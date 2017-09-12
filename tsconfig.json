@@ -1,0 +1,35 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "baseUrl": "",
+        "module": "commonjs",
+        "outDir": "dist/",
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "lib": ["es2016", "dom"],
+        "target": "es5",
+        "types": []
+    },
+    "include": [
+        "app.ts",
+        "src/*",
+        "typings/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ],
+    "typeAcquisition": {
+        "include": [
+            "jquery",
+            "lodash",
+            "bootstrap"
+        ]
+    }
+}
