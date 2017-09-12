@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2017-09-12 10:47:59.604229
+ * 2017-09-12 12:43:57.189405
  */
 
 import { IDEUIComponent } from "../../../../src/app/ide/components-framework/ide-ui-component";

@@ -68,26 +68,10 @@ function DeclareIDEComponentHelper(data: IComponentData | IUIComponentData) {
 
     if (isIUIComponentData(data)) {
       const templateHTML = (<IUIComponentData>data).templateHTML;
-      // ComponentLoader.IncreaseRequestedTemplates();
-      var templateURL = "./templates/___" + data.name + "_name_" + templateHTML;
-      // var callback = function(initData, data, compEntry: ComponentEntry, templateHTML) {
-      // var template: JQuery = $( $.parseHTML(data.templateHTML) );
-      initData = [ (<IUIComponentData>data).selector,  templateURL, templateHTML, ...initData ];
-      // compEntry.SetArgs(initData);
-      //   ComponentLoader.DecreaseRequestedTemplates();
-      // };
-      // var b_callback = callback.bind(null, initData, data, compEntry);
-      // $.get(templateURL, b_callback)
-      //   .fail(function(){
-      //     IDEError.raise(
-      //       "DeclareIDEUIComponent",
-      //       "Template with URL " + templateURL + " fail to load!"
-      //     );
-      //   });
+      initData = [ (<IUIComponentData>data).selector, templateHTML, ...initData ];
     }
-    // else {
-      compEntry.SetArgs(initData);
-    // }
+    
+    compEntry.SetArgs(initData);
 
   };
 }

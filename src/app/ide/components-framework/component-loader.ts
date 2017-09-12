@@ -16,24 +16,7 @@ export class ComponentLoader {
 
     constructor() {}
 
-    get RequestedTemplatesNO() {
-        return ComponentLoader._requestedTemplatesNO;
-    }
-
-    public static IncreaseRequestedTemplates() {
-        ++ComponentLoader._requestedTemplatesNO;
-    }
-    
-    public static DecreaseRequestedTemplates() {
-        --ComponentLoader._requestedTemplatesNO;
-        if (ComponentLoader._requestedTemplatesNO == 0) {
-            IDECore.OnTemplatesLoadCompleted();
-        }
-    }
-
     public static Initialize(): void {}
 
-    public CleanUp(): void {
-        ComponentLoader._requestedTemplatesNO = 0;
-    }
+    public CleanUp(): void {}
 }
