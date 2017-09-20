@@ -22,18 +22,18 @@ export class MapHolder<T> {
         this._data = {};
     }
 
-    public Initialize(): void {
+    public initialize(): void {
     }
 
-    public CleanUp(): void {
+    public cleanUp(): void {
         delete this._data;
     }
 
-    public ContainsKey(key: string): boolean {
+    public containsKey(key: string): boolean {
         return key in this._data;
     }
 
-    public ContainsValue(value: T): boolean {
+    public containsValue(value: T): boolean {
       for (const key in this._data) {
         if (this._comparator(value, this._data[key])) {
           return true;
@@ -42,23 +42,23 @@ export class MapHolder<T> {
       return false;
     }
 
-    public Get(key: string): T {
-        if (!this.ContainsKey(key)) {
+    public get(key: string): T {
+        if (!this.containsKey(key)) {
           return null;
         }
 
         return this._data[key];
     }
 
-    public GetKeys(): Array<string> {
+    public getKeys(): Array<string> {
       return Object.keys(this._data);
     }
 
-    public Put(key: string, value: T) {
+    public put(key: string, value: T) {
         this._data[key] = value;
     }
 
-    public Remove(key: string) {
+    public remove(key: string) {
         if (!(key in this._data)) {
             IDEError.raise(
                 'Singleton-Remove',

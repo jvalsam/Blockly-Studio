@@ -11,9 +11,10 @@ import {
     IDEUIComponent,
     UIComponentMetadata,
     IViewDataComponent
-} from "../../ide-ui-component";
-import { ComponentRegistry } from "../../component-registry";
-import { ExportedFunction } from "../../ide-component";
+} from "../../component/ide-ui-component";
+import { ComponentRegistry } from "../../component/component-registry";
+import { ViewRegistry } from "../../view/view-registry";
+import { ExportedFunction } from "../../component/ide-component";
 import { StartPageMenu } from "./start-page-menu/start-page-menu";
 import { ApplicationListSP } from "./start-page-elements/application-list-s-p/application-list-s-p";
 import { SmartObjectListSP } from "./start-page-elements/smart-object-list-s-p/smart-object-list-s-p";
@@ -37,52 +38,52 @@ export class StartPageComponent extends IDEUIComponent {
         _templateHTML: string
     ) {
         super(_name, _description, _selector, _templateHTML);
-        this._menu = <StartPageMenu>ComponentRegistry.GetComponentEntry("StartPageMenu").Create();
-        this._applications = <ApplicationListSP>ComponentRegistry.GetComponentEntry("StartPageComponentsViewApplications").Create();
-        this._smartObjects = <SmartObjectListSP>ComponentRegistry.GetComponentEntry("StartPageComponentsViewSmartObjects").Create();
+        this._menu = <StartPageMenu>ViewRegistry.getViewEntry("StartPageMenu").create();
+        this._applications = <ApplicationListSP>ViewRegistry.getViewEntry("ApplicationsListStartPage").create();
+        this._smartObjects = <SmartObjectListSP>ViewRegistry.getViewEntry("SmartObjectListStartPage").create();
     }
 
     @ExportedFunction
-    public Initialize(): void {
-        super.Initialize();
-        this._menu.Initialize();
-        this._applications.Initialize();
-        this.inject_c(this._applications);
-        this._smartObjects.Initialize();
-        this.inject_c(this._smartObjects);
+    public initialize(): void {
+        super.initialize();
+        this.inject(this._applications);
+        this.inject(this._smartObjects);
     }
 
     @ExportedFunction
-    public Update(): void {
-        this._menu.Update();
-        this._smartObjects.Update();
-        this.inject_c(this._smartObjects);
-        this._applications.Update();
-        this.inject_c(this._applications);
+    public registerEvents(): void {}
+
+    @ExportedFunction
+    public update(): void {
+        this._menu.update();
+        this._smartObjects.update();
+        this.inject(this._smartObjects);
+        this._applications.update();
+        this.inject(this._applications);
     }
 
     @ExportedFunction
-    public OnOpen(): void {
-        this._applications.OnOpen();
-        this._smartObjects.OnOpen();
+    public onOpen(): void {
+        this._applications.onOpen();
+        this._smartObjects.onOpen();
     }
 
     @ExportedFunction
-    public OnClose(): void {
-        this._menu.OnClose();
-        this._applications.OnClose();
-        this._smartObjects.OnClose();
+    public onClose(): void {
+        this._menu.onClose();
+        this._applications.onClose();
+        this._smartObjects.onClose();
     }
 
     @ExportedFunction
-    public GetView(): IViewDataComponent {
+    public getView(): IViewDataComponent {
         return {
-            main: this._templateJQ.html(),
-            menubar: this._menu.GetView().menubar
+            main: this.templateHTML,
+            menubar: this._menu.templateHTML
         };
     }
 
-    public Destroy(): void {
+    public destroy(): void {
         // first call destroy of the other components and then close
     }
 }

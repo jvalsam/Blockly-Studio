@@ -17,7 +17,8 @@ ProjectPath = './src/app/ide/'
 
 DecoratorsComponentsList = [
     '@UIComponentMetadata', '@UIComponentMetadata(', '@UIComponentMetadata({',
-    '@ComponentMetadata', '@ComponentMetadata(', '@ComponentMetadata({'
+    '@ComponentMetadata', '@ComponentMetadata(', '@ComponentMetadata({',
+    '@ViewMetadata', '@ViewMetadata(', '@ViewMetadata({'
 ]
 
 def FindComponentName(compPath):
@@ -62,7 +63,7 @@ def FindDecoratorComponentName(compPath):
     return ''
 
 
-file = open(ProjectPath + "components-framework/components-bridge.ts","w")
+file = open(ProjectPath + "components-framework/component/components-bridge.ts","w")
 
 file.write("/**\n")
 file.write(" * -- Auto generated --\n")
@@ -81,13 +82,13 @@ for root, dirs, files in os.walk('./src/'):
     if len(data) == 0:
         continue;
     ComponentNameList.append(data[0])
-    file.write("import { " + data[0] + " } from \"../../../." + root.replace('\\','/') + "/" + data[1][:-3] + "\";\n")
+    file.write("import { " + data[0] + " } from \"../../../../." + root.replace('\\','/') + "/" + data[1][:-3] + "\";\n")
 
 file.write("\n\nexport class ComponentsBridge {\n")
-file.write("\tpublic static Initialize(): void {\n")
+file.write("\tpublic static initialize(): void {\n")
 
 for componentName in ComponentNameList:
-    file.write("\t\t" + componentName + ".OnInit();\n")
+    file.write("\t\t" + componentName + ".onInit();\n")
 
 file.write("\t}\n\n")
 

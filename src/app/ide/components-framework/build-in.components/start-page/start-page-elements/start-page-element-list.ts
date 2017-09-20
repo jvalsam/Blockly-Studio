@@ -2,45 +2,24 @@
  * Start Page Element List - General functionality of start page elements
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * August 2017
+ * September 2017
  */
 
-import {
-    IDEUIComponent,
-    IViewDataComponent
-} from "../../../ide-ui-component";
-import { ExportedFunction } from "../../../ide-component";
+import { View } from "../../../view/view";
 
 
-export class StartPageElement<T> {
-    private _element: T;
-    private _templateHTML: string;
-
-    contructor(element: T, templateHTML: string) {
-        this._element = element;
-        this._templateHTML = templateHTML;
-    }
-
-    OnDelete(): void {
-        ;
-    }
-}
-
-export abstract class StartPageElementListSP<T> extends IDEUIComponent {
+export abstract class StartPageElementListSP<T> extends View {
     protected _elements: Array<T>;
 
-    //TODO: The implementation of request could be globally here
-    protected abstract _requestElementsData (): void;
+    protected abstract requestElementsData (): void;
 
-    @ExportedFunction
-    public Initialize(): void {
-        super.Initialize();
-        this._requestElementsData();
+    public initialize(): void {
+        this.requestElementsData();
+        super.initialize();
     }
 
-    @ExportedFunction
-    public Update(): void {
-        this._requestElementsData();
+    public update(): void {
+        this.requestElementsData();
         this._elements.forEach(
             function(element: T, index: number, elements: Array<T>) {
                 this.templateHTML += (<any>element).templateHTML;
@@ -57,39 +36,27 @@ export abstract class StartPageElementListSP<T> extends IDEUIComponent {
         );
     }
 
-    @ExportedFunction
-    public OnOpen(): void {
+    public onOpen(): void {
         ;
     }
 
-    @ExportedFunction
-    public OnClose(): void {
+    public onClose(): void {
         ;
     }
 
-    @ExportedFunction
-    public GetView(): IViewDataComponent {
-        return {
-            main: this._templateJQ.html()
-        };
-    }
-
-    @ExportedFunction
-    public OnAddElement(element: T): void {
+    public onAddElement(element: T): void {
         //TODO: request to add element in DB
         this._elements.push(element);
-        this.Update();
+        this.update();
     }
 
-    @ExportedFunction
-    public OnDeleteElement(element: T): void {
+    public onDeleteElement(element: T): void {
         //TODO: request to add element in DB
         this._elements.splice(this._elements.indexOf(element, 0), 1);
-        this.Update();
+        this.update();
     }
     
-    @ExportedFunction
-    public Destroy(): void {
+    public destroy(): void {
         //TODO: request to update elements in DB
     }
 }

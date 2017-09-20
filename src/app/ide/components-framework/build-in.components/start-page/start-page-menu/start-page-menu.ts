@@ -7,41 +7,37 @@
 
 /// <reference path="../../../../../../../node.d.ts"/>
 import StartPageMenuTmpl from "./start-page-menu.html";
-import { IDEUIComponent, UIComponentMetadata, IViewDataComponent } from "../../../ide-ui-component";
-import { ExportedFunction } from "../../../ide-component";
+import { View, ViewMetadata } from "../../../view/view";
 
-@UIComponentMetadata({
+@ViewMetadata({
     name: "StartPageMenu",
-    description: "Start Page Menu",
     selector: "#menu-area",
     templateHTML: StartPageMenuTmpl
 })
-export class StartPageMenu extends IDEUIComponent {
-    
-    public Initialize(): void {
-        super.Initialize();
+export class StartPageMenu extends View {
+
+    public initialize(): void {
+        super.initialize();
         // TODO: setup events of the components
     }
 
-    public Update(): void {
+    public render(): void {}
+    
+    public registerEvents(): void {}
+
+    public update(): void {
         ;
     }
 
-    public OnOpen(): void {
+    public onOpen(): void {
+        ;
+    }
+    
+    public onClose(): void {
         ;
     }
 
-    public GetView(): IViewDataComponent {
-        return {
-            menubar: this._templateJQ.html()
-        };
-    }
-
-    public OnClose(): void {
-        ;
-    }
-
-    public Destroy(): void {
+    public destroy(): void {
         // first call destroy of the other components and then close
     }
 }

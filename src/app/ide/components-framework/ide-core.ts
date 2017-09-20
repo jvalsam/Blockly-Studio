@@ -5,44 +5,40 @@
  * June 2017
  */
 
-import { ComponentsBridge } from "./components-bridge";
-import { ComponentLoader } from "./component-loader";
+import { ComponentsBridge } from "./component/components-bridge";
+import { ComponentLoader } from "./component/component-loader";
 import {
   FunctionsHolder,
   RequiredFunctionsHolder,
   SignalListenersHolder,
   SignalsHolder
 } from "./holders";
-import { ComponentRegistry } from "./component-registry";
-import { ComponentsCommunication } from "./components-communication";
+import { ComponentRegistry } from "./component/component-registry";
+import { ComponentsCommunication } from "./component/components-communication";
 import { Shell } from "./common.components/shell/shell";
 import { StartPageComponent } from "./build-in.components/start-page/start-page";
 
 export class IDECore {
-  public static Initialize(): void {
+  public static initialize(): void {
 
-    SignalsHolder.Initialize();
-    SignalListenersHolder.Initialize();
-    FunctionsHolder.Initialize();
-    RequiredFunctionsHolder.Initialize();
-    ComponentLoader.Initialize();
+    SignalsHolder.initialize();
+    SignalListenersHolder.initialize();
+    FunctionsHolder.initialize();
+    RequiredFunctionsHolder.initialize();
+    ComponentLoader.initialize();
 
-    ComponentRegistry.Initialize();
-    ComponentsBridge.Initialize();
-    ComponentsCommunication.Initialize();
+    ComponentRegistry.initialize();
+    ComponentsBridge.initialize();
+    ComponentsCommunication.initialize();
   }
 
-  public static Start(): void {
-    var shell: Shell = <Shell>ComponentRegistry.GetComponentEntry("Shell").Create();
-    shell.Initialize();
-    var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.GetComponentEntry("StartPageComponent").Create();
-    startpage.Initialize();
-    shell.OpenComponent(startpage);
-    shell.Show();
-  }
-
-  public static OnTemplatesLoadCompleted(): void {
-    IDECore.Start();
+  public static start(): void {
+    var shell: Shell = <Shell>ComponentRegistry.getComponentEntry("Shell").create();
+    shell.initialize();
+    var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.getComponentEntry("StartPageComponent").create();
+    startpage.initialize();
+    shell.openComponent(startpage);
+    shell.show();
   }
 
 }

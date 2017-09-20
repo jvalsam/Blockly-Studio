@@ -28,17 +28,17 @@ export let ListensSignal = LS;
 export abstract class IDEComponent extends Component {
 
   @ExportedFunction
-  public Initialize(): void {
-    super.Initialize();
+  public initialize(): void {
+    super.initialize();
     // TODO: add initializations for ide components
   }
 
   @ExportedFunction
-  public CleanUp(): void {
+  public cleanUp(): void {
   }
 
   @ExportedFunction
-  public AddUserAction() {
+  public addUserAction() {
     // this functionality has to be exported in the component framework
   }
 

@@ -8,6 +8,7 @@
 import { Component } from "./component";
 import { ComponentLoader } from "./component-loader";
 import { ComponentRegistry } from "./component-registry";
+import { ViewRegistry } from "../view/view-registry";
 import { ComponentEntry } from "./component-entry";
 import { ComponentFunction, Argument } from "./component-function";
 import { ComponentSignal, SignalListenerData } from "./component-signal";
@@ -19,9 +20,9 @@ import {
     FunctionsHolder,
     SignalListenersHolder,
     RequiredFunctionsHolder
-} from "./holders";
-import { BlackboardComponentRegistry } from "./../shared/blackboard/blackboard-component-registry";
-import { IDEError } from "../shared/ide-error";
+} from "../holders";
+import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-component-registry";
+import { IDEError } from "../../shared/ide-error";
 
 
 ////////////////////////////////////////////////////////////////////
@@ -39,6 +40,13 @@ export interface IUIComponentData extends IComponentData {
   templateHTML: string;
 }
 
+export interface IViewElementData {
+  name: string;
+  selector: string;
+  templateHTML: string;
+  initData?: Array<any>;
+}
+
 function isIUIComponentData(data: IComponentData|IUIComponentData): data is IUIComponentData {
   return (<IUIComponentData>data).selector !== undefined;
 }
@@ -47,9 +55,9 @@ function isIUIComponentData(data: IComponentData|IUIComponentData): data is IUIC
  * Load IDE Components in ComponentRegistry using the Component
  *
  */
-function DeclareIDEComponentHelper(data: IComponentData | IUIComponentData) {
+function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
   return (create: Function) => {
-    if (ComponentRegistry.HasComponentEntry(name)) {
+    if (ComponentRegistry.hasComponentEntry(name)) {
       IDEError.raise(
         "DeclareIDEComponent",
         "Component " + name + " is already defined!"
@@ -58,7 +66,7 @@ function DeclareIDEComponentHelper(data: IComponentData | IUIComponentData) {
 
     var initData = (data.initData) ? data.initData : [];
 
-    var compEntry = ComponentRegistry.CreateComponentEntry(
+    var compEntry = ComponentRegistry.createComponentEntry(
       data.name,
       data.description,
       data.version,
@@ -71,25 +79,50 @@ function DeclareIDEComponentHelper(data: IComponentData | IUIComponentData) {
       initData = [ (<IUIComponentData>data).selector, templateHTML, ...initData ];
     }
     
-    compEntry.SetArgs(initData);
+    compEntry.setArgs(initData);
 
   };
 }
 export function DeclareIDEComponent(data: IComponentData) {
-  return DeclareIDEComponentHelper(data);
+  return declareIDEComponentHelper(data);
 }
 export function DeclareIDEUIComponent(data: IUIComponentData) {
-  return DeclareIDEComponentHelper(data);
+  return declareIDEComponentHelper(data);
 }
 
-function ComponentSignalKey(componentName: string, signal: string) { return componentName + '_' + signal; }
+/**
+ * Load View Component Elements
+ *
+ */
+export function DeclareViewElement(data: IViewElementData) {
+  return (create: Function) => {
+    if (ViewRegistry.hasViewEntry(name)) {
+      IDEError.raise(
+        "DeclareViewElement",
+        "Component " + name + " is already defined!"
+      );
+    }
+
+    var initData = (data.initData) ? data.initData : [];
+
+    ViewRegistry.createViewEntry(
+      data.name,
+      data.selector,
+      data.templateHTML,
+      create,
+      data.initData
+    );
+  };
+}
+
+function componentSignalKey(componentName: string, signal: string) { return componentName + '_' + signal; }
 
 
 const listenSignalsMapTmp: {[component: string]: Array<any>} = {};
 
 function addFunctionHelper(parent: string, child: string, Holder: any) {
-    const funcMap = Holder.Get(parent);
-    let childFuncMap = Holder.Get(child);
+    const funcMap = Holder.get(parent);
+    let childFuncMap = Holder.get(child);
     if (!childFuncMap) {
       childFuncMap = {};
     }
@@ -99,7 +132,7 @@ function addFunctionHelper(parent: string, child: string, Holder: any) {
         const compFunc = funcMap[key].copy();
         childFuncMap[key] = compFunc;
       }
-      Holder.Put(child, childFuncMap);
+      Holder.put(child, childFuncMap);
     }
 }
 
@@ -118,14 +151,14 @@ const LoadHelper = {
   'ExportedSignal': {
     'components' : new Array<string>(),
     'add' : function(parent: string, child: string, data?: any) {
-      const componentSignals = SignalsHolder.Get(parent);
+      const componentSignals = SignalsHolder.get(parent);
       if (componentSignals) {
-        for (const signal of SignalsHolder.Get(parent)) {
+        for (const signal of SignalsHolder.get(parent)) {
           const compSignal = signal.copy();
           compSignal.srcName = child;
-          let csignals = SignalsHolder.Get(child);
+          let csignals = SignalsHolder.get(child);
           csignals.push(compSignal);
-          SignalsHolder.Put(child, csignals);
+          SignalsHolder.put(child, csignals);
         }
       }
     }
@@ -147,7 +180,7 @@ const LoadHelper = {
 type LoadHelperType = 'ListensSignal' | 'ExportedSignal' | 'ExportedFunction' | 'RequiredFunction';
 
 
-function LoadParentElements(loadKey: LoadHelperType, className: string, parent: string, data?: any): void {
+function loadParentElements(loadKey: LoadHelperType, className: string, parent: string, data?: any): void {
   // add functions that are exported by inherited classes
   if (parent !== 'Object' && !(className in LoadHelper[loadKey]['components'])) {
     LoadHelper[loadKey].components.push(className);
@@ -156,11 +189,11 @@ function LoadParentElements(loadKey: LoadHelperType, className: string, parent: 
   }
 }
 
-function ListensSignalHelper (compName: string, parent: string, callback: string, signal: string, src: string, argsList?: Array<any>) {
+function listensSignalHelper (compName: string, parent: string, callback: string, signal: string, src: string, argsList?: Array<any>) {
   if (!(compName in listenSignalsMapTmp)) {
     listenSignalsMapTmp[compName] = [];
   }
-  LoadParentElements('ListensSignal', compName, parent);
+  loadParentElements('ListensSignal', compName, parent);
   listenSignalsMapTmp[compName].push([src, signal, callback, argsList]);
 }
 
@@ -168,7 +201,7 @@ export function ListensSignal (componentSignal: string, signal: string, argsList
   return function (
     target: any, propertyKey: string,
     descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>) {
-      ListensSignalHelper(
+      listensSignalHelper(
         target.constructor.name,
         target.__proto__.constructor.name,
         propertyKey,
@@ -179,16 +212,16 @@ export function ListensSignal (componentSignal: string, signal: string, argsList
   };
 }
 
-function ExportedSignalHelper(compName: string, parent: string, signal: string, argsList?: Array<any>, finalFunc?: string) {
+function exportedSignalHelper(compName: string, parent: string, signal: string, argsList?: Array<any>, finalFunc?: string) {
   const compSignal = new ComponentSignal(compName, signal, argsList);
   if (finalFunc !== '') {
     compSignal.finalCallback = finalFunc;
   }
 
-  const compSignals = (!SignalsHolder.ContainsKey(compName)) ? new Array<ComponentSignal>() : SignalsHolder.Get(compName);
+  const compSignals = (!SignalsHolder.containsKey(compName)) ? new Array<ComponentSignal>() : SignalsHolder.get(compName);
   compSignals.push(compSignal);
-  SignalsHolder.Put(compName, compSignals);
-  LoadParentElements(
+  SignalsHolder.put(compName, compSignals);
+  loadParentElements(
     'ExportedSignal',
     compName,
     parent,
@@ -199,7 +232,7 @@ function ExportedSignalHelper(compName: string, parent: string, signal: string, 
 export function ExportedSignal (signal: string, argsList?: Array<any>, finalFunc?: boolean) {
   return (target: any, propertyKey: string,
   descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>) => {
-    ExportedSignalHelper(
+    exportedSignalHelper(
       target.constructor.name,
       target.__proto__.constructor.name,
       signal,
@@ -209,30 +242,30 @@ export function ExportedSignal (signal: string, argsList?: Array<any>, finalFunc
   };
 }
 
-function FunctionHelper(component: string, funcName: string, argsLen: number, parent, method) {
-      let funcMap = FunctionsHolder.Get(component);
+function functionHelper(component: string, funcName: string, argsLen: number, parent, method) {
+      let funcMap = FunctionsHolder.get(component);
 
       if (funcMap === null) {
-        FunctionsHolder.Put(component, {});
-        LoadParentElements('ExportedFunction', component, parent);
-        funcMap = FunctionsHolder.Get(component);
+        FunctionsHolder.put(component, {});
+        loadParentElements('ExportedFunction', component, parent);
+        funcMap = FunctionsHolder.get(component);
       }
 
       funcMap[funcName] = new ComponentFunction(component, funcName, argsLen);
-      FunctionsHolder.Put(component, funcMap);
+      FunctionsHolder.put(component, funcMap);
 }
 
-function RequiredFunctionHelper(componentDest: string, funcName: string, argsLen: number, componentSrc: string, parent: string, method) {
-  let funcMap = RequiredFunctionsHolder.Get(componentSrc);
+function requiredFunctionHelper(componentDest: string, funcName: string, argsLen: number, componentSrc: string, parent: string, method) {
+  let funcMap = RequiredFunctionsHolder.get(componentSrc);
   
   if (funcMap === null) {
-    RequiredFunctionsHolder.Put(componentSrc, {});
-    LoadParentElements('RequiredFunction', componentSrc, parent);
-    funcMap = RequiredFunctionsHolder.Get(componentSrc);
+    RequiredFunctionsHolder.put(componentSrc, {});
+    loadParentElements('RequiredFunction', componentSrc, parent);
+    funcMap = RequiredFunctionsHolder.get(componentSrc);
   }
 
   funcMap[funcName] = new ComponentFunction(componentDest, funcName, argsLen);
-  RequiredFunctionsHolder.Put(componentSrc, funcMap);
+  RequiredFunctionsHolder.put(componentSrc, funcMap);
 }
 
 const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -252,7 +285,7 @@ export function ExportedFunction (
     propertyKey: string,
     descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>
   ) {
-      FunctionHelper (
+      functionHelper (
         target.constructor.name,
         propertyKey,
         getParamNames(descriptor.value).length,
@@ -268,7 +301,7 @@ export function RequiredFunction (
 ) {
   return (target: any, propertyKey: string,
   descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>) => {
-    RequiredFunctionHelper (
+    requiredFunctionHelper (
         component,
         funcName,
         argsLen,
@@ -280,17 +313,17 @@ export function RequiredFunction (
 }
 
 
-function EstablishSignals() {
+function establishSignals() {
   // load component signals
-  for (const compName of SignalsHolder.GetKeys()) {
-    if (!BlackboardComponentRegistry.HasBlackboard(compName)) {
-      BlackboardComponentRegistry.CreateBlackboard(compName);
+  for (const compName of SignalsHolder.getKeys()) {
+    if (!BlackboardComponentRegistry.hasBlackboard(compName)) {
+      BlackboardComponentRegistry.createBlackboard(compName);
     }
-    for (const signal of SignalsHolder.Get(compName)) {
-      const key = ComponentSignalKey(compName, signal.name);
-      SignalListenersHolder.Put(key, { signal: signal, components: new Array<SignalListenerData>() });
+    for (const signal of SignalsHolder.get(compName)) {
+      const key = componentSignalKey(compName, signal.name);
+      SignalListenersHolder.put(key, { signal: signal, components: new Array<SignalListenerData>() });
 
-      BlackboardComponentRegistry.GetBlackboard(compName).AddEvent(signal.name);
+      BlackboardComponentRegistry.getBlackboard(compName).addEvent(signal.name);
     }
   }
   // load signals listeners
@@ -301,12 +334,12 @@ function EstablishSignals() {
         const signal = data[1];
         const callback = data[2];
         const argsList = data[3];
-        const key = ComponentSignalKey(source, signal);
-        const compSignalData = SignalListenersHolder.Get(key);
+        const key = componentSignalKey(source, signal);
+        const compSignalData = SignalListenersHolder.get(key);
         if (compSignalData) {
           compSignalData.components.push({'component': component, 'callback': callback});
 
-          BlackboardComponentRegistry.GetBlackboard(source).AddEventHandler(
+          BlackboardComponentRegistry.getBlackboard(source).addEventHandler(
             signal,
             {
               compSource: component,
@@ -326,28 +359,28 @@ function EstablishSignals() {
   }
 }
 
-function EstablishFunctions() {
+function establishFunctions() {
   // Add function in Blackboard
-  for(const compName of FunctionsHolder.GetKeys()) {
-    if (!BlackboardComponentRegistry.HasBlackboard(compName)) {
-      BlackboardComponentRegistry.CreateBlackboard(compName);
+  for(const compName of FunctionsHolder.getKeys()) {
+    if (!BlackboardComponentRegistry.hasBlackboard(compName)) {
+      BlackboardComponentRegistry.createBlackboard(compName);
     }
-    const funcsMap = FunctionsHolder.Get(compName);
+    const funcsMap = FunctionsHolder.get(compName);
     if (funcsMap) {
       for(const key of Object.keys(funcsMap)) {
         const compFunc = funcsMap[key];
-        BlackboardComponentRegistry.GetBlackboard(compName).AddFunction(compFunc.name, compFunc.argsLen);
+        BlackboardComponentRegistry.getBlackboard(compName).addFunction(compFunc.name, compFunc.argsLen);
       }
     }
   }
 
   // Check required functions are enable from other components as exported functions
-  for (const componentName of RequiredFunctionsHolder.GetKeys()) {
-    const funcMap = RequiredFunctionsHolder.Get(componentName);
+  for (const componentName of RequiredFunctionsHolder.getKeys()) {
+    const funcMap = RequiredFunctionsHolder.get(componentName);
     if (funcMap) {
       for (const funcName of Object.keys(funcMap)) {
         const srcComponent = funcMap[funcName].srcName;
-        if (!(funcName in FunctionsHolder.Get(srcComponent))) {
+        if (!(funcName in FunctionsHolder.get(srcComponent))) {
           IDEError.raise(
             'Function is Required by ' + componentName + ' that is not exported',
             'Function ' + funcName + ' is not exported by component ' + srcComponent,
@@ -359,9 +392,9 @@ function EstablishFunctions() {
   }
 }
 
-function EstablishCommunication() {
-  EstablishSignals();
-  EstablishFunctions();
+function establishCommunication() {
+  establishSignals();
+  establishFunctions();
 }
 
 
@@ -370,11 +403,11 @@ function EstablishCommunication() {
 
 class _ComponentsCommunication {
 
-  public Initialize() {
-    EstablishCommunication();
+  public initialize() {
+    establishCommunication();
   }
 
-  private AssertComponentHelperCommonExists(dst: ComponentEntry, src?: Component) {
+  private assertComponentHelperCommonExists(dst: ComponentEntry, src?: Component) {
       if (!dst) {
           if (src) {
               IDEError.raise(
@@ -392,13 +425,13 @@ class _ComponentsCommunication {
       }
   }
 
-  public AssertComponentFunctionExists(
+  public assertComponentFunctionExists(
       functionName: string,
       dstComponentName: string,
       srcComponent?: Component
   ): void {
-      const dstComponentEntry = ComponentRegistry.GetComponentEntry(dstComponentName);
-      this.AssertComponentHelperCommonExists(dstComponentEntry, srcComponent);
+      const dstComponentEntry = ComponentRegistry.getComponentEntry(dstComponentName);
+      this.assertComponentHelperCommonExists(dstComponentEntry, srcComponent);
       if (!dstComponentEntry.hasOwnProperty(functionName)) {
           IDEError.raise(
               _ComponentsCommunication.name,
@@ -408,14 +441,14 @@ class _ComponentsCommunication {
       }
   }
 
-  public AssertComponentSignalExists(
+  public assertComponentSignalExists(
       signalName: string,
       dstComponentName: string,
       srcComponent: Component
   ): void {
-      const dstComponentEntry = ComponentRegistry.GetComponentEntry(dstComponentName);
-      this.AssertComponentHelperCommonExists(dstComponentEntry, srcComponent);
-      if (!(signalName in SignalsHolder.Get(dstComponentName))) {
+      const dstComponentEntry = ComponentRegistry.getComponentEntry(dstComponentName);
+      this.assertComponentHelperCommonExists(dstComponentEntry, srcComponent);
+      if (!(signalName in SignalsHolder.get(dstComponentName))) {
           IDEError.raise(
               _ComponentsCommunication.name,
               'Requested signal ' + signalName + ' is not exported by',
@@ -424,9 +457,9 @@ class _ComponentsCommunication {
       }
   }
 
-  private AssertComponentExists(comp: Component | string) {
+  private assertComponentExists(comp: Component | string) {
       const compName: string = ((<Component>comp).name !== undefined) ? (<Component>comp).name : <string>comp;
-      if (!ComponentRegistry.HasComponentEntry(compName)) {
+      if (!ComponentRegistry.hasComponentEntry(compName)) {
           IDEError.raise(
               _ComponentsCommunication.name,
               'Component with name ' + compName + ' is not registered.'
@@ -434,7 +467,7 @@ class _ComponentsCommunication {
       }
   }
 
-  public FunctionRequest(
+  public functionRequest(
       srcComponentName: string,
       dstComponentName: string,
       funcName: string,
@@ -442,7 +475,7 @@ class _ComponentsCommunication {
       dstComponentId ?: string
   ): ResponseValue {
     // check if requested function is not defined as requiredFunction
-    const reqFuncs = RequiredFunctionsHolder.Get(srcComponentName); 
+    const reqFuncs = RequiredFunctionsHolder.get(srcComponentName); 
     if ( srcComponentName!="Shell" &&
          (!reqFuncs || Object.keys(reqFuncs).indexOf(funcName)<=-1)
     ) {
@@ -451,11 +484,11 @@ class _ComponentsCommunication {
         'Requested function ' + funcName + ' which is not defined as a requiredFunction by the component "' + srcComponentName + '".'
       );
     }
-    return BlackboardComponentRegistry.GetBlackboard(dstComponentName).CallFunction(funcName, args, srcComponentName, dstComponentId);
+    return BlackboardComponentRegistry.getBlackboard(dstComponentName).callFunction(funcName, args, srcComponentName, dstComponentId);
   }
 
-  public PostSignal(component: string, signal: string, argsList?: Array<any>): void {
-    const blackboardComp = BlackboardComponentRegistry.GetBlackboard(component);
+  public postSignal(component: string, signal: string, argsList?: Array<any>): void {
+    const blackboardComp = BlackboardComponentRegistry.getBlackboard(component);
 
     if (!blackboardComp) {
       IDEError.raise(
@@ -465,11 +498,11 @@ class _ComponentsCommunication {
       );
     }
 
-    blackboardComp.PostEvent(signal, {data: argsList});
+    blackboardComp.postEvent(signal, {data: argsList});
   }
 
-  public RegisterListensSignal(component: string, parent: string, funcName: string, signal: string, sourceComponent: string) {
-    ListensSignalHelper (
+  public registerListensSignal(component: string, parent: string, funcName: string, signal: string, sourceComponent: string) {
+    listensSignalHelper (
       component,
       parent,
       funcName,
@@ -478,8 +511,8 @@ class _ComponentsCommunication {
     );
   }
 
-  public RegisterSignal(component: string, parent: string, signal: string, argsList?: Array<any>, finalFunc?: string) {
-    ExportedSignalHelper (
+  public registerSignal(component: string, parent: string, signal: string, argsList?: Array<any>, finalFunc?: string) {
+    exportedSignalHelper (
       component,
       parent,
       signal,
@@ -488,8 +521,8 @@ class _ComponentsCommunication {
     );
   }
 
-  public RegisterFunction(component: string, parent: string, funcName: string, func: Function, argsLen: number) {
-    FunctionHelper (
+  public registerFunction(component: string, parent: string, funcName: string, func: Function, argsLen: number) {
+    functionHelper (
       component,
       funcName,
       argsLen,
@@ -498,8 +531,8 @@ class _ComponentsCommunication {
     );
   }
 
-  public RegisterRequiredFunction(componentDst: string, componentSrc: string, parent, funcName: string, func: Function, argsLen: number) {
-    RequiredFunctionHelper (
+  public registerRequiredFunction(componentDst: string, componentSrc: string, parent, funcName: string, func: Function, argsLen: number) {
+    requiredFunctionHelper (
       componentDst,
       funcName,
       argsLen,

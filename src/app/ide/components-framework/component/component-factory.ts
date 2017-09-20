@@ -10,11 +10,11 @@ import { ComponentRegistry } from './component-registry';
 
 class ComponentFactory {
     CreateComponent(compName: string): Component {
-      const component = ComponentRegistry.GetComponentEntry(compName).Create();
+      const component = ComponentRegistry.getComponentEntry(compName).create();
       return component;
     }
 
     DestroyComponent(component: Component): void {
-      ComponentRegistry.GetComponentEntry(component.name).Destroy(component);
+      ComponentRegistry.getComponentEntry(component.name).destroy(component);
     }
 }

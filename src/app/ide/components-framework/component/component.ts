@@ -12,7 +12,7 @@ import {
   ExportedFunction
 } from './components-communication';
 import { ResponseValue } from './response-value';
-import { IDEError } from '../shared/ide-error';
+import { IDEError } from '../../shared/ide-error';
 
 
 enum ComponentState {
@@ -33,7 +33,7 @@ export abstract class Component {
    * @static
    * @memberof Component
    */
-  public static OnInit(): void {}
+  public static onInit(): void {}
 
   constructor(
     protected readonly _name: string,
@@ -46,12 +46,12 @@ export abstract class Component {
   }
 
   @ExportedFunction
-  public Initialize(): void {
+  public initialize(): void {
     // TODO: add initializations for components
   }
 
   // public abstract Create(args: Array<any>): Component;
-  public abstract Destroy(): void;
+  public abstract destroy(): void;
 
   get name(): string { return this._name; }
   get serialNo(): number { return this._serialId; }
@@ -65,11 +65,11 @@ export abstract class Component {
   // Functions to communicate with other IDE components
 
   protected postSignal(signal: string, argsList?: Array<any>) {
-    ComponentsCommunication.PostSignal(this.name, signal, argsList);
+    ComponentsCommunication.postSignal(this.name, signal, argsList);
   }
 
   protected requestFunction(componentName: string, funcName: string, args: Array<Argument>): ResponseValue {
-    return ComponentsCommunication.FunctionRequest(this._name, componentName, funcName, args);
+    return ComponentsCommunication.functionRequest(this._name, componentName, funcName, args);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ export abstract class Component {
   // Establishing Components Communication for Components that are developed in JS
   // Export
   protected addExportedFunction(parent: string, funcName: string, argsLen: number, func: Function) {
-    ComponentsCommunication.RegisterFunction (
+    ComponentsCommunication.registerFunction (
       this.name,
       parent,
       funcName,
@@ -111,7 +111,7 @@ export abstract class Component {
     );
   }
   protected addExportedSignal(parent: string, signal: string, argList?: Array<any>, finalFunc?: string) {
-    ComponentsCommunication.RegisterSignal (
+    ComponentsCommunication.registerSignal (
       this.name,
       parent,
       signal,
@@ -121,7 +121,7 @@ export abstract class Component {
   }
   // Import
   protected addRequestedFunction(parent: string, funcName: string, func: Function, argsLen: number, componentName: string) {
-    ComponentsCommunication.RegisterRequiredFunction (
+    ComponentsCommunication.registerRequiredFunction (
       componentName,
       this.name,
       parent,
@@ -131,7 +131,7 @@ export abstract class Component {
     );
   }
   protected addSignalListener(parent: string, signal: string, sourceComponent: string, callback: string) {
-    ComponentsCommunication.RegisterListensSignal (
+    ComponentsCommunication.registerListensSignal (
       this.name,
       parent,
       callback,

@@ -1,21 +1,19 @@
+var webpack = require('webpack');
 var path = require('path');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = {
-    entry: './app.ts',
+    entry: [
+        'webpack-jquery-ui',
+        './app.ts'
+    ],
     resolve: {
         extensions: ['.webpack.js', '.web.js', '.ts', '.js', '.html']
     },
     module: {
         loaders: [
-            // {
-            //     test: /\.ts$/,
-            //     loaders: ['ts-loader', 'lodash-ts-imports-loader'],
-            //     exclude: /node_modules/,
-            //     enforce: "pre"
-            // },
             { test: /\.ts$/, loader: 'ts-loader' },
-            { test: /\.html/, loaders: ["html-loader?exportAsEs6Default" /*, 'file?name=[name].[ext]', "file-loader?name=/templates/[name].[ext]"*/ ] },
+            { test: /\.html/, loaders: ["html-loader?exportAsEs6Default"] },
             { test: /\.(jpe?g|png|gif|svg)$/i, loaders: ["file-loader?name=/images/[name].[ext]", "image-webpack-loader"] },
             { test: /\.(woff2?|ttf|eot|svg)$/, loader: 'url?limit=10000' },
             { test: /bootstrap\/dist\/js\/umd\//, loader: 'imports?jQuery=jquery' },
@@ -33,6 +31,12 @@ module.exports = {
     plugins: [
         new WebpackShellPlugin({
             onBuildStart: ['py cg_components.py']
+        }),
+        new webpack.ProvidePlugin({
+            '$': "jquery",
+            'jQuery': "jquery",
+            'Tether': 'tether',
+            'Popper': 'popper.js'
         })
     ]
 }

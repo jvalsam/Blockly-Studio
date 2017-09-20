@@ -12,14 +12,22 @@
         "experimentalDecorators": true,
         "allowJs": true,
         "suppressImplicitAnyIndexErrors": true,
-        "lib": ["es2016", "dom"],
+        "lib": [
+            "es2016",
+            "dom"
+        ],
         "target": "es5",
-        "types": []
+        "paths": {
+            "*": ["./node_modules/@types/*"]
+        }
+        // ,
+        // "typeRoots": ["node_modules/@types"]
     },
     "include": [
         "app.ts",
-        "src/*",
-        "typings/*"
+        "src/*"
+        // ,
+        // "typings/*"
     ],
     "exclude": [
         "node_modules",

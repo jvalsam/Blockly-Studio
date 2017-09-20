@@ -5,12 +5,12 @@
  * July 2017
  */
 
-import { ComponentFunction } from '../../components-framework/component-function';
-import { ComponentsCommunication } from '../../components-framework/components-communication';
-import { ComponentRegistry } from '../../components-framework/component-registry';
+import { ComponentFunction } from '../../components-framework/component/component-function';
+import { ComponentsCommunication } from '../../components-framework/component/components-communication';
+import { ComponentRegistry } from '../../components-framework/component/component-registry';
 import { MapHolder } from '../map-holder';
 import { Queue } from '../../../shared/collections/Queue';
-import { ResponseValue } from './../../components-framework/response-value';
+import { ResponseValue } from './../../components-framework/component/response-value';
 import { IDEError } from '../ide-error';
 
 
@@ -114,7 +114,7 @@ export class BlackboardComponent {
     this._queuedEvents = new Queue<QueuedEvent>();
   }
 
-  private AssertExists(exist: boolean, element: string, elementsName: string, type: string) {
+  private assertExists(exist: boolean, element: string, elementsName: string, type: string) {
     const checkExists = element in this[elementsName];
     if (exist ? !checkExists : checkExists) {
       IDEError.raise(
@@ -125,42 +125,42 @@ export class BlackboardComponent {
     }
   }
 
-  public AddEvent(eventId: Event) {
-    this.AssertExists(false, eventId, '_events', 'event');
+  public addEvent(eventId: Event) {
+    this.assertExists(false, eventId, '_events', 'event');
 
     this._events[eventId] = new EventContainer();
   }
 
-  public AddEventHandler(eventId: Event, evtHandler: EventHandler, callOnce = false): EventHandlerUniqueId {
-    this.AssertExists(true, eventId, '_events', 'event handler in')
+  public addEventHandler(eventId: Event, evtHandler: EventHandler, callOnce = false): EventHandlerUniqueId {
+    this.assertExists(true, eventId, '_events', 'event handler in')
 
     return this._events[eventId].addEventHandler(evtHandler, callOnce);
   }
 
-  public AddFunction(funcName: string, argsLen: number=-1) {
-    this.AssertExists(false, funcName, '_functions', 'function');
+  public addFunction(funcName: string, argsLen: number=-1) {
+    this.assertExists(false, funcName, '_functions', 'function');
 
     this._functions[funcName] = new ComponentFunction(this._componentName, funcName, argsLen);
   }
 
-  public RemoveFunction(funcName: string) {
-    this.AssertExists(true, funcName, '_functions', 'function');
+  public removeFunction(funcName: string) {
+    this.assertExists(true, funcName, '_functions', 'function');
 
     delete this._functions[funcName];
   }
 
-  public RemoveEventHandler(eventId: Event, eventHandlerUniqueId: EventHandlerUniqueId): void {
+  public removeEventHandler(eventId: Event, eventHandlerUniqueId: EventHandlerUniqueId): void {
     this._events[eventId].removeEventHandler(eventHandlerUniqueId);
   }
 
-  public ClearEventHandlers(eventId: Event) {
+  public clearEventHandlers(eventId: Event) {
     this._events[eventId].clearEventHandlers();
   }
 
-  private ProcessEvent(eventId: Event, eventContent: Object) {
+  private processEvent(eventId: Event, eventContent: Object) {
     for (const ehc of this._events[eventId].eventHandlerList) {
       const data = ehc.eventHandler;
-      const compEntry = ComponentRegistry.GetComponentEntry(data.compSource);
+      const compEntry = ComponentRegistry.getComponentEntry(data.compSource);
 
       if (!compEntry) {
         IDEError.raise(
@@ -169,18 +169,18 @@ export class BlackboardComponent {
           'Signal ' + eventId + ' posted and the aforementioned component is esteblish that listens it.'
         );
       }
-      const components = compEntry.GetInstances();
+      const components = compEntry.getInstances();
       for (const component of components) {
         component.receiveFunctionRequest(data.funcName, eventContent['data']);
       }
     }
   }
 
-  public PostEvent(eventId: Event, eventContent: Object): void {
-    this.ProcessEvent(eventId, eventContent);
+  public postEvent(eventId: Event, eventContent: Object): void {
+    this.processEvent(eventId, eventContent);
   }
 
-  public CallFunction (funcName: string, args: Array<any>, source: string, destId?: string): ResponseValue {
+  public callFunction (funcName: string, args: Array<any>, source: string, destId?: string): ResponseValue {
     const func = this._functions[funcName];
     if (!func) {
       IDEError.raise(
@@ -197,7 +197,7 @@ export class BlackboardComponent {
       );
     }
 
-    const components = ComponentRegistry.GetComponentEntry(this._componentName).GetInstances();
+    const components = ComponentRegistry.getComponentEntry(this._componentName).getInstances();
     if (!components || components.length === 0) {
       IDEError.raise(
         BlackboardComponent.name,
@@ -226,14 +226,14 @@ export class BlackboardComponent {
     }
   }
 
-  public ProcessQueuedEvents(){
+  public processQueuedEvents(){
     // TODO: if we will need it
   }
-  public PostQueuedEvent(eventId: Event, eventContent: Object): void {
+  public postQueuedEvent(eventId: Event, eventContent: Object): void {
     // TODO: if we will need it
   }
 
-  public StopInvocationLoop() {
+  public stopInvocationLoop() {
     // TODO: if we will need it
   }
 

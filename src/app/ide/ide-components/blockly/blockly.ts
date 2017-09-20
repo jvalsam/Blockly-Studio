@@ -9,13 +9,13 @@ import {
   IDEUIComponent,
   UIComponentMetadata,
   IViewDataComponent
-} from "../../components-framework/ide-ui-component";
+} from "../../components-framework/component/ide-ui-component";
 import {
   ExportedSignal,
   ExportedFunction,
   RequiredFunction,
   ListensSignal
-} from "../../components-framework/ide-component";
+} from "../../components-framework/component/ide-component";
 
 
 @UIComponentMetadata({
@@ -28,27 +28,31 @@ import {
 export class BlocklyVPL extends IDEUIComponent {
 
   @ExportedFunction
-  public OnOpen(): void {
+  public onOpen(): void {
 
   }
 
   @ExportedFunction
-  public OnClose(): void {
+  public onClose(): void {
 
   }
   
   @ExportedFunction
-  public GetView(): IViewDataComponent {
+  public getView(): IViewDataComponent {
       return {
-          main: this._templateJQ.html()
+          main: this.templateHTML
       };
   }
 
-  @ExportedFunction
-  public Update(){}
+  public registerEvents(): void {
+      
+  }
 
   @ExportedFunction
-  public Destroy(){}
+  public update(){}
+
+  @ExportedFunction
+  public destroy(){}
 
   /////////////////////////////////////////////////
   //// Establish Component Communication
@@ -59,8 +63,8 @@ export class BlocklyVPL extends IDEUIComponent {
   @RequiredFunction('ICEVPL', 'loadProgram')
 
   @ExportedFunction
-  public OpenProject (path: string): void {
-    console.log('testing... OpenProject called!');
+  public openProject (path: string): void {
+    console.log('testing... openProject called!');
   }
 
   @ListensSignal('ICEVPL', 'Close')

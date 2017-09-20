@@ -18,19 +18,19 @@ class _BlackboardComponentRegistry {
     this._blackboards = {};
   }
 
-   public GetBlackboard(id: BlackboardId) {
+   public getBlackboard(id: BlackboardId) {
      return this._blackboards[id];
    }
 
-   public HasBlackboard(id: BlackboardId) {
+   public hasBlackboard(id: BlackboardId) {
      return id in this._blackboards;
    }
 
-   public CreateBlackboard(id: BlackboardId) {
+   public createBlackboard(id: BlackboardId) {
      this._blackboards[id] = new BlackboardComponent(id);
    }
 
-   public DestroyBlackboard(id: BlackboardId) {
+   public destroyBlackboard(id: BlackboardId) {
      delete this._blackboards[id];
    }
 }

@@ -5,17 +5,24 @@
  * August 2017
  */
 
-/// <reference path="../../../../../../node.d.ts"/>
+
 import ShellTmpl from "./shell.html";
-import { ComponentRegistry } from "../../component-registry";
-import { IDEUIComponent, UIComponentMetadata, IViewDataComponent } from "../../ide-ui-component";
-import { ExportedFunction } from "../../ide-component";
+import { ComponentRegistry } from "../../component/component-registry";
+import { ViewRegistry } from "../../view/view-registry";
+import { IDEUIComponent, UIComponentMetadata, IViewDataComponent } from "../../component/ide-ui-component";
+import { ExportedFunction } from "../../component/ide-component";
 import { Menu } from "./menu/menu";
 import { Toolbar } from "./toolbar/toolbar";
 import { MainArea } from "./main-area/main-area";
 import * as $ from "jquery";
+
 import "expose-loader?$!expose-loader?jQuery!jquery";
-import "./../../../../../../node_modules/bootstrap/dist/js/bootstrap.js";
+
+require('jquery/dist/jquery');
+require('popper.js/dist/umd/popper');
+require('bootstrap/dist/js/bootstrap');
+
+
 
 type Direction = "menu" | "toolbar" | "main-area";
 
@@ -37,27 +44,28 @@ export class Shell extends IDEUIComponent {
     templateHTML: string
   ) {
     super(name, description, selector, templateHTML);
-    this._menu = <Menu>ComponentRegistry.GetComponentEntry("Menu").Create();
-    this._toolbar = <Toolbar>ComponentRegistry.GetComponentEntry("Toolbar").Create();
-    this._main = <MainArea>ComponentRegistry.GetComponentEntry("MainArea").Create();
+    this._menu = <Menu>ViewRegistry.getViewEntry("Menu").create();
+    this._toolbar = <Toolbar>ViewRegistry.getViewEntry("Toolbar").create();
+    this._main = <MainArea>ViewRegistry.getViewEntry("MainArea").create();
   }
 
   @ExportedFunction
-  public Initialize(): void {
-    super.Initialize();
-    this.inject_c(this._menu);
-    this.inject_c(this._toolbar);
-    this.inject_c(this._main);
+  public initialize(): void {
+    super.initialize();
+    this.inject(this._menu);
+    this.inject(this._toolbar);
+    this.inject(this._main);
   }
 
   @ExportedFunction
-  public Show(): void {
-    $(this._selector).html(this._templateJQ.html());
+  public show(): void {
+    // TODO: implement independently html for each part
+    $(this._selector).html(this.templateHTML);
   }
 
   @ExportedFunction
-  public OpenComponent(comp: IDEUIComponent): void {
-    const view: IViewDataComponent = comp.GetView();
+  public openComponent(comp: IDEUIComponent): void {
+    const view: IViewDataComponent = comp.getView();
     if (view.menubar) {
       this.inject("#menu-area", view.menubar);
     }
@@ -70,31 +78,36 @@ export class Shell extends IDEUIComponent {
   }
 
   @ExportedFunction
-  public CloseComponent(compName: string): void {
+  public closeComponent(compName: string): void {
     ;
   }
 
-  public Destroy(): void {
+  public destroy(): void {
     // first call destroy of the other components and then close
   }
 
   @ExportedFunction
-  public Update():void {
+  public registerEvents():void {
     ;
   }
 
   @ExportedFunction
-  public OnOpen(): void {
+  public update():void {
     ;
   }
 
   @ExportedFunction
-  public OnClose(): void {
+  public onOpen(): void {
     ;
   }
 
   @ExportedFunction
-  public GetView(): IViewDataComponent {
+  public onClose(): void {
+    ;
+  }
+
+  @ExportedFunction
+  public getView(): IViewDataComponent {
     return {};
   }
 }

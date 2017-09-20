@@ -5,36 +5,35 @@
  * September 2017
  */
 
-import { IDEUIComponent, UIComponentMetadata, IViewDataComponent } from "../../../ide-ui-component";
-import { ExportedFunction } from "../../../ide-component";
+/// <reference path="../../../../../../../node.d.ts"/>
+import MainAreaTmpl from "./main-area.html";
+import { View, ViewMetadata } from "../../../view/view";
+import { ExportedFunction } from "../../../component/ide-component";
 
-@UIComponentMetadata({
+@ViewMetadata({
     name: "MainArea",
-    description: "Main area of the IDE",
     selector: "#main-area",
-    templateHTML: "main-area.html"
+    templateHTML: MainAreaTmpl
 })
-export class MainArea extends IDEUIComponent {
+export class MainArea extends View {
     
-    public Update(): void {
+    public render(): void {}
+    
+    public registerEvents(): void {}
+
+    public update(): void {
         ;
     }
 
-    public OnOpen(): void {
+    public onOpen(): void {
         ;
     }
 
-    public GetView(): IViewDataComponent {
-        return {
-            menubar: this._templateJQ.html()
-        };
-    }
-
-    public OnClose(): void {
+    public onClose(): void {
         ;
     }
 
-    public Destroy(): void {
+    public destroy(): void {
         // first call destroy of the other components and then close
     }
 }

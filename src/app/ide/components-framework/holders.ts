@@ -5,9 +5,9 @@
  * July 2017
  */
 
-import { Component } from './component';
-import { ComponentSignal, ComponentSignalData } from './component-signal';
-import { ComponentFunction } from './component-function';
+import { Component } from './component/component';
+import { ComponentSignal, ComponentSignalData } from './component/component-signal';
+import { ComponentFunction } from './component/component-function';
 
 import { MapHolder } from '../shared/map-holder';
 

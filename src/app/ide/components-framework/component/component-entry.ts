@@ -7,7 +7,7 @@
 
 import { Component } from './component';
 import { ComponentSignal } from './component-signal';
-import { IDEError } from '../shared/ide-error';
+import { IDEError } from '../../shared/ide-error';
 
 
 export interface ComponentEntryInfo {
@@ -33,22 +33,22 @@ export class ComponentEntry {
 
   get componentInfo(): ComponentEntryInfo { return this._compInfo; }
 
-  public GetInstances(): Array<Component> {
+  public getInstances(): Array<Component> {
     return this._instanceList;
   }
 
-  public SetArgs(args: Array<any>) {
+  public setArgs(args: Array<any>) {
     this._args = args;
   }
 
-  public Create(): Component {
+  public create(): Component {
     const newComp: Component = new (this._creationFunc) (this._compInfo.name, this._compInfo.description, ...this._args);
     this._instanceList.push(newComp);
     return newComp;
   }
 
-  public Destroy(comp: Component) {
-    comp.Destroy();
+  public destroy(comp: Component) {
+    comp.destroy();
     const index = this._instanceList.indexOf(comp);
     if (index === -1) {
       IDEError.raise(

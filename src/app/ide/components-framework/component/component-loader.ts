@@ -8,7 +8,7 @@ import { IDECore } from "./ide-core";
 
 import { Component } from './component';
 import { ComponentRegistry } from './component-registry';
-import { IDECore } from './ide-core';
+import { IDECore } from '../ide-core';
 
 
 export class ComponentLoader {
@@ -16,7 +16,7 @@ export class ComponentLoader {
 
     constructor() {}
 
-    public static Initialize(): void {}
+    public static initialize(): void {}
 
-    public CleanUp(): void {}
+    public cleanUp(): void {}
 }

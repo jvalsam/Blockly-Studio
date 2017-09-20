@@ -5,36 +5,37 @@
  * September 2017
  */
 
-import { IDEUIComponent, UIComponentMetadata, IViewDataComponent } from "../../../ide-ui-component";
-import { ExportedFunction } from "../../../ide-component";
+/// <reference path="../../../../../../../node.d.ts"/>
+import MenuTmpl from "./menu.html";
+import { View, ViewMetadata } from "../../../view/view";
+import { ExportedFunction } from "../../../component/ide-component";
 
-@UIComponentMetadata({
+@ViewMetadata({
     name: "Menu",
-    description: "Menu area of the IDE",
     selector: "#menu-area",
-    templateHTML: "menu.html"
+    templateHTML: MenuTmpl
 })
-export class Menu extends IDEUIComponent {
+export class Menu extends View {
     
-    public Update(): void {
+    public render(): void {}
+
+    public registerEvents(): void {
+        
+    }
+    
+    public update(): void {
         ;
     }
 
-    public OnOpen(): void {
+    public onOpen(): void {
         ;
     }
 
-    public GetView(): IViewDataComponent {
-        return {
-            menubar: this._templateJQ.html()
-        };
-    }
-
-    public OnClose(): void {
+    public onClose(): void {
         ;
     }
 
-    public Destroy(): void {
+    public destroy(): void {
         // first call destroy of the other components and then close
     }
 }

@@ -20,17 +20,17 @@ class _ComponentRegistry {
     this._componentsEntry = {};
   }
 
-  public Initialize() {}
+  public initialize() {}
 
-  public GetComponentEntry(compName: string) {
+  public getComponentEntry(compName: string) {
      return this._componentsEntry[compName];
    }
 
-   public HasComponentEntry(compName: string) {
+   public hasComponentEntry(compName: string) {
      return compName in this._componentsEntry;
    }
 
-   public CreateComponentEntry(
+   public createComponentEntry(
      compName: string,
      description: string,
      version: string,
@@ -45,7 +45,7 @@ class _ComponentRegistry {
      return this._componentsEntry[compName];
    }
 
-   public DestroyBlackboard(compName: string) {
+   public destroyBlackboard(compName: string) {
      delete this._componentsEntry[compName];
    }
 }
