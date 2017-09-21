@@ -78,6 +78,8 @@ file.write(" */\n\n")
 ComponentNameList = []
 
 for root, dirs, files in os.walk('./src/'):
+    if "google_blockly" in root:
+        continue;
     data = FindComponentName(root)
     if len(data) == 0:
         continue;

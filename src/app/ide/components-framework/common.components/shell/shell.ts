@@ -72,6 +72,9 @@ export class Shell extends IDEUIComponent {
     if (view.tools) {
       this.inject("#toolbar-area", view.tools);
     }
+    else {
+      this._view.templateJQ.find("div#toolbar-area").hide();
+    }
     if (view.main) {
       this.inject("#main-area", view.main);
     }

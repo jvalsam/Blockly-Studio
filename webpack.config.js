@@ -14,7 +14,13 @@ module.exports = {
         loaders: [
             { test: /\.ts$/, loader: 'ts-loader' },
             { test: /\.html/, loaders: ["html-loader?exportAsEs6Default"] },
-            { test: /\.(jpe?g|png|gif|svg)$/i, loaders: ["file-loader?name=/images/[name].[ext]", "image-webpack-loader"] },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                loaders: [
+                    "file-loader?name=/images/[name].[ext]",
+                    "image-webpack-loader"
+                ]
+            },
             { test: /\.(woff2?|ttf|eot|svg)$/, loader: 'url?limit=10000' },
             { test: /bootstrap\/dist\/js\/umd\//, loader: 'imports?jQuery=jquery' },
             { test: /\.scss/, exclude: /node_modules/, loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!autoprefixer?browsers=last 2 version!sass?outputStyle=expanded&sourceMap&includePaths[]=node_modules/compass-mixins/lib' },

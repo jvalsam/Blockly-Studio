@@ -4,6 +4,9 @@
 /dist
 /templates
 
+# git repos
+/src/app/ide/ide-components/blockly/google_blockly
+
 # dependencies
 /node_modules
 

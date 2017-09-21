@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2017-09-20 15:34:49.938697
+ * 2017-09-21 22:12:06.392392
  */
 
 import { StartPageComponent } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page";

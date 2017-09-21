@@ -1,0 +1,12 @@
+<xml id="toolbox" style="display: none">
+  <category name="Control">
+    <block type="controls_if"></block>
+    <block type="controls_whileUntil"></block>
+    <block type="controls_for">
+  </category>
+  <category name="Logic">
+    <block type="logic_compare"></block>
+    <block type="logic_operation"></block>
+    <block type="logic_boolean"></block>
+  </category>
+</xml>
