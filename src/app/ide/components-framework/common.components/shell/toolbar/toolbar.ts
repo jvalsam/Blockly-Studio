@@ -7,12 +7,16 @@
 
 /// <reference path="../../../../../../../node.d.ts"/>
 import ToolbarTmpl from "./toolbar.html";
-import { View, ViewMetadata } from "../../../view/view";
+import { View, IViewElement, ViewMetadata } from "../../../view/view";
 import { ExportedFunction } from "../../../component/ide-component";
+
+
+export interface IShellToolbarViewElement extends IViewElement {
+    view: Toolbar;
+}
 
 @ViewMetadata({
     name: "Toolbar",
-    selector: "#toolbar-area",
     templateHTML: ToolbarTmpl
 })
 export class Toolbar extends View {

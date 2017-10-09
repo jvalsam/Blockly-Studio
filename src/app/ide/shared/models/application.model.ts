@@ -15,17 +15,20 @@ class ApplicationSrc {
 
 
 export class ApplicationModel {
-  private static readonly DEFAULT_DESCRIPTION = 'There is not description yet.';
-  private static readonly DEFAULT_IMAGE_PATH = 'TODO: add default image path';
-  private _appSource: ApplicationSrc;
+  private static readonly DEFAULT_DESCRIPTION = "There is not description yet.";
+  private static readonly DEFAULT_IMAGE_PATH = "../../../../../images/default-app.jpg";
 
+  private _lastUpdated: Date;
   constructor(
+    private _id: string,
     private _name: string,
     private _description: string = ApplicationModel.DEFAULT_DESCRIPTION,
-    private _imagePath: string = ApplicationModel.DEFAULT_IMAGE_PATH,
-    private _sourcePath: string = ''
-  ){}
+    private _imagePath: string = ApplicationModel.DEFAULT_IMAGE_PATH
+  ) {
+    this._lastUpdated = new Date(Date.now());
+  }
 
+  get id(): string { return this._id; }
   get name(): string { return this._name; }
   set name(name: string) {
     // TODO: check if it is unique for the user and handle it
@@ -40,8 +43,12 @@ export class ApplicationModel {
       this._description = description;
     }
   }
-  get imgPath(): string { return this._imagePath; }
-  set imgPath(path: string) {
+  get imagePath(): string { return this._imagePath; }
+  set imagePath(path: string) {
     this._imagePath = path;
+  }
+  get lastUpdated(): Date { return this._lastUpdated; }
+  set lastUpdated(date: Date) {
+    this._lastUpdated = date;
   }
 }

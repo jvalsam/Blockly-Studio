@@ -18,16 +18,14 @@
         ],
         "target": "es5",
         "paths": {
-            "*": ["./node_modules/@types/*"]
-        }
-        // ,
-        // "typeRoots": ["node_modules/@types"]
+            "*": ["./node_modules/@types/*"],
+            "node-blockly": ["./node_modules/node-blockly/*"]
+        },
+        "typeRoots": ["node_modules/@types"]
     },
     "include": [
         "app.ts",
         "src/*"
-        // ,
-        // "typings/*"
     ],
     "exclude": [
         "node_modules",

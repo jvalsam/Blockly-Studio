@@ -5,8 +5,8 @@
  * September 2017
  */
 
-import { View } from './view';
-import { ViewEntry } from './view-entry';
+
+import { ViewEntry } from "./view-entry";
 
 interface MapViewEntry {
   [compName: string]: ViewEntry;
@@ -25,19 +25,18 @@ class _ViewRegistry {
      return this._viewsEntry[viewName];
    }
 
-   public hasViewEntry(viewName: string) {
+   public hasViewEntry(viewName: string): boolean {
      return viewName in this._viewsEntry;
    }
 
    public createViewEntry(
      viewName: string,
-     selector: string,
      templateHTML: string,
      create: Function,
      initData?: Array<any>
     ): ViewEntry {
       this._viewsEntry[viewName] = new ViewEntry (viewName, create, initData);
-      const args: any[] = initData ? [selector, templateHTML, ...initData] : [selector, templateHTML];
+      const args: any[] = initData ? [templateHTML, ...initData] : [templateHTML];
       this._viewsEntry[viewName].setArgs(args);
      return this._viewsEntry[viewName];
    }

@@ -17,6 +17,8 @@ import {
   ListensSignal
 } from "../../components-framework/component/ide-component";
 
+var Blockly = require("../../../../../node_modules/node-blockly/browser");
+
 
 @UIComponentMetadata({
   name: "blockly",
@@ -26,21 +28,48 @@ import {
   version: "1.1"
 })
 export class BlocklyVPL extends IDEUIComponent {
+  private editor: any;
+  private editorArea: string;
+  private changed: boolean;
+
+  constructor(
+    name: string,
+    description: string,
+    selector: string,
+    templateHTML: string
+  ) {
+    super(name, description, selector, templateHTML);
+  }
 
   @ExportedFunction
-  public onOpen(): void {
+  public onOpen() {}
 
+  @ExportedFunction
+  public open(src: string, toolbox: string): void {
+    this.changed = false;
+    this.editor = Blockly.inject(this.editorArea, { media: "./media/", toolbox });
+    Blockly.Xml.domToWorkspace(src, this.editor);
+    this.editor.addChangeListener(this.onChangeListener);
   }
 
   @ExportedFunction
   public onClose(): void {
+    // changeListeners
+    // this.editor.removeChangeListener();
+    let code = Blockly.Xml.workspaceToDom(this.editor);
+    // TODO: notify AutomationEditingManager
+    this.editor.dispose();
+  }
 
+  private onChangeListener(){
+    let code = Blockly.Xml.workspaceToDom(this.editor);
+    // TODO: notify AutomationEditingManager
   }
   
   @ExportedFunction
   public getView(): IViewDataComponent {
       return {
-          main: this.templateHTML
+          main: this.templateJQ
       };
   }
 

@@ -7,12 +7,15 @@
 
 /// <reference path="../../../../../../../node.d.ts"/>
 import MainAreaTmpl from "./main-area.html";
-import { View, ViewMetadata } from "../../../view/view";
+import { View, IViewElement, ViewMetadata } from "../../../view/view";
 import { ExportedFunction } from "../../../component/ide-component";
+
+export interface IShellMainAreaViewElement extends IViewElement {
+    view: MainArea;
+}
 
 @ViewMetadata({
     name: "MainArea",
-    selector: "#main-area",
     templateHTML: MainAreaTmpl
 })
 export class MainArea extends View {

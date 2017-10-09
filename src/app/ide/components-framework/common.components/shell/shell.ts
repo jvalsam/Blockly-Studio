@@ -7,35 +7,33 @@
 
 
 import ShellTmpl from "./shell.html";
-import { ComponentRegistry } from "../../component/component-registry";
+
 import { ViewRegistry } from "../../view/view-registry";
 import { IDEUIComponent, UIComponentMetadata, IViewDataComponent } from "../../component/ide-ui-component";
 import { ExportedFunction } from "../../component/ide-component";
-import { Menu } from "./menu/menu";
-import { Toolbar } from "./toolbar/toolbar";
-import { MainArea } from "./main-area/main-area";
+
+import { Menu, IShellMenuViewElement } from "./menu/menu";
+import { Toolbar, IShellToolbarViewElement } from "./toolbar/toolbar";
+import { MainArea, IShellMainAreaViewElement } from "./main-area/main-area";
+
 import * as $ from "jquery";
-
 import "expose-loader?$!expose-loader?jQuery!jquery";
-
-require('jquery/dist/jquery');
-require('popper.js/dist/umd/popper');
-require('bootstrap/dist/js/bootstrap');
-
-
+require("jquery/dist/jquery");
+require("popper.js/dist/umd/popper");
+require("bootstrap/dist/js/bootstrap");
 
 type Direction = "menu" | "toolbar" | "main-area";
 
 @UIComponentMetadata({
   name: "Shell",
   description: "The basic skeleton of the IDE where the other visual components are attached in order to build the whole environment",
-  selector: "#app",
+  selector: ".ide-container",
   templateHTML: ShellTmpl
 })
 export class Shell extends IDEUIComponent {
-  private _menu: Menu;
-  private _toolbar: Toolbar;
-  private _main: MainArea;
+  private _menu: IShellMenuViewElement;
+  private _toolbar: IShellToolbarViewElement;
+  private _main: IShellMainAreaViewElement;
 
   constructor(
     name: string,
@@ -44,9 +42,19 @@ export class Shell extends IDEUIComponent {
     templateHTML: string
   ) {
     super(name, description, selector, templateHTML);
-    this._menu = <Menu>ViewRegistry.getViewEntry("Menu").create();
-    this._toolbar = <Toolbar>ViewRegistry.getViewEntry("Toolbar").create();
-    this._main = <MainArea>ViewRegistry.getViewEntry("MainArea").create();
+
+    this._menu = {
+      selector: ".menu-view-area",
+      view: <Menu>ViewRegistry.getViewEntry("Menu").create(this)
+    };
+    this._toolbar = {
+      selector: ".toolbar-view-area",
+      view: <Toolbar>ViewRegistry.getViewEntry("Toolbar").create(this)
+    };
+    this._main = {
+      selector: ".main-view-area",
+      view: <MainArea>ViewRegistry.getViewEntry("MainArea").create(this)
+    };
   }
 
   @ExportedFunction
@@ -60,23 +68,23 @@ export class Shell extends IDEUIComponent {
   @ExportedFunction
   public show(): void {
     // TODO: implement independently html for each part
-    $(this._selector).html(this.templateHTML);
+    $(this.selector).append(this.view.$el);
   }
 
   @ExportedFunction
   public openComponent(comp: IDEUIComponent): void {
     const view: IViewDataComponent = comp.getView();
     if (view.menubar) {
-      this.inject("#menu-area", view.menubar);
+      this.inject(".menu-container", view.menubar);
     }
     if (view.tools) {
-      this.inject("#toolbar-area", view.tools);
+      this.inject(".toolbar-container", view.tools);
     }
     else {
-      this._view.templateJQ.find("div#toolbar-area").hide();
+      this.view.templateJQ.find("div.toolbar-view-area").hide();
     }
     if (view.main) {
-      this.inject("#main-area", view.main);
+      this.inject(".main-area-container", view.main);
     }
   }
 

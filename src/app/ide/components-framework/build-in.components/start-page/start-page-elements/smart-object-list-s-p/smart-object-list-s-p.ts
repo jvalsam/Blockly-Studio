@@ -7,39 +7,69 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import SmartObjectListTmpl from "./smart-object-list-s-p.html";
-import { ViewMetadata } from "../../../../view/view";
-import {
-    UIComponentMetadata
-} from "../../../../component/ide-ui-component";
+import { IViewElement, ViewMetadata } from "../../../../view/view";
+import { ViewRegistry } from "../../../../view/view-registry";
+import { SmartObjectViewBox } from "./smart-object-view-box/smart-object-view-box";
 import { SmartObjectModel, SOProperties } from "../../../../../shared/models/smart-object.model";
 import { StartPageElementListSP } from "../start-page-element-list";
+import * as _ from "lodash";
+
+export interface IStartPageSmartObjectListViewElement extends IViewElement {
+    view: SmartObjectListSP;
+}
 
 @ViewMetadata({
     name: "SmartObjectListStartPage",
-    selector: ".pos-so-list",
     templateHTML: SmartObjectListTmpl
 })
 export class SmartObjectListSP extends StartPageElementListSP<SmartObjectModel> {
-    
     public render(): void {
-        this.$el.html(this.template(
-            // TODO: add data of the template
-        ));
+        this.requestElementsData();
+        this.$el = $(this.template({
+            totalSmartObjects: this._elements.length
+        }));
+        this.registerEvents();
+        _.forEach(this._elements, (smartObject) => {
+            const soViewBox: SmartObjectViewBox = <SmartObjectViewBox>ViewRegistry.getViewEntry("SmartObjectViewBox").create(this.parent, smartObject);
+            soViewBox.render();
+            this.$el.find(".smart-objects-view-list").append(soViewBox.$el);
+        });
     }
 
     public registerEvents(): void {
         this.attachEvents(
-            // TODO: attach related events of the template
+            {
+                eventType: "click",
+                selector: ".ts-register-new-smart-object",
+                handler: this.registerSmartObject
+            },
+            {
+                eventType: "click",
+                selector: ".ts-search-smart-object",
+                handler: this.searchSmartObject
+            }
         );
     }
 
     protected requestElementsData (): void {
         this._elements = [
-            new SmartObjectModel("Alarm Clock", "", "./alarm_clock.png", new SOProperties()),
-            new SmartObjectModel("Air-conditioning", "", "./air_conditioning.png", new SOProperties()),
-            new SmartObjectModel("Coffee Machine", "", "./coffee_machine.png", new SOProperties()),
-            new SmartObjectModel("TV", "", "./tv.png", new SOProperties())
+            new SmartObjectModel("Alarm Clock", "", "../../../../../../../../images/alarm-clock.png", new SOProperties()),
+            new SmartObjectModel("Air Condition", "", "../../../../../../../../images/air-condition.png", new SOProperties()),
+            new SmartObjectModel("Coffee Machine", "", "../../../../../../../../images/coffee-machine.png", new SOProperties()),
+            new SmartObjectModel("TV", "", "../../../../../../../../images/TV.png", new SOProperties())
         ];
+    }
+
+    /**
+     *  Events Function Callbacks
+     */
+
+    private registerSmartObject(): void {
+        alert("registerSmartObject: Not implemented yet.");
+    }
+
+    private searchSmartObject(): void {
+        alert("searchSmartObject: Not implemented yet.");
     }
 
 }

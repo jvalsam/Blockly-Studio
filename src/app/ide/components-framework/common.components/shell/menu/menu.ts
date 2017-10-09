@@ -7,12 +7,15 @@
 
 /// <reference path="../../../../../../../node.d.ts"/>
 import MenuTmpl from "./menu.html";
-import { View, ViewMetadata } from "../../../view/view";
-import { ExportedFunction } from "../../../component/ide-component";
+import { View, IViewElement, ViewMetadata } from "../../../view/view";
+
+
+export interface IShellMenuViewElement extends IViewElement {
+    view: Menu;
+}
 
 @ViewMetadata({
     name: "Menu",
-    selector: "#menu-area",
     templateHTML: MenuTmpl
 })
 export class Menu extends View {

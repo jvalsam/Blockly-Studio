@@ -12,24 +12,23 @@ import {
     UIComponentMetadata,
     IViewDataComponent
 } from "../../component/ide-ui-component";
-import { ComponentRegistry } from "../../component/component-registry";
 import { ViewRegistry } from "../../view/view-registry";
 import { ExportedFunction } from "../../component/ide-component";
-import { StartPageMenu } from "./start-page-menu/start-page-menu";
-import { ApplicationListSP } from "./start-page-elements/application-list-s-p/application-list-s-p";
-import { SmartObjectListSP } from "./start-page-elements/smart-object-list-s-p/smart-object-list-s-p";
+import { StartPageMenu, IStartPageMenuViewElement } from "./start-page-menu/start-page-menu";
+import { ApplicationListSP, IStartPageApplicationListViewElement } from "./start-page-elements/application-list-s-p/application-list-s-p";
+import { SmartObjectListSP, IStartPageSmartObjectListViewElement } from "./start-page-elements/smart-object-list-s-p/smart-object-list-s-p";
 
 @UIComponentMetadata({
     name: "StartPageComponent",
     description: "Start page of the IDE",
-    selector: "#start-page",
+    selector: ".start-page-container",
     templateHTML: StartPageTmpl,
     version: "1.0"
 })
 export class StartPageComponent extends IDEUIComponent {
-    private _menu: StartPageMenu;
-    private _smartObjects: SmartObjectListSP;
-    private _applications: ApplicationListSP;
+    private _menu: IStartPageMenuViewElement;
+    private _smartObjects: IStartPageSmartObjectListViewElement;
+    private _applications: IStartPageApplicationListViewElement;
 
     constructor(
         _name: string,
@@ -38,14 +37,25 @@ export class StartPageComponent extends IDEUIComponent {
         _templateHTML: string
     ) {
         super(_name, _description, _selector, _templateHTML);
-        this._menu = <StartPageMenu>ViewRegistry.getViewEntry("StartPageMenu").create();
-        this._applications = <ApplicationListSP>ViewRegistry.getViewEntry("ApplicationsListStartPage").create();
-        this._smartObjects = <SmartObjectListSP>ViewRegistry.getViewEntry("SmartObjectListStartPage").create();
+        // view elements
+        this._menu = {
+            selector: ".menu-container",
+            view: <StartPageMenu>ViewRegistry.getViewEntry("StartPageMenu").create(this)
+        };
+        this._applications = {
+            selector: ".application-list-view-area",
+            view: <ApplicationListSP>ViewRegistry.getViewEntry("ApplicationsListStartPage").create(this)
+        };
+        this._smartObjects = {
+            selector: ".smart-object-list-view-area",
+            view: <SmartObjectListSP>ViewRegistry.getViewEntry("SmartObjectListStartPage").create(this)
+        };
     }
 
     @ExportedFunction
     public initialize(): void {
         super.initialize();
+        this._menu.view.render();
         this.inject(this._applications);
         this.inject(this._smartObjects);
     }
@@ -55,31 +65,31 @@ export class StartPageComponent extends IDEUIComponent {
 
     @ExportedFunction
     public update(): void {
-        this._menu.update();
-        this._smartObjects.update();
+        this._menu.view.update();
+        this._smartObjects.view.update();
         this.inject(this._smartObjects);
-        this._applications.update();
+        this._applications.view.update();
         this.inject(this._applications);
     }
 
     @ExportedFunction
     public onOpen(): void {
-        this._applications.onOpen();
-        this._smartObjects.onOpen();
+        this._applications.view.onOpen();
+        this._smartObjects.view.onOpen();
     }
 
     @ExportedFunction
     public onClose(): void {
-        this._menu.onClose();
-        this._applications.onClose();
-        this._smartObjects.onClose();
+        this._menu.view.onClose();
+        this._applications.view.onClose();
+        this._smartObjects.view.onClose();
     }
 
     @ExportedFunction
     public getView(): IViewDataComponent {
         return {
-            main: this.templateHTML,
-            menubar: this._menu.templateHTML
+            main: this.templateJQ,
+            menubar: this._menu.view.$el
         };
     }
 

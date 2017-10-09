@@ -5,7 +5,7 @@
  * May 2017
  */
 
-import { Component } from '../../components-framework/component';
+import { Component } from "../../components-framework/component/component";
 import { VPLDescription } from './vpl-description';
 
 export class ViperPL extends Component {

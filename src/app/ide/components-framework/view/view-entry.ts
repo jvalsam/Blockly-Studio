@@ -5,6 +5,7 @@
  * September 2017
  */
 
+import { IDEUIComponent } from "../component/ide-ui-component";
 import { View } from "./view";
 import { IDEError } from "../../shared/ide-error";
 
@@ -27,8 +28,8 @@ export class ViewEntry {
     this._args = args;
   }
 
-  public create(): View {
-    const newView: View = new (this._creationFunc) (this.name, ...this._args);
+  public create(parent: IDEUIComponent, ...extraElements: Array<any>): View {
+    const newView: View = new (this._creationFunc) (parent, this.name, ...this._args, ...extraElements);
     this._instanceList.push(newView);
     return newView;
   }

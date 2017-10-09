@@ -1,189 +1,24 @@
-<div class="row">
+<div class="smart-object-list-container row">
     <div class="col-xs-12">
-        <button class="btn btn-success">Register Smart Object</button>
+        <div class="smart-object-user-actions row">
+            <div class="col" style="margin-left: 2em;">
+                <h2><u>Smart Objects</u></h2>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-outline-primary btn-sm ts-register-new-smart-object">
+                        <i class="fa fa-plus fa-2x" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm ts-search-smart-object">
+                    <i class="fa fa-search fa-2x" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+        <div class="smart-objects-view-list row" style="margin-top: 1em;">
+            <% if (totalSmartObjects === 0) { %>
+                <div class="col-sm-5 text-center" style="margin-left:15px;">
+                    <p>No smart objects are registered. Click above add button to find and register your first smart object.</p>
+                </div>
+                <% } %>
+        </div>
     </div>
-</div>
-<hr>
-<div class="row">
-    <div class="col-sm-5 card text-center" style="margin-left:15px;">
-        <div class="row align-items-center" style="border-bottom: 1px solid rgba(0,0,0,.125);">
-            <div class="col-sm-10 col-xs-10 align-items-center">
-                <div class="row">
-                    <div class="col-sm-1 col-xs-1"></div>
-                    <div class="col-sm-11 col-xs-11">
-                        <h4 class="card-title" style="padding-top: 5px">Air-Condition</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-2 col-xs-2">
-                <a href="#" class="btn btn-default btn-sm">
-                    <i class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>
-                </a>                
-            </div>
-        </div>
-        <div class="row card-body">
-            <div class="col-sm-2 col-xs-2"></div>
-            <div class="col-sm-8 col-xs-8">
-                <img class="card-img-top img-thumbnail" style="border: 0 none;" src="../../../../../../../../images/default-app.jpg" alt="Responsive image">
-            </div>
-            <div class="col-sm-2 col-xs-2"></div>
-        </div>
-        <div class="row" style="padding-bottom: 10px;">
-            <div class="col-sm-12 col-xs-12 text-left">
-                <p class="card-text">morning automations waking up until leave home</p>
-            </div>
-        </div>
-        <footer style="border-top: 1px solid rgba(0,0,0,.125);"><small class="text-muted">Last updated 3 mins ago</small></footer>
-    </div>
-    <div class="col-sm-5 card text-center" style="margin-left:15px;">
-            <div class="row align-items-center" style="border-bottom: 1px solid rgba(0,0,0,.125);">
-                <div class="col-sm-10 col-xs-10 align-items-center">
-                    <div class="row">
-                        <div class="col-sm-1 col-xs-1"></div>
-                        <div class="col-sm-11 col-xs-11">
-                            <h4 class="card-title" style="padding-top: 5px">Air-Condition</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-2 col-xs-2">
-                    <a href="#" class="btn btn-default btn-sm">
-                        <i class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>
-                    </a>                
-                </div>
-            </div>
-            <div class="row card-body">
-                <div class="col-sm-2 col-xs-2"></div>
-                <div class="col-sm-8 col-xs-8">
-                    <img class="card-img-top img-thumbnail" style="border: 0 none;" src="../../../../../../../../images/default-app.jpg" alt="Responsive image">
-                </div>
-                <div class="col-sm-2 col-xs-2"></div>
-            </div>
-            <div class="row" style="padding-bottom: 10px;">
-                <div class="col-sm-12 col-xs-12 text-left">
-                    <p class="card-text">morning automations waking up until leave home</p>
-                </div>
-            </div>
-            <footer style="border-top: 1px solid rgba(0,0,0,.125);"><small class="text-muted">Last updated 3 mins ago</small></footer>
-        </div>
-
-        <div class="col-sm-5 card text-center" style="margin-left:15px; margin-top:15px;">
-                <div class="row align-items-center" style="border-bottom: 1px solid rgba(0,0,0,.125);">
-                    <div class="col-sm-10 col-xs-10 align-items-center">
-                        <div class="row">
-                            <div class="col-sm-1 col-xs-1"></div>
-                            <div class="col-sm-11 col-xs-11">
-                                <h4 class="card-title" style="padding-top: 5px">Air-Condition</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-2 col-xs-2">
-                        <a href="#" class="btn btn-default btn-sm">
-                            <i class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>
-                        </a>                
-                    </div>
-                </div>
-                <div class="row card-body">
-                    <div class="col-sm-2 col-xs-2"></div>
-                    <div class="col-sm-8 col-xs-8">
-                        <img class="card-img-top img-thumbnail" style="border: 0 none;" src="../../../../../../../../images/default-app.jpg" alt="Responsive image">
-                    </div>
-                    <div class="col-sm-2 col-xs-2"></div>
-                </div>
-                <div class="row" style="padding-bottom: 10px;">
-                    <div class="col-sm-12 col-xs-12 text-left">
-                        <p class="card-text">morning automations waking up until leave home</p>
-                    </div>
-                </div>
-                <footer style="border-top: 1px solid rgba(0,0,0,.125);"><small class="text-muted">Last updated 3 mins ago</small></footer>
-            </div>
-            <div class="col-sm-5 card text-center" style="margin-left:15px; margin-top:15px;">
-                    <div class="row align-items-center" style="border-bottom: 1px solid rgba(0,0,0,.125);">
-                        <div class="col-sm-10 col-xs-10 align-items-center">
-                            <div class="row">
-                                <div class="col-sm-1 col-xs-1"></div>
-                                <div class="col-sm-11 col-xs-11">
-                                    <h4 class="card-title" style="padding-top: 5px">Air-Condition</h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-xs-2">
-                            <a href="#" class="btn btn-default btn-sm">
-                                <i class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>
-                            </a>                
-                        </div>
-                    </div>
-                    <div class="row card-body">
-                        <div class="col-sm-2 col-xs-2"></div>
-                        <div class="col-sm-8 col-xs-8">
-                            <img class="card-img-top img-thumbnail" style="border: 0 none;" src="../../../../../../../../images/default-app.jpg" alt="Responsive image">
-                        </div>
-                        <div class="col-sm-2 col-xs-2"></div>
-                    </div>
-                    <div class="row" style="padding-bottom: 10px;">
-                        <div class="col-sm-12 col-xs-12 text-left">
-                            <p class="card-text">morning automations waking up until leave home</p>
-                        </div>
-                    </div>
-                    <footer style="border-top: 1px solid rgba(0,0,0,.125);"><small class="text-muted">Last updated 3 mins ago</small></footer>
-                </div>
-                <div class="col-sm-5 card text-center" style="margin-left:15px; margin-top:15px;">
-                        <div class="row align-items-center" style="border-bottom: 1px solid rgba(0,0,0,.125);">
-                            <div class="col-sm-10 col-xs-10 align-items-center">
-                                <div class="row">
-                                    <div class="col-sm-1 col-xs-1"></div>
-                                    <div class="col-sm-11 col-xs-11">
-                                        <h4 class="card-title" style="padding-top: 5px">Air-Condition</h4>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-2 col-xs-2">
-                                <a href="#" class="btn btn-default btn-sm">
-                                    <i class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>
-                                </a>                
-                            </div>
-                        </div>
-                        <div class="row card-body">
-                            <div class="col-sm-2 col-xs-2"></div>
-                            <div class="col-sm-8 col-xs-8">
-                                <img class="card-img-top img-thumbnail" style="border: 0 none;" src="../../../../../../../../images/default-app.jpg" alt="Responsive image">
-                            </div>
-                            <div class="col-sm-2 col-xs-2"></div>
-                        </div>
-                        <div class="row" style="padding-bottom: 10px;">
-                            <div class="col-sm-12 col-xs-12 text-left">
-                                <p class="card-text">morning automations waking up until leave home</p>
-                            </div>
-                        </div>
-                        <footer style="border-top: 1px solid rgba(0,0,0,.125);"><small class="text-muted">Last updated 3 mins ago</small></footer>
-                    </div>
-                    <div class="col-sm-5 card text-center" style="margin-left:15px; margin-top:15px;">
-                            <div class="row align-items-center" style="border-bottom: 1px solid rgba(0,0,0,.125);">
-                                <div class="col-sm-10 col-xs-10 align-items-center">
-                                    <div class="row">
-                                        <div class="col-sm-1 col-xs-1"></div>
-                                        <div class="col-sm-11 col-xs-11">
-                                            <h4 class="card-title" style="padding-top: 5px">Air-Condition</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-2 col-xs-2">
-                                    <a href="#" class="btn btn-default btn-sm">
-                                        <i class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>
-                                    </a>                
-                                </div>
-                            </div>
-                            <div class="row card-body">
-                                <div class="col-sm-2 col-xs-2"></div>
-                                <div class="col-sm-8 col-xs-8">
-                                    <img class="card-img-top img-thumbnail" style="border: 0 none;" src="../../../../../../../../images/default-app.jpg" alt="Responsive image">
-                                </div>
-                                <div class="col-sm-2 col-xs-2"></div>
-                            </div>
-                            <div class="row" style="padding-bottom: 10px;">
-                                <div class="col-sm-12 col-xs-12 text-left">
-                                    <p class="card-text">morning automations waking up until leave home</p>
-                                </div>
-                            </div>
-                            <footer style="border-top: 1px solid rgba(0,0,0,.125);"><small class="text-muted">Last updated 3 mins ago</small></footer>
-                        </div>
 </div>

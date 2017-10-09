@@ -8,6 +8,8 @@
 import { Component } from "./component";
 import { ComponentLoader } from "./component-loader";
 import { ComponentRegistry } from "./component-registry";
+import { IDEUIComponent } from "./ide-ui-component";
+import { Shell } from "../common.components/shell/shell";
 import { ViewRegistry } from "../view/view-registry";
 import { ComponentEntry } from "./component-entry";
 import { ComponentFunction, Argument } from "./component-function";
@@ -42,7 +44,6 @@ export interface IUIComponentData extends IComponentData {
 
 export interface IViewElementData {
   name: string;
-  selector: string;
   templateHTML: string;
   initData?: Array<any>;
 }
@@ -78,7 +79,7 @@ function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
       const templateHTML = (<IUIComponentData>data).templateHTML;
       initData = [ (<IUIComponentData>data).selector, templateHTML, ...initData ];
     }
-    
+
     compEntry.setArgs(initData);
 
   };
@@ -107,10 +108,9 @@ export function DeclareViewElement(data: IViewElementData) {
 
     ViewRegistry.createViewEntry(
       data.name,
-      data.selector,
       data.templateHTML,
       create,
-      data.initData
+      initData
     );
   };
 }
@@ -400,10 +400,20 @@ function establishCommunication() {
 
 ///////////////////////////////////////////////////////////////////
 
+interface ISpecialFunctionRequestMap {
+  [funcName: string]: (srcCompName: string, dstCompName: string, args: Array<any>, dstComponentId ?: string) => ResponseValue;
+};
 
 class _ComponentsCommunication {
+  private readonly fullPermissionComponents : Array<String> = [
+    "Shell"
+  ];
+  private readonly specialFunctionRequests: ISpecialFunctionRequestMap = {
+    "open" : this.specialFuncRequestOpen,
+    "close" : this.specialFuncRequestClose
+  };
 
-  public initialize() {
+  public initialize(): void {
     establishCommunication();
   }
 
@@ -467,6 +477,32 @@ class _ComponentsCommunication {
       }
   }
 
+  private fullPermissionComponent(compName) {
+    return compName in this.fullPermissionComponents;
+  }
+
+  private specialFuncRequestOpen(
+    srcComponentName: string,
+    dstComponentName: string,
+    args: Array<any>=[],
+    dstComponentId ?: string
+  ): ResponseValue {
+    BlackboardComponentRegistry.getBlackboard(dstComponentName).callFunction("open", args, srcComponentName, dstComponentId);
+    let comp: IDEUIComponent = <IDEUIComponent>ComponentRegistry.getComponentEntry(dstComponentName).getInstances()[0];
+    var shell: Shell = <Shell>ComponentRegistry.getComponentEntry("Shell").getInstances()[0];
+    shell.openComponent(comp);
+    return new ResponseValue(dstComponentName, "open", true);
+  }
+
+  private specialFuncRequestClose(
+      srcComponentName: string,
+      dstComponentName: string,
+      args: Array<any>=[],
+      dstComponentId ?: string
+  ): ResponseValue {
+      return new ResponseValue(dstComponentName, "close", true);
+  }
+
   public functionRequest(
       srcComponentName: string,
       dstComponentName: string,
@@ -476,7 +512,7 @@ class _ComponentsCommunication {
   ): ResponseValue {
     // check if requested function is not defined as requiredFunction
     const reqFuncs = RequiredFunctionsHolder.get(srcComponentName); 
-    if ( srcComponentName!="Shell" &&
+    if ( srcComponentName != "Shell" &&
          (!reqFuncs || Object.keys(reqFuncs).indexOf(funcName)<=-1)
     ) {
       IDEError.raise(
@@ -484,7 +520,13 @@ class _ComponentsCommunication {
         'Requested function ' + funcName + ' which is not defined as a requiredFunction by the component "' + srcComponentName + '".'
       );
     }
-    return BlackboardComponentRegistry.getBlackboard(dstComponentName).callFunction(funcName, args, srcComponentName, dstComponentId);
+
+    if (funcName in this.specialFunctionRequests) {
+      return this.specialFunctionRequests[funcName] (srcComponentName, dstComponentName, args, dstComponentId);
+    }
+    else {
+      return BlackboardComponentRegistry.getBlackboard(dstComponentName).callFunction(funcName, args, srcComponentName, dstComponentId);
+    }
   }
 
   public postSignal(component: string, signal: string, argsList?: Array<any>): void {
@@ -493,8 +535,8 @@ class _ComponentsCommunication {
     if (!blackboardComp) {
       IDEError.raise(
         _ComponentsCommunication.name,
-        'Component ' + component + ' posts signal which is not exported',
-        'Signal ' + signal + ' is not defined as exported signal of the component ' + component + '.'
+        "Component " + component + " posts signal which is not exported",
+        "Signal " + signal + " is not defined as exported signal of the component " + component + "."
       );
     }
 

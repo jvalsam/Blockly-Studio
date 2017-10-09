@@ -4,20 +4,123 @@
 <head>
     <meta charset="utf-8" />
     <title>Puppy</title>
-    <!-- <link rel="icon" href="data:;base64,iVBORw0KGgo="> -->
     <link rel="shortcut icon" type="image/png" href="/images/puppy.png" />
     <link href="app.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous"> -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="/dist/bundle.js"></script>
 </head>
 
 <body>
-    <div id="app">
-        <img class="centered" src="images/loader.gif">
+    <div class="ide-container">
+        <i class="fa fa-spinner fa-pulse fa-5x fa-fw centered"></i>
+        <span class="sr-only">Loading...</span>
     </div>
-</body>
+    <!-- <div id="blocklyDiv" style="position: absolute; display: inline-block; height: 480px; width: 58%;"></div>
+    <div id="blocklyArea"></div>
+    <div>
+        <p class="label">JS</p>
+        <pre id="js"></pre>
+        <p class="label">PHP</p>
+        <pre id="php"></pre>
+        <p class="label">Lua</p>
+        <pre id="lua"></pre>
+        <p class="label">Dart</p>
+        <pre id="dart"></pre>
+        <p class="label">Python</p>
+        <pre id="python"></pre>
+    </div> -->
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted">
+                Visual End-User Programming of Personal Automations (My Applications) for the Internet of Things
+            </p>
+        </div>
+    </footer>
+    <!-- <xml id="startBlocks" style="display: none">
+        <block type="variables_set" id="set_n_initial" inline="true" x="20" y="20">
+            <field name="VAR">n</field>
+            <value name="VALUE">
+                <block type="math_number">
+                    <field name="NUM">1</field>
+                </block>
+            </value>
+            <next>
+                <block type="controls_repeat_ext" id="repeat" inline="true">
+                    <value name="TIMES">
+                        <block type="math_number">
+                            <field name="NUM">4</field>
+                        </block>
+                    </value>
+                    <statement name="DO">
+                        <block type="variables_set" id="set_n_update" inline="true">
+                            <field name="VAR">n</field>
+                            <value name="VALUE">
+                                <block type="math_arithmetic" inline="true">
+                                    <field name="OP">MULTIPLY</field>
+                                    <value name="A">
+                                        <block type="variables_get">
+                                            <field name="VAR">n</field>
+                                        </block>
+                                    </value>
+                                    <value name="B">
+                                        <block type="math_number">
+                                            <field name="NUM">2</field>
+                                        </block>
+                                    </value>
+                                </block>
+                            </value>
+                            <next>
+                                <block type="text_print" id="print">
+                                    <value name="TEXT">
+                                        <block type="variables_get">
+                                            <field name="VAR">n</field>
+                                        </block>
+                                    </value>
+                                </block>
+                            </next>
+                        </block>
+                    </statement>
+                </block>
+            </next>
+        </block>
+    </xml>
+    <xml id="toolbox" style="display: none">
+        <category name="Logic">
+            <block type="controls_if"></block>
+            <block type="logic_compare"></block>
+            <block type="logic_operation"></block>
+            <block type="logic_negate"></block>
+            <block type="logic_boolean"></block>
+        </category>
+        <category name="Loops">
+            <block type="controls_repeat_ext">
+                <value name="TIMES">
+                    <block type="math_number">
+                        <field name="NUM">10</field>
+                    </block>
+                </value>
+            </block>
+            <block type="controls_whileUntil"></block>
+        </category>
+        <category name="Math">
+            <block type="math_number"></block>
+            <block type="math_arithmetic"></block>
+            <block type="math_single"></block>
+        </category>
+        <category name="Text">
+            <block type="text"></block>
+            <block type="text_length"></block>
+            <block type="text_print"></block>
+            <block type="text_prompt_ext">
+                <value name="TEXT">
+                    <block type="text"></block>
+                </value>
+            </block>
+        </category>
+        <category name="Variables" custom="VARIABLE"></category>
+        <category name="Functions" custom="PROCEDURE"></category>
+    </xml>
+</body> -->
 
 </html>

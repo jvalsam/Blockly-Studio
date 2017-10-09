@@ -1,13 +1,17 @@
 /**
+import { IDEError } from '../../shared/ide-error';
+import { IDEError } from "./../../shared/ide-error";
  * View - Events Registration Handler
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
  * September 2017
  */
 
-import * as $ from "jquery";
-import * as _ from "lodash";
+import * as $ from 'jquery';
+import * as _ from 'lodash';
 import { DeclareViewElement } from "../component/components-communication";
+import { IDEUIComponent } from "../component/ide-ui-component";
+import { IDEError } from "../../shared/ide-error";
 
 export let ViewMetadata = DeclareViewElement;
 
@@ -17,32 +21,41 @@ export interface IViewEvent {
 }
 
 export interface IViewEventRegistration {
-    event: IViewEvent;
-    handler: (eventObject: JQueryEventObject) => any
+    eventType: string;
+    selector: string;
+    handler: (eventObject?: JQueryEventObject) => any;
 }
 
 export interface IViewEventData {
     type: string;
     selector: string;
-    handler: (eventObject: JQueryEventObject) => any;
+    handler: (eventObject?: JQueryEventObject) => any;
     $target: JQuery;
 }
 
+export interface IViewElement {
+    selector: string;
+    view: View;
+}
+export function instanceOfIViewElement(object: any): boolean {
+    return typeof object !== "string" && "view" in object && "selector" in object;
+}
+
 export abstract class View {
-    protected $el: JQuery;
+    public $el: JQuery;
     protected template: Function;
     private _nextEventID: number;
     private _events: { [key: number]: IViewEventData };
 
     constructor(
+        protected parent: IDEUIComponent,
         public readonly name: string,
-        protected readonly _selector: string,
         protected readonly _templateHTML: string
     ) {
         this._events = {};
         this._nextEventID = 0;
         this.template = _.template(this._templateHTML);
-        this.initialize();
+        this.$el = $( $.parseHTML(this._templateHTML) );
     }
 
     public abstract render(): void;
@@ -72,11 +85,7 @@ export abstract class View {
     }
 
     get templateHTML(): string {
-        return $('<div>').append(this.$el.clone()).html();
-    }
-
-    get selector(): string {
-        return this._selector;
+        return $("<div>").append(this.$el.clone(true, true)).html();
     }
 
     get templateJQ(): JQuery {
@@ -87,13 +96,19 @@ export abstract class View {
         this.ensureElement();
 
         return _.map(eventRegs, (reg: IViewEventRegistration) => {
-            const $target = this.$el.find(reg.event.selector);
-            $target.bind(reg.event.type, reg.handler);
+            const $target: JQuery = this.$el.find(reg.selector);
+            if (!$target.length) {
+                IDEError.raise(
+                    "View - Attach Event",
+                    "Selector " + reg.selector + " is not found in View: " + this.name + "."
+                );
+            }
+            $target.bind(reg.eventType, reg.handler);
 
             ++this._nextEventID;
             this._events[this._nextEventID] = {
-              type: reg.event.type,
-              selector: reg.event.selector,
+              type: reg.eventType,
+              selector: reg.selector,
               handler: reg.handler,
               $target: $target
             };

@@ -78,11 +78,12 @@ file.write(" */\n\n")
 ComponentNameList = []
 
 for root, dirs, files in os.walk('./src/'):
-    if "google_blockly" in root:
-        continue;
+    if "media" in root:
+        continue
     data = FindComponentName(root)
     if len(data) == 0:
-        continue;
+        continue
+    print ("Component " + data[0] + " is registered.")
     ComponentNameList.append(data[0])
     file.write("import { " + data[0] + " } from \"../../../../." + root.replace('\\','/') + "/" + data[1][:-3] + "\";\n")
 

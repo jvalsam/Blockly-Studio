@@ -5,17 +5,27 @@
  * September 2017
  */
 
+
+import { IDEUIComponent } from './ide-ui-component';
 import { View, IViewEventRegistration } from "../view/view";
+
 
 export class ComponentView extends View {
     private renderData: Object;
     private eventRegData: Array<IViewEventRegistration>;
 
-    constructor(name: string, selector: string, templateHTML: string) {
-        super(name, selector, templateHTML);
-        this.renderData = {};
-        this.eventRegData = new Array<IViewEventRegistration>();
+    constructor(
+        parent: IDEUIComponent,
+        name: string,
+        private _selector: string,
+        templateHTML: string,
+        renderData: Object = {},
+        eventRegdata: Array<IViewEventRegistration> = new Array<IViewEventRegistration>()
+    ) {
+        super(parent, name, templateHTML);
     }
+
+    get selector (): string { return this._selector; }
 
     public setRenderData(templateData: Object): void {
         this.renderData = templateData;
@@ -27,6 +37,7 @@ export class ComponentView extends View {
 
     public render(): void {
         this.$el.html(this.template(this.renderData));
+        this.registerEvents();
     }
 
     public registerEvents(): void {

@@ -11,7 +11,7 @@ import {
     ExportedFunction,
     IDEComponent
 } from "./ide-component";
-import { View } from "../view/view";
+import { IViewElement, instanceOfIViewElement } from "../view/view";
 import { ComponentView } from "./component-view";
 import {
     DeclareIDEUIComponent as UCI,
@@ -20,9 +20,9 @@ import {
 export let UIComponentMetadata: Function = UCI;
 
 export interface IViewDataComponent {
-    main?: string;
-    menubar?: string;
-    tools?: string;
+    main?: JQuery;
+    menubar?: JQuery;
+    tools?: JQuery;
 }
 
 @ComponentMetadata({
@@ -31,53 +31,60 @@ export interface IViewDataComponent {
     version: "1.0"
 })
 export abstract class IDEUIComponent extends IDEComponent {
-    protected _view: View;
+    protected view: ComponentView;
 
     constructor(
         name: string,
         description: string,
-        protected _selector: string,
+        selector: string,
         templateHTML: string
     ) {
         super(name, description);
-        this._view = new ComponentView(
-            '_uiidecomponent_' + this.name,
-            _selector,
+        this.view = new ComponentView(
+            this,
+            "_uiidecomponent_" + this.name,
+            selector,
             templateHTML
         );
     }
 
     get templateHTML(): string {
-        return this._view.templateHTML;
+        return this.view.templateHTML;
     }
 
     get templateJQ(): JQuery {
-        return this._view.templateJQ;
+        return this.view.templateJQ;
     }
 
     get selector(): string {
-        return this._selector;
+        return this.view.selector;
     }
 
-    public inject(selector: string, templateHTML: string): void;
-    public inject(component: IDEUIComponent): void;
-    public inject(viewElement: View): void;
+    public render(): void {
+        this.view.render();
+    }
 
-    @ExportedFunction
-    public inject(selector: any, templateHTML?: string): void {
-        if (templateHTML && typeof selector == "string") {
-            this._view.templateJQ.find("div"+selector).html(templateHTML);
+    protected inject(selector: string, templateHTML: JQuery): void;
+    protected inject(component: IDEUIComponent): void;
+    protected inject(viewElem: IViewElement): void;
+
+    protected inject(selector: any, content?: JQuery): void {
+        if (typeof selector !== "string" || instanceOfIViewElement(selector)) {
+            /* ts: bug in multiple types all fields have to be public even if src code is in the current class */
+            const elem: any /*IDEUIComponent | IViewElement*/ = selector;
+            elem.view.render();
+            content = elem.view.$el;
+            selector = elem.selector;
         }
-        else {
-            const element: View|IDEUIComponent = (selector instanceof View) ? <View>selector : <IDEUIComponent>selector;
-            this.inject(element.selector, element.templateHTML);
-        }
+        
+        this.view.templateJQ.find("div"+selector).empty();
+        this.view.templateJQ.find("div"+selector).append(content);
     }
 
     public reset(): void {
-        this._view.reset();
+        this.view.reset();
     }
-    
+
     public abstract registerEvents(): void;
     public abstract update(): void;
     public abstract onOpen(): void;

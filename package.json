@@ -35,6 +35,7 @@
     "@types/lodash": "^4.14.74",
     "bootstrap": "^4.0.0-alpha.6",
     "lodash.template": "^4.4.0",
+    "node-blockly": "^1.0.26",
     "popper.js": "^1.12.5"
   }
 }

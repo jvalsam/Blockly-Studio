@@ -47,7 +47,7 @@ export class ICEVPL extends IDEUIComponent {
   @ExportedFunction
   public getView(): IViewDataComponent {
       return {
-          main: this.templateHTML
+          main: this.templateJQ
       };
   }
 
