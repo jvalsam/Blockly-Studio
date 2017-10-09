@@ -11,7 +11,7 @@ import {
     ExportedFunction,
     IDEComponent
 } from "./ide-component";
-import { IViewElement, instanceOfIViewElement } from "../view/view";
+import { IViewElement } from "../view/view";
 import { ComponentView } from "./component-view";
 import {
     DeclareIDEUIComponent as UCI,
@@ -31,7 +31,7 @@ export interface IViewDataComponent {
     version: "1.0"
 })
 export abstract class IDEUIComponent extends IDEComponent {
-    protected view: ComponentView;
+    protected _view: ComponentView;
 
     constructor(
         name: string,
@@ -40,7 +40,7 @@ export abstract class IDEUIComponent extends IDEComponent {
         templateHTML: string
     ) {
         super(name, description);
-        this.view = new ComponentView(
+        this._view = new ComponentView(
             this,
             "_uiidecomponent_" + this.name,
             selector,
@@ -60,6 +60,10 @@ export abstract class IDEUIComponent extends IDEComponent {
         return this.view.selector;
     }
 
+    get view(): ComponentView {
+        return this._view;
+    }
+
     public render(): void {
         this.view.render();
     }
@@ -69,9 +73,8 @@ export abstract class IDEUIComponent extends IDEComponent {
     protected inject(viewElem: IViewElement): void;
 
     protected inject(selector: any, content?: JQuery): void {
-        if (typeof selector !== "string" || instanceOfIViewElement(selector)) {
-            /* ts: bug in multiple types all fields have to be public even if src code is in the current class */
-            const elem: any /*IDEUIComponent | IViewElement*/ = selector;
+        if (typeof selector !== "string") {
+            const elem: IDEUIComponent | IViewElement = selector;
             elem.view.render();
             content = elem.view.$el;
             selector = elem.selector;

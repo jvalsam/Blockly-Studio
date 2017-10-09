@@ -37,9 +37,6 @@ export interface IViewElement {
     selector: string;
     view: View;
 }
-export function instanceOfIViewElement(object: any): boolean {
-    return typeof object !== "string" && "view" in object && "selector" in object;
-}
 
 export abstract class View {
     public $el: JQuery;
