@@ -24,7 +24,8 @@ export class ComponentEntry {
   constructor(
     private readonly _compInfo: ComponentEntryInfo,
     private _creationFunc: any,
-    private _args?: Array<any>
+    private _args?: Array<any>,
+    private _isUnique: boolean = false
   ) {
     this._instanceList = new Array<Component>();
     this._signalList = new Array<string>();
@@ -37,11 +38,21 @@ export class ComponentEntry {
     return this._instanceList;
   }
 
+  public hasInstance(): boolean {
+    return this._instanceList.length > 0;
+  }
+
   public setArgs(args: Array<any>) {
     this._args = args;
   }
 
+  public isUnique(): boolean { return this._isUnique; }
+
   public create(): Component {
+    if (this._isUnique && this._instanceList.length === 1) {
+      return this._instanceList[0];
+    }
+
     const newComp: Component = new (this._creationFunc) (this._compInfo.name, this._compInfo.description, ...this._args);
     this._instanceList.push(newComp);
     return newComp;

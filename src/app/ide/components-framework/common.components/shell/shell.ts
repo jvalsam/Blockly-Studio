@@ -68,11 +68,16 @@ export class Shell extends IDEUIComponent {
   @ExportedFunction
   public show(): void {
     // TODO: implement independently html for each part
+    // connecting ide selector with document root element
+    $(this.selector).empty();
     $(this.selector).append(this.view.$el);
   }
 
   @ExportedFunction
   public openComponent(comp: IDEUIComponent): void {
+    // render
+    comp.render();
+    // inject
     const view: IViewDataComponent = comp.getView();
     if (view.menubar) {
       this.inject(".menu-container", view.menubar);

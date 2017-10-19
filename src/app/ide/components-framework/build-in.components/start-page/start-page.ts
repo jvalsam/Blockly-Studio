@@ -13,10 +13,11 @@ import {
     IViewDataComponent
 } from "../../component/ide-ui-component";
 import { ViewRegistry } from "../../view/view-registry";
-import { ExportedFunction } from "../../component/ide-component";
+import { ExportedFunction, RequiredFunction } from "../../component/ide-component";
 import { StartPageMenu, IStartPageMenuViewElement } from "./start-page-menu/start-page-menu";
 import { ApplicationListSP, IStartPageApplicationListViewElement } from "./start-page-elements/application-list-s-p/application-list-s-p";
 import { SmartObjectListSP, IStartPageSmartObjectListViewElement } from "./start-page-elements/smart-object-list-s-p/smart-object-list-s-p";
+import { ComponentsCommunication } from "../../component/components-communication";
 
 @UIComponentMetadata({
     name: "StartPageComponent",
@@ -93,7 +94,22 @@ export class StartPageComponent extends IDEUIComponent {
         };
     }
 
+    public render(): void {
+        super.render();
+        this._menu.view.render();
+        this.inject(this._applications);
+        this.inject(this._smartObjects);
+    }
+
     public destroy(): void {
         // first call destroy of the other components and then close
+    }
+
+    /**
+     * Requested events from Application View Box
+     */
+    @RequiredFunction("ApplicationWSPManager", "openApplication")
+    public openApplication (applicationID: string) {
+        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "openApplication", [applicationID]);
     }
 }

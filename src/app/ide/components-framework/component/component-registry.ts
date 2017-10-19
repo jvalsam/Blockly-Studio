@@ -35,12 +35,14 @@ class _ComponentRegistry {
      description: string,
      version: string,
      create: Function,
-     initData?: Array<any>
+     initData?: Array<any>,
+     isUnique?: boolean
     ): ComponentEntry {
       this._componentsEntry[compName] = new ComponentEntry (
         { name: compName, description: description, version: version },
         create,
-        initData
+        initData,
+        isUnique
      );
      return this._componentsEntry[compName];
    }

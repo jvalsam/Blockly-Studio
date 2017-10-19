@@ -1,0 +1,24 @@
+<div class="automation-list-container row">
+    <div class="col-xs-12">
+        <div class="automation-user-actions row">
+            <div class="col-xs-4">
+                <button type="button" class="btn btn-outline-primary btn-sm ts-create-automation">
+                        <i class="fa fa-plus fa-2x" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm ts-search-automation">
+                    <i class="fa fa-search fa-2x" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="col" style="margin-left: 1em; margin-top:5px;">
+                <h3><u>Automations</u></h3>
+            </div>
+        </div>
+        <div class="automations-view-list row" style="margin-top: 1em;">
+            <% if (totalAutomations === 0) { %>
+                <div class="col-sm-5 text-center" style="margin-left:15px;">
+                    <p>No automations are defined. Click above create button to define your first automation for the application.</p>
+                </div>
+                <% } %>
+        </div>
+    </div>
+</div>

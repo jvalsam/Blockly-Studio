@@ -31,7 +31,7 @@ export class ComponentView extends View {
         this.renderData = templateData;
     }
 
-    public setEventRegData(eventRegs: Array<IViewEventRegistration>) {
+    public setEventRegData(...eventRegs: Array<IViewEventRegistration>) {
         this.eventRegData = eventRegs;
     }
 

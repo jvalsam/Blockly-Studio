@@ -54,7 +54,7 @@ export class ApplicationsAdministration {
         // server requests code data of the application
         // create Application Component
         // request Shell to open the component
-        return new Application();
+        return new Application("IoT");
     }
 
 }

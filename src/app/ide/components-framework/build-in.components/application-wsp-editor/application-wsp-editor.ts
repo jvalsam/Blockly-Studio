@@ -5,7 +5,6 @@
  * September 2017
  */
 
-
 import ApplicationWSPEditorTmpl from "./application-wsp-editor.html";
 import {
     UIComponentMetadata,
@@ -18,7 +17,7 @@ import { ApplicationScreens } from "./application-screens/application-screens";
 
 
 @UIComponentMetadata({
-    name: "Shell",
+    name: "ApplicationWSPEditor",
     description: "The basic skeleton of the IDE where the other visual components are attached in order to build the whole environment",
     selector: "#app",
     templateHTML: ApplicationWSPEditorTmpl

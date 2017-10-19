@@ -26,17 +26,17 @@ export class ApplicationViewBox extends View {
             {
                 eventType: "click",
                 selector: ".ts-start-page-application-open",
-                handler: this.onOpenApplication
+                handler: () => this.onOpenApplication()
             },
             {
                 eventType: "click",
                 selector: ".ts-start-page-application-menu",
-                handler: this.onClickApplicationMenu
+                handler: () => this.onClickApplicationMenu()
             },
             {
                 eventType: "focusout",
                 selector: ".ts-start-page-application-menu",
-                handler: this.onFocusOutApplicationMenu
+                handler: () => this.onFocusOutApplicationMenu()
             }
         );
     }
@@ -54,7 +54,7 @@ export class ApplicationViewBox extends View {
     }
 
     private onOpenApplication(): void {
-        alert("onOpenApplication: not implemented yet.");
+        this.parent["openApplication"](this.application.id);
     }
 
     private onClickApplicationMenu(): void {

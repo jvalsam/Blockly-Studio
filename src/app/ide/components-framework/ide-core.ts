@@ -19,10 +19,10 @@ import { ComponentsCommunication } from "./component/components-communication";
 import { Shell } from "./common.components/shell/shell";
 import { StartPageComponent } from "./build-in.components/start-page/start-page";
 
-// var Blockly = require("../../../../node_modules/node-blockly/browser");
+var Blockly = require("../../../../node_modules/node-blockly/browser");
 
-// var editor: any;
-// var code: any;
+var editor: any;
+var code: any;
 
 export class IDECore {
   public static initialize(): void {
@@ -46,35 +46,39 @@ export class IDECore {
   //   document.getElementById("python").innerText = Blockly.Python.workspaceToCode(editor);
   // }
 
-  // public static render(element, toolbox) {
-  //   if(editor) {
-  //     editor.removeChangeListener(IDECore.updateCode);
-  //     code = Blockly.Xml.workspaceToDom(editor);
-  //     editor.dispose();
-  //   }
+  public static render(element, toolbox) {
+    if(editor) {
+      //editor.removeChangeListener(IDECore.updateCode);
+      code = Blockly.Xml.workspaceToDom(editor);
+      editor.dispose();
+    }
 
-  //   editor = Blockly.inject(element, {
-  //     toolbox: document.getElementById(toolbox)
-  //   });
+    editor = Blockly.inject(element, {
+      toolbox: document.getElementById(toolbox)
+    });
 
-  //   Blockly.Xml.domToWorkspace(code, editor);
+    Blockly.Xml.domToWorkspace(code, editor);
 
-  //   editor.addChangeListener(IDECore.updateCode);
+    //editor.addChangeListener(IDECore.updateCode);
 
-  //   return editor;
-  // }
+    return editor;
+  }
 
   public static start(): void {
     var shell: Shell = <Shell>ComponentRegistry.getComponentEntry("Shell").create();
     shell.initialize();
+    ComponentRegistry.getComponentEntry("ApplicationWSPManager").create();
     var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.getComponentEntry("StartPageComponent").create();
-    startpage.initialize();
     shell.openComponent(startpage);
     shell.show();
+    // $("#blocklyDiv").hide();
 
     // code = document.getElementById("startBlocks");
     // editor = IDECore.render("blocklyDiv", "toolbox");
     // IDECore.updateCode();
+    // var $el = $("#blocklyDiv").clone(true, true);
+    // $("#blocklyDiv").remove();
+    // $("#example").append($el);
   }
 
 }

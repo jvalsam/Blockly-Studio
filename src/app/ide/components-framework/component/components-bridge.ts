@@ -3,10 +3,11 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2017-10-09 09:54:38.913669
+ * 2017-10-19 11:55:16.103385
  */
 
 import { ApplicationWSPEditor } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-editor/application-wsp-editor";
+import { ApplicationWSPManager } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-manager/application-wsp-manager";
 import { StartPageComponent } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page";
 import { ApplicationListSP } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-elements/application-list-s-p/application-list-s-p";
 import { ApplicationViewBox } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-elements/application-list-s-p/application-view-box/application-view-box";
@@ -20,11 +21,15 @@ import { Toolbar } from "../../../../../src/app/ide/components-framework/common.
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
 import { BlocklyVPL } from "../../../../../src/app/ide/ide-components/blockly/blockly";
 import { ICEVPL } from "../../../../../src/app/ide/ide-components/ice/ice";
+import { IoTWSPEditor } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-wsp-editor";
+import { IoTAutomationList } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-list";
+import { IoTAutomationViewBox } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-view-box/iot-automation-view-box";
 
 
 export class ComponentsBridge {
 	public static initialize(): void {
 		ApplicationWSPEditor.onInit();
+		ApplicationWSPManager.onInit();
 		StartPageComponent.onInit();
 		ApplicationListSP.onInit();
 		ApplicationViewBox.onInit();
@@ -38,6 +43,9 @@ export class ComponentsBridge {
 		IDEUIComponent.onInit();
 		BlocklyVPL.onInit();
 		ICEVPL.onInit();
+		IoTWSPEditor.onInit();
+		IoTAutomationList.onInit();
+		IoTAutomationViewBox.onInit();
 	}
 
 }

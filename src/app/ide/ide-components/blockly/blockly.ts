@@ -21,7 +21,7 @@ var Blockly = require("../../../../../node_modules/node-blockly/browser");
 
 
 @UIComponentMetadata({
-  name: "blockly",
+  name: "BlocklyEditor",
   description: "VPL uses jigsaws",
   selector: "main-area",
   templateHTML: "blockly.html",

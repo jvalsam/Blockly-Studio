@@ -15,8 +15,8 @@ import { ComponentEntry } from "./component-entry";
 import { ComponentFunction, Argument } from "./component-function";
 import { ComponentSignal, SignalListenerData } from "./component-signal";
 import { ResponseValue } from "./response-value";
-import * as $ from "jquery";
-import * as _ from "lodash";
+import * as $ from 'jquery';
+import * as _ from 'lodash';
 import {
     SignalsHolder,
     FunctionsHolder,
@@ -25,6 +25,7 @@ import {
 } from "../holders";
 import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-component-registry";
 import { IDEError } from "../../shared/ide-error";
+import { FuncsMap, FuncsCompsMap } from './../holders';
 
 
 ////////////////////////////////////////////////////////////////////
@@ -34,6 +35,7 @@ import { IDEError } from "../../shared/ide-error";
 export interface IComponentData {
   name: string;
   description: string;
+  isUnique ?: boolean;
   version ?: string;
   initData?: Array<any>;
 }
@@ -56,6 +58,7 @@ function isIUIComponentData(data: IComponentData|IUIComponentData): data is IUIC
  * Load IDE Components in ComponentRegistry using the Component
  *
  */
+
 function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
   return (create: Function) => {
     if (ComponentRegistry.hasComponentEntry(name)) {
@@ -64,6 +67,7 @@ function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
         "Component " + name + " is already defined!"
       );
     }
+    BlackboardComponentRegistry.createBlackboard(create.name);
 
     var initData = (data.initData) ? data.initData : [];
 
@@ -72,7 +76,8 @@ function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
       data.description,
       data.version,
       create,
-      data.initData
+      data.initData,
+      data.isUnique
     );
 
     if (isIUIComponentData(data)) {
@@ -81,7 +86,6 @@ function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
     }
 
     compEntry.setArgs(initData);
-
   };
 }
 export function DeclareIDEComponent(data: IComponentData) {
@@ -264,7 +268,11 @@ function requiredFunctionHelper(componentDest: string, funcName: string, argsLen
     funcMap = RequiredFunctionsHolder.get(componentSrc);
   }
 
-  funcMap[funcName] = new ComponentFunction(componentDest, funcName, argsLen);
+  if (!(funcName in funcMap)) {
+    funcMap[funcName] = new Array<ComponentFunction>();  
+  }
+
+  funcMap[funcName].push(new ComponentFunction(componentDest, funcName, argsLen));
   RequiredFunctionsHolder.put(componentSrc, funcMap);
 }
 
@@ -312,12 +320,15 @@ export function RequiredFunction (
   };
 }
 
+function hasMetadata(compName: string): boolean {
+  return compName !== "Component" && compName !== "IDEComponent";
+}
 
 function establishSignals() {
   // load component signals
   for (const compName of SignalsHolder.getKeys()) {
-    if (!BlackboardComponentRegistry.hasBlackboard(compName)) {
-      BlackboardComponentRegistry.createBlackboard(compName);
+    if (!hasMetadata(compName)) {
+      continue;
     }
     for (const signal of SignalsHolder.get(compName)) {
       const key = componentSignalKey(compName, signal.name);
@@ -362,8 +373,8 @@ function establishSignals() {
 function establishFunctions() {
   // Add function in Blackboard
   for(const compName of FunctionsHolder.getKeys()) {
-    if (!BlackboardComponentRegistry.hasBlackboard(compName)) {
-      BlackboardComponentRegistry.createBlackboard(compName);
+    if (!hasMetadata(compName)) {
+      continue;
     }
     const funcsMap = FunctionsHolder.get(compName);
     if (funcsMap) {
@@ -379,13 +390,15 @@ function establishFunctions() {
     const funcMap = RequiredFunctionsHolder.get(componentName);
     if (funcMap) {
       for (const funcName of Object.keys(funcMap)) {
-        const srcComponent = funcMap[funcName].srcName;
-        if (!(funcName in FunctionsHolder.get(srcComponent))) {
-          IDEError.raise(
-            'Function is Required by ' + componentName + ' that is not exported',
-            'Function ' + funcName + ' is not exported by component ' + srcComponent,
-            'components-communication .. ManageComponentsFunctionalityRequired'
-          );
+        for(const compFunc of funcMap[funcName]) {
+          const srcComponent = compFunc.srcName;
+          if (!(funcName in FunctionsHolder.get(srcComponent))) {
+            IDEError.raise(
+              'Function is Required by ' + componentName + ' that is not exported',
+              'Function ' + funcName + ' is not exported by component ' + srcComponent,
+              'components-communication .. ManageComponentsFunctionalityRequired'
+            );
+          }
         }
       }
     }
@@ -406,7 +419,8 @@ interface ISpecialFunctionRequestMap {
 
 class _ComponentsCommunication {
   private readonly fullPermissionComponents : Array<String> = [
-    "Shell"
+    "Shell",
+    "ApplicationWSPManager"
   ];
   private readonly specialFunctionRequests: ISpecialFunctionRequestMap = {
     "open" : this.specialFuncRequestOpen,
@@ -417,19 +431,19 @@ class _ComponentsCommunication {
     establishCommunication();
   }
 
-  private assertComponentHelperCommonExists(dst: ComponentEntry, src?: Component) {
+  private assertComponentHelperCommonExists(dst: ComponentEntry, src?: Component): void {
       if (!dst) {
           if (src) {
               IDEError.raise(
                   _ComponentsCommunication.name,
-                  'Not found component ' + dst.componentInfo.name + 'requested by',
+                  "Not found component " + dst.componentInfo.name + "requested by",
                   src.getComponentInfoMsg()
               );
           }
           else {
               IDEError.raise(
                   _ComponentsCommunication.name,
-                  'Not found component ' + dst.componentInfo.name + '.'
+                  "Not found component " + dst.componentInfo.name + "."
               );
           }
       }
@@ -445,7 +459,7 @@ class _ComponentsCommunication {
       if (!dstComponentEntry.hasOwnProperty(functionName)) {
           IDEError.raise(
               _ComponentsCommunication.name,
-              'Requested function ' + functionName + ' is not exported by',
+              "Requested function " + functionName + " is not exported by",
               dstComponentEntry.componentInfo.name
           );
       }
@@ -461,24 +475,36 @@ class _ComponentsCommunication {
       if (!(signalName in SignalsHolder.get(dstComponentName))) {
           IDEError.raise(
               _ComponentsCommunication.name,
-              'Requested signal ' + signalName + ' is not exported by',
+              "Requested signal " + signalName + " is not exported by",
               dstComponentEntry.componentInfo.name
           );
       }
   }
 
-  private assertComponentExists(comp: Component | string) {
+  private assertComponentExists(comp: Component | string): void {
       const compName: string = ((<Component>comp).name !== undefined) ? (<Component>comp).name : <string>comp;
       if (!ComponentRegistry.hasComponentEntry(compName)) {
           IDEError.raise(
               _ComponentsCommunication.name,
-              'Component with name ' + compName + ' is not registered.'
+              "Component with name " + compName + " is not registered."
           );
       }
   }
 
-  private fullPermissionComponent(compName) {
-    return compName in this.fullPermissionComponents;
+  private hasPermissions(compName: string, dstCompName: string, funcName: string): boolean {
+    if (this.fullPermissionComponents.indexOf(compName)>-1) {
+      return true;
+    }
+
+    const reqFuncs: FuncsCompsMap = RequiredFunctionsHolder.get(compName);
+    if (reqFuncs && Object.keys(reqFuncs).indexOf(funcName)>-1) {
+      for (const compFunc of reqFuncs[funcName]) {
+        if (dstCompName === compFunc.srcName) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private specialFuncRequestOpen(
@@ -510,15 +536,15 @@ class _ComponentsCommunication {
       args: Array<any>=[],
       dstComponentId ?: string
   ): ResponseValue {
-    // check if requested function is not defined as requiredFunction
-    const reqFuncs = RequiredFunctionsHolder.get(srcComponentName); 
-    if ( srcComponentName != "Shell" &&
-         (!reqFuncs || Object.keys(reqFuncs).indexOf(funcName)<=-1)
-    ) {
+    if (!this.hasPermissions(srcComponentName, dstComponentName, funcName)) {
       IDEError.raise(
         _ComponentsCommunication.name,
-        'Requested function ' + funcName + ' which is not defined as a requiredFunction by the component "' + srcComponentName + '".'
+        "Requested function " + funcName + " which is not defined as a requiredFunction by the component \"" + srcComponentName + "\"."
       );
+    }
+
+    if (!dstComponentId && !ComponentRegistry.getComponentEntry(dstComponentName).hasInstance()) {
+      ComponentRegistry.getComponentEntry(dstComponentName).create();
     }
 
     if (funcName in this.specialFunctionRequests) {

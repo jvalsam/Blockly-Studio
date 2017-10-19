@@ -17,6 +17,10 @@ export interface FuncsMap {
   [funcName: string]: ComponentFunction;
 }
 
+export interface FuncsCompsMap {
+  [funcName: string]: Array<ComponentFunction>;
+}
+
 
 /**
  * Map: key => Component Name, value => Array of ComponentSignals
@@ -38,7 +42,7 @@ export let FunctionsHolder =
  * Map: key => Component Name, value =>Map of functions are exported
  */
 export let RequiredFunctionsHolder =
-  new MapHolder<FuncsMap>("ComponentRequiredFunction");
+  new MapHolder<FuncsCompsMap>("ComponentRequiredFunction");
 
 /**
  * Map: key => Application ID, value =>ApplicationModel
