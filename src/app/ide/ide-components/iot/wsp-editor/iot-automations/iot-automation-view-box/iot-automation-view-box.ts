@@ -6,7 +6,7 @@ import { IDEUIComponent } from "../../../../../components-framework/component/id
 import { Automation } from "../../../application/automation"
 
 @ViewMetadata({
-    name: "AutomationViewBox",
+    name: "IoTAutomationViewBox",
     templateHTML: AutomationViewBoxTmpl
 })
 export class IoTAutomationViewBox extends View {
@@ -42,6 +42,6 @@ export class IoTAutomationViewBox extends View {
      *  Events Function Callbacks
      */
     private onOpenAutomation(): void {
-        this.parent["openAutomation"](this.automation.id);
+        this.parent["openAutomation"](this.automation.id, this.automation.type);
     }
 }

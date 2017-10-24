@@ -12,7 +12,6 @@ import { Application } from "../../../shared/application";
 import { ComponentsCommunication } from "../../component/components-communication";
 
 @ComponentMetadata({
-    name: "ApplicationWSPManager",
     description: "",
     isUnique: true
 })

@@ -5,7 +5,6 @@
  * August 2017
  */
 
-
 import ShellTmpl from "./shell.html";
 
 import { ViewRegistry } from "../../view/view-registry";
@@ -25,7 +24,6 @@ require("bootstrap/dist/js/bootstrap");
 type Direction = "menu" | "toolbar" | "main-area";
 
 @UIComponentMetadata({
-  name: "Shell",
   description: "The basic skeleton of the IDE where the other visual components are attached in order to build the whole environment",
   selector: ".ide-container",
   templateHTML: ShellTmpl
@@ -34,6 +32,8 @@ export class Shell extends IDEUIComponent {
   private _menu: IShellMenuViewElement;
   private _toolbar: IShellToolbarViewElement;
   private _main: IShellMainAreaViewElement;
+
+  private _currentComponent: IDEUIComponent;
 
   constructor(
     name: string,
@@ -75,6 +75,10 @@ export class Shell extends IDEUIComponent {
 
   @ExportedFunction
   public openComponent(comp: IDEUIComponent): void {
+    if (this._currentComponent) {
+      this._currentComponent.onClose();
+    }
+    this._currentComponent = comp;
     // render
     comp.render();
     // inject
@@ -93,9 +97,27 @@ export class Shell extends IDEUIComponent {
     }
   }
 
+  private getSelector(selector: string): string {
+    let index = 0;
+    while ( $(selector + ++index).length !== 0 );
+    return selector.substr(1)+"_index_"+index;
+  }
+
+  @ExportedFunction
+  public createComponentEmptyContainer(comp: IDEUIComponent, viewArea: string, display: boolean = false): string {
+    const selector = this.getSelector(comp.selector);
+    const $newEl = $("<div id=\""+selector+"\" class='"+comp.selector.substr(1)+" container-fluid' style=\"height: 480px; width: 600px; margin-top:10px;\"></div>");
+    $(viewArea).append($newEl);
+    return selector;
+  }
+
   @ExportedFunction
   public closeComponent(compName: string): void {
     ;
+  }
+
+  public closeCurrentComponent(): void {
+
   }
 
   public destroy(): void {

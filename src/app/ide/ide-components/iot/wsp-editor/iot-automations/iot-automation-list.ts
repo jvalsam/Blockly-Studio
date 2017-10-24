@@ -2,6 +2,7 @@
 
 /// <reference path="../../../../../../../node.d.ts"/>
 import IoTAutomationListTmpl from "./iot-automation-list.html";
+import IoTAutomationCategoryTmpl from "./iot-automation-category.html";
 import { ViewRegistry } from "../../../../components-framework/view/view-registry";
 import { View, IViewElement, ViewMetadata } from "../../../../components-framework/view/view";
 import { IDEUIComponent } from "../../../../components-framework/component/ide-ui-component";
@@ -19,22 +20,31 @@ export interface IWSPEditorIoTAutomationsListViewElement extends IViewElement {
     templateHTML: IoTAutomationListTmpl
 })
 export class IoTAutomationList extends View {
+    private cTemplate: Function;
     constructor(
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        private app: IoTApplication 
+        private app: IoTApplication
     ) {
         super(parent, name, templateHTML);
+        this.cTemplate = _.template(IoTAutomationCategoryTmpl);
     }
-    
+
     public render(): void {
         this.$el = $(this.template({ totalAutomations: Object.keys(this.app.automations).length }));
         this.registerEvents();
-        _.forEach(this.app.automations, (automation) => {
-            const autoViewBox: IoTAutomationViewBox = <IoTAutomationViewBox>ViewRegistry.getViewEntry("IoTAutomationViewBox").create(this.parent, automation);
-            autoViewBox.render();
-            this.$el.find(".automations-view-list").append(autoViewBox.$el);
+        _.forEach(Object.keys(this.app.automations), (automationType) => {
+            var $cEl: JQuery = $(this.cTemplate({
+                category: automationType,
+                totalAutomations: this.app.automations[automationType].length
+            }));
+            _.forEach(this.app.automations[automationType], (automation) => {
+                const autoViewBox: IoTAutomationViewBox = <IoTAutomationViewBox>ViewRegistry.getViewEntry("IoTAutomationViewBox").create(this.parent, automation);
+                autoViewBox.render();
+                $cEl.find(".automations-group-view-list").append(autoViewBox.$el);
+            });
+            this.$el.find(".automations-view-area").append($cEl);
         });
     }
 

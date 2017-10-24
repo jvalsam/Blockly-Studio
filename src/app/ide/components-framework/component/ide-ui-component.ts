@@ -26,7 +26,6 @@ export interface IViewDataComponent {
 }
 
 @ComponentMetadata({
-    name: "ui-ide-component",
     description: "All components which are visible in the IDE",
     version: "1.0"
 })

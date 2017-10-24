@@ -4,8 +4,10 @@
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
  * Octomber 2017
  */
-import { ExportedFunction } from '../../../components-framework/component/ide-component';
 
+import { ExportedFunction, RequiredFunction } from './../../../components-framework/component/ide-component';
+import { IoTVPL } from './../application/iot-vpl';
+import { ComponentsCommunication } from './../../../components-framework/component/components-communication';
 import IoTWSPEditorTmpl from "./iot-wsp-editor.html";
 import {
     UIComponentMetadata,
@@ -13,8 +15,10 @@ import {
     IViewDataComponent
 } from "../../../components-framework/component/ide-ui-component";
 import { IoTApplication } from "../application/iot-application";
+import { Automation } from "../application/automation";
 import { IoTAutomationList, IWSPEditorIoTAutomationsListViewElement } from "./iot-automations/iot-automation-list";
 import { ViewRegistry } from "../../../components-framework/view/view-registry";
+
 
 @UIComponentMetadata({
     name: "IoTWSPEditor",
@@ -46,7 +50,7 @@ export class IoTWSPEditor extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public open (app: IoTApplication) {
+    public open (app: IoTApplication): void {
         this.app = app;
         // data for automations, categories of automations
         this.automations = {
@@ -74,9 +78,10 @@ export class IoTWSPEditor extends IDEUIComponent {
     /**
      *  Handlers for events are wsp editor template
      */
-    private openAutomation(automationId: string): void {
-        // IoT Automation
-        alert("openAutomation: not implemented yet!");
+    @RequiredFunction("BlocklyVPL", "open", 2)
+    private openAutomation(automationId: string, automationType: string): void {
+        const automation: Automation = this.app.getAutomation(automationId, automationType);
+        ComponentsCommunication.functionRequest(this.name, "BlocklyVPL", "open", [automation.src, IoTVPL.getToolbox(automation.type)]);
     }
     
     private createAutomation(): void {

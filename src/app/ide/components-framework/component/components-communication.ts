@@ -33,7 +33,7 @@ import { FuncsMap, FuncsCompsMap } from './../holders';
 
 
 export interface IComponentData {
-  name: string;
+  // name: string;
   description: string;
   isUnique ?: boolean;
   version ?: string;
@@ -72,7 +72,7 @@ function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
     var initData = (data.initData) ? data.initData : [];
 
     var compEntry = ComponentRegistry.createComponentEntry(
-      data.name,
+      create.name,
       data.description,
       data.version,
       create,

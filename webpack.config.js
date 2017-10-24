@@ -14,6 +14,7 @@ module.exports = {
         loaders: [
             { test: /\.ts$/, loader: 'ts-loader' },
             { test: /\.html/, loaders: ["html-loader?exportAsEs6Default"] },
+            { test: /\.xml$/, loader: 'xml-loader' },
             {
                 test: /\.(jpe?g|png|gif|svg)$/i,
                 loaders: [

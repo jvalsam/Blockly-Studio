@@ -20,7 +20,6 @@ import { SmartObjectListSP, IStartPageSmartObjectListViewElement } from "./start
 import { ComponentsCommunication } from "../../component/components-communication";
 
 @UIComponentMetadata({
-    name: "StartPageComponent",
     description: "Start page of the IDE",
     selector: ".start-page-container",
     templateHTML: StartPageTmpl,

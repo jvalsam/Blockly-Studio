@@ -18,5 +18,5 @@ export class ViperPL extends Component {
         super(_name, _description, _isActive, _isVisible);
     }
 
-    public Destroy(){}
+    public destroy(){}
 }

@@ -6,6 +6,8 @@
  */
 
 import { ApplicationModel } from "../../../shared/models/application.model";
+import { IoTApplication } from "../../../ide-components/iot/application/iot-application";
+import { Automation } from "../../../ide-components/iot/application/automation";
 import { Application } from "../../../shared/application";
 import { ApplicationsHolder } from "../../holders";
 import * as _ from "lodash";
@@ -54,7 +56,19 @@ export class ApplicationsAdministration {
         // server requests code data of the application
         // create Application Component
         // request Shell to open the component
-        return new Application("IoT");
+        return new IoTApplication(
+            {
+                "Smart Objects Automations" : [
+                    new Automation("auto-so-1", "First time alarm clock rings", "Smart Objects Automations"),
+                    new Automation("auto-so-2", "Alarm clock stops", "Smart Objects Automations")
+                ],
+                "Calendar Automations" : [
+                    new Automation("auto-ca-1", "Every Monday tasks", "Calendar Automations"),
+                    new Automation("auto-ca-2", "Every week tasks", "Calendar Automations")
+                ],
+                "Time Events": []
+            }
+        );
     }
 
 }

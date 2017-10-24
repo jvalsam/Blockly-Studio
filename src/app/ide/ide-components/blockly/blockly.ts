@@ -4,6 +4,7 @@
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
  * August 2017
  */
+import { ComponentsCommunication } from '../../components-framework/component/components-communication';
 
 import {
   IDEUIComponent,
@@ -21,9 +22,8 @@ var Blockly = require("../../../../../node_modules/node-blockly/browser");
 
 
 @UIComponentMetadata({
-  name: "BlocklyEditor",
   description: "VPL uses jigsaws",
-  selector: "main-area",
+  selector: ".blockly-editor-container",
   templateHTML: "blockly.html",
   version: "1.1"
 })
@@ -31,6 +31,7 @@ export class BlocklyVPL extends IDEUIComponent {
   private editor: any;
   private editorArea: string;
   private changed: boolean;
+  private toolbox: any;
 
   constructor(
     name: string,
@@ -44,12 +45,23 @@ export class BlocklyVPL extends IDEUIComponent {
   @ExportedFunction
   public onOpen() {}
 
+  @RequiredFunction("Shell", "createComponentEmptyContainer")
   @ExportedFunction
   public open(src: string, toolbox: string): void {
+    this._view.selector = <string>ComponentsCommunication.functionRequest(
+      this.name,
+      "Shell",
+      "createComponentEmptyContainer",
+      [this, ".main-area-container", false]
+    ).value;
     this.changed = false;
-    this.editor = Blockly.inject(this.editorArea, { media: "./media/", toolbox });
-    Blockly.Xml.domToWorkspace(src, this.editor);
+    this.toolbox = (toolbox === undefined) ? require("./toolbox.xml") : toolbox;
+    this.editor = Blockly.inject(this._view.selector, { "media": "./media/", "toolbox": this.toolbox });
+    if (src) {
+      Blockly.Xml.domToWorkspace(src, this.editor);
+    }
     this.editor.addChangeListener(this.onChangeListener);
+    this._view.$el = $("#"+this._view.selector);
   }
 
   @ExportedFunction
@@ -62,6 +74,7 @@ export class BlocklyVPL extends IDEUIComponent {
   }
 
   private onChangeListener(){
+    alert("on change listener is not implemented yet.");
     let code = Blockly.Xml.workspaceToDom(this.editor);
     // TODO: notify AutomationEditingManager
   }

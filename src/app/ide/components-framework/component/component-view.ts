@@ -26,6 +26,7 @@ export class ComponentView extends View {
     }
 
     get selector (): string { return this._selector; }
+    set selector (newSel: string) { this._selector = newSel; }
 
     public setRenderData(templateData: Object): void {
         this.renderData = templateData;
