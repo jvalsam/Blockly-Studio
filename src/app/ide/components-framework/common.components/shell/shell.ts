@@ -10,13 +10,14 @@ import ShellTmpl from "./shell.html";
 import { ViewRegistry } from "../../view/view-registry";
 import { IDEUIComponent, UIComponentMetadata, IViewDataComponent } from "../../component/ide-ui-component";
 import { ExportedFunction } from "../../component/ide-component";
+import { ComponentsViewTree } from "./components-view-tree";
 
 import { Menu, IShellMenuViewElement } from "./menu/menu";
 import { Toolbar, IShellToolbarViewElement } from "./toolbar/toolbar";
 import { MainArea, IShellMainAreaViewElement } from "./main-area/main-area";
 
-import * as $ from "jquery";
-import "expose-loader?$!expose-loader?jQuery!jquery";
+import * as $ from 'jquery';
+import 'expose-loader?$!expose-loader?jQuery!jquery';
 require("jquery/dist/jquery");
 require("popper.js/dist/umd/popper");
 require("bootstrap/dist/js/bootstrap");
@@ -29,11 +30,10 @@ type Direction = "menu" | "toolbar" | "main-area";
   templateHTML: ShellTmpl
 })
 export class Shell extends IDEUIComponent {
+  private _firstCompIsLoad: boolean;
   private _menu: IShellMenuViewElement;
   private _toolbar: IShellToolbarViewElement;
   private _main: IShellMainAreaViewElement;
-
-  private _currentComponent: IDEUIComponent;
 
   constructor(
     name: string,
@@ -42,7 +42,7 @@ export class Shell extends IDEUIComponent {
     templateHTML: string
   ) {
     super(name, description, selector, templateHTML);
-
+    this._firstCompIsLoad = false;
     this._menu = {
       selector: ".menu-view-area",
       view: <Menu>ViewRegistry.getViewEntry("Menu").create(this)
@@ -73,12 +73,18 @@ export class Shell extends IDEUIComponent {
     $(this.selector).append(this.view.$el);
   }
 
+  private updateComponentsViewTree(comp: IDEUIComponent) {
+    if (!this._firstCompIsLoad) {
+      ComponentsViewTree.setRootComponent(comp, ".main-area-container");
+    }
+    else {
+      ComponentsViewTree.onOpenComponent(comp);
+    }
+  }
+
   @ExportedFunction
   public openComponent(comp: IDEUIComponent): void {
-    if (this._currentComponent) {
-      this._currentComponent.onClose();
-    }
-    this._currentComponent = comp;
+    this.updateComponentsViewTree(comp);
     // render
     comp.render();
     // inject

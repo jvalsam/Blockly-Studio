@@ -23,6 +23,8 @@ export class ComponentView extends View {
         eventRegdata: Array<IViewEventRegistration> = new Array<IViewEventRegistration>()
     ) {
         super(parent, name, templateHTML);
+        this.renderData = renderData;
+        this.eventRegData = eventRegdata;
     }
 
     get selector (): string { return this._selector; }

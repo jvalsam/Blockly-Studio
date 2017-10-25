@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2017-10-24 12:05:49.456345
+ * 2017-10-25 13:32:09.227359
  */
 
 import { ApplicationWSPEditor } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-editor/application-wsp-editor";

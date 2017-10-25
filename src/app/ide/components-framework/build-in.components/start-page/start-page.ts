@@ -5,7 +5,6 @@
  * August 2017
  */
 
-/// <reference path="../../../../../../node.d.ts"/>
 import StartPageTmpl from "./start-page.html";
 import {
     IDEUIComponent,
