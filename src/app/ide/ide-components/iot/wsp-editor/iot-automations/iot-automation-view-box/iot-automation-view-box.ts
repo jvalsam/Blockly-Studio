@@ -24,7 +24,25 @@ export class IoTAutomationViewBox extends View {
             {
                 eventType: "click",
                 selector: ".ts-edit-automation",
-                handler: () => this.onOpenAutomation()
+                handler: () => {
+                    this.parent["selectedAutomationId"] = this.automation.id;
+                    $("#automation-view-" + this.automation.id).css("background-color", "#D3D3D3");
+                    this.onOpenAutomation();
+                }
+            },
+            {
+                eventType: "mouseover",
+                selector: ".ts-edit-automation",
+                handler: () => $("#automation-view-" + this.automation.id).css("background-color", "rgb(196, 195, 195)")
+            },
+            {
+                eventType: "mouseout",
+                selector: ".ts-edit-automation",
+                handler: () => {
+                    if (this.parent["selectedAutomationId"] !== this.automation.id ) {
+                        $("#automation-view-" + this.automation.id).css("background-color", "rgba(211, 211, 211, 0.541)");
+                    }
+                }
             }
         );
     }
@@ -32,6 +50,7 @@ export class IoTAutomationViewBox extends View {
     public render(): void {
         this.$el = $(
             this.template({
+                id: this.automation.id,
                 name: this.automation.name
             })
         );

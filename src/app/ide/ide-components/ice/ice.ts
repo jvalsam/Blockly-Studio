@@ -5,24 +5,19 @@
  * August 2017
  */
 
-import {
-  IDEUIComponent,
+ import {
   UIComponentMetadata,
-  IViewDataComponent
-} from "../../components-framework/component/ide-ui-component";
-import {
   ExportedSignal,
   ExportedFunction,
   RequiredFunction,
   ListensSignal
-} from "../../components-framework/component/ide-component";
+} from "../../components-framework/component/component-loader";
+import { IDEUIComponent, IViewDataComponent } from "../../components-framework/component/ide-ui-component";
 
 
 @UIComponentMetadata({
-  name: "ICEVPL",
   description: "VPL Editor uses structure of source code with 3 different boxes I C E",
-  selector: "main-area",
-  templateHTML: "ice.html",
+  componentView: "ICEView",
   version: "1.0"
 })
 export class ICEVPL extends IDEUIComponent {

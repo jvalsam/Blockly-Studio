@@ -1,33 +1,32 @@
 /**
- * Menu - IDE Main Menu
+ * Toolbar - IDE Toolbar hosts component tools
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * September 2017
+ * November 2017
  */
 
-/// <reference path="../../../../../../../node.d.ts"/>
-import ToolbarTmpl from "./toolbar.html";
-import { View, IViewElement, ViewMetadata } from "../../../view/view";
-import { ExportedFunction } from "../../../component/ide-component";
+import { IDEUIComponent } from "../../../component/ide-ui-component";
+import { UIComponentMetadata } from "../../../component/component-loader";
+import { IViewElements } from "../../../component/component-view";
+import { ToolbarView } from "./toolbar-view";
 
 
-export interface IShellToolbarViewElement extends IViewElement {
-    view: Toolbar;
-}
-
-@ViewMetadata({
-    name: "Toolbar",
-    templateHTML: ToolbarTmpl
+@UIComponentMetadata({
+    description: "IDE toolbar hosts tools of the components",
+    componentView: "ToolbarView",
+    menuDef: ""
 })
-export class Toolbar extends View {
+export class Toolbar extends IDEUIComponent {
     protected _tools: Array<string> = [];
 
-    get tools(): Array<string> {
-        return this._tools;
+    public addTools(tools: IViewElements): void {
+        if (Object.keys(tools).length !== 0) {
+            (<ToolbarView>this.view).addTools(tools);
+        }
     }
 
-    set tools(ntools: Array<string>) {
-        this._tools = ntools;
+    public removeTools(tools: IViewElements): void {
+        (<ToolbarView>this.view).removeTools(tools);
     }
 
     public render(): void {

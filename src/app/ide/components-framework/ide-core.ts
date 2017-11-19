@@ -1,5 +1,4 @@
-﻿import { ComponentCommunicationElement } from './component/component-communication-element';
-/**
+﻿/**
  * Component - Each Component will register in the system will inherits component class
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
@@ -14,7 +13,7 @@ import {
   SignalListenersHolder,
   SignalsHolder
 } from "./holders";
-import { ComponentRegistry } from "./component/component-registry";
+import { ComponentRegistry } from "./component/component-entry";
 import { ComponentsCommunication } from "./component/components-communication";
 import { Shell } from "./common.components/shell/shell";
 import { StartPageComponent } from "./build-in.components/start-page/start-page";
@@ -26,7 +25,6 @@ var code: any;
 
 export class IDECore {
   public static initialize(): void {
-
     SignalsHolder.initialize();
     SignalListenersHolder.initialize();
     FunctionsHolder.initialize();
@@ -65,10 +63,10 @@ export class IDECore {
   }
 
   public static start(): void {
-    var shell: Shell = <Shell>ComponentRegistry.getComponentEntry("Shell").create();
+    var shell: Shell = <Shell>ComponentRegistry.getEntry("Shell").create();
     shell.initialize();
-    ComponentRegistry.getComponentEntry("ApplicationWSPManager").create();
-    var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.getComponentEntry("StartPageComponent").create();
+    ComponentRegistry.getEntry("ApplicationWSPManager").create();
+    var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.getEntry("StartPageComponent").create();
     shell.openComponent(startpage);
     shell.show();
     // $("#blocklyDiv").hide();

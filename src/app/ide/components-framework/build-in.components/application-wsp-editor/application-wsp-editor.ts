@@ -5,22 +5,15 @@
  * September 2017
  */
 
-import ApplicationWSPEditorTmpl from "./application-wsp-editor.html";
-import {
-    UIComponentMetadata,
-    IDEUIComponent,
-    IViewDataComponent
-} from "../../component/ide-ui-component";
+import { IDEUIComponent, IViewDataComponent } from "../../component/ide-ui-component";
+import { UIComponentMetadata } from "../../component/component-loader";
 import { ApplicationStart } from "./application-start/application-start";
 import { ApplicationAutomations } from "./application-automations/application-automations";
 import { ApplicationScreens } from "./application-screens/application-screens";
 
-
 @UIComponentMetadata({
-    name: "ApplicationWSPEditor",
     description: "The basic skeleton of the IDE where the other visual components are attached in order to build the whole environment",
-    selector: "#app",
-    templateHTML: ApplicationWSPEditorTmpl
+    componentView: "ApplicationWSPEditorView"
 })
 export class ApplicationWSPEditor extends IDEUIComponent {
     private smartObjectsSelected: Array<string>; // Smart Object ids, in case are not selected array is undefined, and we get them all
@@ -31,10 +24,9 @@ export class ApplicationWSPEditor extends IDEUIComponent {
     constructor(
         name: string,
         description: string,
-        protected _selector: string,
-        templateHTML: string
+        componentView: string
     ) {
-        super(name, description, _selector, templateHTML);
+        super(name, description, componentView);
     }
 
     public open (applicationId: string) {
@@ -43,7 +35,6 @@ export class ApplicationWSPEditor extends IDEUIComponent {
     }
     public onOpen(): void {}
     public destroy(): void {}
-    public getView(): IViewDataComponent { return {}; }
     public onClose(): void {}
     public registerEvents(): void {}
     public update(): void {}

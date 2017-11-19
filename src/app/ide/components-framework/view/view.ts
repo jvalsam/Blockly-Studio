@@ -1,6 +1,4 @@
 /**
-import { IDEError } from '../../shared/ide-error';
-import { IDEError } from "./../../shared/ide-error";
  * View - Events Registration Handler
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
@@ -9,11 +7,11 @@ import { IDEError } from "./../../shared/ide-error";
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-import { DeclareViewElement } from "../component/components-communication";
 import { IDEUIComponent } from "../component/ide-ui-component";
 import { IDEError } from "../../shared/ide-error";
+import { Registry } from "../../shared/entry/registry";
+import { Entry } from "../../shared/entry/entry";
 
-export let ViewMetadata = DeclareViewElement;
 
 export interface IViewEvent {
     type: string;
@@ -55,8 +53,8 @@ export abstract class View {
         this.$el = $( $.parseHTML(this._templateHTML) );
     }
 
-    public abstract render(): void;
-    public abstract registerEvents(): void;
+    public abstract render();
+    public abstract registerEvents();
 
     /**
      * Empty static function used and called by all ViewElements OnInit of the IDE
@@ -129,4 +127,38 @@ export abstract class View {
             throw new Error("This view has not context");
         }
     }
+}
+
+
+export let ViewRegistry = new Registry<View>();
+
+/**
+ * Load View Component Elements
+ *
+ */
+
+export interface IViewElementData {
+    name: string;
+    templateHTML: string;
+    initData?: Array<any>;
+}
+
+export let ViewMetadata = // Used as decorator
+function DeclareViewElement (data: IViewElementData) {
+    return (create: Function) => {
+        if (ViewRegistry.hasEntry(name)) {
+            IDEError.raise(
+                "DeclareViewElement",
+                "View " + name + " is already defined!"
+            );
+        }
+
+        var initData = (data.initData) ? data.initData : [];
+
+        ViewRegistry.createEntry(
+            data.name,
+            create,
+            [data.templateHTML, ...initData]
+        );
+    };
 }

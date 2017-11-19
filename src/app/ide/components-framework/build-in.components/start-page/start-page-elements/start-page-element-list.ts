@@ -5,10 +5,10 @@
  * September 2017
  */
 
-import { View } from "../../../view/view";
+import { ComponentViewElement } from "../../../component/component-view";
 
 
-export abstract class StartPageElementListSP<T> extends View {
+export abstract class StartPageElementListSP<T> extends ComponentViewElement {
     protected _elements: Array<T>;
 
     protected abstract requestElementsData (): void;

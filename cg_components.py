@@ -18,22 +18,27 @@ ProjectPath = './src/app/ide/'
 DecoratorsComponentsList = [
     '@UIComponentMetadata', '@UIComponentMetadata(', '@UIComponentMetadata({',
     '@ComponentMetadata', '@ComponentMetadata(', '@ComponentMetadata({',
-    '@ViewMetadata', '@ViewMetadata(', '@ViewMetadata({'
+    '@ViewMetadata', '@ViewMetadata(', '@ViewMetadata({',
+    '@ComponentViewMetadata', '@ComponentViewMetadata(', '@ComponentViewMetadata({',
+    '@ComponentViewElementMetadata', '@ComponentViewElementMetadata(', '@ComponentViewElementMetadata({'
 ]
 
-def FindComponentName(compPath):
-    flag = 0
+def FindComponentNames(compPath):
     filePathList = [f for f in listdir(compPath) if isfile(join(compPath, f))]
     for filePath in filePathList:
         f = open(compPath + '/' + filePath)
         words = f.read().split()
+        flag = 0
         for i in range(len(words)):
             if words[i] in DecoratorsComponentsList:
                 flag = 1
             if words[i] == 'extends' and flag == 1:
-                return [words[i-1], filePath]
+                data = [words[i-1], filePath]
+                print (data[0] + " is registered.")
+                ComponentNameList.append(data[0])
+                file.write("import { " + data[0] + " } from \"../../../../." + root.replace('\\','/') + "/" + data[1][:-3] + "\";\n")
+                break
         f.close()
-    return []
 
 
 def FindName(filePath):
@@ -80,12 +85,7 @@ ComponentNameList = []
 for root, dirs, files in os.walk('./src/'):
     if "media" in root:
         continue
-    data = FindComponentName(root)
-    if len(data) == 0:
-        continue
-    print ("Component " + data[0] + " is registered.")
-    ComponentNameList.append(data[0])
-    file.write("import { " + data[0] + " } from \"../../../../." + root.replace('\\','/') + "/" + data[1][:-3] + "\";\n")
+    data = FindComponentNames(root)
 
 file.write("\n\nexport class ComponentsBridge {\n")
 file.write("\tpublic static initialize(): void {\n")

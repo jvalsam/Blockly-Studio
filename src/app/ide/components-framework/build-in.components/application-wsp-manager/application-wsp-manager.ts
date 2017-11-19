@@ -5,8 +5,8 @@
  * Octomber 2017
  */
 
-
-import { ComponentMetadata, IDEComponent, ExportedFunction, RequiredFunction } from "../../component/ide-component";
+import { IDEComponent } from "../../component/ide-component";
+import { ComponentMetadata, ExportedFunction } from "../../component/component-loader";
 import { ApplicationsAdministration } from "../applications-admin-sc/applications-administration";
 import { Application } from "../../../shared/application";
 import { ComponentsCommunication } from "../../component/components-communication";

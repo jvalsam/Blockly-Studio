@@ -5,21 +5,15 @@
  * September 2017
  */
 
-/// <reference path="../../../../../../../node.d.ts"/>
 import StartPageMenuTmpl from "./start-page-menu.html";
-import { View, IViewElement, ViewMetadata } from "../../../view/view";
+import { ComponentViewElementMetadata, ComponentViewElement } from "../../../component/component-view";
 
 
-export interface IStartPageMenuViewElement extends IViewElement {
-    view: StartPageMenu;
-}
-
-@ViewMetadata({
-    name: "StartPageMenu",
+@ComponentViewElementMetadata({
+    name: "StartPageMenuViewElement",
     templateHTML: StartPageMenuTmpl
 })
-export class StartPageMenu extends View {
-
+export class StartPageMenuViewElement extends ComponentViewElement {
     public render(): void {
         this.registerEvents();
     }

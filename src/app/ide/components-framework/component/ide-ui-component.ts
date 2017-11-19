@@ -6,18 +6,13 @@
  */
 
 import * as _ from "lodash";
-import {
-    ComponentMetadata,
-    ExportedFunction,
-    IDEComponent
-} from "./ide-component";
+import { IDEComponent } from "./ide-component";
+import { ComponentMetadata } from "./component-loader";
 import { IViewElement } from "../view/view";
-import { ComponentView } from "./component-view";
 import {
-    DeclareIDEUIComponent as UCI,
-} from "./components-communication";
-
-export let UIComponentMetadata: Function = UCI;
+    ComponentView,
+    ComponentViewRegistry
+} from "./component-view";
 
 export interface IViewDataComponent {
     main?: JQuery;
@@ -35,16 +30,10 @@ export abstract class IDEUIComponent extends IDEComponent {
     constructor(
         name: string,
         description: string,
-        selector: string,
-        templateHTML: string
+        compViewName: string
     ) {
         super(name, description);
-        this._view = new ComponentView(
-            this,
-            "_uiidecomponent_" + this.name,
-            selector,
-            templateHTML
-        );
+        this._view = ComponentViewRegistry.getEntry(compViewName).create(this);
     }
 
     get templateHTML(): string {
@@ -55,16 +44,16 @@ export abstract class IDEUIComponent extends IDEComponent {
         return this.view.templateJQ;
     }
 
-    get selector(): string {
+    public get selector(): string {
         return this.view.selector;
     }
 
-    get view(): ComponentView {
+    public get view(): ComponentView {
         return this._view;
     }
 
     public render(): void {
-        this.view.render();
+            this.view.render();
     }
 
     protected inject(selector: string, templateHTML: JQuery): void;
@@ -78,7 +67,7 @@ export abstract class IDEUIComponent extends IDEComponent {
             content = elem.view.$el;
             selector = elem.selector;
         }
-        
+
         this.view.templateJQ.find("div"+selector).empty();
         this.view.templateJQ.find("div"+selector).append(content);
     }
@@ -90,6 +79,5 @@ export abstract class IDEUIComponent extends IDEComponent {
     public abstract registerEvents(): void;
     public abstract update(): void;
     public abstract onOpen(): void;
-    public abstract getView(): IViewDataComponent;
     public abstract onClose(): void;
 }

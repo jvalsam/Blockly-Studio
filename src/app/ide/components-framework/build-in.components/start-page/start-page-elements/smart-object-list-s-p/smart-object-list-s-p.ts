@@ -7,19 +7,17 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import SmartObjectListTmpl from "./smart-object-list-s-p.html";
-import { IViewElement, ViewMetadata } from "../../../../view/view";
-import { ViewRegistry } from "../../../../view/view-registry";
+import { ComponentViewElementMetadata } from "../../../../component/component-view";
+import { ComponentViewRegistry } from "../../../../component/component-view-registry";
+import { ViewRegistry } from "../../../../view/view";
 import { SmartObjectViewBox } from "./smart-object-view-box/smart-object-view-box";
 import { SmartObjectModel, SOProperties } from "../../../../../shared/models/smart-object.model";
 import { StartPageElementListSP } from "../start-page-element-list";
 import * as _ from "lodash";
 
-export interface IStartPageSmartObjectListViewElement extends IViewElement {
-    view: SmartObjectListSP;
-}
-
-@ViewMetadata({
+@ComponentViewElementMetadata({
     name: "SmartObjectListStartPage",
+    selector: ".smart-object-list-view-area",
     templateHTML: SmartObjectListTmpl
 })
 export class SmartObjectListSP extends StartPageElementListSP<SmartObjectModel> {
@@ -30,7 +28,7 @@ export class SmartObjectListSP extends StartPageElementListSP<SmartObjectModel> 
         }));
         this.registerEvents();
         _.forEach(this._elements, (smartObject) => {
-            const soViewBox: SmartObjectViewBox = <SmartObjectViewBox>ViewRegistry.getViewEntry("SmartObjectViewBox").create(this.parent, smartObject);
+            const soViewBox: SmartObjectViewBox = <SmartObjectViewBox>ViewRegistry.getEntry("SmartObjectViewBox").create(this.parent, smartObject);
             soViewBox.render();
             this.$el.find(".smart-objects-view-list").append(soViewBox.$el);
         });

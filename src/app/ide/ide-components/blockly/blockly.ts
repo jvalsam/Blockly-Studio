@@ -4,64 +4,82 @@
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
  * August 2017
  */
-import { ComponentsCommunication } from '../../components-framework/component/components-communication';
 
+import { ComponentsCommunication } from "../../components-framework/component/components-communication";
+import { IDEUIComponent } from "../../components-framework/component/ide-ui-component";
+import { Editor } from "../../components-framework/build-in.components/editor-manager/editor";
 import {
-  IDEUIComponent,
   UIComponentMetadata,
-  IViewDataComponent
-} from "../../components-framework/component/ide-ui-component";
-import {
   ExportedSignal,
   ExportedFunction,
   RequiredFunction,
   ListensSignal
-} from "../../components-framework/component/ide-component";
+} from "../../components-framework/component/component-loader";
 
 var Blockly = require("../../../../../node_modules/node-blockly/browser");
 
 
 @UIComponentMetadata({
   description: "VPL uses jigsaws",
-  selector: ".blockly-editor-container",
-  templateHTML: "blockly.html",
+  componentView: "BlocklyView",
   version: "1.1"
 })
-export class BlocklyVPL extends IDEUIComponent {
+export class BlocklyVPL extends Editor {
   private editor: any;
   private editorArea: string;
   private changed: boolean;
   private toolbox: any;
+  private src: string;
 
   constructor(
     name: string,
     description: string,
-    selector: string,
-    templateHTML: string
+    compViewName: string
   ) {
-    super(name, description, selector, templateHTML);
+    super(name, description, compViewName);
   }
 
   @ExportedFunction
-  public onOpen() {}
+  public onOpen(): void {}
 
-  @RequiredFunction("Shell", "createComponentEmptyContainer")
   @ExportedFunction
-  public open(src: string, toolbox: string): void {
-    this._view.selector = <string>ComponentsCommunication.functionRequest(
-      this.name,
-      "Shell",
-      "createComponentEmptyContainer",
-      [this, ".main-area-container", false]
-    ).value;
+  public open(src: string, toolbox?: string): void {
     this.changed = false;
-    this.toolbox = (toolbox === undefined) ? require("./toolbox.xml") : toolbox;
-    this.editor = Blockly.inject(this._view.selector, { "media": "./media/", "toolbox": this.toolbox });
-    if (src) {
-      Blockly.Xml.domToWorkspace(src, this.editor);
+    this.toolbox = (toolbox === undefined) ? /*require("./toolbox.xml")*/document.getElementById("toolbox") : toolbox;
+    this.src = src;
+  }
+
+  @ExportedFunction
+  public render(): void {
+    var blocklyArea: any = document.getElementById("editors-area-container");
+    var blocklyDiv: any = document.getElementById(this.selector);
+    this.view.$el = $("#" + this.view.selector);
+    this.view.$el.empty();
+    this.view.$el.show();
+    this.editor = Blockly.inject(this.view.selector, { "media": "./media/", "toolbox": this.toolbox });
+    if (this.src) {
+      Blockly.Xml.domToWorkspace(this.src, this.editor);
     }
-    this.editor.addChangeListener(this.onChangeListener);
-    this._view.$el = $("#"+this._view.selector);
+    this.editor.addChangeListener(() => this.onChangeListener());
+    var onresize = (e) => {
+      // Compute the absolute coordinates and dimensions of blocklyArea.
+      // var element = blocklyArea;
+      // var x = 0;
+      // var y = 0;
+      // do {
+      //   x += element.offsetLeft;
+      //   y += element.offsetTop;
+      //   element = element.offsetParent;
+      // } while (element);
+      // // Position blocklyDiv over blocklyArea.
+      blocklyDiv.style.left = -12 + 'px';
+      blocklyDiv.style.top = 3 + 'px';
+      blocklyDiv.style.width = (blocklyArea.offsetWidth+24) + 'px';
+      blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+    };
+    window.addEventListener('resize', onresize, false);
+    onresize(null);
+    Blockly.svgResize(this.editor);
   }
 
   @ExportedFunction
@@ -73,17 +91,9 @@ export class BlocklyVPL extends IDEUIComponent {
     this.editor.dispose();
   }
 
-  private onChangeListener(){
-    alert("on change listener is not implemented yet.");
-    let code = Blockly.Xml.workspaceToDom(this.editor);
+  private onChangeListener(): void {
+    this.src = Blockly.Xml.workspaceToDom(this.editor);
     // TODO: notify AutomationEditingManager
-  }
-  
-  @ExportedFunction
-  public getView(): IViewDataComponent {
-      return {
-          main: this.templateJQ
-      };
   }
 
   public registerEvents(): void {
@@ -95,6 +105,27 @@ export class BlocklyVPL extends IDEUIComponent {
 
   @ExportedFunction
   public destroy(){}
+
+  @ExportedFunction
+  public undo() {
+
+  }
+  
+  @ExportedFunction
+  public redo() {
+
+  }
+
+  @ExportedFunction
+  public copy() {
+
+  }
+
+  @ExportedFunction
+  public paste() {
+
+  }
+  
 
   /////////////////////////////////////////////////
   //// Establish Component Communication

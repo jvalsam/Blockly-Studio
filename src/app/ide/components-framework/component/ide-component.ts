@@ -5,25 +5,8 @@
  * August 2017
  */
 
+import { ExportedFunction } from "./component-loader";
 import { Component } from "./component";
-import {
-  DeclareIDEComponent as CI,
-  DeclareIDEUIComponent as UCI,
-  ExportedSignal as ES,
-  ExportedFunction as EF,
-  RequiredFunction as RF,
-  ListensSignal as LS
-} from "./components-communication";
-
-
-/////////////////////////////////////////////////////////////////////////
-// package all required for components to be exported by ide-component
-
-export let ComponentMetadata = CI;
-export let ExportedSignal = ES;
-export let ExportedFunction = EF;
-export let RequiredFunction = RF;
-export let ListensSignal = LS;
 
 export abstract class IDEComponent extends Component {
 

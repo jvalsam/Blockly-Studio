@@ -10,19 +10,17 @@ import ApplicationsListTmpl from "./application-list-s-p.html";
 
 import * as _ from "lodash";
 
-import { IViewElement, ViewMetadata } from "../../../../view/view";
-import { ViewRegistry } from "./../../../../view/view-registry";
+import { ComponentViewElementMetadata } from "../../../../component/component-view";
+import { ViewRegistry } from "../../../../view/view";
 import { ApplicationViewBox } from "./application-view-box/application-view-box";
 import { ApplicationModel } from "../../../../../shared/models/application.model";
 import { ApplicationsAdministration } from "../../../applications-admin-sc/applications-administration";
 import { StartPageElementListSP } from "../start-page-element-list";
 
-export interface IStartPageApplicationListViewElement extends IViewElement {
-    view: ApplicationListSP;
-}
 
-@ViewMetadata({
+@ComponentViewElementMetadata({
     name: "ApplicationsListStartPage",
+    selector: ".application-list-view-area",
     templateHTML: ApplicationsListTmpl
 })
 export class ApplicationListSP extends StartPageElementListSP<ApplicationModel> {
@@ -31,7 +29,7 @@ export class ApplicationListSP extends StartPageElementListSP<ApplicationModel> 
         this.$el = $(this.template({totalApplications: this._elements.length}));
         this.registerEvents();
         _.forEach(this._elements, (application) => {
-            const appViewBox: ApplicationViewBox = <ApplicationViewBox>ViewRegistry.getViewEntry("ApplicationViewBox").create(this.parent, application);
+            const appViewBox: ApplicationViewBox = <ApplicationViewBox>ViewRegistry.getEntry("ApplicationViewBox").create(this.parent, application);
             appViewBox.render();
             this.$el.find(".applications-view-list").append(appViewBox.$el);
         });

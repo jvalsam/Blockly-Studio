@@ -3,7 +3,7 @@
 /// <reference path="../../../../../../../node.d.ts"/>
 import IoTAutomationListTmpl from "./iot-automation-list.html";
 import IoTAutomationCategoryTmpl from "./iot-automation-category.html";
-import { ViewRegistry } from "../../../../components-framework/view/view-registry";
+import { ViewRegistry } from "../../../../components-framework/view/view";
 import { View, IViewElement, ViewMetadata } from "../../../../components-framework/view/view";
 import { IDEUIComponent } from "../../../../components-framework/component/ide-ui-component";
 import { IoTApplication } from "../../application/iot-application";
@@ -40,7 +40,7 @@ export class IoTAutomationList extends View {
                 totalAutomations: this.app.automations[automationType].length
             }));
             _.forEach(this.app.automations[automationType], (automation) => {
-                const autoViewBox: IoTAutomationViewBox = <IoTAutomationViewBox>ViewRegistry.getViewEntry("IoTAutomationViewBox").create(this.parent, automation);
+                const autoViewBox: IoTAutomationViewBox = <IoTAutomationViewBox>ViewRegistry.getEntry("IoTAutomationViewBox").create(this.parent, automation);
                 autoViewBox.render();
                 $cEl.find(".automations-group-view-list").append(autoViewBox.$el);
             });

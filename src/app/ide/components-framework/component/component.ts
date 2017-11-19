@@ -7,10 +7,8 @@
 
 import { ComponentFunction, Argument, Type } from './component-function';
 import { ComponentSignal } from './component-signal';
-import {
-  ComponentsCommunication,
-  ExportedFunction
-} from './components-communication';
+import { ComponentsCommunication } from './components-communication';
+import { ExportedFunction, EstablishComponentsCommunicationJS } from "./component-loader";
 import { ResponseValue } from './response-value';
 import { IDEError } from '../../shared/ide-error';
 
@@ -102,7 +100,7 @@ export abstract class Component {
   // Establishing Components Communication for Components that are developed in JS
   // Export
   protected addExportedFunction(parent: string, funcName: string, argsLen: number, func: Function) {
-    ComponentsCommunication.registerFunction (
+    EstablishComponentsCommunicationJS.registerFunction (
       this.name,
       parent,
       funcName,
@@ -111,7 +109,7 @@ export abstract class Component {
     );
   }
   protected addExportedSignal(parent: string, signal: string, argList?: Array<any>, finalFunc?: string) {
-    ComponentsCommunication.registerSignal (
+    EstablishComponentsCommunicationJS.registerSignal (
       this.name,
       parent,
       signal,
@@ -121,7 +119,7 @@ export abstract class Component {
   }
   // Import
   protected addRequestedFunction(parent: string, funcName: string, func: Function, argsLen: number, componentName: string) {
-    ComponentsCommunication.registerRequiredFunction (
+    EstablishComponentsCommunicationJS.registerRequiredFunction (
       componentName,
       this.name,
       parent,
@@ -131,7 +129,7 @@ export abstract class Component {
     );
   }
   protected addSignalListener(parent: string, signal: string, sourceComponent: string, callback: string) {
-    ComponentsCommunication.registerListensSignal (
+    EstablishComponentsCommunicationJS.registerListensSignal (
       this.name,
       parent,
       callback,

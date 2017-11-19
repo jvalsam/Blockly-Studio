@@ -1,0 +1,34 @@
+{
+    "ComponentName": "Name of the component define these elements",
+    "MenuElements": [
+        // for menu items that are leaf or items(hasChildren is true) have children
+        {
+            // path: / to choose level e.g. /Help/ is level 2 to add items in Help
+            // | to choose position e.g. /Home| is to add item next to Home in same level
+            "path": "/Home/Open|", // level 2 after Open menu item
+            "hasChilden": false, // true when is not leaf
+            "data": {
+                "title": "Exit",
+                "help": "Exit platform", // optional
+                "imagePath": "path of the menu image", // optional
+                "style": "css would like to change for the menu item", // optional
+                "events": [ // not exists when hasChildren field is true
+                    { "onclick": "onExitPlatform" } // function will be called on click
+                ],
+                "children": [ // optional
+                    // menu items or groups
+                ]
+            }
+        },
+        {
+            "path": "path explanation earlier discussed",
+            "data": {
+                "title": "", // optional
+                "style": "", // optional
+                "group": [
+                    // menu items that are leaf or nested groups
+                ]
+            }
+        }
+    ]
+}

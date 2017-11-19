@@ -1,0 +1,18 @@
+{
+    "ComponentName": "Menu",
+    "MenuElements": [
+        {
+            "path": "/",
+            "data": {
+                "title": "Home",
+                "help": "Go at home page",
+                "imagePath": "../../../../../../../images/puppy.png",
+                "events": [
+                    {
+                        "click": "onClickHomePage"
+                    }
+                ]
+            }
+        }
+    ]
+}

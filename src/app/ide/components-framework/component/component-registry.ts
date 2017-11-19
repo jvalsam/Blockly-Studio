@@ -5,51 +5,57 @@
  * August 2017
  */
 
-import { Component } from './component';
-import { ComponentEntry } from './component-entry';
-import { ComponentFunction } from './component-function';
+// import { Component } from './component';
+// import { ComponentEntry } from './component-entry';
+// import { ComponentFunction } from './component-function';
 
-interface MapComponentEntry {
-  [compName: string]: ComponentEntry;
-}
+// interface MapComponentEntry {
+//   [compName: string]: ComponentEntry;
+// }
 
-class _ComponentRegistry {
-  private _componentsEntry: MapComponentEntry;
+// class _ComponentRegistry {
+//   private _componentsEntry: MapComponentEntry;
 
-  constructor() {
-    this._componentsEntry = {};
-  }
+//   constructor() {
+//     this._componentsEntry = {};
+//   }
 
-  public initialize() {}
+//   public initialize() {}
 
-  public getComponentEntry(compName: string) {
-     return this._componentsEntry[compName];
-   }
+//   public getEntry(compName: string) {
+//      return this._componentsEntry[compName];
+//    }
 
-   public hasComponentEntry(compName: string) {
-     return compName in this._componentsEntry;
-   }
+//    public hasEntry(compName: string) {
+//      return compName in this._componentsEntry;
+//    }
 
-   public createComponentEntry(
-     compName: string,
-     description: string,
-     version: string,
-     create: Function,
-     initData?: Array<any>,
-     isUnique?: boolean
-    ): ComponentEntry {
-      this._componentsEntry[compName] = new ComponentEntry (
-        { name: compName, description: description, version: version },
-        create,
-        initData,
-        isUnique
-     );
-     return this._componentsEntry[compName];
-   }
+//    public createEntry(
+//      compName: string,
+//      description: string,
+//      version: string,
+//      create: Function,
+//      initData?: Array<any>,
+//      menuData?: any,
+//      isUnique?: boolean
+//     ): ComponentEntry {
+//       this._componentsEntry[compName] = new ComponentEntry (
+//         { name: compName, description: description, version: version },
+//         create,
+//         initData,
+//         menuData,
+//         isUnique
+//      );
+//      return this._componentsEntry[compName];
+//    }
 
-   public destroyBlackboard(compName: string) {
-     delete this._componentsEntry[compName];
-   }
-}
+//    public getEntries (): MapComponentEntry {
+//      return this._componentsEntry;
+//    }
 
-export let ComponentRegistry = new _ComponentRegistry();
+//    public destroyEntry(compName: string) {
+//      delete this._componentsEntry[compName];
+//    }
+// }
+
+// export let ComponentRegistry = new _ComponentRegistry();

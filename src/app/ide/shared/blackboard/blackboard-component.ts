@@ -6,8 +6,8 @@
  */
 
 import { ComponentFunction } from '../../components-framework/component/component-function';
-import { ComponentsCommunication } from '../../components-framework/component/components-communication';
-import { ComponentRegistry } from '../../components-framework/component/component-registry';
+import { ComponentsCommunication } from "../../components-framework/component/components-communication";
+import { ComponentRegistry } from "../../components-framework/component/component-entry";
 import { MapHolder } from '../map-holder';
 import { Queue } from '../../../shared/collections/Queue';
 import { ResponseValue } from './../../components-framework/component/response-value';
@@ -160,7 +160,7 @@ export class BlackboardComponent {
   private processEvent(eventId: Event, eventContent: Object) {
     for (const ehc of this._events[eventId].eventHandlerList) {
       const data = ehc.eventHandler;
-      const compEntry = ComponentRegistry.getComponentEntry(data.compSource);
+      const compEntry = ComponentRegistry.getEntry(data.compSource);
 
       if (!compEntry) {
         IDEError.raise(
@@ -197,7 +197,7 @@ export class BlackboardComponent {
       );
     }
 
-    const components = ComponentRegistry.getComponentEntry(this._componentName).getInstances();
+    const components = ComponentRegistry.getEntry(this._componentName).getInstances();
     if (!components || components.length === 0) {
       IDEError.raise(
         BlackboardComponent.name,

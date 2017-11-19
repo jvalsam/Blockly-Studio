@@ -1,3 +1,4 @@
+import { ComponentRegistry } from './../../../components-framework/component/component-entry';
 /**
  * IoT Application Editor
  *
@@ -5,48 +6,57 @@
  * Octomber 2017
  */
 
-import { ExportedFunction, RequiredFunction } from './../../../components-framework/component/ide-component';
-import { IoTVPL } from './../application/iot-vpl';
-import { ComponentsCommunication } from './../../../components-framework/component/components-communication';
-import IoTWSPEditorTmpl from "./iot-wsp-editor.html";
 import {
     UIComponentMetadata,
+    ExportedFunction,
+    RequiredFunction
+} from "./../../../components-framework/component/component-loader";
+import { IoTVPL } from "./../application/iot-vpl";
+import { ComponentsCommunication } from "./../../../components-framework/component/components-communication";
+import {
     IDEUIComponent,
     IViewDataComponent
 } from "../../../components-framework/component/ide-ui-component";
 import { IoTApplication } from "../application/iot-application";
 import { Automation } from "../application/automation";
 import { IoTAutomationList, IWSPEditorIoTAutomationsListViewElement } from "./iot-automations/iot-automation-list";
-import { ViewRegistry } from "../../../components-framework/view/view-registry";
+import { ViewRegistry } from "../../../components-framework/view/view";
+import { EditorManager } from "../../../components-framework/build-in.components/editor-manager/editor-manager";
 
 
 @UIComponentMetadata({
-    name: "IoTWSPEditor",
-    description: "The basic skeleton of the IDE where the other visual components are attached in order to build the whole environment",
-    selector: "#app",
-    templateHTML: IoTWSPEditorTmpl
+    description: "The basic skeletonof the IDE where the other visual components are attached in order to build the whole environment",
+    componentView: "IoTWSPEditorView"
 })
 export class IoTWSPEditor extends IDEUIComponent {
     private app: IoTApplication;
     private automations: IWSPEditorIoTAutomationsListViewElement;
-    // private smartObjectsSelected: Array<string>; // Smart Object ids, in case are not selected array is undefined, and we get them all
-    // private start: ApplicationStart;
-    // private automations: ApplicationAutomations;
-    // private screens: ApplicationScreens;
+    private _selectedAutomationId: string;
+    private editorManager: EditorManager;
 
     constructor(
         name: string,
         description: string,
-        protected _selector: string,
-        templateHTML: string
+        componentView: string
     ) {
-        super(name, description, _selector, templateHTML);
+        super(name, description, componentView);
+        this.editorManager = <EditorManager>ComponentRegistry.getEntry("EditorManager").create();
+        this._selectedAutomationId = "";
+    }
+
+    public get selectedAutomationId(): string {
+        return this._selectedAutomationId;
+    }
+
+    public set selectedAutomationId(id: string) {
+        this._selectedAutomationId = id;
     }
 
     public render(): void {
         super.render();
         this.automations.view.render();
         this.inject(this.automations);
+        this.inject(this.editorManager);
     }
 
     @ExportedFunction
@@ -55,14 +65,14 @@ export class IoTWSPEditor extends IDEUIComponent {
         // data for automations, categories of automations
         this.automations = {
             selector: ".automation-list-view-area",
-            view: <IoTAutomationList>ViewRegistry.getViewEntry("IoTAutomationsWSPEditor").create(this, this.app)
+            view: <IoTAutomationList>ViewRegistry.getEntry("IoTAutomationsWSPEditor").create(this, this.app)
         };
     }
     public onOpen(): void {}
     public destroy(): void {}
     public getView(): IViewDataComponent {
         return {
-            main: this._view.$el
+            main: this.view.$el
         };
     }
     public onClose(): void {}
@@ -78,10 +88,9 @@ export class IoTWSPEditor extends IDEUIComponent {
     /**
      *  Handlers for events are wsp editor template
      */
-    @RequiredFunction("BlocklyVPL", "open", 2)
     private openAutomation(automationId: string, automationType: string): void {
         const automation: Automation = this.app.getAutomation(automationId, automationType);
-        ComponentsCommunication.functionRequest(this.name, "BlocklyVPL", "open", [automation.src, IoTVPL.getToolbox(automation.type)]);
+        this.editorManager.open(automationId, "BlocklyVPL", automation.src, IoTVPL.getToolbox(automation.type));
     }
     
     private createAutomation(): void {
