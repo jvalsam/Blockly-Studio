@@ -49,6 +49,7 @@ export class BlocklyVPL extends Editor {
     this.src = src;
   }
 
+  @RequiredFunction("Shell", "addTools")
   @ExportedFunction
   public render(): void {
     var blocklyArea: any = document.getElementById("editors-area-container");
@@ -80,6 +81,8 @@ export class BlocklyVPL extends Editor {
     window.addEventListener('resize', onresize, false);
     onresize(null);
     Blockly.svgResize(this.editor);
+    ComponentsCommunication.functionRequest(this.name, "Shell", "addTools", [this.view.toolElems]);
+
   }
 
   @ExportedFunction
@@ -101,19 +104,23 @@ export class BlocklyVPL extends Editor {
   }
 
   @ExportedFunction
-  public update(){}
-
-  @ExportedFunction
-  public destroy(){}
-
-  @ExportedFunction
-  public undo() {
+  public update(): void {
 
   }
-  
-  @ExportedFunction
-  public redo() {
 
+  @ExportedFunction
+  public destroy(): void{
+
+  }
+
+  @ExportedFunction
+  public undo(): void {
+    this.editor.undo(false);
+  }
+
+  @ExportedFunction
+  public redo(): void {
+    this.editor.undo(true);
   }
 
   @ExportedFunction

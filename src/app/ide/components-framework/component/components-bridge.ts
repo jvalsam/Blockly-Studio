@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2017-11-18 14:18:26.695425
+ * 2017-11-20 02:17:15.527656
  */
 
 import { ApplicationWSPEditorView } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-editor/application-wsp-editor-view";
@@ -28,6 +28,7 @@ import { MenuView } from "../../../../../src/app/ide/components-framework/common
 import { ToolbarView } from "../../../../../src/app/ide/components-framework/common.components/shell/toolbar/toolbar-view";
 import { Toolbar } from "../../../../../src/app/ide/components-framework/common.components/shell/toolbar/toolbar";
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
+import { BlocklyToolbarView } from "../../../../../src/app/ide/ide-components/blockly/blockly-toolbar-view";
 import { BlocklyView } from "../../../../../src/app/ide/ide-components/blockly/blockly-view";
 import { BlocklyVPL } from "../../../../../src/app/ide/ide-components/blockly/blockly";
 import { ICEView } from "../../../../../src/app/ide/ide-components/ice/ice-view";
@@ -62,6 +63,7 @@ export class ComponentsBridge {
 		ToolbarView.onInit();
 		Toolbar.onInit();
 		IDEUIComponent.onInit();
+		BlocklyToolbarView.onInit();
 		BlocklyView.onInit();
 		BlocklyVPL.onInit();
 		ICEView.onInit();

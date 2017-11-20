@@ -117,6 +117,12 @@ export class Shell extends IDEUIComponent {
   }
 
   @ExportedFunction
+  public addTools(tools): void {
+    this._toolbar.addTools(tools);
+    this.inject(this._toolbar);
+  }
+
+  @ExportedFunction
   public onOpen(): void {
     ;
   }

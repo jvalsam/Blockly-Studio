@@ -1,3 +1,4 @@
+import { ComponentsCommunication } from './../../../component/components-communication';
 /**
  * Toolbar - IDE Toolbar hosts component tools
  *
@@ -6,19 +7,20 @@
  */
 
 import { IDEUIComponent } from "../../../component/ide-ui-component";
-import { UIComponentMetadata } from "../../../component/component-loader";
+import { UIComponentMetadata, RequiredFunction, ExportedFunction } from "../../../component/component-loader";
 import { IViewElements } from "../../../component/component-view";
 import { ToolbarView } from "./toolbar-view";
 
 
 @UIComponentMetadata({
     description: "IDE toolbar hosts tools of the components",
-    componentView: "ToolbarView",
-    menuDef: ""
+    componentView: "ToolbarView"
+    //,menuDef: ""
 })
 export class Toolbar extends IDEUIComponent {
     protected _tools: Array<string> = [];
 
+    @ExportedFunction
     public addTools(tools: IViewElements): void {
         if (Object.keys(tools).length !== 0) {
             (<ToolbarView>this.view).addTools(tools);
@@ -29,12 +31,8 @@ export class Toolbar extends IDEUIComponent {
         (<ToolbarView>this.view).removeTools(tools);
     }
 
-    public render(): void {
-
-    }
-
     public registerEvents(): void {
-
+        this.view.registerEvents();
     }
 
     addTool(tool: string): void {
@@ -50,7 +48,7 @@ export class Toolbar extends IDEUIComponent {
     }
 
     public onClose(): void {
-        ;
+        alert("Close Toolbar not implemented yet!");
     }
 
     public destroy(): void {

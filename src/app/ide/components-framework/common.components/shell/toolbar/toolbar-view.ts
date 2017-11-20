@@ -4,7 +4,8 @@ import {
     ComponentViewMetadata,
     IViewElements,
 } from "../../../component/component-view";
-import { View } from "../../../view/view";
+import { ComponentViewElement } from "../../../component/component-view";
+import { IDEUIComponent } from "../../../component/ide-ui-component";
 
 @ComponentViewMetadata({
     name: "ToolbarView",
@@ -12,21 +13,29 @@ import { View } from "../../../view/view";
     templateHTML: ToolbarTmpl
 })
 export class ToolbarView extends ComponentView {
-    private tools: Array<any>;
+    private tools: IViewElements;
+
+    constructor(
+        parent: IDEUIComponent,
+        name: string,
+        selector: string,
+        templateHTML: string
+    ) {
+        super(parent, name, selector, templateHTML);
+        this.tools = {};
+    }
 
     public addTools(tools: IViewElements): void {
         for (let index of Object.keys(tools)) {
-            let toolElem: View = tools[index];
-            this.inject({ selector: ".tool-container", view: toolElem });
+            this.tools[index] = tools[index];
         }
-        this.templateJQ.find("div.toolbar-view-area").show();
     }
 
     public removeTools(tools: IViewElements): void {
         //TODO: implement
 
 
-        if (this.tools.length === 0) {
+        if (Object.keys(this.tools).length === 0) {
             this.$el.hide();
         }
     }
@@ -40,7 +49,11 @@ export class ToolbarView extends ComponentView {
     }
 
     public render(): void {
-        this.$el.html(this.template());
+        this.$el = $(this.template());
         this.registerEvents();
+        for (let index of Object.keys(this.tools)) {
+            this.tools[index].render();
+            this.$el.find(this.tools[index].selector).append(this.tools[index].$el);
+        }
     }
 }
