@@ -47,6 +47,7 @@ export class IoTAutomationViewBox extends View {
         );
     }
 
+
     public render(): void {
         this.$el = $(
             this.template({

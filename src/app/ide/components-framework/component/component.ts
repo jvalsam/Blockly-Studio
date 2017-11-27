@@ -5,12 +5,11 @@
  * June 2017
  */
 
-import { ComponentFunction, Argument, Type } from './component-function';
-import { ComponentSignal } from './component-signal';
-import { ComponentsCommunication } from './components-communication';
+import { Argument } from "./component-function";
+import { ComponentsCommunication } from "./components-communication";
 import { ExportedFunction, EstablishComponentsCommunicationJS } from "./component-loader";
-import { ResponseValue } from './response-value';
-import { IDEError } from '../../shared/ide-error';
+import { ResponseValue } from "./response-value";
+import { IDEError } from "../../shared/ide-error/ide-error";
 
 
 enum ComponentState {

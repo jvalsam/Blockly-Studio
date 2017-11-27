@@ -6,7 +6,7 @@
  */
 
 import { IDEUIComponent } from "../../components-framework/component/ide-ui-component";
-import { IDEError } from "../../shared/ide-error";
+import { IDEError } from "../../shared/ide-error/ide-error";
 
 export class Entry<T> {
   protected _instanceList: Array<T>;

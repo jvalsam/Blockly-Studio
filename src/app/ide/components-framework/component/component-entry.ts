@@ -5,10 +5,10 @@
  * August 2017
  */
 
-import { Component } from './component';
-import { ComponentSignal } from './component-signal';
+import { Component } from "./component";
+import { ComponentSignal } from "./component-signal";
 import { Entry } from "../../shared/entry/entry";
-import { IDEError } from './../../shared/ide-error';
+import { IDEError } from "../../shared/ide-error/ide-error";
 
 
 export interface ComponentEntryInfo {

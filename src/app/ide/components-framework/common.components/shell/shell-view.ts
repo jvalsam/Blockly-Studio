@@ -1,16 +1,7 @@
 
 /// <reference path="../../../../../../node.d.ts"/>
 import ShellTmpl from "./shell.html";
-import MenuGroupItemsTmpl from "./menu-templates/menu-group-items.html";
-import MenuItemTmpl from "./menu-templates/menu-item.html";
-import {
-    ComponentView,
-    ComponentViewElement,
-    ComponentViewElementMetadata,
-    ComponentViewMetadata,
-} from "../../component/component-view";
-import { IDEUIComponent } from "../../component/ide-ui-component";
-import { View, ViewMetadata, ViewRegistry } from "../../view/view";
+import { ComponentView, ComponentViewMetadata } from "../../component/component-view";
 import * as _ from "lodash";
 
 
@@ -21,11 +12,11 @@ import * as _ from "lodash";
 })
 export class ShellView extends ComponentView {
 
-    public render() {
-        this.$el.html(this.template());
+    public render(): void {
+        this.$el = $(this.template());
     }
 
-    public show() {
+    public show(): void {
         $(this.selector).empty();
         $(this.selector).append(this.$el);
     }

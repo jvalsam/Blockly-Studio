@@ -1,16 +1,13 @@
 
-import { IDEError } from "./../../../shared/ide-error";
+import { IDEError } from "../../../shared/ide-error/ide-error";
 import { Application } from "../../../shared/application";
 import { Automation } from "./automation";
-import * as _ from "lodash";
-
 
 export interface IAutomationsMap {
     [name: string]: Array<Automation>;
 }
 
 export class IoTApplication extends Application {
-
     constructor(
         private _automations: IAutomationsMap = {}
     ) {

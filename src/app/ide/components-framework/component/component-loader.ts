@@ -5,16 +5,17 @@
  * May 2017
  */
 
-import { ComponentRegistry } from './component-entry';
+import { ComponentRegistry } from "./component-entry";
 import {
     SignalsHolder,
     FunctionsHolder,
     RequiredFunctionsHolder
 } from "../holders";
 import { ComponentSignal } from "./component-signal";
-import { IDEError } from "../../shared/ide-error";
+import { IDEError } from "../../shared/ide-error/ide-error";
 import { ComponentFunction } from "./component-function";
 import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-component-registry";
+
 
 /**
  * Load IDE Components in ComponentRegistry using the Component

@@ -10,9 +10,7 @@ import { MenuItemLeafData } from "../menu";
 import { View, ViewMetadata, IViewEventRegistration } from "../../../../view/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { ComponentsCommunication } from "./../../../../component/components-communication";
-import { IDEError } from "./../../../../../shared/ide-error";
-
-import * as _ from "lodash";
+import { IDEError } from "../../../../../shared/ide-error/ide-error";
 
 @ViewMetadata({
     name: "MenuViewItem",
@@ -45,7 +43,7 @@ export class MenuViewItem extends View {
     }
 
     public render (): void {
-        this.$el.html(this.template(this.menuElem));
+        this.$el = $(this.template(this.menuElem));
         this.registerEvents();
     }
 

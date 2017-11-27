@@ -6,7 +6,7 @@
  */
 
 
-import { IDEError } from './ide-error';
+import { IDEError } from "./ide-error/ide-error";
 
 
 export class MapHolder<T> {

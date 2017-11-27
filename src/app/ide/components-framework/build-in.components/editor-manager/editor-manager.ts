@@ -23,11 +23,16 @@ export class EditorManager extends IDEUIComponent {
     ) {
         super(name, description, compViewName);
         this.editorInstancesMap = {};
+        this.editorOnFocusId = "";
     }
 
     @RequiredFunction("Shell", "createComponentEmptyContainer")
     @ExportedFunction
     public open(sourceId: string, editorName: string, src: string, toolbox: string/* subject to change toolbox */): void {
+        if (!this.editorOnFocusId) {
+
+        }
+
         if (!this.editorInstancesMap[sourceId]) {
             this.editorInstancesMap[sourceId] = <Editor>ComponentRegistry.getEntry(editorName).create();
             (<EditorManagerView>this.view).prepareEditorArea();
@@ -38,9 +43,14 @@ export class EditorManager extends IDEUIComponent {
                 [this.editorInstancesMap[sourceId], ".editors-area-container", false]
             ).value;
             (<BlocklyVPL>this.editorInstancesMap[sourceId]).open(src, toolbox);
+
         }
 
-        if (sourceId !== this.editorOnFocusId) {
+        if (Object.keys(this.editorInstancesMap).length === 1) {
+            this.editorOnFocusId = sourceId;
+            (<EditorManagerView>this.view).render();
+        }
+        else if (sourceId !== this.editorOnFocusId) {
             this.editorOnFocusId = sourceId;
             (<EditorManagerView>this.view).changeFocus(this.editorInstancesMap[sourceId]);
         }
@@ -48,6 +58,10 @@ export class EditorManager extends IDEUIComponent {
 
     public getOnFocusEditor(): Editor {
         return this.editorInstancesMap[this.editorOnFocusId];
+    }
+
+    public OnFocusEditorId(): string {
+        return this.editorInstancesMap[this.editorOnFocusId].id;
     }
 
     public destroy(): void {

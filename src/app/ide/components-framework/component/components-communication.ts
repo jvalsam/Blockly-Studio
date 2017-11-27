@@ -13,8 +13,6 @@ import { Shell } from "../common.components/shell/shell";
 import { ComponentEntry } from "./component-entry";
 import { SignalListenerData } from "./component-signal";
 import { ResponseValue } from "./response-value";
-import * as $ from 'jquery';
-import * as _ from 'lodash';
 import {
     SignalsHolder,
     FunctionsHolder,
@@ -22,8 +20,8 @@ import {
     RequiredFunctionsHolder
 } from "../holders";
 import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-component-registry";
-import { IDEError } from "../../shared/ide-error";
-import { FuncsMap, FuncsCompsMap } from './../holders';
+import { IDEError } from "../../shared/ide-error/ide-error";
+import { FuncsCompsMap } from "./../holders";
 
 
 

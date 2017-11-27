@@ -7,7 +7,8 @@
 
 import { IDEUIComponent } from "../component/ide-ui-component";
 import { ComponentViewElement } from "./component-view";
-import { IDEError } from "../../shared/ide-error";
+import { IDEError } from "../../shared/ide-error/ide-error";
+
 
 export class ComponentViewEntry {
     private _instanceList: Array<ComponentViewElement>;
@@ -24,7 +25,7 @@ export class ComponentViewEntry {
         return this._instanceList;
     }
 
-    public setArgs(args: Array<any>) {
+    public setArgs(args: Array<any>): void {
         this._args = args;
     }
 

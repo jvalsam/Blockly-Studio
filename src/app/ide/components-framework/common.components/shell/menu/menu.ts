@@ -1,17 +1,18 @@
-import { IViewElements } from './../../../component/component-view';
 /**
  * Menu - Menu of the platform
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
  * November 2017
  */
-import { IDEError } from '../../../../shared/ide-error';
 
+import { IDEError } from "../../../../shared/ide-error/ide-error";
+import { IViewElements } from "./../../../component/component-view";
 import { IDEUIComponent, IViewDataComponent } from "../../../component/ide-ui-component";
 import { UIComponentMetadata, ExportedFunction } from "../../../component/component-loader";
 import { ComponentRegistry } from "../../../component/component-entry";
 
 var basicMenuJson = require("./basic_menu.json");
+
 
 interface MenuItemGeneralData {
     compName: string;

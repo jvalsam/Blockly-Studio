@@ -5,13 +5,11 @@
  * July 2017
  */
 
-import { ComponentFunction } from '../../components-framework/component/component-function';
-import { ComponentsCommunication } from "../../components-framework/component/components-communication";
+import { ComponentFunction } from "../../components-framework/component/component-function";
 import { ComponentRegistry } from "../../components-framework/component/component-entry";
-import { MapHolder } from '../map-holder';
-import { Queue } from '../../../shared/collections/Queue';
-import { ResponseValue } from './../../components-framework/component/response-value';
-import { IDEError } from '../ide-error';
+import { Queue } from "../../../shared/collections/Queue";
+import { ResponseValue } from "../../components-framework/component/response-value";
+import { IDEError } from "../ide-error/ide-error";
 
 
 export type BlackboardId = string;
@@ -64,7 +62,7 @@ class EventContainer {
   get eventHandlerList(): Array<EventHandlerContainer> { return this._eventHandlerList; }
 
   public addEventHandler(eventHandler: EventHandler, oneTime: boolean): EventHandlerUniqueId {
-    const ehc = new EventHandlerContainer(eventHandler, oneTime);
+    const ehc: EventHandlerContainer = new EventHandlerContainer(eventHandler, oneTime);
     this._eventHandlerList.push(ehc);
     return ehc.eventHandlerId;
   }
@@ -78,10 +76,10 @@ class EventContainer {
     return null;
   }
 
-  public removeEventHandler(eventHandlerUniqueId: EventHandlerUniqueId) {
-    let elem = this.getEventHandlerContainer(eventHandlerUniqueId);
+  public removeEventHandler(eventHandlerUniqueId: EventHandlerUniqueId): void {
+    let elem: EventHandlerContainer = this.getEventHandlerContainer(eventHandlerUniqueId);
     if (elem) {
-      const index = this._eventHandlerList.indexOf(elem, 0);
+      const index: number = this._eventHandlerList.indexOf(elem, 0);
       if (index > -1) {
         this._eventHandlerList.splice(index, 1);
       }
@@ -114,37 +112,37 @@ export class BlackboardComponent {
     this._queuedEvents = new Queue<QueuedEvent>();
   }
 
-  private assertExists(exist: boolean, element: string, elementsName: string, type: string) {
-    const checkExists = element in this[elementsName];
+  private assertExists(exist: boolean, element: string, elementsName: string, type: string): void {
+    const checkExists: boolean = element in this[elementsName];
     if (exist ? !checkExists : checkExists) {
       IDEError.raise(
         BlackboardComponent.name,
-        'Try to add ' + type + ' ' + element +
-        (exist ? 'that is not defined' : ' that already exists!')
+        "Try to add " + type + " " + element +
+        (exist ? "that is not defined" : " that already exists!")
       );
     }
   }
 
-  public addEvent(eventId: Event) {
-    this.assertExists(false, eventId, '_events', 'event');
+  public addEvent(eventId: Event): void {
+    this.assertExists(false, eventId, "_events", "event");
 
     this._events[eventId] = new EventContainer();
   }
 
   public addEventHandler(eventId: Event, evtHandler: EventHandler, callOnce = false): EventHandlerUniqueId {
-    this.assertExists(true, eventId, '_events', 'event handler in')
+    this.assertExists(true, eventId, "_events", "event handler in");
 
     return this._events[eventId].addEventHandler(evtHandler, callOnce);
   }
 
-  public addFunction(funcName: string, argsLen: number=-1) {
-    this.assertExists(false, funcName, '_functions', 'function');
+  public addFunction(funcName: string, argsLen: number=-1): void {
+    this.assertExists(false, funcName, "_functions", "function");
 
     this._functions[funcName] = new ComponentFunction(this._componentName, funcName, argsLen);
   }
 
-  public removeFunction(funcName: string) {
-    this.assertExists(true, funcName, '_functions', 'function');
+  public removeFunction(funcName: string): void {
+    this.assertExists(true, funcName, "_functions", "function");
 
     delete this._functions[funcName];
   }
@@ -153,25 +151,25 @@ export class BlackboardComponent {
     this._events[eventId].removeEventHandler(eventHandlerUniqueId);
   }
 
-  public clearEventHandlers(eventId: Event) {
+  public clearEventHandlers(eventId: Event): void {
     this._events[eventId].clearEventHandlers();
   }
 
-  private processEvent(eventId: Event, eventContent: Object) {
+  private processEvent(eventId: Event, eventContent: Object): void {
     for (const ehc of this._events[eventId].eventHandlerList) {
-      const data = ehc.eventHandler;
+      const data: EventHandler = ehc.eventHandler;
       const compEntry = ComponentRegistry.getEntry(data.compSource);
 
       if (!compEntry) {
         IDEError.raise(
           BlackboardComponent.name,
-          'Not found component with name ' + data.compSource,
-          'Signal ' + eventId + ' posted and the aforementioned component is esteblish that listens it.'
+          "Not found component with name " + data.compSource,
+          "Signal " + eventId + " posted and the aforementioned component is esteblish that listens it."
         );
       }
       const components = compEntry.getInstances();
       for (const component of components) {
-        component.receiveFunctionRequest(data.funcName, eventContent['data']);
+        component.receiveFunctionRequest(data.funcName, eventContent["data"]);
       }
     }
   }
@@ -185,15 +183,15 @@ export class BlackboardComponent {
     if (!func) {
       IDEError.raise(
           BlackboardComponent.name,
-          'CallFunction: Not found function ' + funcName + ' in component ' + this._componentName + '.'
+          "CallFunction: Not found function " + funcName + " in component " + this._componentName + "."
       );
     }
 
     if (func.argsLen !== args.length) {
       IDEError.raise(
           BlackboardComponent.name,
-          'CallFunction: function ' + funcName + ' of component ' + this._componentName + ' requires ' + func.argsLen +
-          ' while it is called by ' + source + ' using ' + args.length + '.'
+          "CallFunction: function " + funcName + " of component " + this._componentName + " requires " + func.argsLen +
+          " while it is called by " + source + " using " + args.length + "."
       );
     }
 
@@ -201,8 +199,8 @@ export class BlackboardComponent {
     if (!components || components.length === 0) {
       IDEError.raise(
         BlackboardComponent.name,
-        'CallFunction: Requested function ' + funcName + ' of component ' + this._componentName +
-        '. There is no instance of this component.'
+        "CallFunction: Requested function " + funcName + " of component " + this._componentName +
+        ". There is no instance of this component."
       );
     }
 
@@ -226,14 +224,14 @@ export class BlackboardComponent {
     }
   }
 
-  public processQueuedEvents(){
+  public processQueuedEvents(): void {
     // TODO: if we will need it
   }
   public postQueuedEvent(eventId: Event, eventContent: Object): void {
     // TODO: if we will need it
   }
 
-  public stopInvocationLoop() {
+  public stopInvocationLoop(): void {
     // TODO: if we will need it
   }
 

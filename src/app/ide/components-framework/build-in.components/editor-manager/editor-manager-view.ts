@@ -11,19 +11,22 @@ import { Editor } from "./editor";
 export class EditorManagerView extends ComponentView {
     private editorOnFocus: Editor;
 
-    public changeFocus(editor: Editor) {
+    public changeFocus(editor: Editor): void {
         if (this.editorOnFocus) {
             this.editorOnFocus.view.detachAllEvents();
         }
-        
         this.editorOnFocus = editor;
         this.render();
+    }
+
+    private clearEditorAreaContainer(): void {
+        $(".editors-area-container").css("margin-top", "0px");
     }
 
     public render(): void {
         super.render();
         if (this.editorOnFocus) {
-            $(".editors-area-container").css("margin-top", "0px");
+            this.clearEditorAreaContainer();
             this.editorOnFocus.render();
             if (this.editorOnFocus.name !== "BlocklyVPL") {
                 this.$el.find(this.editorOnFocus.view.selector).empty();

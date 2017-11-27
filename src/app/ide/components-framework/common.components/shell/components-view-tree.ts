@@ -1,4 +1,4 @@
-import { IDEError } from '../../../shared/ide-error';
+import { IDEError } from "../../../shared/ide-error/ide-error";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 
 

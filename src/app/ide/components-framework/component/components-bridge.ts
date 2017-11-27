@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2017-11-20 02:17:15.527656
+ * 2017-11-27 10:31:26.966416
  */
 
 import { ApplicationWSPEditorView } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-editor/application-wsp-editor-view";
@@ -37,6 +37,8 @@ import { IoTWSPEditorView } from "../../../../../src/app/ide/ide-components/iot/
 import { IoTWSPEditor } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-wsp-editor";
 import { IoTAutomationList } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-list";
 import { IoTAutomationViewBox } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-view-box/iot-automation-view-box";
+import { IDEErrorView } from "../../../../../src/app/ide/shared/ide-error/ide-error-view";
+import { IDEWarningView } from "../../../../../src/app/ide/shared/ide-error/ide-warning-view";
 
 
 export class ComponentsBridge {
@@ -72,6 +74,8 @@ export class ComponentsBridge {
 		IoTWSPEditor.onInit();
 		IoTAutomationList.onInit();
 		IoTAutomationViewBox.onInit();
+		IDEErrorView.onInit();
+		IDEWarningView.onInit();
 	}
 
 }

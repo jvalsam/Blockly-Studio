@@ -1,4 +1,5 @@
-﻿/**
+﻿import { ResponseValue } from './../../components-framework/component/response-value';
+/**
  * BlocklyVPL - VPL uses jigsaws
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
@@ -43,10 +44,13 @@ export class BlocklyVPL extends Editor {
   public onOpen(): void {}
 
   @ExportedFunction
-  public open(src: string, toolbox?: string): void {
+  public open(src: string, toolbox?: string, isFirstInst:boolean =false): void {
     this.changed = false;
     this.toolbox = (toolbox === undefined) ? /*require("./toolbox.xml")*/document.getElementById("toolbox") : toolbox;
     this.src = src;
+    if (isFirstInst) {
+      ComponentsCommunication.functionRequest(this.name, "Shell", "addTools", [this.view.toolElems]);
+    }
   }
 
   @RequiredFunction("Shell", "addTools")
@@ -73,16 +77,14 @@ export class BlocklyVPL extends Editor {
       //   element = element.offsetParent;
       // } while (element);
       // // Position blocklyDiv over blocklyArea.
-      blocklyDiv.style.left = -12 + 'px';
-      blocklyDiv.style.top = 3 + 'px';
-      blocklyDiv.style.width = (blocklyArea.offsetWidth+24) + 'px';
-      blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+      blocklyDiv.style.left = -12 + "px";
+      blocklyDiv.style.top = 3 + "px";
+      blocklyDiv.style.width = (blocklyArea.offsetWidth+24) + "px";
+      blocklyDiv.style.height = blocklyArea.offsetHeight + "px";
     };
-    window.addEventListener('resize', onresize, false);
+    window.addEventListener("resize", onresize, false);
     onresize(null);
     Blockly.svgResize(this.editor);
-    ComponentsCommunication.functionRequest(this.name, "Shell", "addTools", [this.view.toolElems]);
-
   }
 
   @ExportedFunction
@@ -133,6 +135,11 @@ export class BlocklyVPL extends Editor {
 
   }
   
+  @RequiredFunction("EditorManager", "OnFocusEditorId")
+  public requestOnFocusEditorId(): string {
+    let resp: ResponseValue = ComponentsCommunication.functionRequest(this.name, "EditorManager", "OnFocusEditorId");
+    return <string>resp.value;
+  }
 
   /////////////////////////////////////////////////
   //// Establish Component Communication

@@ -2,6 +2,7 @@ import { ComponentsCommunication } from './../../components-framework/component/
 import BlocklyToolbarTmpl from "./blockly-toolbar.html";
 import { ComponentViewElementMetadata } from './../../components-framework/component/component-view';
 import { ComponentViewElement } from "../../components-framework/component/component-view";
+import { BlocklyVPL } from "./blockly";
 
 @ComponentViewElementMetadata({
     name: "BlocklyToolbarView",
@@ -19,14 +20,20 @@ export class BlocklyToolbarView extends ComponentViewElement {
             {
                 eventType: "click",
                 selector: ".ts-blockly-undo-toolbar-btn",
-                // TODO: fix it for id multiple instances
-                handler: () => ComponentsCommunication.functionRequest("Toolbar", this.parent.name, "undo")
+                handler: () => ComponentsCommunication.functionRequest(
+                    "Toolbar",
+                    this.parent.name, "undo", [],
+                    (<BlocklyVPL>this.parent).requestOnFocusEditorId()
+                )
             },
             {
                 eventType: "click",
                 selector: ".ts-blockly-redo-toolbar-btn",
-                // TODO: fix it for id multiple instances
-                handler: () => ComponentsCommunication.functionRequest("Toolbar", this.parent.name, "redo")
+                handler: () => ComponentsCommunication.functionRequest(
+                    "Toolbar",
+                    this.parent.name, "redo", [],
+                    (<BlocklyVPL>this.parent).requestOnFocusEditorId()
+                )
             }
         );
     }

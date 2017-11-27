@@ -12,7 +12,7 @@ import {
     IViewEventRegistration,
     IViewElement
 } from "../view/view";
-import { IDEError } from "../../shared/ide-error";
+import { IDEError } from "../../shared/ide-error/ide-error";
 import { Registry } from "../../shared/entry/registry";
 import * as _ from "lodash";
 
@@ -114,6 +114,7 @@ export class ComponentView extends ComponentViewElement {
         _.forEach(this.toolsViewElems, (toolViewElement) => {
             toolViewElement.render();
         });
+        super.render();
     }
 
     protected inject (selector: string, templateHTML: JQuery): void;

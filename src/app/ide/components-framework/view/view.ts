@@ -5,12 +5,11 @@
  * September 2017
  */
 
-import * as $ from 'jquery';
-import * as _ from 'lodash';
+import * as $ from "jquery";
+import * as _ from "lodash";
 import { IDEUIComponent } from "../component/ide-ui-component";
-import { IDEError } from "../../shared/ide-error";
+import { IDEError } from "../../shared/ide-error/ide-error";
 import { Registry } from "../../shared/entry/registry";
-import { Entry } from "../../shared/entry/entry";
 
 
 export interface IViewEvent {
@@ -37,6 +36,8 @@ export interface IViewElement {
 }
 
 export abstract class View {
+    private static numOfViews: number = 0;
+    public readonly id;
     public $el: JQuery;
     protected template: Function;
     private _nextEventID: number;
@@ -51,10 +52,18 @@ export abstract class View {
         this._nextEventID = 0;
         this.template = _.template(this._templateHTML);
         this.$el = $( $.parseHTML(this._templateHTML) );
+        this.id = this.name + (View.numOfViews++);
     }
 
-    public abstract render();
-    public abstract registerEvents();
+    public render(): void {
+        let selector: string = "#" + this.id;
+        if ($(selector).length) {
+            $(selector).empty();
+            $(selector).append(this.$el);
+        }
+    }
+    
+    public abstract registerEvents(): void;
 
     /**
      * Empty static function used and called by all ViewElements OnInit of the IDE
@@ -85,6 +94,10 @@ export abstract class View {
 
     get templateJQ(): JQuery {
         return this.$el;
+    }
+
+    public element(selector: string): JQuery {
+        return this.$el.find(selector);
     }
 
     public attachEvents(...eventRegs: Array<IViewEventRegistration>) {
