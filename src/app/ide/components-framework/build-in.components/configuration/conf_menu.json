@@ -1,0 +1,24 @@
+{
+    "ComponentName": "Configuration",
+    "MenuElements": [
+        {
+            "path": "/Home|",
+            "data": {
+                "title": "Configure",
+                "help": "Configuration of all Components of the Platform"
+            }
+        },
+        {
+            "path": "/Home/Configure/",
+            "data": {
+                "title": "Configuration",
+                "help": "Configuration of all Components of the Platform",
+                "events": [
+                    {
+                        "click": "onClickHomePage"
+                    }
+                ]
+            }
+        }
+    ]
+}

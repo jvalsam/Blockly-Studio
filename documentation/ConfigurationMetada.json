@@ -1,0 +1,14 @@
+{
+    "ComponentName": "Name of the component define these elements",
+    "Properties": [
+        {
+            "name": "property name",
+            "description": "description help of the property (optional)",
+            "value": {
+                "type": "Boolean | Text | Number | Date | Colour | Font| Image | Aggregate(i.e. pair<name, value{type,default}>)",
+                "default": "depends of value"
+            }
+        }
+        //, one or more
+    ]
+}
