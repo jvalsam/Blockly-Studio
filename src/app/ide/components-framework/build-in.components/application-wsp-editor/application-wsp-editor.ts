@@ -13,6 +13,13 @@ import { ApplicationScreens } from "./application-screens/application-screens";
 
 @UIComponentMetadata({
     description: "The basic skeleton of the IDE where the other visual components are attached in order to build the whole environment",
+    authors: [
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "Octomber 2017"
+        }
+    ],
     componentView: "ApplicationWSPEditorView"
 })
 export class ApplicationWSPEditor extends IDEUIComponent {

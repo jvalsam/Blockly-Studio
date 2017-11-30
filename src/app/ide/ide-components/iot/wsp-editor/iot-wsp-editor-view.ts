@@ -22,6 +22,7 @@ export class IoTWSPEditorView extends ComponentView {
     public registerEvents (): void {
     }
 
-    public render (): void {
-    }
+    // public render (): void {
+    //     super.render();
+    // }
 }

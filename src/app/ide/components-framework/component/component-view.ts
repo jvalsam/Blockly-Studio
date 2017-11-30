@@ -1,17 +1,10 @@
-/**
- * ComponentView - IDEUIComponent has instance of ComponentView which is responsible for the look and feel of the component
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * November 2017
- */
-
 import { IDEUIComponent } from "./ide-ui-component";
 import {
     View,
     IViewElementData,
     IViewEventRegistration,
     IViewElement
-} from "../view/view";
+} from "./view";
 import { IDEError } from "../../shared/ide-error/ide-error";
 import { Registry } from "../../shared/entry/registry";
 import * as _ from "lodash";
@@ -101,7 +94,7 @@ export class ComponentView extends ComponentViewElement {
     }
 
     public render(): void {
-        this.$el = $(this.template(this.renderData));
+        this.renderTmplEl(this.renderData);
         this.registerEvents();
         _.forEach(this.mainViewElems, (mainViewElement: ComponentViewElement) => {
             mainViewElement.render();
@@ -114,7 +107,6 @@ export class ComponentView extends ComponentViewElement {
         _.forEach(this.toolsViewElems, (toolViewElement) => {
             toolViewElement.render();
         });
-        super.render();
     }
 
     protected inject (selector: string, templateHTML: JQuery): void;
@@ -137,8 +129,8 @@ export class ComponentView extends ComponentViewElement {
             selector = selector.selector;
         }
 
-        this.templateJQ.find("div" + selector).empty();
-        this.templateJQ.find("div" + selector).append(content);
+        this.$el.find("div" + selector).empty();
+        this.$el.find("div" + selector).append(content);
     }
 }
 

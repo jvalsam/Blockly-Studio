@@ -1,6 +1,10 @@
-import { ComponentsCommunication } from './../../component/components-communication';
-import { BlocklyVPL } from './../../../ide-components/blockly/blockly';
-import { ExportedFunction, UIComponentMetadata, RequiredFunction } from "../../component/component-loader";
+import { ComponentsCommunication } from "./../../component/components-communication";
+import { BlocklyVPL } from "./../../../ide-components/blockly/blockly";
+import {
+    ExportedFunction,
+    UIComponentMetadata,
+    RequiredFunction
+} from "../../component/component-loader";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import { Editor } from "./editor";
 import { ComponentRegistry } from "../../component/component-entry";
@@ -8,6 +12,13 @@ import { EditorManagerView } from "./editor-manager-view";
 
 @UIComponentMetadata({
     description: "Handles requests to open editor instances for sources",
+    authors: [
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "November 2017"
+        }
+    ],
     componentView: "EditorManagerView"
 })
 export class EditorManager extends IDEUIComponent {
@@ -29,8 +40,7 @@ export class EditorManager extends IDEUIComponent {
     @RequiredFunction("Shell", "createComponentEmptyContainer")
     @ExportedFunction
     public open(sourceId: string, editorName: string, src: string, toolbox: string/* subject to change toolbox */): void {
-        if (!this.editorOnFocusId) {
-
+        if (Object.keys(this.editorInstancesMap).length === 0) {
         }
 
         if (!this.editorInstancesMap[sourceId]) {
@@ -42,24 +52,26 @@ export class EditorManager extends IDEUIComponent {
                 "createComponentEmptyContainer",
                 [this.editorInstancesMap[sourceId], ".editors-area-container", false]
             ).value;
-            (<BlocklyVPL>this.editorInstancesMap[sourceId]).open(src, toolbox);
-
+            (<BlocklyVPL>this.editorInstancesMap[sourceId]).open(
+                src,
+                toolbox,
+                this.totalEditorsOpen() === 1
+            );
         }
 
-        if (Object.keys(this.editorInstancesMap).length === 1) {
-            this.editorOnFocusId = sourceId;
-            (<EditorManagerView>this.view).render();
-        }
-        else if (sourceId !== this.editorOnFocusId) {
-            this.editorOnFocusId = sourceId;
-            (<EditorManagerView>this.view).changeFocus(this.editorInstancesMap[sourceId]);
-        }
+        this.editorOnFocusId = sourceId;
+        (<EditorManagerView>this.view).update(this.editorInstancesMap[sourceId]);
+    }
+
+    public totalEditorsOpen(): number {
+        return Object.keys(this.editorInstancesMap).length;
     }
 
     public getOnFocusEditor(): Editor {
         return this.editorInstancesMap[this.editorOnFocusId];
     }
 
+    @ExportedFunction
     public OnFocusEditorId(): string {
         return this.editorInstancesMap[this.editorOnFocusId].id;
     }

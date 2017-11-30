@@ -3,7 +3,7 @@
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import SmartObjectViewBoxTmpl from "./smart-object-view-box.html";
 import SmartObjectMenuTmpl from "./smart-object-menu.html";
-import { View, ViewMetadata } from "../../../../../view/view";
+import { View, ViewMetadata } from "../../../../../component/view";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { SmartObjectModel } from "../../../../../../shared/models/smart-object.model";
 
@@ -42,14 +42,12 @@ export class SmartObjectViewBox extends View {
     }
 
     public render(): void {
-        this.$el = $(
-            this.template({
-                name: this.smartObject.name,
-                description: this.smartObject.description,
-                imagePath: this.smartObject.imagePath,
-                lastAction: this.smartObject.lastAction.toLocaleString()
-            })
-        );
+        this.renderTmplEl({
+            name: this.smartObject.name,
+            description: this.smartObject.description,
+            imagePath: this.smartObject.imagePath,
+            lastAction: this.smartObject.lastAction.toLocaleString()
+        });
         this.registerEvents();
     }
 

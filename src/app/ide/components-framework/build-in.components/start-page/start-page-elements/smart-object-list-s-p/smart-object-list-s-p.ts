@@ -1,15 +1,7 @@
-/**
- * ApplicationListStartPage - Quick view of applications
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * August 2017
- */
-
 /// <reference path="../../../../../../../../node.d.ts"/>
 import SmartObjectListTmpl from "./smart-object-list-s-p.html";
 import { ComponentViewElementMetadata } from "../../../../component/component-view";
-import { ComponentViewRegistry } from "../../../../component/component-view-registry";
-import { ViewRegistry } from "../../../../view/view";
+import { ViewRegistry } from "../../../../component/registry";
 import { SmartObjectViewBox } from "./smart-object-view-box/smart-object-view-box";
 import { SmartObjectModel, SOProperties } from "../../../../../shared/models/smart-object.model";
 import { StartPageElementListSP } from "../start-page-element-list";
@@ -23,9 +15,7 @@ import * as _ from "lodash";
 export class SmartObjectListSP extends StartPageElementListSP<SmartObjectModel> {
     public render(): void {
         this.requestElementsData();
-        this.$el = $(this.template({
-            totalSmartObjects: this._elements.length
-        }));
+        this.renderTmplEl({ totalSmartObjects: this._elements.length });
         this.registerEvents();
         _.forEach(this._elements, (smartObject) => {
             const soViewBox: SmartObjectViewBox = <SmartObjectViewBox>ViewRegistry.getEntry("SmartObjectViewBox").create(this.parent, smartObject);

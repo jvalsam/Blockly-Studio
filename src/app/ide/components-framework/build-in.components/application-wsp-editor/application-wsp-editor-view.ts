@@ -3,8 +3,6 @@
 import ApplicationWSPEditorTmpl from "./application-wsp-editor.html";
 import {
     ComponentView,
-    ComponentViewElement,
-    ComponentViewElementMetadata,
     ComponentViewMetadata,
 } from "../../../components-framework/component/component-view";
 

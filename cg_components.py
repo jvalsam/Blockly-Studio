@@ -36,7 +36,8 @@ def FindComponentNames(compPath):
                 data = [words[i-1], filePath]
                 print (data[0] + " is registered.")
                 ComponentNameList.append(data[0])
-                file.write("import { " + data[0] + " } from \"../../../../." + root.replace('\\','/') + "/" + data[1][:-3] + "\";\n")
+                if data[0] != "IDEErrorView" and data[0] != "IDEWarningView":
+                    file.write("import { " + data[0] + " } from \"../../../../." + root.replace('\\','/') + "/" + data[1][:-3] + "\";\n")
                 break
         f.close()
 
@@ -81,6 +82,8 @@ file.write(" */\n\n")
 # find path folders of component to import them in IDE
 
 ComponentNameList = []
+
+file.write("import { IDEErrorView } from \"../../../../../src/app/ide/shared/ide-error/ide-error-view\";\nimport { IDEWarningView } from \"../../../../../src/app/ide/shared/ide-error/ide-warning-view\";\n\n");
 
 for root, dirs, files in os.walk('./src/'):
     if "media" in root:

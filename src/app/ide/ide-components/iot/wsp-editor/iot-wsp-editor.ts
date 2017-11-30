@@ -1,31 +1,23 @@
-import { ComponentRegistry } from './../../../components-framework/component/component-entry';
-/**
- * IoT Application Editor
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * Octomber 2017
- */
-
-import {
-    UIComponentMetadata,
-    ExportedFunction,
-    RequiredFunction
-} from "./../../../components-framework/component/component-loader";
+import { UIComponentMetadata, ExportedFunction } from "./../../../components-framework/component/component-loader";
 import { IoTVPL } from "./../application/iot-vpl";
-import { ComponentsCommunication } from "./../../../components-framework/component/components-communication";
-import {
-    IDEUIComponent,
-    IViewDataComponent
-} from "../../../components-framework/component/ide-ui-component";
+import { IDEUIComponent, IViewDataComponent } from "../../../components-framework/component/ide-ui-component";
 import { IoTApplication } from "../application/iot-application";
 import { Automation } from "../application/automation";
 import { IoTAutomationList, IWSPEditorIoTAutomationsListViewElement } from "./iot-automations/iot-automation-list";
-import { ViewRegistry } from "../../../components-framework/view/view";
+import { ViewRegistry } from "../../../components-framework/component/registry";
 import { EditorManager } from "../../../components-framework/build-in.components/editor-manager/editor-manager";
+import { ComponentRegistry } from "./../../../components-framework/component/component-entry";
 
 
 @UIComponentMetadata({
     description: "The basic skeletonof the IDE where the other visual components are attached in order to build the whole environment",
+    authors: [
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "Octomber 2017"
+        }
+    ],
     componentView: "IoTWSPEditorView"
 })
 export class IoTWSPEditor extends IDEUIComponent {
@@ -54,7 +46,6 @@ export class IoTWSPEditor extends IDEUIComponent {
 
     public render(): void {
         super.render();
-        this.automations.view.render();
         this.inject(this.automations);
         this.inject(this.editorManager);
     }

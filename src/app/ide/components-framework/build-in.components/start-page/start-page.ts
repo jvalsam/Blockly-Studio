@@ -1,11 +1,3 @@
-/**
- * StartPageComponent - Start Page Component
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * August 2017
- */
-
-
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import {
     ExportedFunction,
@@ -17,6 +9,13 @@ import { ComponentsCommunication } from "../../component/components-communicatio
 
 @UIComponentMetadata({
     description: "Start page of the IDE",
+    authors: [
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "August 2017"
+        }
+    ],
     componentView: "StartPageView",
     version: "1.0"
 })

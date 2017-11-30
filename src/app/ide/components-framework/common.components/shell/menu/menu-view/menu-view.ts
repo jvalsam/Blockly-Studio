@@ -1,29 +1,7 @@
-/**
- * MenuView - Menu View Component of the platform
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * November 2017
- */
-
 import MenuTmpl from "./templates/menu.html";
 import { renderMenuElem } from "./menu-view-group-item";
-import {
-    MenuItemLeafData,
-    MenuItemData,
-    MenuItem,
-    MenuElem,
-    MenuItemLeaf,
-    isMenuItemLeaf
-} from "../menu";
-import { View, ViewMetadata, ViewRegistry } from "../../../../view/view";
-import {
-    ComponentView,
-    ComponentViewElement,
-    ComponentViewElementMetadata,
-    ComponentViewMetadata,
-} from "../../../../component/component-view";
-import { IDEUIComponent } from "../../../../component/ide-ui-component";
-
+import { MenuElem } from "../menu";
+import { ComponentView, ComponentViewMetadata } from "../../../../component/component-view";
 import * as _ from "lodash";
 
 
@@ -46,7 +24,7 @@ export class MenuView extends ComponentView {
     }
 
     public render (): void {
-        this.$el = $(this.template());
+        this.renderTmplEl();
         this.registerEvents();
         for (let index of Object.keys(this.renderData)) {
             let view = renderMenuElem(this.parent, <MenuElem>this.renderData[index]);

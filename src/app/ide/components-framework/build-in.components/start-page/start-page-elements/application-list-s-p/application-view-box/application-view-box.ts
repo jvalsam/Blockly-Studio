@@ -3,7 +3,7 @@
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import ApplicationViewBoxTmpl from "./application-view-box.html";
 import ApplicationMenuTmpl from "./application-menu.html";
-import { View, ViewMetadata } from "../../../../../view/view";
+import { View, ViewMetadata } from "../../../../../component/view";
 import { ApplicationModel } from "../../../../../../shared/models/application.model";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 
@@ -42,14 +42,12 @@ export class ApplicationViewBox extends View {
     }
 
     public render(): void {
-        this.$el = $(
-            this.template({
-                name: this.application.name,
-                description: this.application.description,
-                imagePath: this.application.imagePath,
-                lastUpdated: this.application.lastUpdated.toLocaleString()
-            })
-        );
+        this.renderTmplEl({
+            name: this.application.name,
+            description: this.application.description,
+            imagePath: this.application.imagePath,
+            lastUpdated: this.application.lastUpdated.toLocaleString()
+        });
         this.registerEvents();
     }
 

@@ -1,10 +1,3 @@
-/**
- * MenuGroupViewItem
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * November 2017
- */
-
 import MenuGroupItemsTmpl from "./templates/menu-group-items.html";
 import { MenuViewItem } from "./menu-view-item";
 import {
@@ -12,16 +5,10 @@ import {
     MenuItemData,
     MenuItem,
     MenuElem,
-    MenuItemLeaf,
     isMenuItemLeaf
 } from "../menu";
-import { View, ViewMetadata, ViewRegistry } from "../../../../view/view";
-import {
-    ComponentView,
-    ComponentViewElement,
-    ComponentViewElementMetadata,
-    ComponentViewMetadata,
-} from "../../../../component/component-view";
+import { View, ViewMetadata } from "../../../../component/view";
+import { ViewRegistry } from "../../../../component/registry";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 
 import * as _ from "lodash";
@@ -55,7 +42,7 @@ export class MenuGroupViewItem extends View {
     }
 
     public render (): void {
-        this.$el.html(this.template(this.menuItem.data));
+        this.renderTmplEl(this.menuItem.data);
         this.registerEvents();
         _.forEach(this.menuItem.data.children, (menuElem: MenuElem) => {
             let view = renderMenuElem(this.parent, menuElem);

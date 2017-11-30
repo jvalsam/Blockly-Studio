@@ -1,5 +1,5 @@
 import WarningViewTmpl from "./ide-warning.html";
-import { View, ViewMetadata } from "../../components-framework/view/view";
+import { View, ViewMetadata } from "../../components-framework/component/view";
 
 
 @ViewMetadata({
@@ -12,13 +12,14 @@ export class IDEWarningView extends View {
     public alert(msg: string): void {
         this.warningMsg = msg;
         this.render();
-        // TODO: alert...
+        // TODO: UI alert...
+        alert(msg);
     }
 
     registerEvents(): void {}
 
     render(): void {
-        this.$el = $(this.template({ warningMsg: this.warningMsg }));
+        this.renderTmplEl({ warningMsg: this.warningMsg });
         this.registerEvents();
     }
 }

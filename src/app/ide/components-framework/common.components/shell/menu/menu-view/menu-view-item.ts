@@ -1,13 +1,6 @@
-/**
- * MenuView - Menu View Component of the platform
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * November 2017
- */
-
 import MenuItemTmpl from "./templates/menu-item.html";
 import { MenuItemLeafData } from "../menu";
-import { View, ViewMetadata, IViewEventRegistration } from "../../../../view/view";
+import { View, ViewMetadata, IViewEventRegistration } from "../../../../component/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { ComponentsCommunication } from "./../../../../component/components-communication";
 import { IDEError } from "../../../../../shared/ide-error/ide-error";
@@ -43,7 +36,7 @@ export class MenuViewItem extends View {
     }
 
     public render (): void {
-        this.$el = $(this.template(this.menuElem));
+        this.renderTmplEl(this.menuElem);
         this.registerEvents();
     }
 

@@ -7,7 +7,7 @@
 
 import { ComponentFunction } from "../../components-framework/component/component-function";
 import { ComponentRegistry } from "../../components-framework/component/component-entry";
-import { Queue } from "../../../shared/collections/Queue";
+import { Queue } from "../collections/Queue";
 import { ResponseValue } from "../../components-framework/component/response-value";
 import { IDEError } from "../ide-error/ide-error";
 
@@ -46,11 +46,9 @@ class EventHandlerContainer {
 
 class EventContainer {
   private _eventHandlerList: Array<EventHandlerContainer>;
-  private _deleted: boolean;
 
   constructor(other?: EventContainer) {
     this._eventHandlerList = new Array<EventHandlerContainer>();
-    this._deleted = other ? other._deleted : false;
 
     if (other) {
       for (const elem of other._eventHandlerList) {
@@ -86,7 +84,7 @@ class EventContainer {
     }
   }
 
-  public clearEventHandlers(){
+  public clearEventHandlers(): void {
     this._eventHandlerList.length = 0;
   }
 

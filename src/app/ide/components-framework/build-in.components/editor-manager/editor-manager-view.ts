@@ -11,12 +11,25 @@ import { Editor } from "./editor";
 export class EditorManagerView extends ComponentView {
     private editorOnFocus: Editor;
 
-    public changeFocus(editor: Editor): void {
+    public update(editor: Editor): void {
+        if (this.editorOnFocus && this.editorOnFocus.id===editor.id) {
+            return;
+        }
+
         if (this.editorOnFocus) {
             this.editorOnFocus.view.detachAllEvents();
+            $(this.editorOnFocus.selector).hide();
         }
+
         this.editorOnFocus = editor;
-        this.render();
+        this.editorOnFocus.registerEvents();
+
+        if (this.editorOnFocus.isRendered) {
+            $(this.editorOnFocus.selector).show();
+        }
+        else {
+            this.editorOnFocus.render();
+        }
     }
 
     private clearEditorAreaContainer(): void {

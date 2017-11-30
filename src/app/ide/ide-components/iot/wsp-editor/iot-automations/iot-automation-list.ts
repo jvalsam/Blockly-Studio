@@ -1,10 +1,8 @@
-
-
 /// <reference path="../../../../../../../node.d.ts"/>
 import IoTAutomationListTmpl from "./iot-automation-list.html";
 import IoTAutomationCategoryTmpl from "./iot-automation-category.html";
-import { ViewRegistry } from "../../../../components-framework/view/view";
-import { View, IViewElement, ViewMetadata } from "../../../../components-framework/view/view";
+import { ViewRegistry } from "../../../../components-framework/component/registry";
+import { View, IViewElement, ViewMetadata } from "../../../../components-framework/component/view";
 import { IDEUIComponent } from "../../../../components-framework/component/ide-ui-component";
 import { IoTApplication } from "../../application/iot-application";
 import { IoTAutomationViewBox } from "./iot-automation-view-box/iot-automation-view-box";
@@ -32,7 +30,7 @@ export class IoTAutomationList extends View {
     }
 
     public render(): void {
-        this.$el = $(this.template({ totalAutomations: Object.keys(this.app.automations).length }));
+        this.renderTmplEl({ totalAutomations: Object.keys(this.app.automations).length });
         this.registerEvents();
         _.forEach(Object.keys(this.app.automations), (automationType) => {
             var $cEl: JQuery = $(this.cTemplate({

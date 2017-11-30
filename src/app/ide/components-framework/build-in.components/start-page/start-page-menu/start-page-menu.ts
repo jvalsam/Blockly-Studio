@@ -1,12 +1,8 @@
-/**
- * Menu - IDE Main Menu
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * September 2017
- */
-
 import StartPageMenuTmpl from "./start-page-menu.html";
-import { ComponentViewElementMetadata, ComponentViewElement } from "../../../component/component-view";
+import {
+    ComponentViewElementMetadata,
+    ComponentViewElement
+} from "../../../component/component-view";
 
 
 @ComponentViewElementMetadata({

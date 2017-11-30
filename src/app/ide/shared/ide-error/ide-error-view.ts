@@ -1,5 +1,5 @@
 import ErrorViewTmpl from "./ide-error.html";
-import { View, ViewMetadata } from "../../components-framework/view/view";
+import { View, ViewMetadata } from "../../components-framework/component/view";
 
 
 @ViewMetadata({
@@ -22,7 +22,7 @@ export class IDEErrorView extends View {
     registerEvents(): void {}
 
     render(): void {
-        this.$el = $(this.template({ errorMsg: this.errorMsg }));
+        this.renderTmplEl({ errorMsg: this.errorMsg });
         this.registerEvents();
     }
 }

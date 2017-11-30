@@ -49,7 +49,7 @@ export class ToolbarView extends ComponentView {
     }
 
     public render(): void {
-        this.$el = $(this.template());
+        this.renderTmplEl();
         this.registerEvents();
         for (let index of Object.keys(this.tools)) {
             this.tools[index].render();

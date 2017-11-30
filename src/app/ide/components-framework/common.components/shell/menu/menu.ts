@@ -1,10 +1,3 @@
-/**
- * Menu - Menu of the platform
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * November 2017
- */
-
 import { IDEError } from "../../../../shared/ide-error/ide-error";
 import { IViewElements } from "./../../../component/component-view";
 import { IDEUIComponent, IViewDataComponent } from "../../../component/ide-ui-component";
@@ -52,6 +45,13 @@ interface ItemLoadData {
 
 @UIComponentMetadata({
     description: "Menu of the platform",
+    authors: [
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "November 2017"
+        }
+    ],
     componentView: "MenuView"
 })
 export class Menu extends IDEUIComponent {
@@ -99,7 +99,7 @@ export class Menu extends IDEUIComponent {
         return elem;
     }
 
-    private load () {
+    private load (): void {
         for (let indexItem of Object.keys(this.itemsPaths)) {
             let scopeElems = this.itemsPaths[indexItem];
             for (let mkey of Object.keys(scopeElems)) {
@@ -123,18 +123,25 @@ export class Menu extends IDEUIComponent {
                                 prvNode = node;
                                 node = (<MenuItem>item).data.children;
                                 if (node === null) {
-                                    IDEError.raise("MenuLoad", "Node path " + item.path + " with title " + item.data.title + " has no children of component " + compName);
+                                    IDEError.raise(
+                                        "MenuLoad",
+                                        "Node path " + item.path + " with title " + item.data.title +
+                                        " has no children of component " + compName
+                                    );
                                 }
                                 break;
                             }
                         }
                         if (!foundIndex) {
-                            IDEError.raise("MenuLoad", "Node path element " + pathElem + " not found. Requested by component " + compName + ".");
+                            IDEError.raise(
+                                "MenuLoad",
+                                "Node path element " + pathElem + " not found. Requested by component " + compName + "."
+                            );
                         }
                     }
                     let lastElem = pathElems[pathElems.length - 1];
                     let newElem = this.createElem(menuData, compName);
-                    
+
                     if (lastElem.endsWith("|")) {
                         let index = lastElem.split("|").length-1;
                         newElem.path = menuData.path + menuElem.data.title + "/";
@@ -158,17 +165,23 @@ export class Menu extends IDEUIComponent {
 
     private checkIfPathIsValid(path: string, compName: string, title: string) {
         if (!path || !(path.endsWith("|") || path.endsWith("/"))) {
-            IDEError.raise("MenuLoad", "Invalid Menu Path " + path + " of component " + compName + ".");
+            IDEError.raise(
+                "MenuLoad",
+                "Invalid Menu Path " + path + " of component " + compName + "."
+            );
         }
         // check if already exists
         if (this.paths[path]) {
-            IDEError.raise("MenuLoad", "Path " + path + " of component " + compName + " already defined.");
+            IDEError.raise(
+                "MenuLoad",
+                "Path " + path + " of component " + compName + " already defined."
+            );
         }
 
         this.paths[path] = compName;
     }
 
-    private jsonLoader (menuElements, compName: string, group?: string) {
+    private jsonLoader (menuElements: any, compName: string, group?: string): void {
         for (let menuElem of menuElements) {
             let path = menuElem.path;
             this.checkIfPathIsValid(path, compName, menuElem.data.title);
@@ -197,7 +210,7 @@ export class Menu extends IDEUIComponent {
         }
     }
 
-    private loadMenus () {
+    private loadMenus (): void {
         // load menu metadata and validity check
         this.jsonLoader(basicMenuJson.MenuElements, basicMenuJson.ComponentName);
         for (let compName of Object.keys(ComponentRegistry.getEntries())) {

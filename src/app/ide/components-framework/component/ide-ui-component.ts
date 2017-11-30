@@ -1,14 +1,7 @@
-/**
- * IDEUIComponent - standar functionality of visible ide components
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * August 2017
- */
-
 import * as _ from "lodash";
 import { IDEComponent } from "./ide-component";
 import { ComponentMetadata } from "./component-loader";
-import { IViewElement } from "../view/view";
+import { IViewElement } from "./view";
 import {
     ComponentView,
     ComponentViewRegistry
@@ -22,6 +15,13 @@ export interface IViewDataComponent {
 
 @ComponentMetadata({
     description: "All components which are visible in the IDE",
+    authors: [
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "August 2017"
+        }
+    ],
     version: "1.0"
 })
 export abstract class IDEUIComponent extends IDEComponent {
@@ -38,10 +38,6 @@ export abstract class IDEUIComponent extends IDEComponent {
 
     get templateHTML(): string {
         return this.view.templateHTML;
-    }
-
-    get templateJQ(): JQuery {
-        return this.view.templateJQ;
     }
 
     public get selector(): string {
@@ -68,8 +64,8 @@ export abstract class IDEUIComponent extends IDEComponent {
             selector = elem.selector;
         }
 
-        this.view.templateJQ.find("div"+selector).empty();
-        this.view.templateJQ.find("div"+selector).append(content);
+        this.view.$el.find("div"+selector).empty();
+        this.view.$el.find("div"+selector).append(content);
     }
 
     public reset(): void {

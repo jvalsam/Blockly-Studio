@@ -1,10 +1,3 @@
-/**
- * ApplicationWSPManager
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * Octomber 2017
- */
-
 import { IDEComponent } from "../../component/ide-component";
 import { ComponentMetadata, ExportedFunction } from "../../component/component-loader";
 import { ApplicationsAdministration } from "../applications-admin-sc/applications-administration";
@@ -12,7 +5,14 @@ import { Application } from "../../../shared/application";
 import { ComponentsCommunication } from "../../component/components-communication";
 
 @ComponentMetadata({
-    description: "",
+    description: "Application WSP Manager",
+    authors: [
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "Octomber 2017"
+        }
+    ],
     isUnique: true
 })
 export class ApplicationWSPManager extends IDEComponent {

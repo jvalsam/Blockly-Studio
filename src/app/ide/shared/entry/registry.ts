@@ -1,10 +1,3 @@
-/**
- * Registry - Map Holder of Entry
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * Octomber 2017
- */
-
 import { Entry } from "./entry";
 
 

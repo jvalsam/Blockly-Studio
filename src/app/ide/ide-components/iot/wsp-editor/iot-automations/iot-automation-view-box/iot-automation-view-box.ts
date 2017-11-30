@@ -1,7 +1,7 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import AutomationViewBoxTmpl from "./iot-automation-view-box.html";
-import { View, ViewMetadata } from "../../../../../components-framework/view/view";
+import { View, ViewMetadata } from "../../../../../components-framework/component/view";
 import { IDEUIComponent } from "../../../../../components-framework/component/ide-ui-component";
 import { Automation } from "../../../application/automation"
 
@@ -49,12 +49,10 @@ export class IoTAutomationViewBox extends View {
 
 
     public render(): void {
-        this.$el = $(
-            this.template({
-                id: this.automation.id,
-                name: this.automation.name
-            })
-        );
+        this.renderTmplEl({
+            id: this.automation.id,
+            name: this.automation.name
+        });
         this.registerEvents();
     }
 

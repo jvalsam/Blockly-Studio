@@ -1,10 +1,3 @@
-/**
- * Start Page Element List - General functionality of start page elements
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * September 2017
- */
-
 import { ComponentViewElement } from "../../../component/component-view";
 
 

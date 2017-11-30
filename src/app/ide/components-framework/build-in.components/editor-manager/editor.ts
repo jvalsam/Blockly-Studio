@@ -8,12 +8,35 @@
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import { ExportedFunction } from "../../component/component-loader";
 
+// const enum EditorRenderState {
+//     constructed = 0,
+//     rendered = 1
+// }
+// export { EditorRenderState };
 
 export abstract class Editor extends IDEUIComponent {
+    private _isRendered: boolean;
 
-    public abstract undo();
-    public abstract redo();
+    constructor(
+        name: string,
+        description: string,
+        compViewName: string
+    ) {
+        super(name, description, compViewName);
+        this._isRendered = false;
+    }
 
-    public abstract copy();
-    public abstract paste();
+    public abstract undo(): void;
+    public abstract redo(): void;
+
+    public abstract copy(): void;
+    public abstract paste(): void;
+
+    public get isRendered(): boolean {
+        return this._isRendered;
+    }
+
+    public setAsRendered():void {
+        this._isRendered = true;
+    }
 }

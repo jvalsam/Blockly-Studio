@@ -1,4 +1,3 @@
-
 /// <reference path="../../../../../../node.d.ts"/>
 import ShellTmpl from "./shell.html";
 import { ComponentView, ComponentViewMetadata } from "../../component/component-view";
@@ -13,7 +12,7 @@ import * as _ from "lodash";
 export class ShellView extends ComponentView {
 
     public render(): void {
-        this.$el = $(this.template());
+        this.renderTmplEl();
     }
 
     public show(): void {

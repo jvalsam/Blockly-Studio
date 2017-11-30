@@ -27,6 +27,7 @@ export class ComponentEntry extends Entry<Component> {
     _creationFunc?: any,
     _args?: Array<any>,
     private _menuData?: any,
+    private _configData?: any,
     private _isUnique: boolean = false
   ) {
     super(_compInfo.name, _creationFunc, _args);
@@ -40,8 +41,12 @@ export class ComponentEntry extends Entry<Component> {
     return this._instanceList.length > 0;
   }
 
-  public getMenuMetadata() {
+  public getMenuMetadata():any {
     return this._menuData;
+  }
+
+  public getConfigMetadata():any {
+    return this._configData;
   }
 
   public isUnique(): boolean { return this._isUnique; }
@@ -97,6 +102,7 @@ export class _ComponentRegistry {
      create: Function,
      initData?: Array<any>,
      menuData?: any,
+     configData?: any,
      isUnique?: boolean
     ): ComponentEntry {
       this.entries[compName] = new ComponentEntry (
@@ -104,6 +110,7 @@ export class _ComponentRegistry {
         create,
         initData,
         menuData,
+        configData,
         isUnique
      );
      return this.entries[compName];

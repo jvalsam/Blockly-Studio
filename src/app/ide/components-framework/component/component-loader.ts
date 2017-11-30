@@ -1,11 +1,4 @@
-﻿/**
- * ComponentLoader - Construct each components instances
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * May 2017
- */
-
-import { ComponentRegistry } from "./component-entry";
+﻿import { ComponentRegistry } from "./component-entry";
 import {
     SignalsHolder,
     FunctionsHolder,
@@ -22,12 +15,21 @@ import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-
  *
  */
 
+export interface IAuthorData {
+    name: string,
+    email: string,
+    date: string,
+    workDescr?: string // description of changes, refactoring, extensions etc
+}
+
 export interface IComponentData {
     description: string;
+    authors: Array<IAuthorData>;
     isUnique?: boolean;
     version?: string;
     initData?: Array<any>;
     menuDef?: any;
+    configDef?: any;
 }
 
 export interface IUIComponentData extends IComponentData {
@@ -58,6 +60,7 @@ function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
             create,
             data.initData,
             data.menuDef,
+            data.configDef,
             data.isUnique
         );
 

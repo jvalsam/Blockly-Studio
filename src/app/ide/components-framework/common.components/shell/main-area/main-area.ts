@@ -1,13 +1,6 @@
-/**
- * Main - IDE main area
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * September 2017
- */
-
 /// <reference path="../../../../../../../node.d.ts"/>
 import MainAreaTmpl from "./main-area.html";
-import { View, IViewElement, ViewMetadata } from "../../../view/view";
+import { View, IViewElement, ViewMetadata } from "../../../component/view";
 
 export interface IShellMainAreaViewElement extends IViewElement {
     view: MainArea;

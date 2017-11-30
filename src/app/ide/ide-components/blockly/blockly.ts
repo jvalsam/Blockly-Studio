@@ -1,13 +1,5 @@
-﻿import { ResponseValue } from './../../components-framework/component/response-value';
-/**
- * BlocklyVPL - VPL uses jigsaws
- *
- * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * August 2017
- */
-
+﻿import { ResponseValue } from "./../../components-framework/component/response-value";
 import { ComponentsCommunication } from "../../components-framework/component/components-communication";
-import { IDEUIComponent } from "../../components-framework/component/ide-ui-component";
 import { Editor } from "../../components-framework/build-in.components/editor-manager/editor";
 import {
   UIComponentMetadata,
@@ -17,11 +9,17 @@ import {
   ListensSignal
 } from "../../components-framework/component/component-loader";
 
-var Blockly = require("../../../../../node_modules/node-blockly/browser");
-
+var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
 
 @UIComponentMetadata({
   description: "VPL uses jigsaws",
+  authors: [
+    {
+      name: "Yannis Valsamakis",
+      email: "jvalsam@ics.forth.gr",
+      date: "October 2017"
+    }
+  ],
   componentView: "BlocklyView",
   version: "1.1"
 })
@@ -43,6 +41,7 @@ export class BlocklyVPL extends Editor {
   @ExportedFunction
   public onOpen(): void {}
 
+  @RequiredFunction("Shell", "addTools")
   @ExportedFunction
   public open(src: string, toolbox?: string, isFirstInst:boolean =false): void {
     this.changed = false;
@@ -53,12 +52,13 @@ export class BlocklyVPL extends Editor {
     }
   }
 
-  @RequiredFunction("Shell", "addTools")
   @ExportedFunction
   public render(): void {
+    this.setAsRendered();
+
     var blocklyArea: any = document.getElementById("editors-area-container");
-    var blocklyDiv: any = document.getElementById(this.selector);
-    this.view.$el = $("#" + this.view.selector);
+    var blocklyDiv: any = document.getElementById(this.selector.substring(1));
+    this.view.$el = $(this.view.selector);
     this.view.$el.empty();
     this.view.$el.show();
     this.editor = Blockly.inject(this.view.selector, { "media": "./media/", "toolbox": this.toolbox });
@@ -102,7 +102,7 @@ export class BlocklyVPL extends Editor {
   }
 
   public registerEvents(): void {
-      
+      this.view.registerEvents();
   }
 
   @ExportedFunction
@@ -134,6 +134,14 @@ export class BlocklyVPL extends Editor {
   public paste() {
 
   }
+
+  // public static updateCode() {
+  //   document.getElementById("js").innerText = Blockly.JavaScript.workspaceToCode(editor);
+  //   document.getElementById("php").innerText = Blockly.PHP.workspaceToCode(editor);
+  //   document.getElementById("lua").innerText = Blockly.Lua.workspaceToCode(editor);
+  //   document.getElementById("dart").innerText = Blockly.Dart.workspaceToCode(editor);
+  //   document.getElementById("python").innerText = Blockly.Python.workspaceToCode(editor);
+  // }
   
   @RequiredFunction("EditorManager", "OnFocusEditorId")
   public requestOnFocusEditorId(): string {

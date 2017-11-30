@@ -1,6 +1,6 @@
-import { ComponentsCommunication } from './../../components-framework/component/components-communication';
+import { ComponentsCommunication } from "../../components-framework/component/components-communication";
 import BlocklyToolbarTmpl from "./blockly-toolbar.html";
-import { ComponentViewElementMetadata } from './../../components-framework/component/component-view';
+import { ComponentViewElementMetadata } from "../../components-framework/component/component-view";
 import { ComponentViewElement } from "../../components-framework/component/component-view";
 import { BlocklyVPL } from "./blockly";
 
@@ -11,7 +11,7 @@ import { BlocklyVPL } from "./blockly";
 })
 export class BlocklyToolbarView extends ComponentViewElement {
     public render(): void {
-        this.$el = $(this.template());
+        this.renderTmplEl();
         this.registerEvents();
     }
 
