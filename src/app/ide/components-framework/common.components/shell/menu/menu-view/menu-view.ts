@@ -1,5 +1,5 @@
 import MenuTmpl from "./templates/menu.html";
-import { renderMenuElem } from "./menu-view-group-item";
+import { renderMenuElem } from "./menu-aggregate-view-item";
 import { MenuElem } from "../menu";
 import { ComponentView, ComponentViewMetadata } from "../../../../component/component-view";
 import * as _ from "lodash";

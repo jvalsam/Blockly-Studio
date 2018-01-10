@@ -1,0 +1,26 @@
+<% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
+<div class="form-group row property-form-group">
+<% } %>
+    <% if(typeof(renderName)==='undefined' || renderName) { %>
+        <label for="input_<%= id %>" id="title_<%= id %>" class="col-4 col-form-label">
+            <%= name %>
+        </label>
+    <% } %>
+    <div class="col-8">
+        <select class="form-control ts-change-enum-input" id="input_<%= id %>">
+            <% _.each(values, function(opt){ %>
+                <% if (typeof(opt)==='string') { %>
+                    <option <%= selected === opt ? 'selected' : '' %> value="<%= opt %>"><%= opt %></option>
+                <% } else { %>
+                    <optgroup label="<%= opt.label %>">
+                        <% _.each(opt.values, function(subOpt){ %>
+                            <option <%= selected === subOpt ? 'selected' : '' %> value="<%= subOpt %>"><%= subOpt %></option>
+                        <% }); %>
+                    </optgroup>
+                <% } %>
+            <% }); %>
+        </select>
+    </div>
+<% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
+</div>
+<% } %>

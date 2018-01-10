@@ -1,0 +1,17 @@
+{
+    "componentName": "Menu",
+    "properties": [
+        {
+            "name": "Backgound Colour",
+            "type": "color",
+            "value": "dark"
+        },
+        {
+            "name": "Titles Font",
+            "type": "font",
+            "value": {
+                
+            }
+        }
+    ]
+}

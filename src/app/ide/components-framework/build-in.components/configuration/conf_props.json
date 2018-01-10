@@ -1,0 +1,32 @@
+{
+    "componentName": "Configuration",
+    "properties": [
+        {
+            "name": "Backgound Colour",
+            "type": "color",
+            "value": "black"
+        },
+        {
+            "name": "Config Title Elements Font",
+            "type": "font",
+            "value": {
+                "family": "Helvetica",
+                "textColor": "#000000",
+                "size": "large",
+                "weight": "bold",
+                "style": "normal"
+            }
+        },
+        {
+            "name": "Config Elements Font",
+            "type": "font",
+            "value": {
+                "family": "Helvetica",
+                "textColor": "#000000",
+                "size": "medium",
+                "weight": "normal",
+                "style": "normal"
+            }
+        }
+    ]
+}

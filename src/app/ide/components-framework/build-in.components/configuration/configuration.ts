@@ -1,8 +1,10 @@
+import { ConfigurationView } from "./configuration-view/configuration-view";
 import { ComponentRegistry } from "../../component/component-entry";
 import { IDEUIComponent } from "../../component/ide-ui-component";
-import { UIComponentMetadata } from "../../component/component-loader";
+import { UIComponentMetadata, ExportedFunction } from "../../component/component-loader";
 
-var confMenuJson: any = require("./conf_menu.json");
+var menuJson: any = require("./conf_menu.json");
+var configJson: any = require("./conf_props.json");
 
 @UIComponentMetadata({
     description: "Configuration of all components of the IDE",
@@ -14,31 +16,45 @@ var confMenuJson: any = require("./conf_menu.json");
         }
     ],
     componentView: "ConfigurationView",
-    menuDef: confMenuJson,
+    menuDef: menuJson,
+    configDef: configJson,
     isUnique: true
 })
 export class Configuration extends IDEUIComponent {
 
-    public initialize(): void {
-        let data: { [compName: string]: any } = {};
-        for (let compName of Object.keys(ComponentRegistry.getEntries())) {
-            let jsonConfigMetadata = ComponentRegistry.getEntry(compName).getConfigMetadata();
-            if (jsonConfigMetadata) {
-                data[compName] = jsonConfigMetadata;
-            }
-        }
-        this.view.setRenderData(data);
-    }
+    @ExportedFunction
+    public initialize(): void { ; }
 
-    public destroy(): void {}
+    @ExportedFunction
+    public destroy(): void { ; }
 
-    public onClose(): void {}
+    @ExportedFunction
+    public onClose(): void { ; }
 
-    public onOpen(): void {}
+    @ExportedFunction
+    public onOpen(): void { ; }
 
+    @ExportedFunction
     public registerEvents(): void {
         this.view.registerEvents();
     }
 
-    public update(): void {}
+    @ExportedFunction
+    public update(): void { ; }
+
+    @ExportedFunction
+    public openComponentConfig(compName: string): void {
+        let currentValues: any = ComponentRegistry.getEntry(compName).getCurrentConfigValues();
+        let configData: any = ComponentRegistry.getEntry(compName).getConfigMetadata();
+        (<ConfigurationView>this.view).generate(compName, configData, currentValues);
+        (<ConfigurationView>this.view).open();
+    }
+
+    public onSaveValues(compName: string, values: any): void {
+        ComponentRegistry.getEntry(compName).updateConfigValues(values);
+    }
+
+    public updateConfigProperties(values: any): void {
+
+    }
 }

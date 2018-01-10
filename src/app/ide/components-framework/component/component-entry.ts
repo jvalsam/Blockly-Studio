@@ -10,6 +10,8 @@ import { ComponentSignal } from "./component-signal";
 import { Entry } from "../../shared/entry/entry";
 import { IDEError } from "../../shared/ide-error/ide-error";
 
+import * as _ from "lodash";
+
 
 export interface ComponentEntryInfo {
   name: string;
@@ -18,7 +20,6 @@ export interface ComponentEntryInfo {
 }
 
 export class ComponentEntry extends Entry<Component> {
-  //private _instanceList: Array<Component>;
   private _signalList: Array<string>;
   private _signalListensList: Array<ComponentSignal>;
 
@@ -47,6 +48,17 @@ export class ComponentEntry extends Entry<Component> {
 
   public getConfigMetadata():any {
     return this._configData;
+  }
+
+  public getCurrentConfigValues(): any {
+    return this._creationFunc.getConfigProperties();
+  }
+
+  public updateConfigValues(values: any): void {
+    this._creationFunc.setConfigProperties(values);
+    _.forEach(this._instanceList, (instance: any) => {
+      instance.updateConfigProperties(values);
+    });
   }
 
   public isUnique(): boolean { return this._isUnique; }

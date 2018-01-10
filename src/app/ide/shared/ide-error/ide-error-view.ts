@@ -24,5 +24,10 @@ export class IDEErrorView extends View {
     render(): void {
         this.renderTmplEl({ errorMsg: this.errorMsg });
         this.registerEvents();
+        $("div.modal-area").empty();
+        $("div.modal-area").append(this.$el);
+        $("#" + this.id)["modal"]("show");
     }
+
+    update(data:any): void { this.errorMsg = data; }
 }

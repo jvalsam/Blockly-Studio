@@ -19,7 +19,8 @@ import { ComponentsCommunication } from "./component/components-communication";
 import { Shell } from "./common.components/shell/shell";
 import { Configuration } from "./build-in.components/configuration/configuration";
 import { StartPageComponent } from "./build-in.components/start-page/start-page";
-
+import "jquery";
+import "bootstrap";
 
 export class IDECore {
   public static initialize(): void {

@@ -4,8 +4,10 @@ import { IDEUIComponent, IViewDataComponent } from "../../../component/ide-ui-co
 import { UIComponentMetadata, ExportedFunction } from "../../../component/component-loader";
 import { ComponentRegistry } from "../../../component/component-entry";
 
-var basicMenuJson = require("./basic_menu.json");
+import * as _ from "lodash";
 
+var basicMenuJson = require("./basic_menu.json");
+var configJson = require("./conf_props.json");
 
 interface MenuItemGeneralData {
     compName: string;
@@ -14,6 +16,8 @@ interface MenuItemGeneralData {
     imagePath?: string;
     style?: string;
     groupName?: string; // in case item is in group
+    type: string;
+    root: boolean;
 }
 export interface MenuItemLeafData extends MenuItemGeneralData {
     events: Array<Object>;
@@ -32,8 +36,8 @@ export interface MenuItemLeaf {
     data: MenuItemLeafData;
 }
 
-export function isMenuItemLeaf(menuElem: MenuElem): boolean {
-    return (<MenuItemLeafData>(menuElem.data)).events !== null;
+interface INodeArray {
+    [index: number]: MenuElem;
 }
 
 interface ItemLoadData {
@@ -52,12 +56,13 @@ interface ItemLoadData {
             date: "November 2017"
         }
     ],
-    componentView: "MenuView"
+    componentView: "MenuView",
+    configDef: configJson
 })
 export class Menu extends IDEUIComponent {
     private paths: {[path:string]: string}; // helps in check that each path is unique
     private itemsPaths: { [index: number]: { [index: number]: Array<ItemLoadData> } }; // outer Array is scope of path
-    private items: { [index: number]: MenuElem };
+    private items: INodeArray;
 
     constructor(
         name: string,
@@ -81,22 +86,85 @@ export class Menu extends IDEUIComponent {
                 compName: compName
             }
         };
-        if (menuElem.help) {
-            elem.data.help = menuElem.help;
-        }
-        if (menuElem.imagePath) {
-            elem.data.imagePath = menuElem.imagePath;
-        }
-        if (menuElem.style) {
-            elem.data.style = menuElem.style;
-        }
-        if (menuElem.hasChildren) {
-            elem.data.children = {};
-        }
-        else {
-            elem.data.events = menuElem.events;
+        elem.data.root = (menuData.path.split("/").length > 2) ? false : true;
+        elem.data.type = menuElem.type;
+
+        if ( menuElem.type !== "divider" ) {
+            if (menuElem.help) {
+                elem.data.help = menuElem.help;
+            }
+            if (menuElem.imagePath) {
+                elem.data.imagePath = menuElem.imagePath;
+            }
+            if (menuElem.style) {
+                elem.data.style = menuElem.style;
+            }
+
+            if (menuElem.type === "sub-menu") {
+                elem.data.children = {};
+            }
+            else {
+                if (typeof (menuElem.events) === "undefined") {
+                    IDEError.raise(
+                        "CreateMenuElem",
+                        "Component: " + compName + " defines menu leaf item " + menuElem.title +
+                        " without events!"
+                    );
+                }
+                elem.data.events = menuElem.events;
+            }
         }
         return elem;
+    }
+
+    private checkPathValidity(path: string, compName: string): void {
+        if (!path.startsWith("/") || !(path.endsWith("|") || path.endsWith("/"))) {
+            IDEError.raise("MenuComponent", "Invalid Path "+path+" defined by component "+compName+
+                                            ". Path has to ends with '/' or '|' or starts with '/' !"
+            );
+        }
+    }
+
+    private findNode (pathElems, compName) {
+        let node = this.items;
+        let prvNode = null;
+        for (let pathElem of pathElems.slice(0, pathElems.length - 1)) {
+            let foundIndex = false;
+            for (let index of Object.keys(node)) {
+                if (node[index].data.title === pathElem) {
+                    foundIndex = true;
+                    prvNode = node[index];
+                    node = (<MenuItem>node[index]).data.children;
+                    if (!node) {
+                        IDEError.raise(
+                            "MenuLoad",
+                            "Node path " + node[index].path + " with title " + node[index].data.title +
+                            " has no children of component " + compName
+                        );
+                    }
+                    break;
+                }
+            }
+            if (!foundIndex) {
+                IDEError.raise(
+                    "MenuLoad",
+                    "Node path element " + pathElem + " not found. Requested by component " + compName + "."
+                );
+            }
+        }
+        return {
+            "node": node,
+            "previous": prvNode
+        };
+    }
+
+    private findIndex(title, node) {
+        for (let index of Object.keys(node)) {
+            if (node[index].data.title === title) {
+                return index;
+            }
+        }
+        IDEError.raise("MenuLoad: findIndex", "Node path not found!");
     }
 
     private load (): void {
@@ -108,55 +176,46 @@ export class Menu extends IDEUIComponent {
                     let path = <string>menuData.path;
                     let menuElem = menuData.item;
                     let compName = menuData.compName;
+                    this.checkPathValidity(path, compName);
 
                     // find where to add menu node based on path
                     let pathElems = path.split("/");
-                    pathElems = pathElems.splice(0, pathElems.length-1);
-                    let node = this.items;
-                    let prvNode = null;
-                    for (let pathElem of pathElems.slice(0, pathElems.length - 1)) {
-                        let foundIndex = false;
-                        for (let index of Object.keys(node)) {
-                            let item = node[index];
-                            if (item.data.title === pathElem) {
-                                foundIndex = true;
-                                prvNode = node;
-                                node = (<MenuItem>item).data.children;
-                                if (node === null) {
-                                    IDEError.raise(
-                                        "MenuLoad",
-                                        "Node path " + item.path + " with title " + item.data.title +
-                                        " has no children of component " + compName
-                                    );
-                                }
-                                break;
-                            }
-                        }
-                        if (!foundIndex) {
-                            IDEError.raise(
-                                "MenuLoad",
-                                "Node path element " + pathElem + " not found. Requested by component " + compName + "."
-                            );
-                        }
+                    pathElems.splice(0, 1);
+
+                    if (path.endsWith("/")) {
+                        pathElems = pathElems.splice(0, pathElems.length-1);
                     }
+
+                    let data = this.findNode(pathElems, compName);
+                    let node = data.node;
+                    let prvNode = data.previous;
+
                     let lastElem = pathElems[pathElems.length - 1];
                     let newElem = this.createElem(menuData, compName);
 
-                    if (lastElem.endsWith("|")) {
+                    if (pathElems.length === 0) {
+                        newElem.path = "/" + menuElem.title + "/";
+                        this.items[0] = newElem;
+                    }
+                    else if (lastElem.endsWith("|")) {
                         let index = lastElem.split("|").length-1;
-                        newElem.path = menuData.path + menuElem.data.title + "/";
+                        newElem.path = menuData.path.slice(0, menuData.path.length-1) + "/" + menuElem.title + "/";
                         if (prvNode === null) {
                             this.items[index] = newElem;
                         }
                         else {
-                            prvNode.children[index] = newElem;
+                            prvNode.data.children[index] = newElem;
                         }
                     }
-                    else if (lastElem === "") {
-                        this.items[0] = newElem;
-                    }
                     else {
-                        (<MenuItemData>node[0].data).children[0] = newElem;
+                        newElem.path = path + menuElem.title + "/";
+                        if (prvNode === null) {
+                            let index = this.findIndex(pathElems[0], node);
+                            (<MenuItemData>node[index].data).children[0] = newElem;
+                        }
+                        else {
+                            (<MenuItemData>node[0].data).children[0] = newElem;
+                        }
                     }
                 }
             }
@@ -181,7 +240,7 @@ export class Menu extends IDEUIComponent {
         this.paths[path] = compName;
     }
 
-    private jsonLoader (menuElements: any, compName: string, group?: string): void {
+    private jsonLoader (menuElements: any, compName: string): void {
         for (let menuElem of menuElements) {
             let path = menuElem.path;
             this.checkIfPathIsValid(path, compName, menuElem.data.title);
@@ -193,20 +252,11 @@ export class Menu extends IDEUIComponent {
             if (!this.itemsPaths[level][sLevel]) {
                 this.itemsPaths[level][sLevel] = [];
             }
-            if (group) {
-                menuElem.data.group = group;
-            }
             this.itemsPaths[level][sLevel].push({
                 path: path,
                 item: menuElem.data,
                 compName: compName
             });
-            if (menuElem.data.group) {
-                this.jsonLoader(menuElem.data.group, compName, menuElem.data.title);
-            }
-            if (menuElem.data.children) {
-                this.jsonLoader(menuElem.data.children, compName);
-            }
         }
     }
 
@@ -266,5 +316,11 @@ export class Menu extends IDEUIComponent {
     @ExportedFunction
     public onClickHomePage() {
         alert ("Go Home is not implemented yet!");
+    }
+
+    // 1st statement sets 
+    @ExportedFunction
+    public updateConfigProperties(values: Object): void {
+
     }
 }

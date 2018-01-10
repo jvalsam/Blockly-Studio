@@ -7,9 +7,23 @@
                 "title": "Home",
                 "help": "Go at home page",
                 "imagePath": "../../../../../../../images/puppy.png",
+                "type" : "leaf",
                 "events": [
                     {
                         "click": "onClickHomePage"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "/Configure/Configuration|DividerConfiguration|",
+            "data": {
+                "title": "Menu",
+                "help": "Configuration of Menu",
+                "type": "leaf",
+                "events": [
+                    {
+                        "click": "onConfig"
                     }
                 ]
             }

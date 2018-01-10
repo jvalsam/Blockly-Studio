@@ -29,6 +29,11 @@ class _IDEError {
             this.errorView = <IDEErrorView>ViewRegistry.getEntry("IDEErrorView").create(null);
             this.warningView = <IDEWarningView>ViewRegistry.getEntry("IDEWarningView").create(null);
         }
+        window.onerror = function (message, source, lineno, colno, error) {
+            let msg = "Error:\nMessage: " + message + "\source: " + source +
+                "\nlineno: " + lineno + "\ncolno: " + colno + "\nerror: " + error;
+            alert(msg);
+        };
     }
 
     private msgCreator(
@@ -45,9 +50,10 @@ class _IDEError {
     }
 
     public raise(etype: string, msg: string, srcInfo?: string) {
-        let errorMsg: string = this.msgCreator("Error", etype, msg, srcInfo);
+        let errorMsg: string = this.msgCreator(" Error", etype, msg, srcInfo);
         if (this.errorView) {
-            this.errorView.alert(errorMsg);
+            this.errorView.update(errorMsg);
+            this.errorView.render();
         }
         else {
             alert(errorMsg);
@@ -56,7 +62,7 @@ class _IDEError {
     }
 
     public warn(etype: string, msg: string, srcInfo?: string) {
-        let warningMsg: string = this.msgCreator("Warning", etype, msg, srcInfo);
+        let warningMsg: string = this.msgCreator(" Warning", etype, msg, srcInfo);
         if (this.warningView) {
             this.warningView.alert(warningMsg);
         }

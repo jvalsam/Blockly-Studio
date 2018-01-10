@@ -76,7 +76,7 @@ export abstract class View {
     public abstract render(): void;
     public abstract registerEvents(): void;
 
-    public id(): string {
+    public get id(): string {
         return this._id;
     }
 

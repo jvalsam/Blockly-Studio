@@ -1,0 +1,27 @@
+{
+    "ComponentName": "Blockly",
+    "MenuElements": [
+        {
+            "path": "/Home|Configure|",
+            "data": {
+                "title": "Blockly",
+                "type": "sub-menu",
+                "help": "Edit Blockly Editor Properties"
+            }
+        },
+
+        {
+            "path": "/Configure/Configuration|DividerConfiguration|Menu|",
+            "data": {
+                "title": "Blockly",
+                "help": "Configuration of Blockly",
+                "type": "leaf",
+                "events": [
+                    {
+                        "click": "onConfig"
+                    }
+                ]
+            }
+        }
+    ]
+}

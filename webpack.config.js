@@ -4,29 +4,51 @@ const WebpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = {
     entry: [
-        'webpack-jquery-ui',
+        //'webpack-jquery-ui',
         './app.ts'
     ],
     resolve: {
         extensions: ['.webpack.js', '.web.js', '.ts', '.js', '.html']
     },
     module: {
-        loaders: [
-            { test: /\.ts$/, loader: 'ts-loader' },
-            { test: /\.html/, loaders: ["html-loader?exportAsEs6Default"] },
-            { test: /\.xml$/, loader: 'xml-loader' },
+        rules: [
+            { test: /\.ts$/, use:[ {loader: 'ts-loader'} ] },
+            { test: /\.html/, use:[ {loader: "html-loader?exportAsEs6Default"} ] },
+            { test: /\.xml$/, use:[ {loader: 'xml-loader' } ] },
             {
                 test: /\.(jpe?g|png|gif|svg)$/i,
-                loaders: [
-                    "file-loader?name=/images/[name].[ext]",
-                    "image-webpack-loader"
+                use: [
+                    { loader: "file-loader?name=/images/[name].[ext]" },
+                    { loader: "image-webpack-loader" }
                 ]
             },
-            { test: /\.(woff2?|ttf|eot|svg)$/, loader: 'url?limit=10000' },
-            { test: /bootstrap\/dist\/js\/umd\//, loader: 'imports?jQuery=jquery' },
-            { test: /\.scss/, exclude: /node_modules/, loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!autoprefixer?browsers=last 2 version!sass?outputStyle=expanded&sourceMap&includePaths[]=node_modules/compass-mixins/lib' },
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
-            { test: require.resolve("jquery"), loader: "expose-loader?$" }
+            { test: /\.(woff2?|ttf|eot|svg)$/, use:[ {loader: 'url?limit=10000' } ] },
+            { test: /bootstrap\/dist\/js\/umd\//, use: [ {loader: 'imports?jQuery=jquery' } ] },
+            {
+                test: /\.scss/,
+                exclude: /node_modules/,
+                use: [
+                    {loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!autoprefixer?browsers=last 2 version!sass?outputStyle=expanded&sourceMap&includePaths[]=node_modules/compass-mixins/lib' }
+                ]
+            },
+            {
+                test: /\.css$/,
+                loaders: ['style-loader!css-loader', "style-loader", "css-loader"]
+            },
+            {
+                test: require.resolve("jquery"),
+                use: [
+                    {loader: "expose-loader?$"},
+                    { loader: 'expose-loader', options: 'jQuery' },
+                    { loader: 'expose-loader', options: '$' }
+                ] 
+            },
+            {
+                test: require.resolve('tether'),
+                use: [
+                    { loader: 'expose-loader', options: 'Tether' }
+                ]
+            }
         ]
     },
     output: {
@@ -41,9 +63,15 @@ module.exports = {
         }),
         new webpack.ProvidePlugin({
             '$': "jquery",
-            'jQuery': "jquery",
             'Tether': 'tether',
-            'Popper': 'popper.js'
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            "window.$": "jquery",
+            Popper: ['popper.js', 'default'],
+            Tether: "tether"
+            // In case you imported plugins individually, you must also require them here:
+            // Util: "exports-loader?Util!bootstrap/js/dist/util",
+            // Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
         })
     ]
 }

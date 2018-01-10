@@ -5,11 +5,13 @@
   "private": true,
   "devDependencies": {
     "@types/jquery": "^2.0.47",
-    "@types/node": "^6.0.42",
+    "@types/node": "^6.0.93",
+    "@types/webpack": "^3.8.1",
     "bootstrap-loader": "^2.2.0",
     "bootstrap-sass": "^3.3.7",
     "css-loader": "^0.28.7",
     "expose-loader": "^0.7.3",
+    "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^0.11.2",
     "handlebars": "^4.0.6",
     "handlebars-loader": "^1.4.0",
@@ -24,19 +26,24 @@
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
-    "ts-node": "1.2.1",
+    "ts-node": "^1.2.1",
     "tslint": "^4.3.0",
-    "typescript": "~2.0.3",
+    "typescript": "^2.6.2",
+    "uglifyjs-webpack-plugin": "^0.4.6",
     "url-loader": "^0.5.9",
+    "webpack": "^3.10.0",
     "webpack-shell-plugin": "^0.5.0"
   },
   "dependencies": {
     "@types/jqueryui": "^1.11.36",
     "@types/lodash": "^4.14.74",
-    "bootstrap": "^4.0.0-alpha.6",
+    "bootstrap": "^4.0.0-beta.2",
+    "html-minifier": "^3.5.7",
     "lodash.template": "^4.4.0",
     "node-blockly": "^1.0.26",
-    "popper.js": "^1.12.5",
+    "popper.js": "^1.12.9",
+    "tether": "^1.4.3",
+    "ts-loader": "^3.2.0",
     "xml-loader": "^1.2.1"
   }
 }

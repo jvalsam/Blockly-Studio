@@ -9,6 +9,8 @@ import {
   ListensSignal
 } from "../../components-framework/component/component-loader";
 
+var menuJson: any = require("./conf_menu.json");
+var confJson: any = require("./conf_props.json");
 var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
 
 @UIComponentMetadata({
@@ -21,6 +23,8 @@ var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
     }
   ],
   componentView: "BlocklyView",
+  menuDef: menuJson,
+  configDef: confJson,
   version: "1.1"
 })
 export class BlocklyVPL extends Editor {
@@ -165,6 +169,12 @@ export class BlocklyVPL extends Editor {
   @ListensSignal('ICEVPL', 'Close')
   public onCloseEditor(data: any): void {
     console.log('testing... onCloseEditor called!');
+  }
+
+  // first stmt 
+  @ExportedFunction
+  public updateConfigProperties(values: any): void {
+
   }
 
 }

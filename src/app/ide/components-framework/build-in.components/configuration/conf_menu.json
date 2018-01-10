@@ -5,19 +5,28 @@
             "path": "/Home|",
             "data": {
                 "title": "Configure",
+                "type": "sub-menu",
                 "help": "Configuration of all Components of the Platform"
             }
         },
         {
-            "path": "/Home/Configure/",
+            "path": "/Configure/",
             "data": {
                 "title": "Configuration",
                 "help": "Configuration of all Components of the Platform",
+                "type": "leaf",
                 "events": [
                     {
-                        "click": "onClickHomePage"
+                        "click": "onConfig"
                     }
                 ]
+            }
+        },
+        {
+            "path": "/Configure/Configuration|",
+            "data": {
+                "title": "DividerConfiguration",
+                "type": "divider"
             }
         }
     ]

@@ -1,0 +1,18 @@
+<% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
+<div class="form-group row property-form-group">
+<% } %>
+<% if(renderName) { %>
+    <label for="input_<%= id %>" id="title_<%= id %>" class="col-4 col-form-label">
+        <%= name %>
+    </label>
+<% } %>
+    <div class="col-8">
+        <div class="row dynamic-extra-property-elements<%= id %>">
+            <div class="col main-extra-view" id="main_extra_view_<%= id %>">
+            
+            </div>
+        </div>
+    </div>
+<% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
+</div>
+<% } %>

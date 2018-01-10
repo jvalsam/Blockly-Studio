@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import { IDEComponent } from "./ide-component";
-import { ComponentMetadata } from "./component-loader";
+import { ComponentMetadata, ExportedFunction } from "./component-loader";
 import { IViewElement } from "./view";
 import {
     ComponentView,
@@ -48,6 +48,7 @@ export abstract class IDEUIComponent extends IDEComponent {
         return this._view;
     }
 
+    @ExportedFunction
     public render(): void {
             this.view.render();
     }

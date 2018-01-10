@@ -1,14 +1,23 @@
 {
-    "ComponentName": "Name of the component define these elements",
-    "Properties": [
+    "componentName": "Name of the component define these elements",
+    "properties": [
+        // 1st type
         {
             "name": "property name",
             "description": "description help of the property (optional)",
             "value": {
-                "type": "Boolean | Text | Number | Date | Colour | Font| Image | Aggregate(i.e. pair<name, value{type,default}>)",
-                "default": "depends of value"
+                "type": "checkbox | text | number | date | color | select | font | percentage | Image | Aggregate(i.e. pair<name, value{type,default}>)",
+                "values": [], // exist only in case of enum type
+                "default": "depends of value (optional)"
             }
+        },
+        // 2nd type
+        {
+            "group-name": "property name",
+            "properties": [
+                // same properties earlier discussed
+            ]
         }
-        //, one or more
+        // one or more properties
     ]
 }

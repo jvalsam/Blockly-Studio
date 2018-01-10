@@ -1,4 +1,4 @@
-﻿import { ComponentRegistry } from "./component-entry";
+﻿import { ComponentRegistry, ComponentEntry } from "./component-entry";
 import {
     SignalsHolder,
     FunctionsHolder,
@@ -8,6 +8,9 @@ import { ComponentSignal } from "./component-signal";
 import { IDEError } from "../../shared/ide-error/ide-error";
 import { ComponentFunction } from "./component-function";
 import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-component-registry";
+import { IDEUIComponent } from "./ide-ui-component";
+
+import * as _ from "lodash";
 
 
 /**
@@ -16,10 +19,10 @@ import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-
  */
 
 export interface IAuthorData {
-    name: string,
-    email: string,
-    date: string,
-    workDescr?: string // description of changes, refactoring, extensions etc
+    name: string;
+    email: string;
+    date: string;
+    workDescr?: string; // description of changes, refactoring, extensions etc
 }
 
 export interface IComponentData {
@@ -40,20 +43,66 @@ function isIUIComponentData(data: IComponentData | IUIComponentData): data is IU
     return (<IUIComponentData>data).componentView !== undefined;
 }
 
+function checkIDEComponentValidity(name: string, create: Function, data: IComponentData | IUIComponentData): void {
+    if (ComponentRegistry.hasEntry(name)) {
+        IDEError.raise(
+            "DeclareIDEComponent",
+            "Component " + name + " is already defined!"
+        );
+    }
+    if (!data.configDef || name === "IDEComponent" || name === "IDEUIComponent") {
+        return;
+    }
+    let funcNames: Array<string> = [
+        "updateConfigProperties"
+    ];
+    _.forEach (funcNames, (funcName:string) => {
+        if (!create[funcName] && !create.prototype[funcName]) {
+            IDEError.raise(
+                "DeclareIDEComponent",
+                "Component " + name + " has not defined static method " + funcName + "!"
+            );
+        }
+    });
+}
+
+function declareComponentConfigProperties(create: Function, configData: any): void {
+    if (typeof(configData) === "undefined") {
+        return;
+    }
+
+    // TODO: apply json schema validator
+
+    let configProperties: Object = {};
+    _.forEach(configData.properties, (property) => {
+        configProperties[property.name] = property.value;
+    });
+    create["_configProperties"] = configProperties;
+    create["getConfigProperties"] = function() { return this._configProperties; };
+    create["setConfigProperties"] = (values: Object) => {
+        // if (typeof (this._configProperties) === "undefined") { this._configProperties = {}; }
+        _.forOwn(values, (value, key) => {
+            this._configProperties[key] = value;
+        });
+        for (let component of ComponentRegistry.getEntry(name).getInstances()) {
+            (<IDEUIComponent>component).view.setRenderData("ConfigProperties", this._configProperties);
+        }
+    };
+}
 
 function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
     return (create: Function) => {
-        if (ComponentRegistry.hasEntry(name)) {
-            IDEError.raise(
-                "DeclareIDEComponent",
-                "Component " + name + " is already defined!"
-            );
-        }
+        let name: string = create["name"];
+
+        checkIDEComponentValidity(name, create, data);
+
+        declareComponentConfigProperties(create, data.configDef);
+
         BlackboardComponentRegistry.createBlackboard(create.name);
 
         var initData = (data.initData) ? data.initData : [];
 
-        var compEntry = ComponentRegistry.createEntry(
+        var compEntry: ComponentEntry = ComponentRegistry.createEntry(
             create.name,
             data.description,
             data.version,
@@ -215,7 +264,7 @@ export function ExportedSignal(signal: string, argsList?: Array<any>, finalFunc?
     };
 }
 
-function functionHelper(component: string, funcName: string, argsLen: number, parent, method) {
+function FunctionHelper(component: string, funcName: string, argsLen: number, parent, method) {
     let funcMap = FunctionsHolder.get(component);
 
     if (funcMap === null) {
@@ -228,7 +277,7 @@ function functionHelper(component: string, funcName: string, argsLen: number, pa
     FunctionsHolder.put(component, funcMap);
 }
 
-function requiredFunctionHelper(componentDest: string, funcName: string, argsLen: number, componentSrc: string, parent: string, method) {
+function RequiredFunctionHelper(componentDest: string, funcName: string, argsLen: number, componentSrc: string, parent: string, method) {
     let funcMap = RequiredFunctionsHolder.get(componentSrc);
 
     if (funcMap === null) {
@@ -256,6 +305,16 @@ function getParamNames(func): Array<any> {
     return result;
 }
 
+// function AddFunctionBodyFunctionality (propertyKey: string, descriptor: TypedPropertyDescriptor<(...args: any[]) => any>): void {
+//     if (propertyKey === "updateConfigProperties") {
+//         let method = descriptor.value;
+//         descriptor.value = function () {
+//             this.setConfigProperties(arguments[0]);
+//             return method.apply(this, arguments);
+//         };
+//     }
+// }
+
 // Used as decorator
 // publishes enabled functionality of the component
 export function ExportedFunction(
@@ -263,7 +322,9 @@ export function ExportedFunction(
     propertyKey: string,
     descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>
 ) {
-    functionHelper(
+    // AddFunctionBodyFunctionality(propertyKey, descriptor);
+
+    FunctionHelper(
         target.constructor.name,
         propertyKey,
         getParamNames(descriptor.value).length,
@@ -281,7 +342,7 @@ export function RequiredFunction(
 ) {
     return (target: any, propertyKey: string,
         descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>) => {
-        requiredFunctionHelper(
+        RequiredFunctionHelper(
             component,
             funcName,
             argsLen,
@@ -315,8 +376,14 @@ export class EstablishComponentsCommunicationJS {
         );
     }
 
-    public static registerFunction(component: string, parent: string, funcName: string, func: Function, argsLen: number) {
-        functionHelper(
+    public static registerFunction(
+        component: string,
+        parent: string,
+        funcName: string,
+        func: Function,
+        argsLen: number
+    ) {
+        FunctionHelper(
             component,
             funcName,
             argsLen,
@@ -325,8 +392,15 @@ export class EstablishComponentsCommunicationJS {
         );
     }
 
-    public static registerRequiredFunction(componentDst: string, componentSrc: string, parent, funcName: string, func: Function, argsLen: number) {
-        requiredFunctionHelper(
+    public static registerRequiredFunction(
+        componentDst: string,
+        componentSrc: string,
+        parent,
+        funcName: string,
+        func: Function,
+        argsLen: number
+    ) {
+        RequiredFunctionHelper(
             componentDst,
             funcName,
             argsLen,

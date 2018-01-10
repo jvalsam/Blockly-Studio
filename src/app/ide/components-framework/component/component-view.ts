@@ -25,9 +25,19 @@ export abstract class ComponentViewElement extends View {
     get selector (): string { return this._selector; }
     set selector (newSel: string) { this._selector = newSel; }
 
-
-    public setRenderData (templateData: Object): void {
-        this.renderData = templateData;
+    public setRenderData(templateData: Object): void;
+    public setRenderData(key: string, data: Object): void;
+    public setRenderData (key: any, data?: Object): void {
+        switch(typeof(key)) {
+            case "string":
+                this.renderData[key] = data;
+                break;
+            case "object":
+                this.renderData = key;
+                break;
+            default:
+                IDEError.raise("setRenderData", "First element is not string or object!");
+        }
     }
 
     public setEventRegData (...eventRegs: Array<IViewEventRegistration>) {
@@ -58,8 +68,10 @@ export class ComponentView extends ComponentViewElement {
 
     private initViews (views: Array<string>, parent: IDEUIComponent) {
         let viewElems = {};
-        for (let view of views) {
-            viewElems[view] = ComponentViewElementRegistry.getEntry(view).create(parent);
+        if (views) {
+            for (let view of views) {
+                viewElems[view] = ComponentViewElementRegistry.getEntry(view).create(parent);
+            }
         }
         return viewElems;
     }
@@ -132,6 +144,10 @@ export class ComponentView extends ComponentViewElement {
         this.$el.find("div" + selector).empty();
         this.$el.find("div" + selector).append(content);
     }
+}
+
+export class ComponentWConfView extends ComponentView {
+    public update
 }
 
 export let ComponentViewRegistry = new Registry<ComponentView>();
