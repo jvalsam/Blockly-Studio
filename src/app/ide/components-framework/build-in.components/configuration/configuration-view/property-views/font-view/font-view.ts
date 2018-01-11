@@ -1,6 +1,6 @@
-import { IFontData } from './font-view';
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import FontViewTmpl from "./font-view.html";
+import { IFontData } from "./font-view";
 import { IInputData } from "../input-view/input-view";
 import { IDynamicExtraData } from "../dynamic-extra-view/dynamic-extra-view";
 import { ISelectData } from "../select-view/select-view";
@@ -32,8 +32,10 @@ interface IUpdateFuncs {
     [key: string]: (data: any) => void;
 }
 
-function IFontDataConverter(data:any): { indepedent: boolean, font: IFontData } {
+function IFontDataConverter(data: any): { name: string, renderName: boolean, indepedent: boolean, font: IFontData } {
     return {
+        name: data.config.name,
+        renderName: data.renderName,
         indepedent: data.indepedent,
         font: data.value
     };
@@ -53,9 +55,9 @@ export class FontView extends AggregateView {
     ) {
         data = IFontDataConverter(data);
         let aggregateData: IAggregateData = {
-            name: "Font",
+            name: "Font (" + data.name + ")",
             type: "font",
-            renderName: true,
+            renderName: data.renderName,
             indepedent: typeof (data.indepedent) !== "undefined" ? data.indepedent : false,
             props: {}
         };

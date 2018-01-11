@@ -173,8 +173,8 @@ export class BlocklyVPL extends Editor {
 
   // first stmt 
   @ExportedFunction
-  public updateConfigProperties(values: any): void {
-
+  public onChangeConfig(values: any): void {
+    alert("on change config data not developed yet in Blockly Component");
   }
 
 }

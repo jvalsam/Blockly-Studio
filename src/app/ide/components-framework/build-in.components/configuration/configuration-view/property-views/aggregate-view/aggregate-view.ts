@@ -19,6 +19,7 @@ function IAggregateDataConverter(data: any): IAggregateData {
         return data;
     }
     let ISData: IAggregateData;
+    ISData["id"] = data.id;
     ISData.name = data.config.name;
     ISData.type = data.config.type;
     ISData.indepedent = data.indepedent;
@@ -33,16 +34,14 @@ function IAggregateDataConverter(data: any): IAggregateData {
     templateHTML: AggregateViewTmpl
 })
 export class AggregateView extends PropertyView {
-    private data: IAggregateData;
     constructor(
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
         data: any
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, data);
         this.data = IAggregateDataConverter(data);
-        this.data["id"] = this.id;
     }
 
     public render(): void {

@@ -54,7 +54,7 @@ function checkIDEComponentValidity(name: string, create: Function, data: ICompon
         return;
     }
     let funcNames: Array<string> = [
-        "updateConfigProperties"
+        "onChangeConfig"
     ];
     _.forEach (funcNames, (funcName:string) => {
         if (!create[funcName] && !create.prototype[funcName]) {
@@ -79,13 +79,13 @@ function declareComponentConfigProperties(create: Function, configData: any): vo
     });
     create["_configProperties"] = configProperties;
     create["getConfigProperties"] = function() { return this._configProperties; };
-    create["setConfigProperties"] = (values: Object) => {
+    create["setConfigProperties"] = function (values: Object) {
         // if (typeof (this._configProperties) === "undefined") { this._configProperties = {}; }
         _.forOwn(values, (value, key) => {
             this._configProperties[key] = value;
         });
-        for (let component of ComponentRegistry.getEntry(name).getInstances()) {
-            (<IDEUIComponent>component).view.setRenderData("ConfigProperties", this._configProperties);
+        for (let component of ComponentRegistry.getEntry(this.name).getInstances()) {
+            component["onChangeConfig"] (this._configProperties);
         }
     };
 }

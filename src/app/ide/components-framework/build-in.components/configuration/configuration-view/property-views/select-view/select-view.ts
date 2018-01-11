@@ -15,6 +15,7 @@ function ISelectDataConverter(data: any): ISelectData {
         return data;
     }
     let ISData: ISelectData;
+    ISData["id"] = data.id;
     ISData.name = data.config.name;
     ISData.type = data.config.type;
     ISData.indepedent = data.indepedent;
@@ -29,16 +30,14 @@ function ISelectDataConverter(data: any): ISelectData {
     templateHTML: SelectViewTmpl
 })
 export class SelectView extends PropertyView {
-    private data: ISelectData;
     constructor(
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
         data: any
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, data);
         this.data = ISelectDataConverter(data);
-        this.data["id"] = this.id;
     }
 
     public render(): void {
@@ -51,14 +50,16 @@ export class SelectView extends PropertyView {
             {
                 eventType: "change",
                 selector: ".ts-change-enum-input",
-                handler: () => {
-                    this.data.selected = $("#value_" + this.id).val();
-                    if (typeof(this.data.updateParent)!=="undefined") {
-                        this.data.updateParent(this.data);
-                    }
-                }
+                handler: () => this.onChange()
             }
         );
+    }
+
+    private onChange(): void {
+        this.data.selected = $("#input_" + this.id).val();
+        if (typeof (this.data.updateParent) !== "undefined") {
+            this.data.updateParent(this.data);
+        }
     }
 
     public get value(): any {

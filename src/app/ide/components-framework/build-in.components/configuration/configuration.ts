@@ -54,7 +54,7 @@ export class Configuration extends IDEUIComponent {
         ComponentRegistry.getEntry(compName).updateConfigValues(values);
     }
 
-    public updateConfigProperties(values: any): void {
+    public onChangeConfig(values: any): void {
 
     }
 }

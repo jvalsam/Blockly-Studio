@@ -20,12 +20,16 @@ export interface IPropertyData {
 }
 
 export abstract class PropertyView extends View {
+    protected readonly selector: string;
     constructor(
         parent: IDEUIComponent,
         name: string,
-        templateHTML: string
+        templateHTML: string,
+        protected data: any
     ) {
         super(parent, name, templateHTML);
+        this.selector = "#input_"+this.id;
+        this.data.id = this.id;
     }
 
     abstract get value(): any;

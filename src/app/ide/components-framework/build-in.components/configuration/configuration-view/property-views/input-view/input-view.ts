@@ -17,7 +17,7 @@ function IInputDataConverter(data: any): IInputData {
     if (!data.config) {
         return data;
     }
-    return {
+    let inputData: IInputData = {
         name: data.config.name,
         type: data.config.type,
         indepedent: data.indepedent,
@@ -26,6 +26,8 @@ function IInputDataConverter(data: any): IInputData {
         step: data.config.step,
         max: data.config.max
     };
+    inputData["id"] = data.id;
+    return inputData;
 }
 
 @ViewMetadata({
@@ -40,9 +42,8 @@ export class InputView extends PropertyView {
         templateHTML: string,
         data: any
     ) {
-        super(parent,name,templateHTML);
+        super(parent,name,templateHTML, data);
         this.data = IInputDataConverter(data);
-        this.data["id"] = this.id;
     }
 
     public render(): void {
@@ -55,23 +56,7 @@ export class InputView extends PropertyView {
             {
                 eventType: "change",
                 selector: ".ts-change-input",
-                handler: () => {
-                    switch (this.data.type) {
-                        case "checkbox":
-                            this.data.value = $("#value_" + this.id)["checked"];
-                            break;
-                        case "image":
-                            this.data.value = $("#value_" + this.id).val();
-                            this.readURL(this);
-                            break;
-                        default:
-                            this.data.value = $("#value_" + this.id).val();
-                    }
-                    this.data.value = this.data.type !== "checkbox" ? $("#value_" + this.id).val():$("#value_" + this.id)["checked"];
-                    if (this.data.updateParent) {
-                        this.data["updateParent"](this.data);
-                    }
-                }
+                handler: () => this.onChange()
             }
         );
     }
@@ -84,6 +69,24 @@ export class InputView extends PropertyView {
                 $("#img_"+id).attr("src", e.target["result"]);
             };
             reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    public onChange(): void {
+        switch (this.data.type) {
+            case "checkbox":
+                this.data.value = $(this.selector)["checked"];
+                break;
+            case "image":
+                this.data.value = $(this.selector).val();
+                this.readURL(this);
+                break;
+            default:
+                this.data.value = $(this.selector).val();
+        }
+        this.data.value = this.data.type !== "checkbox" ? $(this.selector).val() : $(this.selector)["checked"];
+        if (this.data.updateParent) {
+            this.data["updateParent"](this.data);
         }
     }
 

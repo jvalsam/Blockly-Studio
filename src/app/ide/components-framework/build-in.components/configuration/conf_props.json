@@ -7,7 +7,7 @@
             "value": "black"
         },
         {
-            "name": "Config Title Elements Font",
+            "name": "Config Title Elements",
             "type": "font",
             "value": {
                 "family": "Helvetica",
@@ -18,7 +18,7 @@
             }
         },
         {
-            "name": "Config Elements Font",
+            "name": "Config Elements",
             "type": "font",
             "value": {
                 "family": "Helvetica",

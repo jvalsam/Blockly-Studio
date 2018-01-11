@@ -36,6 +36,7 @@ export class ConfigurationView extends ComponentView {
         this.$el.find(".config-properties-body").append(this.propsView.$el);
         $("div."+this.configCompData.selector).empty();
         $("div."+this.configCompData.selector).append(this.$el);
+        this.registerEvents();
     }
 
     public registerEvents(): void {
@@ -43,22 +44,33 @@ export class ConfigurationView extends ComponentView {
             {
                 eventType: "click",
                 selector: ".ts-btn-config-cancel",
-                handler: () => { ; }
+                handler: () => this.onCancel()
             },
             {
                 eventType: "click",
                 selector: ".ts-btn-config-reset",
-                handler: () => { ; }
+                handler: () => this.onReset()
             },
             {
                 eventType: "click",
                 selector: ".ts-btn-config-save",
-                handler: () => {
-                    this.parent["onSaveValues"](this.propsView.value);
-                    this.propsView.destroy();
-                }
+                handler: () => this.onSave()
             }
         );
+    }
+
+    private onSave(): void {
+        this.parent["onSaveValues"](this.configCompData.compName, this.propsView.value);
+        this.propsView.destroy();
+        this.close();
+    }
+
+    private onReset(): void {
+        this.render();
+    }
+
+    private onCancel(): void {
+        this.close();
     }
 
     private generatePropertyView (type: string, propData: any, currentValues: any): PropertyView {
@@ -67,7 +79,8 @@ export class ConfigurationView extends ComponentView {
             {
                 config: propData,
                 value: currentValues[propData.name],
-                indepedent: true
+                indepedent: true,
+                renderName: true
             }
         );
     }
@@ -101,4 +114,9 @@ export class ConfigurationView extends ComponentView {
         $("#"+this.configCompData.id)["modal"]("show");
     }
 
+
+    private close(): void {
+        $("#" + this.configCompData.id)["modal"]("hide");
+        $("div." + this.configCompData.selector).empty();
+    }
 }

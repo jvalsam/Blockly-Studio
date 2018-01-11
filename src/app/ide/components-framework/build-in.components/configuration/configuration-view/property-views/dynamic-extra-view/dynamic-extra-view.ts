@@ -1,6 +1,6 @@
-import { IAggregateData } from './../aggregate-view/aggregate-view';
-import { IFontData } from './../font-view/font-view';
-import { ISelectData } from './../select-view/select-view';
+import { IAggregateData } from "./../aggregate-view/aggregate-view";
+import { IFontData } from "./../font-view/font-view";
+import { ISelectData } from "./../select-view/select-view";
 import { IPropertyData, PropertyView, PropertyType } from "./../property-view";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { ViewMetadata } from "../../../../../component/view";
@@ -23,6 +23,7 @@ function IDynamicExtraDataConverter(data: any): IDynamicExtraData {
         return data;
     }
     let IDEData: IDynamicExtraData;
+    IDEData["id"] = data.id;
     IDEData.name = data.config.name;
     IDEData.type = data.config.type;
     IDEData.indepedent = data.indepedent;
@@ -36,7 +37,6 @@ function IDynamicExtraDataConverter(data: any): IDynamicExtraData {
     templateHTML: SelectViewTmpl
 })
 export class DynamicExtraView extends PropertyView {
-    private data: IDynamicExtraData;
     private readonly mainViewSelector: string;
     private readonly extraElemsViewSelector: string;
     private mainView: PropertyView;
@@ -47,12 +47,11 @@ export class DynamicExtraView extends PropertyView {
         templateHTML: string,
         data: any
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, data);
         this.data = IDynamicExtraDataConverter(data);
-        this.data["id"] = this.id;
         this.mainViewSelector = "#main_extra_view_"+this.id;
         this.extraElemsViewSelector = ".dynamic-extra-property-elements"+this.id;
-        this.data.main.updateParent = (data: any) => this.onChange(data);
+        this.data.main.updateParent = () => this.onChange();
         this.mainView = <PropertyView>ViewRegistry.getEntry(
             TypeToNameOfPropertyView(this.data.main.type)
         ).create(this.parent, this.data.main);
@@ -61,8 +60,7 @@ export class DynamicExtraView extends PropertyView {
 
     private mainElemRender(): void {
         this.mainView.render();
-        $(this.mainViewSelector).empty();
-        $(this.mainViewSelector).append(this.mainView.$el);
+        this.mainView.$el = this.mainView.$el.children();
     }
 
     private extraElemRender(): void {
@@ -97,14 +95,15 @@ export class DynamicExtraView extends PropertyView {
             this.currExtraView.render();
             return true;
         }
-        
+
         return false;
     }
 
     public render(): void {
         this.renderTmplEl(this.data);
-        this.mainView.render();
+        this.mainElemRender();
         this.$el.find("#main_extra_view_" + this.id).append(this.mainView.$el);
+        this.extraElemRender();
         if (this.extraElem()) {
             this.$el.find(this.extraElemsViewSelector).append(this.$currExtraElem());
         }
@@ -113,8 +112,10 @@ export class DynamicExtraView extends PropertyView {
 
     public registerEvents(): void { ; }
 
-    public onChange(extraData?: any): void {
+    public onChange(): void {
         this.mainElemRender();
+        $(this.mainViewSelector).empty();
+        $(this.mainViewSelector).append(this.mainView.$el);
         this.extraElemRender();
 
         if (typeof (this.data.updateParent) !== "undefined") {

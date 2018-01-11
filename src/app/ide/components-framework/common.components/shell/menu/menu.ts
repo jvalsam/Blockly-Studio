@@ -320,7 +320,7 @@ export class Menu extends IDEUIComponent {
 
     // 1st statement sets 
     @ExportedFunction
-    public updateConfigProperties(values: Object): void {
-
+    public onChangeConfig(values: Object): void {
+        alert("on change config data not developed yet in Menu Component");
     }
 }

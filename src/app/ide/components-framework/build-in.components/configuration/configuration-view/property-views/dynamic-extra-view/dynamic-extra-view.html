@@ -1,6 +1,4 @@
-<% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
-<div class="form-group row property-form-group">
-<% } %>
+<div class="row <%= (typeof(indepedent) ==='undefined' || indepedent===true) ? 'form-group property-form-group':'' %>">
 <% if(renderName) { %>
     <label for="input_<%= id %>" id="title_<%= id %>" class="col-4 col-form-label">
         <%= name %>
@@ -13,6 +11,4 @@
             </div>
         </div>
     </div>
-<% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
 </div>
-<% } %>
