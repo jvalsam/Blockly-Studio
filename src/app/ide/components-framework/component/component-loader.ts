@@ -8,7 +8,6 @@ import { ComponentSignal } from "./component-signal";
 import { IDEError } from "../../shared/ide-error/ide-error";
 import { ComponentFunction } from "./component-function";
 import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-component-registry";
-import { IDEUIComponent } from "./ide-ui-component";
 
 import * as _ from "lodash";
 
@@ -21,7 +20,7 @@ import * as _ from "lodash";
 export interface IAuthorData {
     name: string;
     email: string;
-    date: string;
+    date?: string;
     workDescr?: string; // description of changes, refactoring, extensions etc
 }
 
@@ -85,6 +84,7 @@ function declareComponentConfigProperties(create: Function, configData: any): vo
             this._configProperties[key] = value;
         });
         for (let component of ComponentRegistry.getEntry(this.name).getInstances()) {
+            component["_configProperties"] = this._configProperties;
             component["onChangeConfig"] (this._configProperties);
         }
     };
@@ -414,11 +414,12 @@ export class EstablishComponentsCommunicationJS {
 export class ComponentLoader {
     private static _requestedTemplatesNO = 0;
 
-    constructor() {}
-
-    public static initialize(): void {
-
+    constructor() {
     }
 
-    public cleanUp(): void {}
+    public static initialize(): void {
+    }
+
+    public cleanUp(): void {
+    }
 }

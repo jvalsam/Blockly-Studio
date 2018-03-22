@@ -11,6 +11,7 @@ import { Entry } from "../../shared/entry/entry";
 import { IDEError } from "../../shared/ide-error/ide-error";
 
 import * as _ from "lodash";
+import { IDEUIComponent } from "./ide-ui-component";
 
 
 export interface ComponentEntryInfo {
@@ -56,19 +57,27 @@ export class ComponentEntry extends Entry<Component> {
 
   public updateConfigValues(values: any): void {
     this._creationFunc.setConfigProperties(values);
-    _.forEach(this._instanceList, (instance: any) => {
-      instance.updateConfigProperties(values);
-    });
   }
 
   public isUnique(): boolean { return this._isUnique; }
 
-  public create(): Component {
+  public create(data?: Array<any>): Component;
+  public create(data?: IDEUIComponent): Component;
+  public create(data?: any): Component {
     if (this._isUnique && this._instanceList.length === 1) {
       return this._instanceList[0];
     }
+    let args = this._args;
+    if (data) {
+      args.concat(data);
+    }
 
-    const newComp: Component = new (this._creationFunc)(this._compInfo.name, this._compInfo.description, ...this._args);
+    const newComp: Component = new (this._creationFunc)(this._compInfo.name, this._compInfo.description, ...args);
+    if (this._creationFunc._configProperties) {
+      newComp["_configProperties"] = this._creationFunc._configProperties;
+      newComp["getConfigProperties"] = this._creationFunc.getConfigProperties;
+      newComp["setConfigProperties"] = this._creationFunc.setConfigProperties;
+    }
     this._instanceList.push(newComp);
     return newComp;
   }

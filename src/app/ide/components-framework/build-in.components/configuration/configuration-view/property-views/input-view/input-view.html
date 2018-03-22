@@ -6,8 +6,8 @@
             <%= name %>
         </label>
     <% } %>
-    <div class="col-8">
-        <input id="input_<%= id %>" type="<%= type==='percentage' ? 'number' : type %>" style="margin-left: 10px; <%= type==='color'?'margin-top:6px;':'' %>"
+    <div class="col">
+        <input id="input_<%= id %>" type="<%= type==='percentage' ? 'number' : type %>" style="margin-left:<%= typeof(isExtra)!=='undefined' && isExtra?'5':' 10' %>px; <%= type==='color'?'margin-top:6px;':'' %>"
                 class="<%= type!=='color'?'form-control':'' %> ts-change-input"
                 <%= typeof(step)!=='undefined' ? 'step="'+step+'"':'' %>
                 <%= typeof(min)!=='undefined' ? 'min="'+min+'"' : (type==='percentage' ? 'min="0"' : '') %>

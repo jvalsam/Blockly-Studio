@@ -1,6 +1,7 @@
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { ViewMetadata } from "../../../../../component/view";
 import { IPropertyData, PropertyView } from "../property-view";
+import { FontView } from "../font-view/font-view";
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import SelectViewTmpl from "./select-view.html";
@@ -18,7 +19,9 @@ function ISelectDataConverter(data: any): ISelectData {
     ISData["id"] = data.id;
     ISData.name = data.config.name;
     ISData.type = data.config.type;
+    ISData.style = data.config.style;
     ISData.indepedent = data.indepedent;
+    ISData.isExtra = typeof (data.isExtra) === "boolean" ? data.isExtra : false;
     ISData.values = data.config.values;
     ISData.selected = data.value;
     return ISData;
@@ -42,6 +45,7 @@ export class SelectView extends PropertyView {
 
     public render(): void {
         this.renderTmplEl(this.data);
+        this.setStyle();
         this.registerEvents();
     }
 
@@ -53,6 +57,10 @@ export class SelectView extends PropertyView {
                 handler: () => this.onChange()
             }
         );
+    }
+
+    public setStyle(): void {
+        this.$el.find("#title_" + this.id).css(FontView.getStyle(this.data.style["Config Elements"]));
     }
 
     private onChange(): void {

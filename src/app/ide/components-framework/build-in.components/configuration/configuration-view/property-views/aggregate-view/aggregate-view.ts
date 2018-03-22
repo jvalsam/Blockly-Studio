@@ -22,7 +22,9 @@ function IAggregateDataConverter(data: any): IAggregateData {
     ISData["id"] = data.id;
     ISData.name = data.config.name;
     ISData.type = data.config.type;
+    ISData.style = data.config.style;
     ISData.indepedent = data.indepedent;
+    ISData.isExtra = typeof (data.isExtra) === "boolean" ? data.isExtra : false;
     ISData.renderName = data.renderName;
     ISData.props = data.props ? data.props : {};
     return ISData;
@@ -44,8 +46,13 @@ export class AggregateView extends PropertyView {
         this.data = IAggregateDataConverter(data);
     }
 
+    public get properties(): { [name: string]: PropertyView } {
+        return this.data.props;
+    }
+
     public render(): void {
         this.renderTmplEl(this.data);
+        this.setStyle();
         _.forOwn(this.data.props, (value, key) => {
             value.render();
             this.$el.find("#elems_"+this.id).append(value.$el);
@@ -70,6 +77,8 @@ export class AggregateView extends PropertyView {
     }
 
     public registerEvents(): void { ; }
+
+    public setStyle(): void { ; }
 
     public get value(): any {
         let aggValue: Object = {};

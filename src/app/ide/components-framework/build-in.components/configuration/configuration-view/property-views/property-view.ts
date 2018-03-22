@@ -14,8 +14,10 @@ export type PropertyType =
 export interface IPropertyData {
     name: string;
     type: PropertyType;
+    style: Object;
     renderName?: boolean;
     indepedent?: boolean;
+    isExtra?: boolean;
     updateParent?: (data:any) => void;
 }
 
@@ -25,14 +27,22 @@ export abstract class PropertyView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        protected data: any
+        protected _data: any
     ) {
         super(parent, name, templateHTML);
         this.selector = "#input_"+this.id;
-        this.data.id = this.id;
+        this._data.id = this.id;
     }
 
     abstract get value(): any;
+
+    public get data(): any {
+        return this._data;
+    }
+
+    public set data(val: any) {
+        this._data = val;
+    }
 
     public get type(): PropertyType {
         return this["data"].type;
@@ -64,4 +74,22 @@ export function TypeToNameOfPropertyView(type: string): string {
         default:
             return "InputView";
     }
+}
+
+export function StyleObjectToString(data: any): string {
+    if (typeof(data)!=="object") {
+        return data;
+    }
+    let value: string = data.extra;
+    switch (data.main) {
+        case "number":
+            value += "px";
+            break;
+        case "percentage":
+            value += "%";
+            break;
+        default:
+            value += data.main;
+    }
+    return value;
 }

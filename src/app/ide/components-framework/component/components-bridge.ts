@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2018-01-11 13:02:14.945693
+ * 2018-03-22 11:34:24.248491
  */
 
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
@@ -22,6 +22,10 @@ import { InputView } from "../../../../../src/app/ide/components-framework/build
 import { SelectView } from "../../../../../src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/select-view/select-view";
 import { EditorManagerView } from "../../../../../src/app/ide/components-framework/build-in.components/editor-manager/editor-manager-view";
 import { EditorManager } from "../../../../../src/app/ide/components-framework/build-in.components/editor-manager/editor-manager";
+import { ProjectManager } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager";
+import { ProjectManagerView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-view";
+import { CategoryView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/category-view/category-view";
+import { ActionsView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/category-view/actions-view/actions-view";
 import { StartPageView } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-view";
 import { StartPageComponent } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page";
 import { ApplicationListSP } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-elements/application-list-s-p/application-list-s-p";
@@ -43,6 +47,8 @@ import { BlocklyView } from "../../../../../src/app/ide/ide-components/blockly/b
 import { BlocklyVPL } from "../../../../../src/app/ide/ide-components/blockly/blockly";
 import { ICEView } from "../../../../../src/app/ide/ide-components/ice/ice-view";
 import { ICEVPL } from "../../../../../src/app/ide/ide-components/ice/ice";
+import { SmartObjectEditorView } from "../../../../../src/app/ide/ide-components/iot/smart-objects-editor/smart-object-editor-view";
+import { SmartObjectsEditor } from "../../../../../src/app/ide/ide-components/iot/smart-objects-editor/smart-objects-editor";
 import { IoTWSPEditorView } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-wsp-editor-view";
 import { IoTWSPEditor } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-wsp-editor";
 import { IoTAutomationList } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-list";
@@ -65,6 +71,10 @@ export class ComponentsBridge {
 		SelectView.onInit();
 		EditorManagerView.onInit();
 		EditorManager.onInit();
+		ProjectManager.onInit();
+		ProjectManagerView.onInit();
+		CategoryView.onInit();
+		ActionsView.onInit();
 		StartPageView.onInit();
 		StartPageComponent.onInit();
 		ApplicationListSP.onInit();
@@ -86,6 +96,8 @@ export class ComponentsBridge {
 		BlocklyVPL.onInit();
 		ICEView.onInit();
 		ICEVPL.onInit();
+		SmartObjectEditorView.onInit();
+		SmartObjectsEditor.onInit();
 		IoTWSPEditorView.onInit();
 		IoTWSPEditor.onInit();
 		IoTAutomationList.onInit();

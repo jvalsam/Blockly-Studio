@@ -10,7 +10,7 @@ import { ComponentRegistry } from "./../../../components-framework/component/com
 
 
 @UIComponentMetadata({
-    description: "The basic skeletonof the IDE where the other visual components are attached in order to build the whole environment",
+    description: "The basic skeleton of the IDE where the other visual components are attached in order to build the whole environment",
     authors: [
         {
             name: "Yannis Valsamakis",

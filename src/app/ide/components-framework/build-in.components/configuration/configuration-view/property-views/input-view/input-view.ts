@@ -1,6 +1,7 @@
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { ViewMetadata } from "../../../../../component/view";
 import { IPropertyData, PropertyView } from "../property-view";
+import { FontView } from "../font-view/font-view";
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import InputViewTmpl from "./input-view.html";
@@ -20,8 +21,10 @@ function IInputDataConverter(data: any): IInputData {
     let inputData: IInputData = {
         name: data.config.name,
         type: data.config.type,
+        style: data.config.style,
         indepedent: data.indepedent,
-        value: data.config.value,
+        isExtra: typeof (data.isExtra) === "boolean" ? data.isExtra : false,
+        value: data.value,
         min: data.config.min,
         step: data.config.step,
         max: data.config.max
@@ -35,7 +38,6 @@ function IInputDataConverter(data: any): IInputData {
     templateHTML: InputViewTmpl
 })
 export class InputView extends PropertyView {
-    protected data: IInputData;
     constructor(
         parent: IDEUIComponent,
         name: string,
@@ -48,6 +50,7 @@ export class InputView extends PropertyView {
 
     public render(): void {
         this.renderTmplEl(this.data);
+        this.setStyle();
         this.registerEvents();
     }
 
@@ -59,6 +62,10 @@ export class InputView extends PropertyView {
                 handler: () => this.onChange()
             }
         );
+    }
+
+    private setStyle(): void {
+        this.$el.find("#title_" + this.id).css(FontView.getStyle(this.data.style["Config Elements"]));
     }
 
     private readURL(input:any): void {

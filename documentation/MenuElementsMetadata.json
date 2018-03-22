@@ -13,7 +13,7 @@
                 "style": "css would like to change for the menu item", // optional
                 "type": "'leaf' or 'sub-menu' or 'group'",
                 "events": [ // not exists when hasChildren field is true
-                    { "onclick": "onExitPlatform" } // function will be called on click
+                    { "click": "onExitPlatform" } // function will be called on click
                 ]
             }
         }

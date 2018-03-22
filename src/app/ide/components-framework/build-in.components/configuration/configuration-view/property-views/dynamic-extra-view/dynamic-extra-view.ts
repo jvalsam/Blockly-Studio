@@ -15,6 +15,7 @@ export type SelectType = "select" | "aggregate";
 
 export interface IDynamicExtraData extends IPropertyData {
     values: { [key: string]: { type: PropertyType, value: IPropertyData } | number };
+    value: { main: any, extra: any };
     main: IInputData | ISelectData | IFontData | IAggregateData | IDynamicExtraData;
 }
 
@@ -27,6 +28,8 @@ function IDynamicExtraDataConverter(data: any): IDynamicExtraData {
     IDEData.name = data.config.name;
     IDEData.type = data.config.type;
     IDEData.indepedent = data.indepedent;
+    IDEData.isExtra = typeof(data.isExtra)==="boolean"?data.isExtra:false;
+    IDEData.value = data.config.value;
     IDEData.values = data.config.values;
     IDEData.main = data.value;
     return IDEData;
@@ -79,7 +82,8 @@ export class DynamicExtraView extends PropertyView {
 
     private $currExtraElem(): JQuery {
         this.currExtraView.render();
-        let $extraEl = $("<div class='col' id='extra_elem_" + this.currExtraView.id + "'></div>");
+        let $extraEl = $("<div class='col' id='extra_elem_" + this.currExtraView.id + "'"+
+            "style=\"padding-left: 0px;\"></div>");
         $extraEl.append(this.currExtraView.$el);
         return $extraEl;
     }
@@ -89,6 +93,7 @@ export class DynamicExtraView extends PropertyView {
 
         let extraElem = this.data.values[this.mainView.value];
         if (extraElem && typeof (extraElem) !== "number") {
+            extraElem.value.isExtra = true;
             this.currExtraView = <PropertyView>ViewRegistry.getEntry(
                 TypeToNameOfPropertyView(extraElem.type)
             ).create(this.parent, extraElem.value);

@@ -8,7 +8,7 @@ import { ViewRegistry } from "../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { IAggregateData, AggregateView } from "./../aggregate-view/aggregate-view";
 import { ViewMetadata } from "./../../../../../component/view";
-import { PropertyView, PropertyType, IPropertyData } from "../property-view";
+import { PropertyView, PropertyType, IPropertyData, StyleObjectToString } from "../property-view";
 
 const font_family_values: Array<string> = [
     "Georgia", "Palatino Linotype", "Book Antiqua", "Times New Roman", "Arial",
@@ -28,15 +28,26 @@ export interface IFontData {
     updateParent?: (data: any) => void;
 }
 
+export interface IFontCData {
+    name: string;
+    renderName: boolean;
+    style: boolean;
+    indepedent: boolean;
+    isExtra: boolean;
+    font: IFontData;
+}
+
 interface IUpdateFuncs {
     [key: string]: (data: any) => void;
 }
 
-function IFontDataConverter(data: any): { name: string, renderName: boolean, indepedent: boolean, font: IFontData } {
+function IFontDataConverter(data: any): IFontCData {
     return {
         name: data.config.name,
+        style: data.config.style,
         renderName: data.renderName,
         indepedent: data.indepedent,
+        isExtra: typeof(data.isExtra) ==="boolean" ? data.isExtra : false,
         font: data.value
     };
 }
@@ -57,6 +68,7 @@ export class FontView extends AggregateView {
         let aggregateData: IAggregateData = {
             name: "Font (" + data.name + ")",
             type: "font",
+            style: data.style,
             renderName: data.renderName,
             indepedent: typeof (data.indepedent) !== "undefined" ? data.indepedent : false,
             props: {}
@@ -65,16 +77,17 @@ export class FontView extends AggregateView {
             aggregateData.updateParent = data.updateParent;
         }
         super(parent, name, templateHTML, aggregateData);
-        this.addFamily(data.font.family);
-        this.addTextColor(data.font.textColor);
-        this.addSize(data.font.size);
-        this.addWeight(data.font.weight);
-        this.addStyle(data.font.style);
+        this.addFamily(data.font["Family"], data.style);
+        this.addTextColor(data.font["Text Colour"], data.style);
+        this.addSize(data.font["Size"], data.style);
+        this.addWeight(data.font["Weight"], data.style);
+        this.addStyle(data.font["Style"], data.style);
     }
 
-    private addFamily(value: any): void {
+    private addFamily(value: any, style: any): void {
         let familyData: ISelectData = {
             name: "Family",
+            style: style,
             selected: value,
             values: font_family_values,
             type: "aggregate",
@@ -84,9 +97,10 @@ export class FontView extends AggregateView {
         this.addProperty("Family", <PropertyView>ViewRegistry.getEntry("SelectView").create(this.parent, familyData));
     }
 
-    private addTextColor(value: any): void {
+    private addTextColor(value: any, style: any): void {
         let textColorData: IInputData = {
             name: "Text Colour",
+            style: style,
             value: value,
             type: "color",
             renderName: true,
@@ -95,7 +109,7 @@ export class FontView extends AggregateView {
         this.addProperty("Text Colour", <PropertyView>ViewRegistry.getEntry("InputView").create(this.parent, textColorData));
     }
 
-    private addSize(value: any): void {
+    private addSize(value: any, style: any): void {
         let values: { [key: string]: { type: PropertyType, value: IPropertyData } | number } = {
             "xx-small": 1,
             "x-small": 2,
@@ -111,8 +125,22 @@ export class FontView extends AggregateView {
                 value: {
                     type: "number",
                     parent: this,
+                    style: style,
                     name: "Size",
-                    value: "9",
+                    value: typeof(value)==="object" && value.main==="number" ? value.extra : 16,
+                    renderName: false
+                }
+            },
+            "rem": {
+                type: "number",
+                value: {
+                    parent: this,
+                    style: style,
+                    name: "Size",
+                    value: typeof (value) === "object" && value.main === "rem" ? value.extra : 1,
+                    step: 0.0001,
+                    min: 0,
+                    type: "number",
                     renderName: false
                 }
             },
@@ -120,8 +148,9 @@ export class FontView extends AggregateView {
                 type: "percentage",
                 value: {
                     parent: this,
+                    style: style,
                     name: "Size",
-                    value: 0,
+                    value: typeof (value) === "object" && value.main === "percentage" ? value.extra : 20,
                     type: "percentage",
                     renderName: false
                 }
@@ -129,25 +158,28 @@ export class FontView extends AggregateView {
             "initial": 10
         };
         let main: ISelectData = {
-            name: "Font size",
+            name: "Size",
+            style: style,
             type: "select",
             values: Object.keys(values),
-            selected: value,
+            selected: value.main,
             renderName: false,
             indepedent: false
         };
         let fontSizeData: IDynamicExtraData = {
-            name: "Font size",
+            name: "Size",
+            style: style,
+            value: value,
             values: values,
             main: main,
             renderName: true,
             indepedent: true,
             type: "dynamic"
         };
-        this.addProperty("Font size", <PropertyView>ViewRegistry.getEntry("DynamicExtraView").create(this.parent, fontSizeData));
+        this.addProperty("Size", <PropertyView>ViewRegistry.getEntry("DynamicExtraView").create(this.parent, fontSizeData));
     }
 
-    private addWeight(value: any): void {
+    private addWeight(value: any, style: any): void {
         let values: { [key: string]: { type: PropertyType, value: IPropertyData } | number } = {
             "normal": 1,
             "bold": 2,
@@ -158,8 +190,9 @@ export class FontView extends AggregateView {
                 type: "number",
                 value: {
                     parent: this,
-                    name: "Weight:",
-                    value: "100",
+                    style: style,
+                    name: "Weight",
+                    value: typeof (value) === "object" && value.main === "number" ? value.extra : 100,
                     step: 100,
                     min: 100,
                     max: 900,
@@ -169,33 +202,47 @@ export class FontView extends AggregateView {
             }
         };
         let main: ISelectData = {
-            name: "Font Weight",
+            name: "Weight",
+            style: style,
             type: "select",
             values: Object.keys(values),
-            selected: value,
+            selected: value.main,
             renderName: false,
             indepedent: false
         };
         let fontWeightData: IDynamicExtraData = {
-            name: "Font weight",
+            name: "Weight",
+            style: style,
+            value: value,
             values: values,
             main: main,
             renderName: true,
             indepedent: true,
             type: "dynamic"
         };
-        this.addProperty("Font weight", <PropertyView>ViewRegistry.getEntry("DynamicExtraView").create(this.parent, fontWeightData));
+        this.addProperty("Weight", <PropertyView>ViewRegistry.getEntry("DynamicExtraView").create(this.parent, fontWeightData));
     }
 
-    private addStyle(value: any): void {
+    private addStyle(value: any, style: any): void {
         let fontStyleData: ISelectData = {
-            name: "Font style",
+            name: "Style",
+            style: style,
             values: ["normal", "italic", "oblique", "initial"],
             selected: value,
             renderName: true,
             indepedent: true,
             type: "aggregate"
         };
-        this.addProperty("Font style", <PropertyView>ViewRegistry.getEntry("SelectView").create(this.parent, fontStyleData));
+        this.addProperty("Style", <PropertyView>ViewRegistry.getEntry("SelectView").create(this.parent, fontStyleData));
+    }
+
+    public static getStyle(data: any): JQueryCssProperties {
+        return {
+            "font-family": StyleObjectToString(data.Family),
+            "font-size": StyleObjectToString(data.Size),
+            "font-style": StyleObjectToString(data.Style),
+            "font-weight": StyleObjectToString(data.Weight),
+            "color": StyleObjectToString(data["Text Colour"])
+        };
     }
 }

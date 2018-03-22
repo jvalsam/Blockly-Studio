@@ -1,10 +1,10 @@
-import { AggregateView } from "./property-views/aggregate-view/aggregate-view";
 /// <reference path="../../../../../../../node.d.ts"/>
 import ConfigurationViewTmpl from "./configuration.html";
 import { ComponentViewMetadata } from "../../../component/component-view";
 import { ComponentView } from "../../../component/component-view";
 import { PropertyView, TypeToNameOfPropertyView } from "./property-views/property-view";
 import { FontView } from "./property-views/font-view/font-view";
+import { AggregateView } from "./property-views/aggregate-view/aggregate-view";
 
 import * as _ from "lodash";
 import { ViewRegistry } from "../../../component/registry";
@@ -21,17 +21,19 @@ export class ConfigurationView extends ComponentView {
     private configCompData: {
         id: string,
         readonly selector: string,
-        compName: string
+        compName: string,
+        style: Object
     };
 
     public initialize(): void {
         super.initialize();
-        this.configCompData = { id: "configModalCenter", selector: "modal-area", compName: "" };
+        this.configCompData = { id: "configModalCenter", selector: "modal-area", compName: "", style: this.parent["_configProperties"] };
         this.propsView = null;
     }
 
     public render(): void {
         this.renderTmplEl(this.configCompData);
+        this.setStyle();
         this.propsView.render();
         this.$el.find(".config-properties-body").append(this.propsView.$el);
         $("div."+this.configCompData.selector).empty();
@@ -59,14 +61,18 @@ export class ConfigurationView extends ComponentView {
         );
     }
 
+    public setStyle(): void {
+        this.$el.find("configModalTitle").css(FontView.getStyle(this.configCompData.style["Config Title Elements"]));
+    }
+
     private onSave(): void {
         this.parent["onSaveValues"](this.configCompData.compName, this.propsView.value);
         this.propsView.destroy();
-        this.close();
     }
 
     private onReset(): void {
-        this.render();
+        this.close();
+        this.open();
     }
 
     private onCancel(): void {
@@ -98,6 +104,7 @@ export class ConfigurationView extends ComponentView {
             }
         );
         _.forEach(configData.properties, (prop) => {
+            prop.style = this.configCompData.style;
             this.propsView.addProperty (
                 prop.name,
                 this.generatePropertyView (
@@ -114,9 +121,16 @@ export class ConfigurationView extends ComponentView {
         $("#"+this.configCompData.id)["modal"]("show");
     }
 
-
     private close(): void {
-        $("#" + this.configCompData.id)["modal"]("hide");
-        $("div." + this.configCompData.selector).empty();
+        $("#" + this.configCompData.id + " .close").click();
+    }
+
+    public setConfigData (data: any): void {
+        this.close();
+        this.setRenderData("config", data);
+        this.configCompData.style = data;
+        _.forOwn(this.propsView.properties, (property: PropertyView, key: string) => {
+            property.data.style = data;
+        });
     }
 }

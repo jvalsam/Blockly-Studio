@@ -55,6 +55,6 @@ export class Configuration extends IDEUIComponent {
     }
 
     public onChangeConfig(values: any): void {
-
+        this.view["setConfigData"](values);
     }
 }

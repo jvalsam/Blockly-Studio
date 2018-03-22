@@ -39,6 +39,7 @@
     "@types/lodash": "^4.14.74",
     "bootstrap": "^4.0.0-beta.2",
     "html-minifier": "^3.5.7",
+    "jstree": "^3.3.5",
     "lodash.template": "^4.4.0",
     "node-blockly": "^1.0.26",
     "popper.js": "^1.12.9",

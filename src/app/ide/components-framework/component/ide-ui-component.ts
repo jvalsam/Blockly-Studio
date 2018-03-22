@@ -16,11 +16,7 @@ export interface IViewDataComponent {
 @ComponentMetadata({
     description: "All components which are visible in the IDE",
     authors: [
-        {
-            name: "Yannis Valsamakis",
-            email: "jvalsam@ics.forth.gr",
-            date: "August 2017"
-        }
+        { date: "August 2017", name: "Yannis Valsamakis", email: "jvalsam@ics.forth.gr" }
     ],
     version: "1.0"
 })

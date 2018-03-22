@@ -16,7 +16,7 @@ export abstract class ComponentViewElement extends View {
         name: string,
         private _selector: string,
         templateHTML: string,
-        protected renderData: Object = {},
+        protected renderData: any = {},
         protected eventRegData: Array<IViewEventRegistration> = new Array<IViewEventRegistration>()
     ) {
         super(parent, name, templateHTML);

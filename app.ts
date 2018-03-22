@@ -4,6 +4,6 @@
 import { IDECore } from "./src/app/ide/components-framework/ide-core";
 
 $(document).ready(function() {
-       IDECore.initialize();
-       IDECore.start();
+    IDECore.initialize();
+    IDECore.start();
 });

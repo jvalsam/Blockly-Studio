@@ -74,3 +74,12 @@ class _IDEError {
 }
 
 export let IDEError: _IDEError = new _IDEError();
+
+export function assert(expr: false, message?: string): any;
+export function assert(expr: boolean, message?: string): void;
+
+export function assert(expr: boolean, message?: string): void {
+    if (!expr) {
+        IDEError.raise("Assertion failed", message);
+    }
+}

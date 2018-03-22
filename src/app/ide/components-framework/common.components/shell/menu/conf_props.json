@@ -2,15 +2,25 @@
     "componentName": "Menu",
     "properties": [
         {
-            "name": "Backgound Colour",
+            "name": "Backgound",
             "type": "color",
-            "value": "dark"
+            "value": "#343a40"
         },
         {
-            "name": "Titles Font",
+            "name": "Label",
             "type": "font",
             "value": {
-                
+                "Family": "Helvetica",
+                "Text Colour": "#fff",
+                "Size": {
+                    "main": "rem",
+                    "extra": "1"
+                },
+                "Weight": {
+                    "main": "number",
+                    "extra": 400
+                },
+                "Style": "normal"
             }
         }
     ]

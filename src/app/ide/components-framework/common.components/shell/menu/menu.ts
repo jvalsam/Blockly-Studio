@@ -125,7 +125,7 @@ export class Menu extends IDEUIComponent {
         }
     }
 
-    private findNode (pathElems, compName) {
+    private findNode(pathElems: any, compName: string): any {
         let node = this.items;
         let prvNode = null;
         for (let pathElem of pathElems.slice(0, pathElems.length - 1)) {
@@ -314,7 +314,7 @@ export class Menu extends IDEUIComponent {
      * Events Callback functions which require components function request or signal
      */
     @ExportedFunction
-    public onClickHomePage() {
+    public onClickHomePage(): void {
         alert ("Go Home is not implemented yet!");
     }
 
