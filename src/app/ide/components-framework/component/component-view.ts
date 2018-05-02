@@ -105,13 +105,16 @@ export class ComponentView extends ComponentViewElement {
         return this.toolsViewElems;
     }
 
-    public render(): void {
+    public render(callback?: Function): void {
         this.renderTmplEl(this.renderData);
         this.registerEvents();
         _.forEach(this.mainViewElems, (mainViewElement: ComponentViewElement) => {
-            mainViewElement.render();
-            this.$el.find(mainViewElement.selector).empty();
-            this.$el.find(mainViewElement.selector).append(mainViewElement.$el);
+            mainViewElement.render(
+                () => {
+                    this.$el.find(mainViewElement.selector).empty();
+                    this.$el.find(mainViewElement.selector).append(mainViewElement.$el);
+                }
+            );
         });
         _.forEach(this.menuElems, (menuViewElement) => {
             menuViewElement.render();
@@ -119,6 +122,9 @@ export class ComponentView extends ComponentViewElement {
         _.forEach(this.toolsViewElems, (toolViewElement) => {
             toolViewElement.render();
         });
+        if (callback) {
+            callback();
+        }
     }
 
     protected inject (selector: string, templateHTML: JQuery): void;

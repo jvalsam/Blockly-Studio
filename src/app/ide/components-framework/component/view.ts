@@ -91,7 +91,7 @@ export abstract class View {
         this.$el.attr("id", this._id);
     }
 
-    public abstract render(): void;
+    public abstract render(callback?: Function): void;
     public abstract registerEvents(): void;
 
     public get id(): string {

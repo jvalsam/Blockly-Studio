@@ -1,5 +1,5 @@
-import { ISelectData } from './../../configuration/configuration-view/property-views/select-view/select-view';
 import { ViewRegistry } from './../../../component/registry';
+import { ISelectData } from './../../configuration/configuration-view/property-views/select-view/select-view';
 /// <reference path="../../../../../../../node.d.ts"/>
 import DomainTmpl from "./domain-view.html";
 import { View, ViewMetadata } from "../../../component/view";
@@ -7,6 +7,7 @@ import { ApplicationListSP } from "../../applications-view/application-list-s-p/
 import { DomainsAdministration } from "./../../applications-admin-sc/domains-admin";
 import { SelectView } from "../../configuration/configuration-view/property-views/select-view/select-view";
 import { IDEUIComponent } from '../../../component/ide-ui-component';
+import { ComponentViewElementRegistry } from '../../../component/component-view';
 
 @ViewMetadata({
     name: "DomaiView",
@@ -47,14 +48,22 @@ export class DomainView extends View {
 
     private renderApps(selectedDomain): void {
         if (selectedDomain.type === "programming") {
-            if (this.domainsAppsView)
+            if (this.domainsAppsView === null) {
+                this.domainsAppsView = <ApplicationListSP>ComponentViewElementRegistry.getEntry("ApplicationsListStartPage").create(
+                    this.parent,
+                    selectedDomain.name
+                );
+            }
+            else {
+                this.domainsAppsView.setDomain(selectedDomain.name);
+            }
         }
         else {
 
         }
     }
 
-    public renderOnResponse (domains): void {
+    public renderOnResponse (domains, callback: Function): void {
         let values = domains.map(x=>x.title);
         this.selectedValue = this.selectedValue ? this.selectedValue : values[0];
         let domainsData: ISelectData = {
@@ -77,10 +86,10 @@ export class DomainView extends View {
         this.renderApps(selectedDomain);
     }
 
-    public render(): void {
+    public render(callback?: Function): void {
         this.renderTmplEl();
         DomainsAdministration.requestDomains(
-            (domains) => this.renderOnResponse(domains)
+            (domains) => this.renderOnResponse(domains, callback)
         );
     }
 

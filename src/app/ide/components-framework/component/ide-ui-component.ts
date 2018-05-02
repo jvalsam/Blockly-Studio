@@ -45,8 +45,8 @@ export abstract class IDEUIComponent extends IDEComponent {
     }
 
     @ExportedFunction
-    public render(): void {
-            this.view.render();
+    public render(callback?:Function): void {
+            this.view.render(callback);
     }
 
     protected inject(selector: string, templateHTML: JQuery): void;

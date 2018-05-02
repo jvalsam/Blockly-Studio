@@ -44,7 +44,6 @@ export class IDECore {
     ComponentRegistry.getEntry("ApplicationWSPManager").create();
     var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.getEntry("StartPageComponent").create();
     shell.openComponent(startpage);
-    shell.show();
   }
 
 }

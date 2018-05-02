@@ -63,16 +63,19 @@ export class Shell extends IDEUIComponent {
   @ExportedFunction
   public openComponent(comp: IDEUIComponent): void {
     //this.updateComponentsViewTree(comp);
+    comp.render (
+      () => {
+        this._menu.activateMenuItems(comp.view.menuElems);
 
-    comp.render();
+        this._toolbar.addTools(comp.view.toolElems);
 
-    this._menu.activateMenuItems(comp.view.menuElems);
+        if (comp.view.main) {
+          this.inject(".main-area-container", comp.view.main);
+        }
 
-    this._toolbar.addTools(comp.view.toolElems);
-
-    if (comp.view.main) {
-      this.inject(".main-area-container", comp.view.main);
-    }
+        this.show();
+      }
+    );
   }
 
   private getSelector(selector: string): string {
