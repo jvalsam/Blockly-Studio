@@ -7,22 +7,23 @@
 
 /// <reference path="../../../../../../node.d.ts"/>
 import StartPageTmpl from "./start-page.html";
-import {
-    ComponentViewElemMetadata,
-    ComponentViewElement
-} from "../../component/component-view-element";
-import { ApplicationListSP } from "./start-page-elements/application-list-s-p/application-list-s-p";
-import { SmartObjectListSP } from "./start-page-elements/smart-object-list-s-p/smart-object-list-s-p";
+import { ComponentViewElement, ComponentViewElementMetadata } from "../../component/component-view";
+import { ApplicationListSP } from "../applications-view/application-list-s-p/application-list-s-p";
 
 
-@ComponentViewElemMetadata({
+@ComponentViewElementMetadata({
     name: "StartPageViewElement",
     selector: ".start-page-container",
     templateHTML: StartPageTmpl
 })
 export class StartPageViewElement extends ComponentViewElement {
-    private _smartObjects: SmartObjectListSP;
     private _applications: ApplicationListSP;
 
-    
+    public render(): void {
+        
+    }
+
+    public registerEvents(): void {
+
+    }
 }

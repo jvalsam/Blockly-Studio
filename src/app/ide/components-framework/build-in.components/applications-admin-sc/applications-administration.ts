@@ -5,47 +5,41 @@
  *
  */
 
-import { ApplicationModel } from "../../../shared/models/application.model";
-import { IoTApplication } from "../../../ide-components/iot/application/iot-application";
+import { IoTApplication, Application } from "../../../ide-components/iot/application/iot-application";
 import { Automation } from "../../../ide-components/iot/application/automation";
-import { Application } from "../../../shared/application";
+// import { Application } from "../../../shared/application";
 import { ApplicationsHolder } from "../../holders";
 import * as _ from "lodash";
+import { URL } from "../../../shared/data";
+
+
+export interface AppFilter {
+    name: string;
+    value: String | Array<String>;
+}
 
 export class ApplicationsAdministration {
     private static readonly prefix = "$application_";
-    private static numberOfApplications: number = 0;
 
-    public static requestUserApplications(): Array<ApplicationModel> {
-        const response: Array<ApplicationModel> = [
-            new ApplicationModel("user_app00001", "Remote Hospitality", "Automations using smart objects for remote hospitality purpuses"),
-            new ApplicationModel("user_app00002", "Morning Automations", "Automations using smart objects for the morning automations"),
-            new ApplicationModel("user_app00003", "Self-Caring Home", "Automations using smart objects for home care")
-        ];
-        _.forEach(
-            response,
-            function (application: ApplicationModel): void {
-                ++ApplicationsAdministration.numberOfApplications;
-                ApplicationsHolder.put(application.id, application);
-            }
+    public static requestUserApplications(callback: (elements) => void): void {
+        $.get(
+            URL + "applications/user/outline",
+            (applications) => callback(applications)
         );
-        return response;
     }
 
-    public static requestSharedApplications(): Array<ApplicationModel> {
-        const response: Array<ApplicationModel> = [
-            new ApplicationModel("shared_app00001", "Remote Hospitality", "Automations using smart objects for remote hospitality purpuses"),
-            new ApplicationModel("shared_app00002", "Morning Automations", "Automations using smart objects for the morning automations"),
-            new ApplicationModel("shared_app00003", "Self-Caring Home", "Automations using smart objects for home care")
-        ];
-        _.forEach(
-            response,
-            function (application: ApplicationModel): void {
-                ++ApplicationsAdministration.numberOfApplications;
-                ApplicationsHolder.put(application.id, application);
-            }
+    public static requestApplications(filters: Array<AppFilter>, callback: (elements) => void): void {
+        $.post(
+            URL + "applications/filters",
+            { filters: filters },
+            (applications) => callback(applications)
         );
-        return response;
+    }
+
+    public static requestSharedApplications(callback: (elements) => void): void {
+        // TODO: extend privileges for specific users
+        //       or categories of users etc.
+        this.requestApplications([ { name: "privileges", value: ["public"] } ], callback);
     }
 
     public static initialize(): void {

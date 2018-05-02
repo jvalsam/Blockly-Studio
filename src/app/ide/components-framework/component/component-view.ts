@@ -146,10 +146,6 @@ export class ComponentView extends ComponentViewElement {
     }
 }
 
-export class ComponentWConfView extends ComponentView {
-    public update
-}
-
 export let ComponentViewRegistry = new Registry<ComponentView>();
 
 /**

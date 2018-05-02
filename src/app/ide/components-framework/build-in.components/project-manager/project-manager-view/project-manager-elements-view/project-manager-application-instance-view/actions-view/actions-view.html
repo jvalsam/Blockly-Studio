@@ -1,0 +1,22 @@
+<div class="row project-manager-actions-container">
+    <button class="btn dropdown-toggle" type="button" id="dropdownMenu<%= id %>" data-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenu<%= id %>" x-placement="bottom-start" style="position: absolute; transform: translate3d(187px, 47px, 0px); top: 0px; left: 0px; will-change: transform;">
+        <% _.forEach(actions, (action) => { %>
+            <a class="dropdown-item" id="<%= action.title %>_<%= id %>" href="#" <%=( typeof(action.help)!=='undefined' ) ?
+                "data-toggle='tooltip' data-placement='left' title='" + action.help + "'" : '' %>
+                >
+                <% if(typeof(action.img)!== 'undefined') {
+                    if (_.includes(action.img, "fa-")) { %>
+                        <i class="fa <%= action.img %>" aria-hidden="true"></i>
+                <%  } else { %>
+                        <img src="<%= action.img %>">
+                    <% } %>
+                <% } %>
+                <%= action.title %>
+            </a>
+        <% }); %>
+    </div>
+</div>

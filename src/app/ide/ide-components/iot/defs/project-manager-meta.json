@@ -1,0 +1,260 @@
+{
+    "title": "IoT Applicatios",
+    "img": "./images/iot/iot-app-domain.png",
+    "actions": [
+        {
+            "title": "Open",
+            "img": "fa-codepen",
+            "help": "Open application",
+            "events": [
+                {
+                    "type": "click",
+                    "callback": "onOpenProject",
+                    "providedBy": "Platform"
+                }
+            ]
+        },
+        {
+            "title": "New",
+            "img": "fa-plus",
+            "help": "Create new application",
+            "events": [
+                {
+                    "click": "onCreateNewProject",
+                    "providedBy": "Platform"
+                }
+            ]
+        },
+        {
+            "title": "Close All",
+            "img": "fa-trash",
+            "help": "Close loaded applications",
+            "events": [
+                {
+                    "click": "onCloseAllProjects",
+                    "providedBy": "Platform"
+                }
+            ]
+        },
+        {
+            "title": "Delete All",
+            "img": "fa-trash",
+            "help": "Delete current application",
+            "events": [{
+                "click": "onDeleteAllProjects",
+                "providedBy": "Platform"
+            }]
+        }
+    ],
+    "categories": [
+        {
+            "type": "SmartObjects",
+            "title": "Smart Objects",
+            "img": "fa-industry-alt",
+            "actions": [
+                {
+                    "title": "Add",
+                    "img": "fa-plus",
+                    "events": [
+                        {
+                            "type": "click",
+                            "callback": "onAddSmartObject",
+                            "providedBy": "SmartObjectsEditor"
+                        }
+                    ]
+                },
+                {
+                    "title": "View All",
+                    "img": "fa-eye",
+                    "events": [
+                        {
+                            "type": "click",
+                            "callback": "onViewAllSmartObjects",
+                            "providedBy": "SmartObjectsEditor"
+                        }
+                    ]
+                },
+                {
+                    "title": "Delete All",
+                    "img": "fa-trash",
+                    "help": "Remove all smart objects and environments",
+                    "events": [
+                        {
+                            "type": "click",
+                            "callback": "onDeleteAllElements",
+                            "providedBy": "Platform"
+                        }
+                    ]
+                },
+                {
+                    "title": "Search",
+                    "events": [
+                        {
+                            "type": "keypress",
+                            "callback": "onSearch",
+                            "providedBy": "Platform"
+                        }
+                    ]
+                }
+            ],
+            "menu": [
+                {
+                    "title": "Create",
+                    "help": "Add new smart object in the project",
+                    "action": {
+                        "callback": "onAddSmartObject",
+                        "providedBy": "SmartObjectsEditor"
+                    }
+                },
+                {
+                    "title": "View All",
+                    "help": "View smart objects and environments are defined in the project",
+                    "action": {
+                        "callback": "onViewAllSmartObjects",
+                        "providedBy": "SmartObjectsEditor"
+                    }
+                },
+                {
+                    "title": "Delete All",
+                    "help": "Delete all smart objects and environments are defined in the project",
+                    "action": {
+                        "type": "click",
+                        "callback": "onDeleteAllElements",
+                        "providedBy": "Platform"
+                    }
+                }
+            ],
+            "validChildren": [
+                "SmartOject",
+                "SOEnvironment"
+            ],
+            "children": [],
+            "items": [
+                {
+                    "type": "SOEnvironment",
+                    "title": "Environment",
+                    "img": "fa-list-alt",
+                    "menu": [
+                        {
+                            "title": "Add",
+                            "img": "fa-plus",
+                            "action": {
+                                "callback": "onAddSmartObject",
+                                "providedBy": "SmartObjectsEditor"
+                            }
+                        },
+                        {
+                            "title": "Delete",
+                            "img": "fa-trash",
+                            "action": {
+                                "callback": "onDeleteElement",
+                                "providedBy": "Platform"
+                            }
+                        },
+                        {
+                            "title": "View",
+                            "img": "fa-eye",
+                            "action": {
+                                "callback": "onViewEnvironment",
+                                "providedBy": "SmartObjectsEditor"
+                            }
+                        },
+                        {
+                            "title": "Edit",
+                            "img": "fa-edit",
+                            "action": {
+                                "callback": "onEditEnvironment",
+                                "providedBy": "SmartObjectsEditor"
+                            }
+                        }
+                    ],
+                    "validChildren": [ "SmartObject", "SOEnvironment" ],
+                    "events": [
+                        {
+                            "type": "click",
+                            "callback": "onFoldingElements",
+                            "providedBy": "Platform"
+                        }
+                    ] 
+                },
+                {
+                    "type": "SmartOject",
+                    "title": "Smart Object",
+                    "img": "fa-tablet",
+                    "menu": [
+                        {
+                            "title": "Delete",
+                            "img": "fa-trash",
+                            "action": {
+                                "callback": "onRemoveElement",
+                                "providedBy": "Platform"
+                            }
+                        },
+                        {
+                            "title": "View",
+                            "img": "fa-eye",
+                            "action": {
+                                "callback": "onViewSmartObject",
+                                "providedBy": "SmartObjectsEditor"
+                            }
+                        },
+                        {
+                            "title": "Edit",
+                            "img": "fa-edit",
+                            "action": {
+                                "callback": "onEditSmartObject",
+                                "providedBy": "SmartObjectsEditor"
+                            }
+                        }
+                    ],
+                    "events": [
+                        {
+                            "type": "click",
+                            "callback": "onViewSmartObject",
+                            "providedBy": "SmartObjectsEditor"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "IoTEvents",
+            "title": "IoT Events",
+            "img": "./images/iot/iot-events.png",
+            "actions": [
+                {
+                    "title": "Search",
+                    "events": [
+                        {
+                            "keypress": "search",
+                            "providedBy": "Platform"
+                        }
+                    ]
+                }
+            ],
+            "categories": [
+                {
+                    "type": "ConditionEVT",
+                    "title": "Condition Events",
+                    "img": "./images/iot/condition-events.png",
+                    "actions": [],
+                    "menu": []
+                },
+                {
+                    "type": "CalendarEVT",
+                    "title": "Calendar Events",
+                    "img": "./images/iot/calendar-events.png",
+                    "actions": [],
+                    "menu": []
+                },
+                {
+                    "type": "TimeEVT",
+                    "title": "Time Events",
+                    "img": "./images/iot/time-events.png",
+                    "actions": [],
+                    "menu": []
+                }
+            ]
+        }
+    ]
+}

@@ -1,7 +1,8 @@
 import { IDEComponent } from "../../component/ide-component";
 import { ComponentMetadata, ExportedFunction } from "../../component/component-loader";
 import { ApplicationsAdministration } from "../applications-admin-sc/applications-administration";
-import { Application } from "../../../shared/application";
+// import { Application } from "../../../shared/application";
+import { Application } from "../../../ide-components/iot/application/iot-application";
 import { ComponentsCommunication } from "../../component/components-communication";
 
 @ComponentMetadata({
@@ -27,6 +28,12 @@ export class ApplicationWSPManager extends IDEComponent {
             "open",
             [app]
         );
+    }
+
+    @ExportedFunction
+    public createApplication (domainType: string): Application {
+
+        return null;
     }
 
     public onOpen(): void {}

@@ -1,0 +1,29 @@
+<div class="col-lg-4 project-manager-container">
+    <div class="row project-manager-info-actions-area">
+        <div class="col">
+            <div class="row">
+                <div class="col project-manager-img">
+                    <% if(_.includes(img, "fa-")) { %>
+                        <i class="fa <%= img %>" aria-hidden="true"></i>
+                    <% } else { %>
+                        <img src="<%= img %>">
+                    <% } %>
+                </div>
+                <div class="col project-manager-title">
+                    <%= title %>
+                </div>
+            </div>
+        </div>
+        <div class="col project-manager-actions-area">
+            
+        </div>
+        <div class="col project-manager-menu-area">
+            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col project-manager-app-instances-view-area">
+
+        </div>
+    </div>
+</div>

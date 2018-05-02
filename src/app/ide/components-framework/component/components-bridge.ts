@@ -3,16 +3,16 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2018-03-22 11:34:24.248491
+ * 2018-04-30 00:29:00.040986
  */
 
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
 import { IDEErrorView } from "../../../../../src/app/ide/shared/ide-error/ide-error-view";
 import { IDEWarningView } from "../../../../../src/app/ide/shared/ide-error/ide-warning-view";
 
-import { ApplicationWSPEditorView } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-editor/application-wsp-editor-view";
-import { ApplicationWSPEditor } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-editor/application-wsp-editor";
 import { ApplicationWSPManager } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-manager/application-wsp-manager";
+import { ApplicationListSP } from "../../../../../src/app/ide/components-framework/build-in.components/applications-view/application-list-s-p/application-list-s-p";
+import { ApplicationViewBox } from "../../../../../src/app/ide/components-framework/build-in.components/applications-view/application-list-s-p/application-view-box/application-view-box";
 import { Configuration } from "../../../../../src/app/ide/components-framework/build-in.components/configuration/configuration";
 import { ConfigurationView } from "../../../../../src/app/ide/components-framework/build-in.components/configuration/configuration-view/configuration-view";
 import { AggregateView } from "../../../../../src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/aggregate-view/aggregate-view";
@@ -24,14 +24,13 @@ import { EditorManagerView } from "../../../../../src/app/ide/components-framewo
 import { EditorManager } from "../../../../../src/app/ide/components-framework/build-in.components/editor-manager/editor-manager";
 import { ProjectManager } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager";
 import { ProjectManagerView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-view";
-import { CategoryView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/category-view/category-view";
-import { ActionsView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/category-view/actions-view/actions-view";
+import { ProjectManagerAppInstanceView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view";
+import { ProjectManagerActionsView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/actions-view/actions-view";
+import { ProjectManagerCategoryView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/category-view/category-view";
+import { ProjectManagerMenuView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/menu-view/menu-view";
+import { StartPageViewElement } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-view-elem";
 import { StartPageView } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-view";
 import { StartPageComponent } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page";
-import { ApplicationListSP } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-elements/application-list-s-p/application-list-s-p";
-import { ApplicationViewBox } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-elements/application-list-s-p/application-view-box/application-view-box";
-import { SmartObjectListSP } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-elements/smart-object-list-s-p/smart-object-list-s-p";
-import { SmartObjectViewBox } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-elements/smart-object-list-s-p/smart-object-view-box/smart-object-view-box";
 import { StartPageMenuViewElement } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-menu/start-page-menu";
 import { ShellView } from "../../../../../src/app/ide/components-framework/common.components/shell/shell-view";
 import { Shell } from "../../../../../src/app/ide/components-framework/common.components/shell/shell";
@@ -59,9 +58,9 @@ export class ComponentsBridge {
 	public static initialize(): void {
 		IDEUIComponent.onInit();
 		IDEErrorView.onInit();
-		IDEWarningView.onInit();		ApplicationWSPEditorView.onInit();
-		ApplicationWSPEditor.onInit();
-		ApplicationWSPManager.onInit();
+		IDEWarningView.onInit();		ApplicationWSPManager.onInit();
+		ApplicationListSP.onInit();
+		ApplicationViewBox.onInit();
 		Configuration.onInit();
 		ConfigurationView.onInit();
 		AggregateView.onInit();
@@ -73,14 +72,13 @@ export class ComponentsBridge {
 		EditorManager.onInit();
 		ProjectManager.onInit();
 		ProjectManagerView.onInit();
-		CategoryView.onInit();
-		ActionsView.onInit();
+		ProjectManagerAppInstanceView.onInit();
+		ProjectManagerActionsView.onInit();
+		ProjectManagerCategoryView.onInit();
+		ProjectManagerMenuView.onInit();
+		StartPageViewElement.onInit();
 		StartPageView.onInit();
 		StartPageComponent.onInit();
-		ApplicationListSP.onInit();
-		ApplicationViewBox.onInit();
-		SmartObjectListSP.onInit();
-		SmartObjectViewBox.onInit();
 		StartPageMenuViewElement.onInit();
 		ShellView.onInit();
 		Shell.onInit();

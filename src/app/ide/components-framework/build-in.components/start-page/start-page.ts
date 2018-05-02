@@ -26,14 +26,6 @@ export class StartPageComponent extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public initialize(): void {
-        super.initialize();
-        // this._menu.view.render();
-        // this.inject(this._applications);
-        // this.inject(this._smartObjects);
-    }
-
-    @ExportedFunction
     public registerEvents(): void {}
 
     @ExportedFunction

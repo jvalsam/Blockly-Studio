@@ -8,7 +8,7 @@
 import * as $ from "jquery";
 import * as _ from "lodash";
 import { IDEUIComponent } from "./ide-ui-component";
-import { IDEError } from "../../shared/ide-error/ide-error";
+import { IDEError, assert } from "../../shared/ide-error/ide-error";
 import { ViewRegistry } from "./registry";
 
 
@@ -37,7 +37,7 @@ export interface IViewElement {
 
 export abstract class View {
     private static numOfViews: number = 0;
-    private _id: string;
+    protected _id: string;
     public $el: JQuery;
     private _template: Function;
     private _nextEventID: number;
@@ -66,6 +66,24 @@ export abstract class View {
             $(selector).empty();
             $(selector).append(this.$el);
         }
+    }
+
+    private append(dst: JQuery, src: JQuery): boolean {
+        if (dst.length) {
+            dst.append(src);
+            return true;
+        }
+        return false;
+    }
+
+    public appendLocal(selector: string, element: JQuery): void {
+        let isAppended: boolean = this.append(this.$el.find(selector), element);
+        assert(isAppended);
+    }
+
+    public appendGlb(selector: string, element: JQuery): void {
+        let isAppended: boolean = this.append($(selector), element);
+        assert(isAppended);
     }
 
     public renderTmplEl(data?:any): void {

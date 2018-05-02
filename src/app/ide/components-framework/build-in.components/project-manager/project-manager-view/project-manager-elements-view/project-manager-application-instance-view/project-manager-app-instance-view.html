@@ -1,0 +1,31 @@
+<div class="row project-manager-app-instance-container">
+    <div class="col">
+        <div class="row project-manager-app-instance-info-actions-area">
+                <div class="col">
+                    <div class="row app-instance-info">
+                        <div class="col project-manager-img">
+                            <% if(_.includes(img, "fa-")) { %>
+                                <i class="fa <%= img %>" aria-hidden="true"></i>
+                                <% } else { %>
+                                    <img src="<%= img %>">
+                                    <% } %>
+                        </div>
+                        <div class="col project-manager-title">
+                            <%= title %>
+                        </div>
+                    </div>
+                </div>
+                <div class="col app-instance-actions">
+
+                </div>
+                <div class="col app-instance-menu">
+
+                </div>
+        </div>
+        <div class="row">
+            <div class="col app-instance-categories" id="categories-<%= id %>">
+
+            </div>
+        </div>
+    </div>
+</div>
