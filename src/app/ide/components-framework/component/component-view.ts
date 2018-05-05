@@ -8,6 +8,7 @@ import {
 import { IDEError } from "../../shared/ide-error/ide-error";
 import { Registry } from "../../shared/entry/registry";
 import * as _ from "lodash";
+import { ViewRegistry } from "./registry";
 
 
 export abstract class ComponentViewElement extends View {
@@ -49,7 +50,7 @@ export abstract class ComponentViewElement extends View {
     }
 }
 
-export let ComponentViewElementRegistry = new Registry<ComponentViewElement>();
+// export let ComponentViewElementRegistry = new Registry<ComponentViewElement>();
 
 type MenuCategory = "OnRegistration" | "OnInstantiation";
 export interface IViewElements {
@@ -70,7 +71,7 @@ export class ComponentView extends ComponentViewElement {
         let viewElems = {};
         if (views) {
             for (let view of views) {
-                viewElems[view] = ComponentViewElementRegistry.getEntry(view).create(parent);
+                viewElems[view] = ViewRegistry.getEntry(view).create(parent);
             }
         }
         return viewElems;
@@ -108,23 +109,25 @@ export class ComponentView extends ComponentViewElement {
     public render(callback?: Function): void {
         this.renderTmplEl(this.renderData);
         this.registerEvents();
-        _.forEach(this.mainViewElems, (mainViewElement: ComponentViewElement) => {
-            mainViewElement.render(
-                () => {
-                    this.$el.find(mainViewElement.selector).empty();
-                    this.$el.find(mainViewElement.selector).append(mainViewElement.$el);
-                }
-            );
-        });
         _.forEach(this.menuElems, (menuViewElement) => {
             menuViewElement.render();
         });
         _.forEach(this.toolsViewElems, (toolViewElement) => {
             toolViewElement.render();
         });
-        if (callback) {
-            callback();
-        }
+        let responcesCounter = 0;
+        _.forEach(this.mainViewElems, (mainViewElement: ComponentViewElement) => {
+            mainViewElement.render(
+                () => {
+                    this.$el.find(mainViewElement.selector).empty();
+                    this.$el.find(mainViewElement.selector).append(mainViewElement.$el);
+
+                    if (++responcesCounter === Object.keys(this.mainViewElems).length && callback) {
+                        callback();
+                    }
+                }
+            );
+        });
     }
 
     protected inject (selector: string, templateHTML: JQuery): void;
@@ -174,22 +177,25 @@ export interface IComponentViewData extends IComponentViewElementData {
 export let ComponentViewElementMetadata = // Used as decorator
 function DeclareComponentViewElement (data: IComponentViewElementData) {
     return (create: Function) => {
-        if (ComponentViewElementRegistry.hasEntry(name)) {
+        if (ViewRegistry.hasEntry(name)) {
             IDEError.raise(
                 "DeclareCompViewElement",
                 "ComponentViewElement " + name + " is already defined!"
             );
         }
 
-        var initData = (data.initData) ? data.initData : [];
+        var initData: any = [data.selector, data.templateHTML];
+        if (data.initData) {
+            initData.push(data.initData);
+        }
 
-        ComponentViewElementRegistry.createEntry(
+        ViewRegistry.createEntry(
             data.name,
             create,
-            [data.selector, data.templateHTML, initData]
+            initData
         );
     };
-}
+};
 
 export let ComponentViewMetadata = // Used as decorator
 function DeclareComponentView (data: IComponentViewData) {
@@ -216,5 +222,5 @@ function DeclareComponentView (data: IComponentViewData) {
             ]
         );
     };
-}
+};
 

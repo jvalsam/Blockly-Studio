@@ -1,9 +1,10 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import ApplicationViewBoxTmpl from "./application-view-box.html";
-import { View, ViewMetadata } from "../../../../component/view";
-import { ApplicationModel } from "../../../../../shared/models/application.model";
+import { View, ViewMetadata, IViewEventRegistration, ModalView } from "../../../../component/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
+import * as _ from "lodash";
+import { ViewRegistry } from "../../../../component/registry";
 
 
 @ViewMetadata({
@@ -15,38 +16,26 @@ export class ApplicationViewBox extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        private application: ApplicationModel
+        private application
     ) {
         super(parent, name, templateHTML);
+        this.application.id = this.id;
     }
 
     public registerEvents(): void {
-        this.attachEvents(
-            {
+        let events: IViewEventRegistration[] = [];
+        _.forEach(this.application.actions, (action) => {
+            events.push({
                 eventType: "click",
-                selector: ".ts-start-page-application-open",
-                handler: () => this.onOpenApplication()
-            },
-            {
-                eventType: "click",
-                selector: ".ts-start-page-application-menu",
-                handler: () => this.onClickApplicationMenu()
-            },
-            {
-                eventType: "focusout",
-                selector: ".ts-start-page-application-menu",
-                handler: () => this.onFocusOutApplicationMenu()
-            }
-        );
+                selector: ".ts-application-action-"+action,
+                handler: () => this["on"+_.startCase(action)+"Application"]()
+            });
+        });
+        this.attachEvents(...events);
     }
 
     public render(): void {
-        this.renderTmplEl({
-            name: this.application.name,
-            description: this.application.description,
-            imagePath: this.application.imagePath,
-            lastUpdated: this.application.lastUpdated.toLocaleString()
-        });
+        this.renderTmplEl(this.application);
         this.registerEvents();
     }
 
@@ -54,10 +43,16 @@ export class ApplicationViewBox extends View {
         this.parent["openApplication"](this.application.id);
     }
 
-    private onClickApplicationMenu(): void {
-        alert("onClickApplicationMenu: not implemented yet.");
+    private onDeleteApplication(): void {
+        this.parent["deleteApplication"](this.application.id);
     }
-    private onFocusOutApplicationMenu(): void {
-        alert("onFocusOutApplicationMenu: not implemented yet.");
+
+    private onShareApplication(): void {
+        this.parent["shareApplication"](this.application.id);
+    }
+
+    private onDetailsApplication(): void {
+        let detailsBox = <ModalView>ViewRegistry.getEntry("ApplicationViewDetailsModal").create(this.parent, this.application);
+        detailsBox.open();
     }
 }

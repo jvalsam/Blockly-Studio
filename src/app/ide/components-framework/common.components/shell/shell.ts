@@ -63,6 +63,7 @@ export class Shell extends IDEUIComponent {
   @ExportedFunction
   public openComponent(comp: IDEUIComponent): void {
     //this.updateComponentsViewTree(comp);
+    
     comp.render (
       () => {
         this._menu.activateMenuItems(comp.view.menuElems);

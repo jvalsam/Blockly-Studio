@@ -1,25 +1,36 @@
-<div class="col-sm-5 card text-center" style="margin-left:15px; height: calc(100% - 15px); margin-bottom: 15px;">
+<div class="ts-start-page-application-open col-sm-5 card text-center" style="margin-left:15px; height: calc(100% - 15px); margin-bottom: 15px; cursor: pointer;">
     <div class="row align-items-center" style="border-bottom: 1px solid rgba(0,0,0,.125);">
         <div class="col-sm-10 col-xs-10 align-items-center" style="padding-right:0px;">
             <div class="row">
                 <div class="col-sm-1 col-xs-1"></div>
                 <div class="col-sm-11 col-xs-11">
-                    <p class="ts-start-page-application-open card-title text-truncate" style="margin-top: 5px;margin-bottom: 5px;">
-                        <strong><%= name %></strong>
+                    <p class="card-title text-truncate" style="margin-top: 5px;margin-bottom: 5px;">
+                        <strong><%= title %></strong>
                     </p>
                 </div>
             </div>
         </div>
         <div class="col-sm-2 col-xs-2">
-            <a href="#" class="ts-start-page-application-menu btn btn-default btn-sm">
-                <i class="fa fa-ellipsis-v fa-lg" aria-hidden="true"></i>
-            </a>
+            <span>
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenu<% id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu<% id %>">
+                    <% _.forEach(actions, (action) => { %>
+                        <a class="dropdown-item ts-application-action-<%= action %>" href="#"><%= action %></a>
+                    <% }); %>
+                </div>
+            </span>
         </div>
     </div>
     <div class="row card-body">
         <div class="col-sm-2 col-xs-2"></div>
         <div class="col-sm-8 col-xs-8">
-            <img class="ts-start-page-application-open card-img-top img-thumbnail" style="border: 0 none;" src="<%= imagePath %>" alt="Responsive image">
+            <% if (typeof(img) === 'undefined') { %>
+                <img class="card-img-top img-thumbnail" style="border: 0 none;" src="../../../../../../../../images/default-app.jpg" alt="Responsive image">
+            <% } else { %>
+                <img class="card-img-top img-thumbnail" style="border: 0 none;" src="<%= img %>" alt="Responsive image">
+            <% } %>
         </div>
         <div class="col-sm-2 col-xs-2"></div>
     </div>
@@ -30,5 +41,5 @@
             </p>
         </div>
     </div>
-    <footer style="border-top: 1px solid rgba(0,0,0,.125);"><span class="text-muted" style="font-size:x-small;">Last updated <%= lastUpdated %></span></footer>
+    <footer style="border-top: 1px solid rgba(0,0,0,.125);"><span class="text-muted" style="font-size:x-small;">Last updated <%= lastModified %></span></footer>
 </div>

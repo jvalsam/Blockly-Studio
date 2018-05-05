@@ -27,6 +27,20 @@ router.post('/new', function (req, res) {
     });
 });
 
+// RETURNS ALL APPS BASED ON FILTERS
+router.post('/filters', function (req, res) {
+    let findElems = { 'author.id': req.session.user._id };
+    if (req.params.filters) {
+        req.params.filters.forEach((filter) => findElems[filter.key] = filter.value);
+    }
+
+    var query = Application.find(findElems);
+
+    query.exec(function (err, apps) {
+        res.status(200).send(apps);
+    });
+});
+
 // RETURNS ALL THE APPLICATIONS FROM THE DATABASE
 router.get('/all', function (req, res) {
     Application.find({}, function (err, apps) {
@@ -53,26 +67,26 @@ router.get('/author/:id', function (req, res) {
 
 // GETS A SINGLE DOMAIN FROM THE DATABASE
 router.get('/:id', function (req, res) {
-    Domain.findById(req.params.id, function (err, domain) {
-        if (err) return res.status(500).send("There was a problem finding the domain.");
-        if (!domain) return res.status(404).send("No domain found.");
-        domain.status(200).send();
+    Application.findById(req.params.id, function (err, app) {
+        if (err) return res.status(500).send("There was a problem finding the application.");
+        if (!app) return res.status(404).send("No application found.");
+        res.status(200).send(app);
     });
 });
 
 // DELETES A DOMAIN FROM THE DATABASE
 router.delete('/:id', function (req, res) {
-    Domain.findByIdAndRemove(req.params.id, function (err, domain) {
-        if (err) return res.status(500).send("There was a problem deleting the domain.");
-        res.status(200).send("Domain: " + domain.name + " was deleted.");
+    Application.findByIdAndRemove(req.params.id, function (err, app) {
+        if (err) return res.status(500).send("There was a problem deleting the application.");
+        res.status(200).send("Application: " + app.name + " was deleted.");
     });
 });
 
 // UPDATES A SINGLE DOMAIN IN THE DATABASE
 router.put('/:id', function (req, res) {
-    Domain.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, domain) {
-        if (err) return res.status(500).send("There was a problem updating the domain.");
-        res.status(200).send(domain);
+    Application.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, app) {
+        if (err) return res.status(500).send("There was a problem updating the application.");
+        res.status(200).send(app);
     });
 });
 

@@ -10,7 +10,8 @@ var DomainSchema = new mongoose.Schema(
         author: {
             id: { type: String, required: [true, 'author.id not exist'] },
             name: { type: String, required: [true, 'author.username not exist'] }
-        }
+        },
+        actions: [String]
     }
 );
 

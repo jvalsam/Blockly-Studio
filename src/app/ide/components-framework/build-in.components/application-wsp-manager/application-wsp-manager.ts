@@ -1,5 +1,5 @@
 import { IDEComponent } from "../../component/ide-component";
-import { ComponentMetadata, ExportedFunction } from "../../component/component-loader";
+import { ComponentMetadata, ExportedFunction, RequiredFunction } from "../../component/component-loader";
 import { ApplicationsAdministration } from "../applications-admin-sc/applications-administration";
 // import { Application } from "../../../shared/application";
 import { Application } from "../../../ide-components/iot/application/iot-application";
@@ -19,15 +19,28 @@ import { ComponentsCommunication } from "../../component/components-communicatio
 export class ApplicationWSPManager extends IDEComponent {
     private readonly postfixOpenAppComp = "WSPEditor";
 
+    @RequiredFunction("ProjectManager", "openProject")
     @ExportedFunction
     public openApplication (applicationId: string): void {
-        const app: Application = ApplicationsAdministration.open(applicationId);
-        ComponentsCommunication.functionRequest(
-            this.name,
-            app.type + this.postfixOpenAppComp,
-            "open",
-            [app]
+        ApplicationsAdministration.open(
+            applicationId,
+            (application) => ComponentsCommunication.functionRequest(
+                this.name,
+                "ProjectManager",
+                "openProject",
+                [application]
+            )
         );
+    }
+
+    @ExportedFunction
+    public deleteApplication (applicationId: string): void {
+        ApplicationsAdministration.delete(applicationId);
+    }
+
+    @ExportedFunction
+    public shareApplication (applicationId: string, shareData: any): void {
+        ApplicationsAdministration.share(applicationId, shareData);
     }
 
     @ExportedFunction

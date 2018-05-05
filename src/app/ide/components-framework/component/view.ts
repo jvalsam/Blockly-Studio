@@ -167,6 +167,21 @@ export abstract class View {
     }
 }
 
+
+export abstract class ModalView extends View {
+    private readonly selector = "modal-area";
+
+    public open(): void {
+        this.render(
+            () => $("#" + this.id)["modal"]("show")
+        );
+    }
+
+    private close(): void {
+        $("#" + this.id + " .close").click();
+    }
+}
+
 /**
  * Load View Component Elements
  *

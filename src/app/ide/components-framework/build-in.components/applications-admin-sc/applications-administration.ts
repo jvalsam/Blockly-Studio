@@ -46,23 +46,22 @@ export class ApplicationsAdministration {
         ApplicationsHolder.initialize();
     }
 
-    public static open(appId: string): Application {
-        // server requests code data of the application
-        // create Application Component
-        // request Shell to open the component
-        return new IoTApplication(
-            {
-                "Smart Objects Automations" : [
-                    new Automation("auto-so-1", "First time alarm clock rings", "Smart Objects Automations"),
-                    new Automation("auto-so-2", "Alarm clock stops", "Smart Objects Automations")
-                ],
-                "Calendar Automations" : [
-                    new Automation("auto-ca-1", "Every Monday tasks", "Calendar Automations"),
-                    new Automation("auto-ca-2", "Every week tasks", "Calendar Automations")
-                ],
-                "Time Events": []
+    public static open(appId: string, callback: Function): void {
+        $.get(
+            URL + "applications/:id/"+appId,
+            (application, textStatus) => {
+                if (application) {
+                    callback(application);
+                }
             }
         );
     }
 
+    public static delete(appId: string): boolean {
+        return false;
+    }
+
+    public static share(appId: string, data: any): boolean {
+        return false;
+    }
 }

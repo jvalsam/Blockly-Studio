@@ -1,22 +1,31 @@
 /// <reference path="../../../../../../node.d.ts"/>
 import StartPageTmpl from "./start-page.html";
 import { ComponentView, ComponentViewMetadata } from "../../../components-framework/component/component-view";
-import { ApplicationListSP } from "../applications-view/application-list-s-p/application-list-s-p";
+import { DomainView } from "./domain-view/domain-view";
 
 
 @ComponentViewMetadata({
     name: "StartPageView",
     selector: ".start-page-container",
-    templateHTML: StartPageTmpl
+    templateHTML: StartPageTmpl,
+    mainElems: [
+        "DomainView"
+    ]
 })
 export class StartPageView extends ComponentView {
-    private _applications: ApplicationListSP;
+    // private _domainView: DomainView;
 
-    public render(): void {
-        this.renderTmplEl();
-    }
+    // public render(callback?: Function): void {
+    //     this.renderTmplEl();
+    //     this.registerEvents();
+    //     this._domainView.render(
+    //         () => {
+    //             this.$el.find(".domain-view-area").empty();
+    //             this.$el.find(".domain-view-area").append(this._domainView.$el);
+    //             callback();
+    //         }
+    //     );
+    // }
 
-    public registerEvents(): void {
-        
-    }
+    // public registerEvents(): void {}
 }

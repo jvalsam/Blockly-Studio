@@ -7,13 +7,14 @@ import { ApplicationListSP } from "../../applications-view/application-list-s-p/
 import { DomainsAdministration } from "./../../applications-admin-sc/domains-admin";
 import { SelectView } from "../../configuration/configuration-view/property-views/select-view/select-view";
 import { IDEUIComponent } from '../../../component/ide-ui-component';
-import { ComponentViewElementRegistry } from '../../../component/component-view';
+import { ComponentViewElement, ComponentViewElementMetadata } from '../../../component/component-view';
 
-@ViewMetadata({
-    name: "DomaiView",
+@ComponentViewElementMetadata({
+    name: "DomainView",
+    selector: ".domain-view-area",
     templateHTML: DomainTmpl
 })
-export class DomainView extends View {
+export class DomainView extends ComponentViewElement {
     private selectedValue: string;
     private selectionView: SelectView;
     private domainsAppsView: ApplicationListSP;
@@ -21,9 +22,10 @@ export class DomainView extends View {
     constructor(
         protected parent: IDEUIComponent,
         public readonly name: string,
+        _selector: string,
         protected readonly _templateHTML: string
     ) {
-        super(parent, name, _templateHTML);
+        super(parent, name, _selector, _templateHTML);
         this.selectedValue = null;
         this.selectionView = null;
         this.domainsAppsView = null;
@@ -46,24 +48,28 @@ export class DomainView extends View {
         this.$el.find(".domain-description").append(description);
     }
 
-    private renderApps(selectedDomain): void {
+    private renderApps(selectedDomain, callback): void {
         if (selectedDomain.type === "programming") {
             if (this.domainsAppsView === null) {
-                this.domainsAppsView = <ApplicationListSP>ComponentViewElementRegistry.getEntry("ApplicationsListStartPage").create(
+                this.domainsAppsView = <ApplicationListSP>ViewRegistry.getEntry("ApplicationsListStartPage").create(
                     this.parent,
-                    selectedDomain.name
+                    { domain: selectedDomain }
                 );
+                this.domainsAppsView.render(callback);
             }
             else {
-                this.domainsAppsView.setDomain(selectedDomain.name);
+                this.domainsAppsView.setDomain(selectedDomain.name, callback);
             }
         }
         else {
-
+            this.domainsAppsView.destroy();
+            delete this.domainsAppsView;
+            this.domainsAppsView = null;
+            callback(true);
         }
     }
 
-    public renderOnResponse (domains, callback: Function): void {
+    public renderOnResponse (domains, callback): void {
         let values = domains.map(x=>x.title);
         this.selectedValue = this.selectedValue ? this.selectedValue : values[0];
         let domainsData: ISelectData = {
@@ -76,14 +82,26 @@ export class DomainView extends View {
             indepedent: true
         };
         this.selectionView = <SelectView>ViewRegistry.getEntry("SelectView").create(this.parent, domainsData);
+        this.selectionView.render();
         this.$el.find(".domain-selection").empty();
         this.$el.find(".domain-selection").append(this.selectionView.$el);
+        this.registerEvents();
 
         var selectedDomain = domains[values.indexOf(this.selectedValue)];
 
         this.renderImg(selectedDomain.img);
         this.renderDescription(selectedDomain.description);
-        this.renderApps(selectedDomain);
+
+        this.renderApps(
+            selectedDomain,
+            (appsEmpty?: Boolean) => {
+                this.$el.find(".domain-applications").empty();
+                if (!appsEmpty) {
+                    this.$el.find(".domain-applications").append(this.domainsAppsView.$el);
+                }
+                callback();
+            }
+        );
     }
 
     public render(callback?: Function): void {
@@ -93,7 +111,5 @@ export class DomainView extends View {
         );
     }
 
-    public registerEvents(): void {
-
-    }
+    public registerEvents(): void {}
 }

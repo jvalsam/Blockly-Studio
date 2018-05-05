@@ -14,11 +14,9 @@ import ApplicationsListTmpl from "./application-list-s-p.html";
 
 import * as _ from "lodash";
 
-import { ComponentViewElementMetadata } from "../../../component/component-view";
+import { ComponentViewElementMetadata, ComponentViewElement } from "../../../component/component-view";
 import { ViewRegistry } from "../../../component/registry";
-import { ApplicationModel } from "../../../../shared/models/application.model";
-import { ApplicationsAdministration, AppFilter } from "../../applications-admin-sc/applications-administration";
-import { ElementsList } from "../../elements-list-view/elements-view";
+import { ApplicationsAdministration } from "../../applications-admin-sc/applications-administration";
 import { View } from "../../../component/view";
 
 @ComponentViewElementMetadata({
@@ -26,20 +24,29 @@ import { View } from "../../../component/view";
     selector: ".application-list-view-area",
     templateHTML: ApplicationsListTmpl
 })
-export class ApplicationListSP extends ElementsList<ApplicationModel, AppFilter> {
+export class ApplicationListSP extends ComponentViewElement {
+    private applications: Array<any>;
+
     public renderOnResponse(applications): void {
+        this.applications = applications;
         this.renderTmplEl({ totalApplications: applications.length });
-        this.registerEvents();
-        _.forEach(this._elements, (application) => {
+        // TODO: application type request to pin data for the actions...
+        _.forEach(applications, (application) => {
+            application.actions = this.renderData.domain.actions;
             const appViewBox: View = ViewRegistry.getEntry("ApplicationViewBox").create(this.parent, application);
             appViewBox.render();
             this.$el.find(".applications-view-list").append(appViewBox.$el);
         });
     }
 
-    public render(): void {
-        this.requestElementsData();
-        this.renderTmplEl();
+    public render(callback?: Function): void {
+        ApplicationsAdministration.requestApplications(
+            this.renderData.filters,
+            (elements) => {
+                this.renderOnResponse(elements);
+                callback();
+            }
+        );
     }
 
     public registerEvents(): void {
@@ -57,18 +64,7 @@ export class ApplicationListSP extends ElementsList<ApplicationModel, AppFilter>
         );
     }
 
-    protected requestElementsData (): void {
-        ApplicationsAdministration.requestApplications (
-            this.renderData.filters,
-            (elements) => this.reloadApplications(elements)
-        );
-    }
-
-    protected reloadApplications(elements: Array<ApplicationModel>) {
-
-    }
-
-    public setDomain(domain): void {
+    public setDomain(domain, callback): void {
 
     }
 

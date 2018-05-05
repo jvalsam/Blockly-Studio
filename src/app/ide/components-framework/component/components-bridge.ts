@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2018-04-30 00:29:00.040986
+ * 2018-05-05 02:41:34.830787
  */
 
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
@@ -13,6 +13,7 @@ import { IDEWarningView } from "../../../../../src/app/ide/shared/ide-error/ide-
 import { ApplicationWSPManager } from "../../../../../src/app/ide/components-framework/build-in.components/application-wsp-manager/application-wsp-manager";
 import { ApplicationListSP } from "../../../../../src/app/ide/components-framework/build-in.components/applications-view/application-list-s-p/application-list-s-p";
 import { ApplicationViewBox } from "../../../../../src/app/ide/components-framework/build-in.components/applications-view/application-list-s-p/application-view-box/application-view-box";
+import { ApplicationViewDetailsModal } from "../../../../../src/app/ide/components-framework/build-in.components/applications-view/application-list-s-p/application-view-details-modal/application-view-details-modal";
 import { Configuration } from "../../../../../src/app/ide/components-framework/build-in.components/configuration/configuration";
 import { ConfigurationView } from "../../../../../src/app/ide/components-framework/build-in.components/configuration/configuration-view/configuration-view";
 import { AggregateView } from "../../../../../src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/aggregate-view/aggregate-view";
@@ -31,6 +32,7 @@ import { ProjectManagerMenuView } from "../../../../../src/app/ide/components-fr
 import { StartPageViewElement } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-view-elem";
 import { StartPageView } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-view";
 import { StartPageComponent } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page";
+import { DomainView } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/domain-view/domain-view";
 import { StartPageMenuViewElement } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-menu/start-page-menu";
 import { ShellView } from "../../../../../src/app/ide/components-framework/common.components/shell/shell-view";
 import { Shell } from "../../../../../src/app/ide/components-framework/common.components/shell/shell";
@@ -61,6 +63,7 @@ export class ComponentsBridge {
 		IDEWarningView.onInit();		ApplicationWSPManager.onInit();
 		ApplicationListSP.onInit();
 		ApplicationViewBox.onInit();
+		ApplicationViewDetailsModal.onInit();
 		Configuration.onInit();
 		ConfigurationView.onInit();
 		AggregateView.onInit();
@@ -79,6 +82,7 @@ export class ComponentsBridge {
 		StartPageViewElement.onInit();
 		StartPageView.onInit();
 		StartPageComponent.onInit();
+		DomainView.onInit();
 		StartPageMenuViewElement.onInit();
 		ShellView.onInit();
 		Shell.onInit();

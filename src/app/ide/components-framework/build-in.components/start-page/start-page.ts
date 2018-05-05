@@ -64,8 +64,20 @@ export class StartPageComponent extends IDEUIComponent {
     /**
      * Requested events from Application View Box
      */
+
     @RequiredFunction("ApplicationWSPManager", "openApplication")
     public openApplication (applicationID: string): void {
-        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "openApplication", [applicationID]);
+        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "s", [applicationID]);
+    }
+
+    @RequiredFunction("ApplicationWSPManager", "deleteApplication")
+    public deleteApplication (applicationID: string): void {
+        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "deleteApplication", [applicationID]);
+    }
+
+    @RequiredFunction("ApplicationWSPManager", "shareApplication")
+    public shareApplication (applicationID: string, shareData: any): void {
+        alert("Functionality of share is not implemented yet!");
+        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "shareApplication", [applicationID]);
     }
 }

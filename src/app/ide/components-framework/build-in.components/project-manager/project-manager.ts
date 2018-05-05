@@ -1,8 +1,10 @@
+import { assert } from './../../../shared/ide-error/ide-error';
 import { ComponentsCommunication } from './../../component/components-communication';
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import {
     ExportedFunction,
-    UIComponentMetadata
+    UIComponentMetadata,
+    RequiredFunction
 } from "../../component/component-loader";
 import { GetProjectManagerMetaData } from "./project-manager-meta-map";
 
@@ -26,6 +28,8 @@ export interface IProjectManagerElementData {
     version: "1.0"
 })
 export class ProjectManager extends IDEUIComponent {
+    private isOpen: Boolean;
+
     constructor(
         name: string,
         description: string,
@@ -33,13 +37,16 @@ export class ProjectManager extends IDEUIComponent {
         private domainType: string
     ) {
         super(name, description, componentView);
-        let metadata = GetProjectManagerMetaData(this.domainType);
-        this._view.setRenderData(metadata);
+        this.isOpen = this.domainType ? true : false;
+        if (this.isOpen) {
+            this.initialize();
+        }
     }
 
     @ExportedFunction
     initialize(): void {
-        this._view.render();
+        let metadata = GetProjectManagerMetaData(this.domainType);
+        this._view.setRenderData(metadata);
     }
 
     @ExportedFunction
@@ -52,8 +59,20 @@ export class ProjectManager extends IDEUIComponent {
         // TODO: send request to delete it from user's account projects in DB
     }
 
-    public loadProject(data: any): void {
-        
+    @RequiredFunction("Shell", "openComponent")
+    @ExportedFunction
+    public openProject(project): void {
+        if (!this.isOpen) {
+            this.domainType = project.domainType;
+            this.initialize();
+        }
+        assert(this.domainType === project.domainType);
+        ComponentsCommunication.functionRequest(this.name, "Shell", "openComponent", [this]);
+    }
+
+    @ExportedFunction
+    public loadProject(project): void {
+
     }
 
     @ExportedFunction

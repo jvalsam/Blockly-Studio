@@ -60,7 +60,9 @@ export class SelectView extends PropertyView {
     }
 
     public setStyle(): void {
-        this.$el.find("#title_" + this.id).css(FontView.getStyle(this.data.style["Config Elements"]));
+        if(this.data.style) {
+            this.$el.find("#title_" + this.id).css(FontView.getStyle(this.data.style));
+        }
     }
 
     private onChange(): void {
