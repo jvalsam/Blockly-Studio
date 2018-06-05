@@ -48,7 +48,7 @@ export class ApplicationsAdministration {
 
     public static open(appId: string, callback: Function): void {
         $.get(
-            URL + "applications/:id/"+appId,
+            URL + "applications/"+appId,
             (application, textStatus) => {
                 if (application) {
                     callback(application);

@@ -56,7 +56,7 @@ export class ProjectManagerActionsView extends View {
             _.forEach(action.events, (event) => {
                 events.push({
                     eventType: event.type,
-                    selector: "#" + action.title + "_" + this.id,
+                    selector: "#" + action.title.replace(/ /g, '') + "_" + this.id,
                     handler: () => this.handleAction(event)
                 });
             });

@@ -15,6 +15,6 @@ var ProjectManagerMetadataMap: {[key:string]: any} = {
 };
 
 export function GetProjectManagerMetaData(key: string): any {
-    assert(key in ProjectManagerMetadataMap);
+    assert(key in ProjectManagerMetadataMap, "Error: Not found " + key + " in existing domains of the Platform.");
     return ProjectManagerMetadataMap[key];
 }

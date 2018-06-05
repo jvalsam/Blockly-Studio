@@ -20,10 +20,16 @@ export class ApplicationViewBox extends View {
     ) {
         super(parent, name, templateHTML);
         this.application.id = this.id;
+        this.application.lastModified = new Date(this.application.lastModified).toUTCString();
     }
 
     public registerEvents(): void {
         let events: IViewEventRegistration[] = [];
+        events.push({
+            eventType: "click",
+            selector: ".ts-application-action-box",
+            handler: () => this.onOpenApplication()
+        });
         _.forEach(this.application.actions, (action) => {
             events.push({
                 eventType: "click",
@@ -40,15 +46,15 @@ export class ApplicationViewBox extends View {
     }
 
     private onOpenApplication(): void {
-        this.parent["openApplication"](this.application.id);
+        this.parent["openApplication"](this.application._id);
     }
 
     private onDeleteApplication(): void {
-        this.parent["deleteApplication"](this.application.id);
+        this.parent["deleteApplication"](this.application._id);
     }
 
     private onShareApplication(): void {
-        this.parent["shareApplication"](this.application.id);
+        this.parent["shareApplication"](this.application._id);
     }
 
     private onDetailsApplication(): void {

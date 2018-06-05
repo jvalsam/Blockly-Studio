@@ -47,6 +47,7 @@ export class ProjectManager extends IDEUIComponent {
     initialize(): void {
         let metadata = GetProjectManagerMetaData(this.domainType);
         this._view.setRenderData(metadata);
+        this._view.initialize();
     }
 
     @ExportedFunction

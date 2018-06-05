@@ -58,15 +58,17 @@ export class ProjectManagerView extends ComponentView {
         this.info = (({ id, title, img, actions }) => ({ id, title, img, actions }))(this.renderData);
         this.skeletonDataProj = this.renderData.categories;
         this.loadedProjects = new Array<InstanceView>();
+        this.actions = <ActionsView>ViewRegistry.getEntry("ProjectManagerActionsView").create(this.parent, { 'actions':  this.renderData.actions });
+        //this.menu = <MenuView>ViewRegistry.getEntry("ProjectManagerMenuView").create(this.parent, this.renderData.menu);
     }
 
-    public render(): void {
+    public render(callback?: Function): void {
         this.renderTmplEl(this.info);
         this.registerEvents();
         this.actions.render();
         this.appendLocal(".project-manager-actions-area", this.actions.$el);
-        this.menu.render();
-        this.appendLocal(".project-manager-menu-area", this.menu.$el);
+        //this.menu.render();
+        //this.appendLocal(".project-manager-menu-area", this.menu.$el);
         _.forEach(this.loadedProjects, (loadedProject: InstanceView) => {
             loadedProject.render();
             this.appendLocal(".project-manager-app-instances-view-area", loadedProject.$el);

@@ -12,11 +12,6 @@ export class IDEErrorView extends View {
     public alert(msg: string): void {
         this.errorMsg = msg;
         this.render();
-        // TODO: UI alert...
-        alert(msg);
-        // this.$el.dialog({
-        //     draggable: false
-        // });
     }
 
     registerEvents(): void {}

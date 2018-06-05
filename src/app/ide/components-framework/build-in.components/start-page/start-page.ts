@@ -67,7 +67,7 @@ export class StartPageComponent extends IDEUIComponent {
 
     @RequiredFunction("ApplicationWSPManager", "openApplication")
     public openApplication (applicationID: string): void {
-        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "s", [applicationID]);
+        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "openApplication", [applicationID]);
     }
 
     @RequiredFunction("ApplicationWSPManager", "deleteApplication")
