@@ -37,12 +37,12 @@ export class IDECore {
   }
 
   public static start(): void {
-    var shell: Shell = <Shell>ComponentRegistry.getEntry("Shell").create();
+    var shell: Shell = <Shell>ComponentRegistry.getEntry("Shell").create([".ide-platform-container"]);
     shell.initialize();
-    var configuration: Configuration = <Configuration>ComponentRegistry.getEntry("Configuration").create();
+    var configuration: Configuration = <Configuration>ComponentRegistry.getEntry("Configuration").create([".modal-platform-container"]);
     configuration.initialize();
     ComponentRegistry.getEntry("ApplicationWSPManager").create();
-    var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.getEntry("StartPageComponent").create();
+    var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.getEntry("StartPageComponent").create([".main-platform-container"]);
     shell.openComponent(startpage);
   }
 

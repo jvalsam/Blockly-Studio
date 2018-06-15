@@ -62,6 +62,7 @@ export class FontView extends AggregateView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         data: any
     ) {
         data = IFontDataConverter(data);
@@ -76,7 +77,7 @@ export class FontView extends AggregateView {
         if (data.updateParent) {
             aggregateData.updateParent = data.updateParent;
         }
-        super(parent, name, templateHTML, aggregateData);
+        super(parent, name, templateHTML, hookSelector, aggregateData);
         this.addFamily(data.font["Family"], data.style);
         this.addTextColor(data.font["Text Colour"], data.style);
         this.addSize(data.font["Size"], data.style);
@@ -94,7 +95,7 @@ export class FontView extends AggregateView {
             renderName: true,
             indepedent: true
         };
-        this.addProperty("Family", <PropertyView>ViewRegistry.getEntry("SelectView").create(this.parent, familyData));
+        this.addProperty("Family", familyData.type, familyData);
     }
 
     private addTextColor(value: any, style: any): void {
@@ -106,7 +107,7 @@ export class FontView extends AggregateView {
             renderName: true,
             indepedent: true
         };
-        this.addProperty("Text Colour", <PropertyView>ViewRegistry.getEntry("InputView").create(this.parent, textColorData));
+        this.addProperty("Text Colour", textColorData.type, textColorData);
     }
 
     private addSize(value: any, style: any): void {
@@ -176,7 +177,7 @@ export class FontView extends AggregateView {
             indepedent: true,
             type: "dynamic"
         };
-        this.addProperty("Size", <PropertyView>ViewRegistry.getEntry("DynamicExtraView").create(this.parent, fontSizeData));
+        this.addProperty("Size", fontSizeData.type, fontSizeData);
     }
 
     private addWeight(value: any, style: any): void {
@@ -220,7 +221,7 @@ export class FontView extends AggregateView {
             indepedent: true,
             type: "dynamic"
         };
-        this.addProperty("Weight", <PropertyView>ViewRegistry.getEntry("DynamicExtraView").create(this.parent, fontWeightData));
+        this.addProperty("Weight", fontWeightData.type, fontWeightData);
     }
 
     private addStyle(value: any, style: any): void {
@@ -233,7 +234,7 @@ export class FontView extends AggregateView {
             indepedent: true,
             type: "aggregate"
         };
-        this.addProperty("Style", <PropertyView>ViewRegistry.getEntry("SelectView").create(this.parent, fontStyleData));
+        this.addProperty("Style", fontStyleData.type, fontStyleData);
     }
 
     public static getStyle(data: any): JQueryCssProperties {

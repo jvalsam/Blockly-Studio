@@ -16,9 +16,10 @@ export class ApplicationViewBox extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         private application
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
         this.application.id = this.id;
         this.application.lastModified = new Date(this.application.lastModified).toUTCString();
     }

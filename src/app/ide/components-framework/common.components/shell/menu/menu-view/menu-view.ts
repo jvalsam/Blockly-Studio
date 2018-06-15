@@ -7,7 +7,7 @@ import * as _ from "lodash";
 
 @ComponentViewMetadata({
     name: "MenuView",
-    selector: ".menu-view-area",
+    //selector: ".menu-view-area",
     templateHTML: MenuTmpl
 })
 export class MenuView extends ComponentView {

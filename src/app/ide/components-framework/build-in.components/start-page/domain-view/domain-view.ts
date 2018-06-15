@@ -11,7 +11,7 @@ import { ComponentViewElement, ComponentViewElementMetadata } from '../../../com
 
 @ComponentViewElementMetadata({
     name: "DomainView",
-    selector: ".domain-view-area",
+    //selector: ".domain-view-area",
     templateHTML: DomainTmpl
 })
 export class DomainView extends ComponentViewElement {
@@ -23,9 +23,10 @@ export class DomainView extends ComponentViewElement {
         protected parent: IDEUIComponent,
         public readonly name: string,
         _selector: string,
-        protected readonly _templateHTML: string
+        protected readonly _templateHTML: string,
+        protected _hookSelector: string
     ) {
-        super(parent, name, _selector, _templateHTML);
+        super(parent, name, _selector, _templateHTML, _hookSelector);
         this.selectedValue = null;
         this.selectionView = null;
         this.domainsAppsView = null;
@@ -81,10 +82,10 @@ export class DomainView extends ComponentViewElement {
             renderName: true,
             indepedent: true
         };
-        this.selectionView = <SelectView>ViewRegistry.getEntry("SelectView").create(this.parent, domainsData);
+        this.selectionView = <SelectView>ViewRegistry.getEntry("SelectView").create(this.parent, ".domain-selection", domainsData);
         this.selectionView.render();
-        this.$el.find(".domain-selection").empty();
-        this.$el.find(".domain-selection").append(this.selectionView.$el);
+        // this.$el.find(".domain-selection").empty();
+        // this.$el.find(".domain-selection").append(this.selectionView.$el);
         this.registerEvents();
 
         var selectedDomain = domains[values.indexOf(this.selectedValue)];

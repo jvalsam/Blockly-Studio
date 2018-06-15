@@ -21,8 +21,13 @@ import { ComponentsCommunication } from "../../component/components-communicatio
 })
 export class StartPageComponent extends IDEUIComponent {
 
-    constructor(name: string, description: string, componentView: string) {
-        super(name, description, componentView);
+    constructor(
+        name: string,
+        description: string,
+        componentView: string,
+        hookSelector: string
+    ) {
+        super(name, description, componentView, hookSelector);
     }
 
     @ExportedFunction

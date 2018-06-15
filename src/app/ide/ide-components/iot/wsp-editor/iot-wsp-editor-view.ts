@@ -12,7 +12,7 @@ import {
 
 @ComponentViewMetadata({
     name: "IoTWSPEditorView",
-    selector: ".main-area-container",
+    //selector: ".main-area-container",
     templateHTML: IoTWSPEditorTmpl,
     mainElems: [
     ]

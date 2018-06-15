@@ -29,20 +29,19 @@ export class Shell extends IDEUIComponent {
   constructor(
     name: string,
     description: string,
-    compViewName: string
+    compViewName: string,
+    hookSelector: string
   ) {
-    super(name, description, compViewName);
+    super(name, description, compViewName, hookSelector);
     this._firstCompIsLoad = false;
-    this._menu = <Menu>ComponentRegistry.getEntry("Menu").create();
-    this._toolbar = <Toolbar>ComponentRegistry.getEntry("Toolbar").create();
   }
 
   @ExportedFunction
   public initialize(): void {
     super.initialize();
     this.view.render();
-    this.inject(this._menu);
-    this.inject(this._toolbar);
+    this._menu = <Menu>ComponentRegistry.getEntry("Menu").create([".menu-view-area"]);
+    this._toolbar = <Toolbar>ComponentRegistry.getEntry("Toolbar").create([".toolbar-view-area"]);
   }
 
   @ExportedFunction
@@ -64,19 +63,10 @@ export class Shell extends IDEUIComponent {
   public openComponent(comp: IDEUIComponent): void {
     //this.updateComponentsViewTree(comp);
     
-    comp.render (
-      () => {
-        this._menu.activateMenuItems(comp.view.menuElems);
+    this._menu.activateMenuItems(comp.view.menuElems);
+    this._toolbar.addTools(comp.view.toolElems);
 
-        this._toolbar.addTools(comp.view.toolElems);
-
-        if (comp.view.main) {
-          this.inject(".main-area-container", comp.view.main);
-        }
-
-        this.show();
-      }
-    );
+    comp.render ();
   }
 
   private getSelector(selector: string): string {
@@ -85,6 +75,7 @@ export class Shell extends IDEUIComponent {
     while ($("#"+prefix + ++index).length !== 0);
     return prefix + index;
   }
+
   @ExportedFunction
   public createComponentEmptyContainer(comp: IDEUIComponent, viewArea: string, display: boolean = false): string {
     const selector = this.getSelector(comp.selector);

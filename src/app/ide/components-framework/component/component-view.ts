@@ -15,15 +15,14 @@ export abstract class ComponentViewElement extends View {
     constructor(
         parent: IDEUIComponent,
         name: string,
-        private _selector: string,
         templateHTML: string,
+        selector: string,
         protected renderData: any = {},
         protected eventRegData: Array<IViewEventRegistration> = new Array<IViewEventRegistration>()
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, selector);
     }
 
-    get selector (): string { return this._selector; }
     set selector (newSel: string) { this._selector = newSel; }
 
     public setRenderData(templateData: Object): void;
@@ -67,11 +66,11 @@ export class ComponentView extends ComponentViewElement {
     private menuViewElems: IMenuViewElements;
     private toolsViewElems: IViewElements;
 
-    private initViews (views: Array<string>, parent: IDEUIComponent) {
+    private initViews (views: Array<IComponentViewDataElement>, parent: IDEUIComponent) {
         let viewElems = {};
         if (views) {
             for (let view of views) {
-                viewElems[view] = ViewRegistry.getEntry(view).create(parent);
+                viewElems[view.name] = ViewRegistry.getEntry(view.name).create(parent, view.selector);
             }
         }
         return viewElems;
@@ -79,16 +78,16 @@ export class ComponentView extends ComponentViewElement {
     constructor(
         parent: IDEUIComponent,
         name: string,
-        selector: string,
         templateHTML: string,
-        mainViews: Array<string> = new Array<string>(),
-        menuViews: { [category: string/*MenuCategory*/]: Array<string> } =
-            { "OnRegistration": new Array<string>(), "OnInstantiation": new Array<string>() },
-        toolViews: Array<string> = new Array<string>(),
+        selector: string,
+        mainViews: Array<IComponentViewDataElement> = new Array<IComponentViewDataElement>(),
+        menuViews: { [category: string/*MenuCategory*/]: Array<IComponentViewDataElement> } =
+            { "OnRegistration": new Array<IComponentViewDataElement>(), "OnInstantiation": new Array<IComponentViewDataElement>() },
+        toolViews: Array<IComponentViewDataElement> = new Array<IComponentViewDataElement>(),
         renderData: Object = {},
         eventRegdata: Array<IViewEventRegistration> = new Array<IViewEventRegistration>()
     ) {
-        super(parent, name, selector, templateHTML, renderData, eventRegdata);
+        super(parent, name, templateHTML, selector, renderData, eventRegdata);
         this.mainViewElems = this.initViews(mainViews, parent);
         this.menuViewElems = { OnRegistration: {}, OnInstantiation: {} };
         this.menuViewElems.OnRegistration = this.initViews(menuViews["OnRegistration"], parent);
@@ -106,7 +105,11 @@ export class ComponentView extends ComponentViewElement {
         return this.toolsViewElems;
     }
 
-    public render(callback?: Function): void {
+    public initialize() {
+
+    }
+
+    public render(): void {
         this.renderTmplEl(this.renderData);
         this.registerEvents();
         _.forEach(this.menuElems, (menuViewElement) => {
@@ -115,17 +118,17 @@ export class ComponentView extends ComponentViewElement {
         _.forEach(this.toolsViewElems, (toolViewElement) => {
             toolViewElement.render();
         });
-        let responcesCounter = 0;
+        // let responcesCounter = 0;
         _.forEach(this.mainViewElems, (mainViewElement: ComponentViewElement) => {
             mainViewElement.render(
-                () => {
-                    this.$el.find(mainViewElement.selector).empty();
-                    this.$el.find(mainViewElement.selector).append(mainViewElement.$el);
+            //     () => {
+            //         // this.$el.find(mainViewElement.selector).empty();
+            //         // this.$el.find(mainViewElement.selector).append(mainViewElement.$el);
 
-                    if (++responcesCounter === Object.keys(this.mainViewElems).length && callback) {
-                        callback();
-                    }
-                }
+            //         if (++responcesCounter === Object.keys(this.mainViewElems).length && callback) {
+            //             callback();
+            //         }
+            //     }
             );
         });
     }
@@ -162,20 +165,19 @@ export let ComponentViewRegistry = new Registry<ComponentView>();
  *
  */
 
-export interface IComponentViewElementData extends IViewElementData {
-    // set selector as default value, on create 
-    // new ComponentViewElement user can set other selector
-    selector?: string;
+export interface IComponentViewDataElement {
+    name: string;
+    selector: string;
 }
 
-export interface IComponentViewData extends IComponentViewElementData {
-    mainElems?: Array<string>;
-    menuElems?: Array<string>;
-    toolsElems?: Array<string>;
+export interface IComponentViewData extends IViewElementData {
+    mainElems?: Array<IComponentViewDataElement>;
+    menuElems?: Array<IComponentViewDataElement>;
+    toolsElems?: Array<IComponentViewDataElement>;
 }
 
 export let ComponentViewElementMetadata = // Used as decorator
-function DeclareComponentViewElement (data: IComponentViewElementData) {
+function DeclareComponentViewElement (data: IViewElementData) {
     return (create: Function) => {
         if (ViewRegistry.hasEntry(name)) {
             IDEError.raise(
@@ -184,7 +186,7 @@ function DeclareComponentViewElement (data: IComponentViewElementData) {
             );
         }
 
-        var initData: any = [data.selector, data.templateHTML];
+        var initData: any = [data.templateHTML];
         if (data.initData) {
             initData.push(data.initData);
         }
@@ -213,7 +215,6 @@ function DeclareComponentView (data: IComponentViewData) {
             data.name,
             create,
             [
-                data.selector,
                 data.templateHTML,
                 data.mainElems,
                 data.menuElems,

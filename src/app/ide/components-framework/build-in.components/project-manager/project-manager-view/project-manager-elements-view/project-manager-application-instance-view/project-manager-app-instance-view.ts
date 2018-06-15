@@ -49,9 +49,10 @@ export class ProjectManagerAppInstanceView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
         data.id = this.id;
         this.info = (({ id, title, img, actions, menu }) => ({ id, title, img, actions, menu }))(data.project);
         this.initElem("actions", data);

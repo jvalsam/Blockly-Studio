@@ -29,9 +29,10 @@ export class IoTWSPEditor extends IDEUIComponent {
     constructor(
         name: string,
         description: string,
-        componentView: string
+        componentView: string,
+        hookSelector: string
     ) {
-        super(name, description, componentView);
+        super(name, description, componentView, hookSelector);
         this.editorManager = <EditorManager>ComponentRegistry.getEntry("EditorManager").create();
         this._selectedAutomationId = "";
     }

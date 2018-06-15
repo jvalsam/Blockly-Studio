@@ -44,32 +44,32 @@ export class DynamicExtraView extends PropertyView {
     private readonly extraElemsViewSelector: string;
     private mainView: PropertyView;
     private currExtraView: PropertyView;
+    private extraElemsCnt: number;
     constructor(
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, data);
+        super(parent, name, templateHTML, hookSelector, data);
         this.data = IDynamicExtraDataConverter(data);
         this.mainViewSelector = "#main_extra_view_"+this.id;
         this.extraElemsViewSelector = ".dynamic-extra-property-elements"+this.id;
         this.data.main.updateParent = () => this.onChange();
-        this.mainView = <PropertyView>ViewRegistry.getEntry(
-            TypeToNameOfPropertyView(this.data.main.type)
-        ).create(this.parent, this.data.main);
+        this.mainView = null;
         this.currExtraView = null;
+        this.extraElemsCnt = 1;
     }
 
     private mainElemRender(): void {
-        this.mainView.render();
-        this.mainView.$el = this.mainView.$el.children();
-    }
-
-    private extraElemRender(): void {
-        if (this.extraElem()) {
-            $(this.extraElemsViewSelector).append(this.$currExtraElem());
+        if (this.mainView === null) {
+            this.mainView = this.mainView = <PropertyView>ViewRegistry.getEntry(
+                TypeToNameOfPropertyView(this.data.main.type)
+            ).create(this.parent, this.mainViewSelector, this.data.main);
+            this.mainView.renderInner = true;
         }
+        this.mainView.render();
     }
 
     private destroyCurrentExtraView(): void {
@@ -80,47 +80,33 @@ export class DynamicExtraView extends PropertyView {
         }
     }
 
-    private $currExtraElem(): JQuery {
-        this.currExtraView.render();
-        let $extraEl = $("<div class='col' id='extra_elem_" + this.currExtraView.id + "'"+
-            "style=\"padding-left: 0px;\"></div>");
-        $extraEl.append(this.currExtraView.$el);
-        return $extraEl;
-    }
-
-    private extraElem(): boolean {
+    private extraElemRender(): boolean {
         this.destroyCurrentExtraView();
 
         let extraElem = this.data.values[this.mainView.value];
         if (extraElem && typeof (extraElem) !== "number") {
             extraElem.value.isExtra = true;
+            let newSel = "extra_elem_"+this.extraElemsCnt++;
+            this.createHook(this.extraElemsViewSelector, newSel, { class: "col", style: "padding-left: 0px;" });
             this.currExtraView = <PropertyView>ViewRegistry.getEntry(
                 TypeToNameOfPropertyView(extraElem.type)
-            ).create(this.parent, extraElem.value);
+            ).create(this.parent, "#"+newSel, extraElem.value);
             this.currExtraView.render();
             return true;
         }
-
         return false;
     }
 
     public render(): void {
         this.renderTmplEl(this.data);
         this.mainElemRender();
-        this.$el.find("#main_extra_view_" + this.id).append(this.mainView.$el);
         this.extraElemRender();
-        if (this.extraElem()) {
-            this.$el.find(this.extraElemsViewSelector).append(this.$currExtraElem());
-        }
-        this.registerEvents();
     }
 
     public registerEvents(): void { ; }
 
     public onChange(): void {
         this.mainElemRender();
-        $(this.mainViewSelector).empty();
-        $(this.mainViewSelector).append(this.mainView.$el);
         this.extraElemRender();
 
         if (typeof (this.data.updateParent) !== "undefined") {

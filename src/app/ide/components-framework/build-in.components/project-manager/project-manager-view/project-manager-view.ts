@@ -42,7 +42,7 @@ interface IProjectManagerData {
 
 @ComponentViewMetadata({
     name: "ProjectManagerView",
-    selector: ".project-elements-view-area",
+    //selector: ".project-elements-view-area",
     templateHTML: ProjectManagerTmpl
 })
 export class ProjectManagerView extends ComponentView {

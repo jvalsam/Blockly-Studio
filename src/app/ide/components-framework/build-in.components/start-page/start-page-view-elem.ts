@@ -13,7 +13,7 @@ import { ApplicationListSP } from "../applications-view/application-list-s-p/app
 
 @ComponentViewElementMetadata({
     name: "StartPageViewElement",
-    selector: ".start-page-container",
+    //selector: ".start-page-container",
     templateHTML: StartPageTmpl
 })
 export class StartPageViewElement extends ComponentViewElement {

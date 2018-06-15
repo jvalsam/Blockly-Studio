@@ -6,7 +6,7 @@ import { BlocklyVPL } from "./blockly";
 
 @ComponentViewElementMetadata({
     name: "BlocklyToolbarView",
-    selector: ".tools-view-container",
+    //selector: ".tools-view-container",
     templateHTML: BlocklyToolbarTmpl
 })
 export class BlocklyToolbarView extends ComponentViewElement {

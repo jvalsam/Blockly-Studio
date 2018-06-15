@@ -8,6 +8,7 @@
 import { IDEErrorView } from "./ide-error-view";
 import { IDEWarningView } from "./ide-warning-view";
 import { ViewRegistry } from "../../components-framework/component/registry";
+import { MODAL_SELECTOR } from "../data";
 
 class _IDEError {
     private errorView: IDEErrorView;
@@ -15,8 +16,8 @@ class _IDEError {
 
     constructor() {
         if (ViewRegistry.hasEntry("IDEErrorView") && ViewRegistry.hasEntry("IDEWarningView")) {
-            this.errorView = <IDEErrorView>ViewRegistry.getEntry("IDEErrorView").create(null);
-            this.warningView = <IDEWarningView>ViewRegistry.getEntry("IDEWarningView").create(null);
+            this.errorView = <IDEErrorView>ViewRegistry.getEntry("IDEErrorView").create(null, MODAL_SELECTOR);
+            this.warningView = <IDEWarningView>ViewRegistry.getEntry("IDEWarningView").create(null, MODAL_SELECTOR);
         }
         else {
             this.errorView = null;
@@ -26,8 +27,8 @@ class _IDEError {
 
     public initialize(): void {
         if (this.errorView === null) {
-            this.errorView = <IDEErrorView>ViewRegistry.getEntry("IDEErrorView").create(null);
-            this.warningView = <IDEWarningView>ViewRegistry.getEntry("IDEWarningView").create(null);
+            this.errorView = <IDEErrorView>ViewRegistry.getEntry("IDEErrorView").create(null, MODAL_SELECTOR);
+            this.warningView = <IDEWarningView>ViewRegistry.getEntry("IDEWarningView").create(null, MODAL_SELECTOR);
         }
         window.onerror = function (message, source, lineno, colno, error) {
             let msg = "Error:\nMessage: " + message + "\source: " + source +

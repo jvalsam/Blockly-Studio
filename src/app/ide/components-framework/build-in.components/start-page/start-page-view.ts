@@ -6,10 +6,13 @@ import { DomainView } from "./domain-view/domain-view";
 
 @ComponentViewMetadata({
     name: "StartPageView",
-    selector: ".start-page-container",
+    //selector: ".start-page-container",
     templateHTML: StartPageTmpl,
     mainElems: [
-        "DomainView"
+        {
+            name:       "DomainView",
+            selector:   ".domain-view-area"
+        }
     ]
 })
 export class StartPageView extends ComponentView {

@@ -17,9 +17,10 @@ export class MenuViewItem extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         private menuElem: MenuItemLeafData
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
         this.events = new Array<IViewEventRegistration>();
         this.menuElem["id"] = this.id;
         if (this.menuElem.type === "leaf") {

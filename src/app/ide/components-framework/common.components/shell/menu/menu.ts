@@ -67,9 +67,10 @@ export class Menu extends IDEUIComponent {
     constructor(
         name: string,
         description: string,
-        compViewName: string
+        compViewName: string,
+        hookSelector: string
     ) {
-        super(name, description, compViewName);
+        super(name, description, compViewName, hookSelector);
         this.items = {};
         this.paths = {};
         this.itemsPaths = {};

@@ -37,9 +37,10 @@ export class ProjectManagerActionsView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
         data.id = this.id;
         this.info = (({id, actions}) => ({id, actions}))(data);
     }

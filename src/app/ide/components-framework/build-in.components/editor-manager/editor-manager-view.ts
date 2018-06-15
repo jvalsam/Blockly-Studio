@@ -5,7 +5,7 @@ import { Editor } from "./editor";
 
 @ComponentViewMetadata({
     name: "EditorManagerView",
-    selector: ".editor-manager-container",
+    //selector: ".editor-manager-container",
     templateHTML: EditorManagerTmpl
 })
 export class EditorManagerView extends ComponentView {

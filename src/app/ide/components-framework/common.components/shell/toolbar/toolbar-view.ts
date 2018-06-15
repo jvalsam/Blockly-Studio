@@ -9,7 +9,7 @@ import { IDEUIComponent } from "../../../component/ide-ui-component";
 
 @ComponentViewMetadata({
     name: "ToolbarView",
-    selector: ".toolbar-view-area",
+    //selector: ".toolbar-view-area",
     templateHTML: ToolbarTmpl
 })
 export class ToolbarView extends ComponentView {
@@ -18,10 +18,10 @@ export class ToolbarView extends ComponentView {
     constructor(
         parent: IDEUIComponent,
         name: string,
-        selector: string,
-        templateHTML: string
+        templateHTML: string,
+        selector: string
     ) {
-        super(parent, name, selector, templateHTML);
+        super(parent, name, templateHTML, selector);
         this.tools = {};
     }
 

@@ -37,9 +37,10 @@ export class BlocklyVPL extends Editor {
   constructor(
     name: string,
     description: string,
-    compViewName: string
+    compViewName: string,
+    hookSelector: string
   ) {
-    super(name, description, compViewName);
+    super(name, description, compViewName, hookSelector);
   }
 
   @ExportedFunction

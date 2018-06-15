@@ -10,6 +10,7 @@ import { IDEError } from "../../shared/ide-error/ide-error";
 
 export class Entry<T> {
   protected _instanceList: Array<T>;
+  protected _html: string;
 
   constructor(
     public readonly name?: string,
@@ -17,6 +18,9 @@ export class Entry<T> {
     protected _args?: Array<any>
   ) {
     this._instanceList = new Array<T>();
+    if (this._args) {
+      this._html = this._args.shift();
+    }
   }
 
   public getInstances(): Array<T> {
@@ -25,10 +29,14 @@ export class Entry<T> {
 
   public setArgs(args: Array<T>) {
     this._args = args;
+    if (this._args) {
+      this._html = this._args.shift();
+    }
   }
 
   public create(parent: IDEUIComponent, ...extraElements: Array<any>): T {
-    const newInst: T = new (this._creationFunc) (parent, this.name, ...this._args, ...extraElements);
+    let selector = extraElements.shift();
+    const newInst: T = new (this._creationFunc) (parent, this.name, this._html,  selector, ...this._args, ...extraElements);
     this._instanceList.push(newInst);
     return newInst;
   }

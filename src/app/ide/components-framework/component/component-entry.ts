@@ -69,10 +69,10 @@ export class ComponentEntry extends Entry<Component> {
     }
     let args = this._args;
     if (data) {
-      args.concat(data);
+      args = args.concat(data);
     }
 
-    const newComp: Component = new (this._creationFunc)(this._compInfo.name, this._compInfo.description, ...args);
+    const newComp: Component = new (this._creationFunc)(this._compInfo.name, this._compInfo.description, this._html, ...args);
     if (this._creationFunc._configProperties) {
       newComp["_configProperties"] = this._creationFunc._configProperties;
       newComp["getConfigProperties"] = this._creationFunc.getConfigProperties;

@@ -125,9 +125,10 @@ export class ProjectManagerCategoryView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
         data.isLeaf = "categories" in data.meta;
         this.info = (({ title, type, isLeaf, img }) => ({ title, type, isLeaf, img })) (data.meta);
         this.initContainer("actions", data.meta);

@@ -22,16 +22,30 @@ export interface IPropertyData {
 }
 
 export abstract class PropertyView extends View {
-    protected readonly selector: string;
+    private _renderInnerHTML: boolean;
     constructor(
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        selector: string,
         protected _data: any
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, selector);
         this.selector = "#input_"+this.id;
         this._data.id = this.id;
+        this._renderInnerHTML = false;
+    }
+
+    set selector (newSel: string) { this._selector = newSel; }
+
+    set renderInner(ri: boolean) { this._renderInnerHTML = ri; }
+
+    public renderTmplEl(data?:any): void {
+        this.renderTmplElHelper(data);
+        if (this._renderInnerHTML) {
+            this.$el = this.$el.children();
+        }
+        this.attachTmplEl();
     }
 
     abstract get value(): any;

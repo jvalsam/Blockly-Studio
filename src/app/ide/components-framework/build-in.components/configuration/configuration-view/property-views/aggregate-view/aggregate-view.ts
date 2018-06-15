@@ -1,7 +1,8 @@
 import { IDEError } from "../../../../../../shared/ide-error/ide-error";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { ViewMetadata } from "../../../../../component/view";
-import { PropertyView, IPropertyData } from "../property-view";
+import { PropertyView, IPropertyData, TypeToNameOfPropertyView } from "../property-view";
+import { ViewRegistry } from "../../../../../component/registry";
 import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
@@ -40,9 +41,10 @@ export class AggregateView extends PropertyView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, data);
+        super(parent, name, templateHTML, hookSelector, data);
         this.data = IAggregateDataConverter(data);
     }
 
@@ -53,15 +55,18 @@ export class AggregateView extends PropertyView {
     public render(): void {
         this.renderTmplEl(this.data);
         this.setStyle();
-        _.forOwn(this.data.props, (value, key) => {
-            value.render();
-            this.$el.find("#elems_"+this.id).append(value.$el);
+        var elemCnt = 1;
+        _.forOwn(this.data.props, (view, key) => {
+            let newSel = "elem_" + this.id + "_" + elemCnt++;
+            this.createHook("#elems_"+this.id, newSel, {class: "row", innerHTML: "<div class='col'></div>"});
+            let prop = <PropertyView>ViewRegistry.getEntry(view.name).create(this.parent, "#"+newSel, view.data);
+            prop.render();
         });
     }
 
-    public addProperty (name: string, property: PropertyView): void {
+    public addProperty (name: string, viewRegName: string, property: any): void {
         if (!this.data.props[name]) {
-            this.data.props[name] = property;
+            this.data.props[name] = { name: TypeToNameOfPropertyView(viewRegName), data: property };
         }
         else {
             IDEError.warn("Aggregate Add Property", "Property with name " + name + " already exists.");

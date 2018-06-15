@@ -13,7 +13,7 @@ import {
 
 @ComponentViewMetadata({
     name: "ICEView",
-    selector: ".main-area-container",
+    //selector: ".main-area-container",
     templateHTML: ICETmpl
 })
 export class ICEView extends ComponentView {

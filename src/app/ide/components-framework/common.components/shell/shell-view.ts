@@ -6,7 +6,7 @@ import * as _ from "lodash";
 
 @ComponentViewMetadata({
     name: "ShellView",
-    selector: ".ide-container",
+    //selector: ".ide-container",
     templateHTML: ShellTmpl
 })
 export class ShellView extends ComponentView {

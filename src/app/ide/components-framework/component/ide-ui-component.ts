@@ -26,10 +26,11 @@ export abstract class IDEUIComponent extends IDEComponent {
     constructor(
         name: string,
         description: string,
-        compViewName: string
+        compViewName: string,
+        hookSelector: string
     ) {
         super(name, description);
-        this._view = ComponentViewRegistry.getEntry(compViewName).create(this);
+        this._view = ComponentViewRegistry.getEntry(compViewName).create(this, hookSelector);
     }
 
     get templateHTML(): string {
@@ -45,8 +46,8 @@ export abstract class IDEUIComponent extends IDEComponent {
     }
 
     @ExportedFunction
-    public render(callback?:Function): void {
-            this.view.render(callback);
+    public render(): void {
+            this.view.render();
     }
 
     protected inject(selector: string, templateHTML: JQuery): void;

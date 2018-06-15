@@ -23,9 +23,10 @@ export class IoTAutomationList extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         private app: IoTApplication
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
         this.cTemplate = _.template(IoTAutomationCategoryTmpl);
     }
 

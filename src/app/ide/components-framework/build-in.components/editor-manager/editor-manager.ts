@@ -30,9 +30,10 @@ export class EditorManager extends IDEUIComponent {
     constructor(
         name: string,
         description: string,
-        compViewName: string
+        compViewName: string,
+        selector: string
     ) {
-        super(name, description, compViewName);
+        super(name, description, compViewName, selector);
         this.editorInstancesMap = {};
         this.editorOnFocusId = "";
     }

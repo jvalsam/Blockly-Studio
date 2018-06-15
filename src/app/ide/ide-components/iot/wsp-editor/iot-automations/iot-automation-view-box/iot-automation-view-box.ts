@@ -14,9 +14,10 @@ export class IoTAutomationViewBox extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         private automation: Automation
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
     }
 
     public registerEvents(): void {

@@ -21,7 +21,7 @@ import { View } from "../../../component/view";
 
 @ComponentViewElementMetadata({
     name: "ApplicationsListStartPage",
-    selector: ".application-list-view-area",
+    //selector: ".application-list-view-area",
     templateHTML: ApplicationsListTmpl
 })
 export class ApplicationListSP extends ComponentViewElement {

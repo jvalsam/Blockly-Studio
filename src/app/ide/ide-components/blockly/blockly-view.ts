@@ -13,9 +13,13 @@ import {
 
 @ComponentViewMetadata({
     name: "BlocklyView",
-    selector: ".main-area-container",
     templateHTML: BlocklyTmpl,
-    toolsElems: [ "BlocklyToolbarView" ]
+    toolsElems: [
+        {
+            name: "BlocklyToolbarView",
+            selector: ".tools-view-container"
+        }
+    ]
 })
 export class BlocklyView extends ComponentView {
 

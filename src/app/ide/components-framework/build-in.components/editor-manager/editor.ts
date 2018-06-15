@@ -20,9 +20,10 @@ export abstract class Editor extends IDEUIComponent {
     constructor(
         name: string,
         description: string,
-        compViewName: string
+        compViewName: string,
+        hookSelector: string
     ) {
-        super(name, description, compViewName);
+        super(name, description, compViewName, hookSelector);
         this._isRendered = false;
     }
 

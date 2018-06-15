@@ -36,9 +36,10 @@ export class ProjectManagerMenuView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
         data.id = this.id;
         this.info = (({ id, menuItems }) => ({ id, menuItems }))(data);
     }

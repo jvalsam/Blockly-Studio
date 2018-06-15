@@ -37,9 +37,10 @@ export class SelectView extends PropertyView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, data);
+        super(parent, name, templateHTML, hookSelector, data);
         this.data = ISelectDataConverter(data);
     }
 

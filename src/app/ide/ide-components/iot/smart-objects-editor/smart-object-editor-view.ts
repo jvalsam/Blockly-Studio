@@ -10,7 +10,7 @@ import {
 
 @ComponentViewMetadata({
     name: "SmartObjectEditorView",
-    selector: ".main-area-container",
+    //selector: ".main-area-container",
     templateHTML: SmartObjectEditorTmpl,
     mainElems: [
     ]

@@ -46,7 +46,8 @@ export abstract class View {
     constructor(
         protected parent: IDEUIComponent,
         public readonly name: string,
-        protected readonly _templateHTML: string
+        protected readonly _templateHTML: string,
+        protected _selector: string
     ) {
         this._events = {};
         this._nextEventID = 0;
@@ -59,6 +60,8 @@ export abstract class View {
         }
         this._template = _.template(this._templateHTML);
     }
+
+    get selector (): string { return this._selector; }
 
     public updateView(): void {
         let selector: string = "#" + this._id;
@@ -86,9 +89,32 @@ export abstract class View {
         assert(isAppended);
     }
 
-    public renderTmplEl(data?:any): void {
+    public createHook(
+        whereSel: string,
+        newIDSel: string,
+        data ?: { class?: string, style?: string, innerHTML?: string }
+    ): void {
+        let hook = "<div id='" + newIDSel + "'" + (data && data.class ? " class='"+data.class+"'" : "") +
+                                                  (data && data.style ? " style='"+data.style+"'" : "") +
+                    ">" +
+                        (data && data.innerHTML ? data.innerHTML : "")
+                    "</div>";
+        $(whereSel).append(hook);
+    }
+
+    protected renderTmplElHelper(data?: any): void {
         this.$el = $(this._template(data));
         this.$el.attr("id", this._id);
+    }
+
+    protected attachTmplEl(): void {
+        $(this.selector).empty();
+        $(this.selector).append(this.$el);
+    }
+
+    public renderTmplEl(data?:any): void {
+        this.renderTmplElHelper(data);
+        this.attachTmplEl();
     }
 
     public abstract render(callback?: Function): void;
@@ -129,7 +155,7 @@ export abstract class View {
         this.ensureElement();
 
         return _.map(eventRegs, (reg: IViewEventRegistration) => {
-            const $target: JQuery = this.$el.find(reg.selector);
+            const $target: JQuery = $(reg.selector);// this.$el.find(reg.selector);
             if (!$target.length) {
                 IDEError.raise(
                     "View - Attach Event",
@@ -169,7 +195,14 @@ export abstract class View {
 
 
 export abstract class ModalView extends View {
-    private readonly selector = "modal-area";
+
+    constructor(
+        protected parent: IDEUIComponent,
+        public readonly name: string,
+        protected readonly _templateHTML: string
+    ) {
+        super(parent, name, _templateHTML, "modal-area");
+    }
 
     public open(): void {
         this.render(

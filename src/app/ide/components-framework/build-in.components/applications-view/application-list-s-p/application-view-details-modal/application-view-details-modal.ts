@@ -9,7 +9,6 @@ import * as _ from "lodash";
     templateHTML: ApplicationViewDetailsTmpl
 })
 export class ApplicationViewDetailsModal extends View {
-    private selector; // modal has selector + open + 
     private application;
 
     public initialize(): void {

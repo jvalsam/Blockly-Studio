@@ -49,9 +49,10 @@ export class MenuAggregateViewItem extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        hookSelector: string,
         private menuItem: MenuItemData
     ) {
-        super(parent, name, templateHTML);
+        super(parent, name, templateHTML, hookSelector);
         this.menuItem["id"] = this.id;
     }
 
