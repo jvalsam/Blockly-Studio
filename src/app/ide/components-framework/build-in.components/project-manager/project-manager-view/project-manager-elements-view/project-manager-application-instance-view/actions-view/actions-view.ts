@@ -48,7 +48,6 @@ export class ProjectManagerActionsView extends View {
     public render(): void {
         this.renderTmplEl(this.info);
         this.setStyle();
-        this.registerEvents();
     }
 
     public registerEvents(): void {

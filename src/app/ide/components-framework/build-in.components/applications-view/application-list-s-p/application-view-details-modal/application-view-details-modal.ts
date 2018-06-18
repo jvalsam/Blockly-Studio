@@ -18,9 +18,8 @@ export class ApplicationViewDetailsModal extends View {
     public render(): void {
         this.renderTmplEl(this.application);
         this.setStyle();
-        $("div." + this.selector).empty();
-        $("div." + this.selector).append(this.$el);
-        this.registerEvents();
+        // $("div." + this.selector).empty();
+        // $("div." + this.selector).append(this.$el);
     }
 
     public registerEvents(): void {

@@ -52,7 +52,6 @@ export class InputView extends PropertyView {
     public render(): void {
         this.renderTmplEl(this.data);
         this.setStyle();
-        this.registerEvents();
     }
 
     public registerEvents(): void {

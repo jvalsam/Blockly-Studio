@@ -46,7 +46,7 @@ export class Configuration extends IDEUIComponent {
     public openComponentConfig(compName: string): void {
         let currentValues: any = ComponentRegistry.getEntry(compName).getCurrentConfigValues();
         let configData: any = ComponentRegistry.getEntry(compName).getConfigMetadata();
-        (<ConfigurationView>this.view).generate(compName, configData, currentValues);
+        (<ConfigurationView>this.view).setRenderDynamicData(compName, configData, currentValues);
         (<ConfigurationView>this.view).open();
     }
 

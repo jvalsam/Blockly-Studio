@@ -50,7 +50,6 @@ export class ToolbarView extends ComponentView {
 
     public render(): void {
         this.renderTmplEl();
-        this.registerEvents();
         for (let index of Object.keys(this.tools)) {
             this.tools[index].render();
             this.$el.find(this.tools[index].selector).append(this.tools[index].$el);

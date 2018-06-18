@@ -33,18 +33,16 @@ export class ApplicationListSP extends ComponentViewElement {
         // TODO: application type request to pin data for the actions...
         _.forEach(applications, (application) => {
             application.actions = this.renderData.domain.actions;
-            const appViewBox: View = ViewRegistry.getEntry("ApplicationViewBox").create(this.parent, application);
+            const appViewBox: View = ViewRegistry.getEntry("ApplicationViewBox").create(this.parent, ".applications-view-list", application);
             appViewBox.render();
-            this.$el.find(".applications-view-list").append(appViewBox.$el);
         });
     }
 
-    public render(callback?: Function): void {
+    public render(): void {
         ApplicationsAdministration.requestApplications(
             this.renderData.filters,
             (elements) => {
                 this.renderOnResponse(elements);
-                callback();
             }
         );
     }
@@ -64,8 +62,8 @@ export class ApplicationListSP extends ComponentViewElement {
         );
     }
 
-    public setDomain(domain, callback): void {
-
+    public setDomain(domain): void {
+        alert('TODO: implement setDomain function!');
     }
 
     /**

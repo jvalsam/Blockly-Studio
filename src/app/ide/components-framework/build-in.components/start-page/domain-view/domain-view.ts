@@ -22,11 +22,10 @@ export class DomainView extends ComponentViewElement {
     constructor(
         protected parent: IDEUIComponent,
         public readonly name: string,
-        _selector: string,
         protected readonly _templateHTML: string,
-        protected _hookSelector: string
+        protected _selector: string
     ) {
-        super(parent, name, _selector, _templateHTML, _hookSelector);
+        super(parent, name, _templateHTML, _selector);
         this.selectedValue = null;
         this.selectionView = null;
         this.domainsAppsView = null;
@@ -40,37 +39,37 @@ export class DomainView extends ComponentViewElement {
         else {
             img = "<img src'TODO' />";
         }
-        this.$el.find(".domain-image").empty();
-        this.$el.find(".domain-image").append(img);
+        $(".domain-image").empty();
+        $(".domain-image").append(img);
     }
 
     private renderDescription(description): void {
-        this.$el.find(".domain-description").empty();
-        this.$el.find(".domain-description").append(description);
+        $(".domain-description").empty();
+        $(".domain-description").append(description);
     }
 
-    private renderApps(selectedDomain, callback): void {
+    private renderApps(selectedDomain): void {
         if (selectedDomain.type === "programming") {
             if (this.domainsAppsView === null) {
                 this.domainsAppsView = <ApplicationListSP>ViewRegistry.getEntry("ApplicationsListStartPage").create(
                     this.parent,
+                    ".domain-applications",
                     { domain: selectedDomain }
                 );
-                this.domainsAppsView.render(callback);
+                this.domainsAppsView.render();
             }
             else {
-                this.domainsAppsView.setDomain(selectedDomain.name, callback);
+                this.domainsAppsView.setDomain(selectedDomain.name);
             }
         }
         else {
             this.domainsAppsView.destroy();
             delete this.domainsAppsView;
             this.domainsAppsView = null;
-            callback(true);
         }
     }
 
-    public renderOnResponse (domains, callback): void {
+    public renderOnResponse (domains): void {
         let values = domains.map(x=>x.title);
         this.selectedValue = this.selectedValue ? this.selectedValue : values[0];
         let domainsData: ISelectData = {
@@ -84,31 +83,19 @@ export class DomainView extends ComponentViewElement {
         };
         this.selectionView = <SelectView>ViewRegistry.getEntry("SelectView").create(this.parent, ".domain-selection", domainsData);
         this.selectionView.render();
-        // this.$el.find(".domain-selection").empty();
-        // this.$el.find(".domain-selection").append(this.selectionView.$el);
-        this.registerEvents();
 
         var selectedDomain = domains[values.indexOf(this.selectedValue)];
 
         this.renderImg(selectedDomain.img);
         this.renderDescription(selectedDomain.description);
 
-        this.renderApps(
-            selectedDomain,
-            (appsEmpty?: Boolean) => {
-                this.$el.find(".domain-applications").empty();
-                if (!appsEmpty) {
-                    this.$el.find(".domain-applications").append(this.domainsAppsView.$el);
-                }
-                callback();
-            }
-        );
+        this.renderApps(selectedDomain);
     }
 
-    public render(callback?: Function): void {
+    public render(): void {
         this.renderTmplEl();
         DomainsAdministration.requestDomains(
-            (domains) => this.renderOnResponse(domains, callback)
+            (domains) => this.renderOnResponse(domains)
         );
     }
 

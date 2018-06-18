@@ -111,7 +111,6 @@ export class ComponentView extends ComponentViewElement {
 
     public render(): void {
         this.renderTmplEl(this.renderData);
-        this.registerEvents();
         _.forEach(this.menuElems, (menuViewElement) => {
             menuViewElement.render();
         });

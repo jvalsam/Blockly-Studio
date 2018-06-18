@@ -210,7 +210,6 @@ export class ProjectManagerCategoryView extends View {
 
     public render(): void {
         this.renderTmplEl(this.info);
-        this.registerEvents();
         this.renderElem("actions");
         this.renderElem("menu");
         this.setStyle();

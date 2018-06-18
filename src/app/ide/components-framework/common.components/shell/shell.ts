@@ -41,7 +41,9 @@ export class Shell extends IDEUIComponent {
     super.initialize();
     this.view.render();
     this._menu = <Menu>ComponentRegistry.getEntry("Menu").create([".menu-view-area"]);
+    this._menu.render();
     this._toolbar = <Toolbar>ComponentRegistry.getEntry("Toolbar").create([".toolbar-view-area"]);
+    this._toolbar.render();
   }
 
   @ExportedFunction

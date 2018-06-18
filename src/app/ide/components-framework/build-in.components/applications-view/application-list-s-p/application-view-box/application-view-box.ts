@@ -43,7 +43,6 @@ export class ApplicationViewBox extends View {
 
     public render(): void {
         this.renderTmplEl(this.application);
-        this.registerEvents();
     }
 
     private onOpenApplication(): void {

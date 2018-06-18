@@ -25,11 +25,9 @@ export class MenuView extends ComponentView {
 
     public render (): void {
         this.renderTmplEl();
-        this.registerEvents();
         for (let index of Object.keys(this.renderData)) {
-            let view = renderMenuElem(this.parent, <MenuElem>this.renderData[index]);
+            let view = renderMenuElem(this.parent, this.itemsContainer, <MenuElem>this.renderData[index]);
             view.render();
-            this.$el.find(this.itemsContainer).append(view.$el);
         }
     }
 }

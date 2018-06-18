@@ -90,7 +90,6 @@ export class ProjectManagerAppInstanceView extends View {
 
     public render(): void {
         this.renderTmplEl(this.info);
-        this.registerEvents();
         this.renderElem("actions");
         this.renderElem("menu");
         _.forEach(this.categories, (category) => {

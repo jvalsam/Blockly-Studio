@@ -32,7 +32,6 @@ export class IoTAutomationList extends View {
 
     public render(): void {
         this.renderTmplEl({ totalAutomations: Object.keys(this.app.automations).length });
-        this.registerEvents();
         _.forEach(Object.keys(this.app.automations), (automationType) => {
             var $cEl: JQuery = $(this.cTemplate({
                 category: automationType,

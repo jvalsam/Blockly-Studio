@@ -11,6 +11,7 @@ import {
 })
 export class StartPageMenuViewElement extends ComponentViewElement {
     public render(): void {
+        alert("start page view element without render template! TODO: see it!");
         this.registerEvents();
     }
 

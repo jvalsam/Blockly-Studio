@@ -12,7 +12,6 @@ import { BlocklyVPL } from "./blockly";
 export class BlocklyToolbarView extends ComponentViewElement {
     public render(): void {
         this.renderTmplEl();
-        this.registerEvents();
     }
 
     public registerEvents(): void {

@@ -54,7 +54,6 @@ export class IoTAutomationViewBox extends View {
             id: this.automation.id,
             name: this.automation.name
         });
-        this.registerEvents();
     }
 
     /**

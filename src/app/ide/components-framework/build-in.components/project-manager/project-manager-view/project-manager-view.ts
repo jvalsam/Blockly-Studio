@@ -64,7 +64,6 @@ export class ProjectManagerView extends ComponentView {
 
     public render(callback?: Function): void {
         this.renderTmplEl(this.info);
-        this.registerEvents();
         this.actions.render();
         this.appendLocal(".project-manager-actions-area", this.actions.$el);
         //this.menu.render();

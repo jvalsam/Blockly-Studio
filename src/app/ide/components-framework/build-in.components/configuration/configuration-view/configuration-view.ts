@@ -35,13 +35,13 @@ export class ConfigurationView extends ComponentView {
     }
 
     public render(): void {
+        this.initialize();
+        this.configCompData.compName = this.renderData.compName;
         this.renderTmplEl(this.configCompData);
         this.setStyle();
+        this.generateProperties(this.renderData.compName, this.renderData.configData, this.renderData.currentValues);
+        this.propsView.clearSelectorArea = false;
         this.propsView.render();
-        // this.$el.find(".config-properties-body").append(this.propsView.$el);
-        // $("div."+this.configCompData.selector).empty();
-        // $("div."+this.configCompData.selector).append(this.$el);
-        this.registerEvents();
     }
 
     public registerEvents(): void {
@@ -90,11 +90,16 @@ export class ConfigurationView extends ComponentView {
             renderName: true
         };
     }
-    // σαμε να στείλετε το αποδεικτικό της κατάθεσής σας στο info@bestdeals.gr
 
-    public generate(compName: string, configData: any, currentValues: any): void {
-        this.initialize();
-        this.configCompData.compName = compName;
+    public setRenderDynamicData (compName: string, configData: any, currentValues: any) {
+        this.renderData = {
+            compName: compName,
+            configData: configData,
+            currentValues: currentValues
+        };
+    }
+
+    public generateProperties(compName: string, configData: any, currentValues: any): void {
         this.propsView = <AggregateView>ViewRegistry.getEntry("AggregateView").create(
             this.parent,
             ".config-properties-body",
@@ -105,7 +110,6 @@ export class ConfigurationView extends ComponentView {
                 indepedent: true
             }
         );
-        this.propsView
         _.forEach(configData.properties, (prop) => {
             prop.style = this.configCompData.style;
             this.propsView.addProperty (

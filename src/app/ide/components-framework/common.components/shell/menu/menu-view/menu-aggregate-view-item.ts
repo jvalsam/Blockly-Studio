@@ -13,19 +13,21 @@ import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import * as _ from "lodash";
 
 
-export function renderMenuElem(parent: IDEUIComponent, menuElem: MenuElem): MenuViewItem | MenuAggregateViewItem {
+export function renderMenuElem(parent: IDEUIComponent, selector: string, menuElem: MenuElem): MenuViewItem | MenuAggregateViewItem {
     let viewItem: MenuViewItem | MenuAggregateViewItem;
     switch (menuElem.data.type) {
         case "divider":
         case "leaf":
             viewItem = <MenuViewItem>ViewRegistry.getEntry("MenuViewItem").create (
                 parent,
+                selector,
                 <MenuItemLeafData>(menuElem.data)
             );
             break;
         case "sub-menu":
             viewItem = <MenuAggregateViewItem>ViewRegistry.getEntry("MenuAggregateViewItem").create (
                 parent,
+                selector,
                 <MenuItemData>(menuElem.data)
             );
             break;
@@ -36,6 +38,7 @@ export function renderMenuElem(parent: IDEUIComponent, menuElem: MenuElem): Menu
                 " is not defined as leaf or sub-menu or divider!"
             );
     }
+    viewItem.clearSelectorArea = false;
     return viewItem;
 }
 
@@ -58,13 +61,10 @@ export class MenuAggregateViewItem extends View {
 
     public render (): void {
         this.renderTmplEl(this.menuItem);
-        this.registerEvents();
         _.forEach(this.menuItem.children, (menuElem: MenuElem) => {
-            let view = renderMenuElem(this.parent, menuElem);
+            let view = renderMenuElem(this.parent, "#elems_"+this.id, menuElem);
             view.render();
-            this.$el.find("#"+this.id).append(view.$el);
         });
-
     }
 
     public registerEvents (): void {}

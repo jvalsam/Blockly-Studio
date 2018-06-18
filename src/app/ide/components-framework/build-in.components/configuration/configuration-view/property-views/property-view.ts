@@ -31,7 +31,7 @@ export abstract class PropertyView extends View {
         protected _data: any
     ) {
         super(parent, name, templateHTML, selector);
-        this.selector = "#input_"+this.id;
+        // this.selector = "#input_"+this.id;
         this._data.id = this.id;
         this._renderInnerHTML = false;
     }

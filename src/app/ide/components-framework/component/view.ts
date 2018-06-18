@@ -47,7 +47,8 @@ export abstract class View {
         protected parent: IDEUIComponent,
         public readonly name: string,
         protected readonly _templateHTML: string,
-        protected _selector: string
+        protected _selector: string,
+        private _clearSelectorArea: boolean = true
     ) {
         this._events = {};
         this._nextEventID = 0;
@@ -62,6 +63,9 @@ export abstract class View {
     }
 
     get selector (): string { return this._selector; }
+
+    get clearSelectorArea (): boolean { return this._clearSelectorArea; }
+    set clearSelectorArea (csa: boolean) { this._clearSelectorArea = csa; }
 
     public updateView(): void {
         let selector: string = "#" + this._id;
@@ -105,11 +109,14 @@ export abstract class View {
     protected renderTmplElHelper(data?: any): void {
         this.$el = $(this._template(data));
         this.$el.attr("id", this._id);
+        this.registerEvents();
     }
 
     protected attachTmplEl(): void {
-        $(this.selector).empty();
-        $(this.selector).append(this.$el);
+        if (this._clearSelectorArea) {
+            $(this._selector).empty();
+        }
+        $(this._selector).append(this.$el);
     }
 
     public renderTmplEl(data?:any): void {
@@ -155,7 +162,7 @@ export abstract class View {
         this.ensureElement();
 
         return _.map(eventRegs, (reg: IViewEventRegistration) => {
-            const $target: JQuery = $(reg.selector);// this.$el.find(reg.selector);
+            const $target: JQuery = this.$el.find(reg.selector);
             if (!$target.length) {
                 IDEError.raise(
                     "View - Attach Event",

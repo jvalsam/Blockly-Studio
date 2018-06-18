@@ -20,6 +20,5 @@ export class IDEWarningView extends View {
 
     render(): void {
         this.renderTmplEl({ warningMsg: this.warningMsg });
-        this.registerEvents();
     }
 }

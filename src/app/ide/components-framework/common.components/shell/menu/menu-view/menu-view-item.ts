@@ -46,7 +46,6 @@ export class MenuViewItem extends View {
 
     public render (): void {
         this.renderTmplEl(this.menuElem);
-        this.registerEvents();
     }
 
     public registerEvents (): void {
