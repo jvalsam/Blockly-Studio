@@ -46,21 +46,19 @@ export class AggregateView extends PropertyView {
     ) {
         super(parent, name, templateHTML, hookSelector, data);
         this.data = IAggregateDataConverter(data);
+        this.data.propsView = {};
     }
 
     public get properties(): { [name: string]: PropertyView } {
-        return this.data.props;
+        return this.data.propsView;
     }
 
     public render(): void {
         this.renderTmplEl(this.data);
-        this.setStyle();
-        var elemCnt = 1;
         _.forOwn(this.data.props, (view, key) => {
-            let newSel = "elem_" + this.id + "_" + elemCnt++;
-            this.createHook("#elems_"+this.id, newSel, {class: "row", innerHTML: "<div class='col'></div>"});
-            let prop = <PropertyView>ViewRegistry.getEntry(view.name).create(this.parent, "#"+newSel, view.data);
-            prop.render();
+            this.data.propsView[key] = <PropertyView>ViewRegistry.getEntry(view.name).create(this.parent, "#elems_"+this.id, view.data);
+            this.data.propsView[key].clearSelectorArea = false;
+            this.data.propsView[key].render();
         });
     }
 
@@ -74,9 +72,9 @@ export class AggregateView extends PropertyView {
     }
 
     public removeProperty(name:string): boolean {
-        if (this.data.props[name]) {
-            this.data.props[name].destroy();
-            delete this.data.props[name];
+        if (this.data.propsView[name]) {
+            this.data.propsView[name].destroy();
+            delete this.data.propsView[name];
         }
         return false;
     }
@@ -87,7 +85,7 @@ export class AggregateView extends PropertyView {
 
     public get value(): any {
         let aggValue: Object = {};
-        _.forOwn(this.data.props, (property: PropertyView, key: string) => {
+        _.forOwn(this.data.propsView, (property: PropertyView, key: string) => {
             aggValue[key] = property.value;
         });
         return aggValue;

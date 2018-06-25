@@ -38,7 +38,6 @@ export class ConfigurationView extends ComponentView {
         this.initialize();
         this.configCompData.compName = this.renderData.compName;
         this.renderTmplEl(this.configCompData);
-        this.setStyle();
         this.generateProperties(this.renderData.compName, this.renderData.configData, this.renderData.currentValues);
         this.propsView.clearSelectorArea = false;
         this.propsView.render();
@@ -65,7 +64,9 @@ export class ConfigurationView extends ComponentView {
     }
 
     public setStyle(): void {
-        this.$el.find("configModalTitle").css(FontView.getStyle(this.configCompData.style["Config Title Elements"]));
+        this.$el.find("#configModalTitle").css(
+            FontView.getStyle(this.configCompData.style["Config Title Elements"])
+        );
     }
 
     private onSave(): void {
@@ -111,7 +112,7 @@ export class ConfigurationView extends ComponentView {
             }
         );
         _.forEach(configData.properties, (prop) => {
-            prop.style = this.configCompData.style;
+            prop.style = this.configCompData.style["Config Elements"];
             this.propsView.addProperty (
                 prop.name,
                 prop.type,

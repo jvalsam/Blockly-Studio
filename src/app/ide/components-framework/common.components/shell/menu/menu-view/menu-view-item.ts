@@ -51,4 +51,6 @@ export class MenuViewItem extends View {
     public registerEvents (): void {
         this.attachEvents(...this.events);
     }
+
+    public setStyle(): void {}
 }

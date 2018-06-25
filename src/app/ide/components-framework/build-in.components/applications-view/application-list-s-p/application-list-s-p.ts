@@ -34,6 +34,7 @@ export class ApplicationListSP extends ComponentViewElement {
         _.forEach(applications, (application) => {
             application.actions = this.renderData.domain.actions;
             const appViewBox: View = ViewRegistry.getEntry("ApplicationViewBox").create(this.parent, ".applications-view-list", application);
+            appViewBox.clearSelectorArea = false;
             appViewBox.render();
         });
     }

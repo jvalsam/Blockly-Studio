@@ -1,5 +1,5 @@
 import { IAggregateData } from "./../aggregate-view/aggregate-view";
-import { IFontData } from "./../font-view/font-view";
+import { IFontData, FontView } from "./../font-view/font-view";
 import { ISelectData } from "./../select-view/select-view";
 import { IPropertyData, PropertyView, PropertyType } from "./../property-view";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
@@ -44,7 +44,6 @@ export class DynamicExtraView extends PropertyView {
     private readonly extraElemsViewSelector: string;
     private mainView: PropertyView;
     private currExtraView: PropertyView;
-    private extraElemsCnt: number;
     constructor(
         parent: IDEUIComponent,
         name: string,
@@ -59,7 +58,6 @@ export class DynamicExtraView extends PropertyView {
         this.data.main.updateParent = () => this.onChange();
         this.mainView = null;
         this.currExtraView = null;
-        this.extraElemsCnt = 1;
     }
 
     private mainElemRender(): void {
@@ -75,7 +73,7 @@ export class DynamicExtraView extends PropertyView {
     private destroyCurrentExtraView(): void {
         if (this.currExtraView !== null) {
             this.currExtraView.destroy();
-            $("#extra_elem_"+this.currExtraView.id).remove();
+            $("#extra_elem_"+this.id).remove();
             this.currExtraView = null;
         }
     }
@@ -86,11 +84,12 @@ export class DynamicExtraView extends PropertyView {
         let extraElem = this.data.values[this.mainView.value];
         if (extraElem && typeof (extraElem) !== "number") {
             extraElem.value.isExtra = true;
-            let newSel = "extra_elem_"+this.extraElemsCnt++;
+            let newSel = "extra_elem_"+this.id;
             this.createHook(this.extraElemsViewSelector, newSel, { class: "col", style: "padding-left: 0px;" });
             this.currExtraView = <PropertyView>ViewRegistry.getEntry(
                 TypeToNameOfPropertyView(extraElem.type)
             ).create(this.parent, "#"+newSel, extraElem.value);
+            this.currExtraView.clearSelectorArea = false;
             this.currExtraView.render();
             return true;
         }
@@ -104,6 +103,14 @@ export class DynamicExtraView extends PropertyView {
     }
 
     public registerEvents(): void { ; }
+
+    public setStyle(): void {
+        if(this.data.style) {
+            this.$el.find("#title_" + this.id).css(
+                FontView.getStyle(this.data.style)
+            );
+        }
+    }
 
     public onChange(): void {
         this.mainElemRender();

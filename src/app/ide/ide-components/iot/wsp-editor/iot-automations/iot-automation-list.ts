@@ -61,6 +61,8 @@ export class IoTAutomationList extends View {
         );
     }
 
+    public setStyle(): void { ; }
+
     /**
      *  Events Function Callbacks
      */

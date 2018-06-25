@@ -95,7 +95,7 @@ export class FontView extends AggregateView {
             renderName: true,
             indepedent: true
         };
-        this.addProperty("Family", familyData.type, familyData);
+        this.addProperty("Family", "select", familyData);
     }
 
     private addTextColor(value: any, style: any): void {
@@ -234,7 +234,7 @@ export class FontView extends AggregateView {
             indepedent: true,
             type: "aggregate"
         };
-        this.addProperty("Style", fontStyleData.type, fontStyleData);
+        this.addProperty("Style", "select", fontStyleData);
     }
 
     public static getStyle(data: any): JQueryCssProperties {

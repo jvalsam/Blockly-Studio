@@ -3,6 +3,7 @@ import {
     View,
     IViewElementData,
     IViewEventRegistration,
+    IViewStyleData,
     IViewElement
 } from "./view";
 import { IDEError } from "../../shared/ide-error/ide-error";
@@ -18,7 +19,8 @@ export abstract class ComponentViewElement extends View {
         templateHTML: string,
         selector: string,
         protected renderData: any = {},
-        protected eventRegData: Array<IViewEventRegistration> = new Array<IViewEventRegistration>()
+        protected eventRegData: Array<IViewEventRegistration> = new Array<IViewEventRegistration>(),
+        protected styleData: Array<IViewStyleData> = new Array<IViewStyleData>()
     ) {
         super(parent, name, templateHTML, selector);
     }
@@ -46,6 +48,12 @@ export abstract class ComponentViewElement extends View {
 
     public registerEvents (): void {
         this.attachEvents(...this.eventRegData);
+    }
+
+    public setStyle(): void {
+        _.forEach(this.styleData, (style: IViewStyleData) => {
+            
+        });
     }
 }
 

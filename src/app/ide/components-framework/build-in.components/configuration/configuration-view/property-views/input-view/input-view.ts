@@ -49,10 +49,7 @@ export class InputView extends PropertyView {
         this.data = IInputDataConverter(data);
     }
 
-    public render(): void {
-        this.renderTmplEl(this.data);
-        this.setStyle();
-    }
+    public render(): void { this.renderTmplEl(this.data); }
 
     public registerEvents(): void {
         this.attachEvents(
@@ -64,8 +61,10 @@ export class InputView extends PropertyView {
         );
     }
 
-    private setStyle(): void {
-        this.$el.find("#title_" + this.id).css(FontView.getStyle(this.data.style["Config Elements"]));
+    public setStyle(): void {
+        this.$el.find("#title_" + this.id).css(
+            FontView.getStyle(this.data.style)
+        );
     }
 
     private readURL(input:any): void {
@@ -82,16 +81,16 @@ export class InputView extends PropertyView {
     public onChange(): void {
         switch (this.data.type) {
             case "checkbox":
-                this.data.value = $(this.selector)["checked"];
+                this.data.value = $("#input_"+this.id)["checked"];
                 break;
             case "image":
-                this.data.value = $(this.selector).val();
+                this.data.value = $("#input_"+this.id).val();
                 this.readURL(this);
                 break;
             default:
-                this.data.value = $(this.selector).val();
+                this.data.value = $("#input_"+this.id).val();
         }
-        this.data.value = this.data.type !== "checkbox" ? $(this.selector).val() : $(this.selector)["checked"];
+        this.data.value = this.data.type !== "checkbox" ? $("#input_"+this.id).val() : $("#input_"+this.id)["checked"];
         if (this.data.updateParent) {
             this.data["updateParent"](this.data);
         }

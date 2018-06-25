@@ -16,6 +16,8 @@ export class MainArea extends View {
     
     public registerEvents(): void {}
 
+    public setStyle(): void {}
+
     public update(): void {
         ;
     }

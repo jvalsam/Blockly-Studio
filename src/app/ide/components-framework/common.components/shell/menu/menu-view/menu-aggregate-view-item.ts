@@ -68,4 +68,5 @@ export class MenuAggregateViewItem extends View {
     }
 
     public registerEvents (): void {}
+    public setStyle(): void {}
 }

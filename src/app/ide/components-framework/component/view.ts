@@ -23,6 +23,11 @@ export interface IViewEventRegistration {
     handler: (eventObject?: JQueryEventObject) => any;
 }
 
+export interface IViewStyleData {
+    selector: string;
+    style: string;
+}
+
 export interface IViewEventData {
     type: string;
     selector: string;
@@ -110,6 +115,7 @@ export abstract class View {
         this.$el = $(this._template(data));
         this.$el.attr("id", this._id);
         this.registerEvents();
+        this.setStyle();
     }
 
     protected attachTmplEl(): void {
@@ -126,6 +132,7 @@ export abstract class View {
 
     public abstract render(callback?: Function): void;
     public abstract registerEvents(): void;
+    public abstract setStyle(): void;
 
     public get id(): string {
         return this._id;

@@ -1,4 +1,4 @@
-<div class="card" style="width: 15rem; max-width: 15rem; min-width: 15rem; height: 20rem; max-height: 20rem; min-height: 20rem; cursor: pointer;">
+<div class="card" style="margin-right: 10px; width: 15rem; max-width: 15rem; min-width: 15rem; height: 20rem; max-height: 20rem; min-height: 20rem; cursor: pointer;">
     <div class="ts-application-action-box">
         <div class="card-header">
             <div class="row align-items-center">
@@ -11,10 +11,10 @@
                 </div>
                 <div class="col-sm-2 col-xs-2">
                     <span>
-                        <a class="btn" href="#" id="dropdownMenu<% id %>" style="background-color: Transparent;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="btn" href="#" id="dropdownMenu<%= id %>" style="background-color: Transparent;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenu<% id %>">
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu<%= id %>">
                             <% _.forEach(actions, (action) => { %>
                                 <a class="dropdown-item ts-application-action-<%= action %>" href="#">
                                     <%= action %>

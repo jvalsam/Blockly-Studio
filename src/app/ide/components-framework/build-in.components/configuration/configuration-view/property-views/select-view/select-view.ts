@@ -46,7 +46,6 @@ export class SelectView extends PropertyView {
 
     public render(): void {
         this.renderTmplEl(this.data);
-        this.setStyle();
     }
 
     public registerEvents(): void {
@@ -61,7 +60,9 @@ export class SelectView extends PropertyView {
 
     public setStyle(): void {
         if(this.data.style) {
-            this.$el.find("#title_" + this.id).css(FontView.getStyle(this.data.style));
+            this.$el.find("#title_" + this.id).css(
+                FontView.getStyle(this.data.style)
+            );
         }
     }
 

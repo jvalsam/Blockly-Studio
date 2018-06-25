@@ -15,6 +15,7 @@ export class IDEErrorView extends View {
     }
 
     registerEvents(): void {}
+    setStyle(): void {}
 
     render(): void {
         this.renderTmplEl({ errorMsg: this.errorMsg });

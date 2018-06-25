@@ -48,6 +48,8 @@ export class IoTAutomationViewBox extends View {
         );
     }
 
+    public setStyle(): void {}
+
 
     public render(): void {
         this.renderTmplEl({

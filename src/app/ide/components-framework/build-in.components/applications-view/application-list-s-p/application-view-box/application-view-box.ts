@@ -29,7 +29,12 @@ export class ApplicationViewBox extends View {
         events.push({
             eventType: "click",
             selector: ".ts-application-action-box",
-            handler: () => this.onOpenApplication()
+            handler: (evt) => {
+                if (evt.target.id === "dropdownMenu"+this.id) {
+                    return;
+                }
+                this.onOpenApplication();
+            }
         });
         _.forEach(this.application.actions, (action) => {
             events.push({
@@ -40,6 +45,7 @@ export class ApplicationViewBox extends View {
         });
         this.attachEvents(...events);
     }
+    public setStyle(): void {}
 
     public render(): void {
         this.renderTmplEl(this.application);
@@ -58,7 +64,10 @@ export class ApplicationViewBox extends View {
     }
 
     private onDetailsApplication(): void {
-        let detailsBox = <ModalView>ViewRegistry.getEntry("ApplicationViewDetailsModal").create(this.parent, this.application);
+        let detailsBox = <ModalView>ViewRegistry.getEntry("ApplicationViewDetailsModal").create(
+            this.parent,
+            this.application
+        );
         detailsBox.open();
     }
 }

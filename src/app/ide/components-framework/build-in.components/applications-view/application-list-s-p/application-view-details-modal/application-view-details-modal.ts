@@ -1,7 +1,6 @@
 /// <reference path="../../../../../../../../node.d.ts"/>
 import ApplicationViewDetailsTmpl from "./application-view-details-modal.html";
 import { ViewMetadata, View } from "../../../../component/view";
-import * as _ from "lodash";
 
 
 @ViewMetadata({
