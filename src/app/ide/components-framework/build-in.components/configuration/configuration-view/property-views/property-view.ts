@@ -22,6 +22,7 @@ export interface IPropertyData {
 }
 
 export abstract class PropertyView extends View {
+    protected notifyParent: boolean;
     private _renderInnerHTML: boolean;
     constructor(
         parent: IDEUIComponent,

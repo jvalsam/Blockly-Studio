@@ -64,7 +64,8 @@ export class ApplicationListSP extends ComponentViewElement {
     }
 
     public setDomain(domain): void {
-        alert('TODO: implement setDomain function!');
+        this.renderData.filters = { domain: domain };
+        this.render();
     }
 
     /**

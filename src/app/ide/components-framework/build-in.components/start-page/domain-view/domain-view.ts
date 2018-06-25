@@ -54,12 +54,12 @@ export class DomainView extends ComponentViewElement {
                 this.domainsAppsView = <ApplicationListSP>ViewRegistry.getEntry("ApplicationsListStartPage").create(
                     this.parent,
                     ".domain-applications",
-                    { domain: selectedDomain }
+                    { domain: selectedDomain, filters: { domainType: selectedDomain.name } }
                 );
                 this.domainsAppsView.render();
             }
             else {
-                this.domainsAppsView.setDomain(selectedDomain.name);
+                this.domainsAppsView.setDomain(selectedDomain);
             }
         }
         else {
@@ -79,7 +79,11 @@ export class DomainView extends ComponentViewElement {
             values: values,
             type: "aggregate",
             renderName: true,
-            indepedent: true
+            indepedent: true,
+            updateParent: (selected: string) => {
+                this.selectedValue = selected;
+                this.renderOnResponse (domains);
+            }
         };
         this.selectionView = <SelectView>ViewRegistry.getEntry("SelectView").create(this.parent, ".domain-selection", domainsData);
         this.selectionView.render();

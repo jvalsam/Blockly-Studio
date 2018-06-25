@@ -69,7 +69,7 @@ export class SelectView extends PropertyView {
     private onChange(): void {
         this.data.selected = $("#input_" + this.id).val();
         if (typeof (this.data.updateParent) !== "undefined") {
-            this.data.updateParent(this.data);
+            this.data.updateParent(this.data.selected);
         }
     }
 

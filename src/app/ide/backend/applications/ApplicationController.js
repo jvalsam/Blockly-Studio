@@ -30,8 +30,8 @@ router.post('/new', function (req, res) {
 // RETURNS ALL APPS BASED ON FILTERS
 router.post('/filters', function (req, res) {
     let findElems = { 'author.id': req.session.user._id };
-    if (req.params.filters) {
-        req.params.filters.forEach((filter) => findElems[filter.key] = filter.value);
+    if (req.body.filters) {
+        Object.entries(req.body.filters).forEach(([key, value]) => findElems[key] = value );
     }
 
     var query = Application.find(findElems);
