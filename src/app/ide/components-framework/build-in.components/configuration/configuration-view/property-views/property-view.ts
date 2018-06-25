@@ -41,6 +41,8 @@ export abstract class PropertyView extends View {
 
     set renderInner(ri: boolean) { this._renderInnerHTML = ri; }
 
+    set style (newStyle: any) { this._data.style= newStyle; }
+
     public renderTmplEl(data?:any): void {
         this.renderTmplElHelper(data);
         if (this._renderInnerHTML) {

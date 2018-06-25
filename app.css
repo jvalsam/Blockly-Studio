@@ -10,12 +10,23 @@
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/font-view/font-view.css";
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/property-view.css";
 
+.ide-platform-container {
+    margin-bottom: 100px;
+}
+
 .centered {
     position: fixed;
     top: 50%;
     left: 50%;
     /* bring your own prefixes */
     transform: translate(-50%, -50%);
+}
+
+.card-header {
+    padding: 0rem 1.25rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .footer {

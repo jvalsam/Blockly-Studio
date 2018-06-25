@@ -28,6 +28,15 @@ export class ApplicationListSP extends ComponentViewElement {
     private applications: Array<any>;
 
     public renderOnResponse(applications): void {
+        if (applications.length >= 3) {
+            $("body").css("position", "absolute");
+            $("body").css("margin", "0");
+        }
+        else {
+            $("body").css("position", "inherit");
+            $("body").css("margin", "0");
+        }
+
         this.applications = applications;
         this.renderTmplEl({ totalApplications: applications.length });
         // TODO: application type request to pin data for the actions...
@@ -64,7 +73,7 @@ export class ApplicationListSP extends ComponentViewElement {
     }
 
     public setDomain(domain): void {
-        this.renderData.filters = { domain: domain };
+        this.renderData.filters = { domainType: domain.name };
         this.render();
     }
 

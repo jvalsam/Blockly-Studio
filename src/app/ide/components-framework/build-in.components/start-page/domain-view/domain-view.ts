@@ -86,6 +86,13 @@ export class DomainView extends ComponentViewElement {
             }
         };
         this.selectionView = <SelectView>ViewRegistry.getEntry("SelectView").create(this.parent, ".domain-selection", domainsData);
+        this.selectionView.style = {
+            Family: "inherit",
+            Size: "1.5rem",
+            Style: "normal",
+            Weight: "500",
+            "Text Colour": "inherit"
+        };
         this.selectionView.render();
 
         var selectedDomain = domains[values.indexOf(this.selectedValue)];
