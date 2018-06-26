@@ -7,6 +7,7 @@ import {
     RequiredFunction
 } from "../../component/component-loader";
 import { GetProjectManagerMetaData } from "./project-manager-meta-map";
+import { ProjectManagerView } from './project-manager-view/project-manager-view';
 
 var menuJson: any = require("./conf_menu.json");
 var configJson: any = require("./conf_props.json");
@@ -70,6 +71,7 @@ export class ProjectManager extends IDEUIComponent {
         }
         assert(this.domainType === project.domainType);
         ComponentsCommunication.functionRequest(this.name, "Shell", "openComponent", [this]);
+        (<ProjectManagerView>this._view).loadProject(project);
     }
 
     @ExportedFunction

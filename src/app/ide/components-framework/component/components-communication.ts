@@ -242,7 +242,8 @@ class _ComponentsCommunication {
       dstComponentName: string,
       funcName: string,
       args: Array<any>=[],
-      dstComponentId ?: string
+      dstComponentId: string="",
+      compInstData: Array<any>=[]
   ): ResponseValue {
     if (!this.hasPermissions(srcComponentName, dstComponentName, funcName)) {
       IDEError.raise(
@@ -252,7 +253,7 @@ class _ComponentsCommunication {
     }
 
     if (!dstComponentId && !ComponentRegistry.getEntry(dstComponentName).hasInstance()) {
-      ComponentRegistry.getEntry(dstComponentName).create();
+      ComponentRegistry.getEntry(dstComponentName).create(compInstData);
     }
 
     if (funcName in this.specialFunctionRequests) {

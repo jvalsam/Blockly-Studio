@@ -11,7 +11,7 @@ var IoT: any = require("./../../../ide-components/iot/defs/project-manager-meta.
 
 
 var ProjectManagerMetadataMap: {[key:string]: any} = {
-    "iot": IoT
+    IoT: IoT
 };
 
 export function GetProjectManagerMetaData(key: string): any {

@@ -28,7 +28,9 @@ export class ApplicationWSPManager extends IDEComponent {
                 this.name,
                 "ProjectManager",
                 "openProject",
-                [application]
+                [application],
+                "",
+                [".main-area-platform-container"]
             )
         );
     }

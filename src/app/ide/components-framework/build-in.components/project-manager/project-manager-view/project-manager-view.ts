@@ -46,6 +46,7 @@ interface IProjectManagerData {
     templateHTML: ProjectManagerTmpl
 })
 export class ProjectManagerView extends ComponentView {
+    private readonly appInstancesSelector = ".project-manager-app-instances-view-area";
     private info: IProjectManagerData;
     private skeletonDataProj: any;
 
@@ -58,19 +59,18 @@ export class ProjectManagerView extends ComponentView {
         this.info = (({ id, title, img, actions }) => ({ id, title, img, actions }))(this.renderData);
         this.skeletonDataProj = this.renderData.categories;
         this.loadedProjects = new Array<InstanceView>();
-        this.actions = <ActionsView>ViewRegistry.getEntry("ProjectManagerActionsView").create(this.parent, { 'actions':  this.renderData.actions });
+        this.loadActions(this.renderData.actions);
         //this.menu = <MenuView>ViewRegistry.getEntry("ProjectManagerMenuView").create(this.parent, this.renderData.menu);
     }
 
     public render(callback?: Function): void {
         this.renderTmplEl(this.info);
         this.actions.render();
-        this.appendLocal(".project-manager-actions-area", this.actions.$el);
         //this.menu.render();
-        //this.appendLocal(".project-manager-menu-area", this.menu.$el);
+        // clear project manager instances
+        $(this.appInstancesSelector).empty();
         _.forEach(this.loadedProjects, (loadedProject: InstanceView) => {
             loadedProject.render();
-            this.appendLocal(".project-manager-app-instances-view-area", loadedProject.$el);
         });
     }
 
@@ -85,6 +85,7 @@ export class ProjectManagerView extends ComponentView {
     public loadActions (data: any): void {
         this.actions = <ActionsView>ViewRegistry.getEntry("ProjectManagerActionsView").create(
             this.parent,
+            ".project-manager-actions-area",
             { "actions": data }
         );
     }
@@ -92,6 +93,7 @@ export class ProjectManagerView extends ComponentView {
     public loadMenu (data: any): void {
         this.menu = <MenuView>ViewRegistry.getEntry("ProjectManagerMenuView").create(
             this.parent,
+            ".project-manager-menu-area",
             { "menu": data }
         );
     }
@@ -99,11 +101,13 @@ export class ProjectManagerView extends ComponentView {
     public loadProject (data: any): void {
         let projectView = <InstanceView>ViewRegistry.getEntry("ProjectManagerAppInstanceView").create (
             this.parent,
+            this.appInstancesSelector,
             {
                 "project": data,
                 "meta": this.skeletonDataProj
             }
         );
+        projectView.clearSelectorArea = false;
         this.loadedProjects.push(projectView);
     }
 
@@ -117,7 +121,6 @@ export class ProjectManagerView extends ComponentView {
         this.loadProject(data);
         let loadedProject = _.last(this.loadedProjects);
         loadedProject.render();
-        $(".project-manager-app-instances-view-area").append(loadedProject.$el);
     }
 
     private removeProject(index: number): void {

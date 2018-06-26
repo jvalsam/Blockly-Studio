@@ -31,10 +31,13 @@ export class ApplicationListSP extends ComponentViewElement {
         if (applications.length >= 3) {
             $("body").css("position", "absolute");
             $("body").css("margin", "0");
+            $("body").css("width", "100%");
         }
         else {
             $("body").css("position", "inherit");
             $("body").css("margin", "0");
+            $("body").css("width", "100%");
+            $("body").css("height", "100%");
         }
 
         this.applications = applications;

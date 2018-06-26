@@ -1,0 +1,12 @@
+
+.project-manager-treeview-area {
+    border: 2px solid black;
+    background-color: rgb(80, 80, 80);
+    color: aliceblue;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.project-manager-container {
+    height: 100%;
+}

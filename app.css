@@ -9,6 +9,8 @@
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/aggregate-view/aggregate-view.css";
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/font-view/font-view.css";
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/property-view.css";
+@import "./src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager.css";
+
 
 .ide-platform-container {
     margin-bottom: 100px;
