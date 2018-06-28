@@ -4,21 +4,23 @@
                 <div class="col">
                     <div class="row app-instance-info">
                         <div class="col project-manager-img">
-                            <% if(_.includes(img, "fa-")) { %>
-                                <i class="fa <%= img %>" aria-hidden="true"></i>
-                                <% } else { %>
-                                    <img src="<%= img %>">
-                                    <% } %>
+                            <% if(!instance.img) { %>
+                                <img src="<%= defaultDomainImg %>">
+                            <% } else if(_.includes(instance.img, "fa-")) { %>
+                                <i class="fa <%= instance.img %>" aria-hidden="true"></i>
+                            <% } else { %>
+                                <img src="<%= instance.img %>">
+                            <% } %>
                         </div>
                         <div class="col project-manager-title">
-                            <%= title %>
+                            <%= instance.title %>
                         </div>
                     </div>
                 </div>
-                <div class="col app-instance-actions">
+                <div class="col app-instance-actions" id="app-instance-actions-<%= id %>">
 
                 </div>
-                <div class="col app-instance-menu">
+                <div class="col app-instance-menu" id="app-instance-menu-<%= id %>">
 
                 </div>
         </div>

@@ -41,7 +41,9 @@ interface IAppInstanceData {
     templateHTML: ProjectManagerAppInstanceViewTmpl
 })
 export class ProjectManagerAppInstanceView extends View {
-    private info: IAppInstanceData;
+    private readonly categoriesViewSelector;
+
+    private renderData: any;
     private actions: ActionsView;
     private menu: MenuView;
     private categories: Array<CategoryView>;
@@ -54,28 +56,43 @@ export class ProjectManagerAppInstanceView extends View {
     ) {
         super(parent, name, templateHTML, hookSelector);
         data.id = this.id;
-        this.info = (({ id, title, img, actions, menu }) => ({ id, title, img, actions, menu }))(data.project);
-        this.initElem("actions", data);
-        this.initElem("menu", data);
-        _.forEach(data.meta, (category) => {
-            let categoryIndex: number = data.project.map(e => e.type).indexOf(category.type);
+        this.categoriesViewSelector = "#categories-" + this.id;
+        this.renderData = {
+            id: this.id,
+            instance: {
+                id: data.project._id,
+                title: data.project.title,
+                img: data.project.img,
+            },
+            defaultDomainImg: data.meta.defaultDomainImg
+        };
+        this.initElem("actions", data.meta.actions);
+        this.initElem("menu", data.meta.actions);
+        this.categories = new Array<CategoryView>();
+        _.forEach(data.meta.categories, (category) => {
+            let categoryIndex: number = data.project.categories.map(e => e.type).indexOf(category.type);
             assert(categoryIndex >= 0);
-            this.categories.push (
-                <CategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create (
-                    this.parent,
-                    {
-                        "meta": category,
-                        "project": data.project[categoryIndex]
-                    }
-                )
+            let categView = <CategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create (
+                this.parent,
+                this.categoriesViewSelector,
+                {
+                    "meta": category,
+                    "project": data.project.categories[categoryIndex]
+                }
             );
+            categView.clearSelectorArea = false;
+            this.categories.push(categView);
         });
     }
 
     private initElem (type: string, data: any): void {
         if (data[type]) {
             let typeFU: string = type[0].toUpperCase() + type.substr(1);
-            this[type] = ViewRegistry.getEntry("ProjectManager"+typeFU+"View").create(this.parent, data[type]);
+            this[type] = ViewRegistry.getEntry("ProjectManager"+typeFU+"View").create(
+                this.parent,
+                this.categoriesViewSelector,
+                data[type]
+            );
             return;
         }
         this[type] = null;
@@ -89,7 +106,7 @@ export class ProjectManagerAppInstanceView extends View {
     }
 
     public render(): void {
-        this.renderTmplEl(this.info);
+        this.renderTmplEl(this.renderData);
         this.renderElem("actions");
         this.renderElem("menu");
         _.forEach(this.categories, (category) => {

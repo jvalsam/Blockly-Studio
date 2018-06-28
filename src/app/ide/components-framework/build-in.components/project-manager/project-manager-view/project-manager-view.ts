@@ -57,7 +57,8 @@ export class ProjectManagerView extends ComponentView {
     public initialize(): void {
         this.renderData.id = this.id;
         this.info = (({ id, title, img, actions }) => ({ id, title, img, actions }))(this.renderData);
-        this.skeletonDataProj = this.renderData.categories;
+        this.skeletonDataProj = this.renderData.project;
+        this.skeletonDataProj.defaultDomainImg = this.renderData.img;
         this.loadedProjects = new Array<InstanceView>();
         this.loadActions(this.renderData.actions);
         //this.menu = <MenuView>ViewRegistry.getEntry("ProjectManagerMenuView").create(this.parent, this.renderData.menu);
@@ -108,7 +109,10 @@ export class ProjectManagerView extends ComponentView {
             }
         );
         projectView.clearSelectorArea = false;
+        
         this.loadedProjects.push(projectView);
+
+        projectView.render();
     }
 
     public loadProjects (data: any): void {

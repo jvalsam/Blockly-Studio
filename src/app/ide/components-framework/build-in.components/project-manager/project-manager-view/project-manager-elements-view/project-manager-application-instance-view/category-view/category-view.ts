@@ -109,6 +109,9 @@ interface JSTreeMenuData {
     templateHTML: CategoryViewTmpl
 })
 export class ProjectManagerCategoryView extends View {
+    private readonly menuSel;
+    private readonly actionsSel;
+    private readonly categElemsSel;
     private info: ICategoryMetaData;
     private actions: ActionsView;
     private menu: MenuView;
@@ -129,37 +132,50 @@ export class ProjectManagerCategoryView extends View {
         data: any
     ) {
         super(parent, name, templateHTML, hookSelector);
-        data.isLeaf = "categories" in data.meta;
+        data.meta.isLeaf = "categories" in data.meta;
+        this.menuSel = "#category-menu-"+this.id;
+        this.actionsSel = "#category-actions-"+this.id;
+        this.categElemsSel = "#category-elements-"+this.id;
         this.info = (({ title, type, isLeaf, img }) => ({ title, type, isLeaf, img })) (data.meta);
         this.initContainer("actions", data.meta);
         this.initContainer("menu", data.meta);
         if (this.info.isLeaf) {
             this.initCategories(data);
         }
-        else {
+        else if (data.meta.items) {
             this.initElements(data);
+        }
+        // create empty root with no items
+        else {
+            this.initWithoutItems(data);
         }
     }
     private initContainer(type: string, data: any): void {
         if (data[type]) {
             let typeFU: string = type[0].toUpperCase() + type.substr(1);
-            this[type] = ViewRegistry.getEntry("ProjectManager" + typeFU + "View").create(this.parent, data[type]);
+            this[type] = ViewRegistry.getEntry("ProjectManager" + typeFU + "View").create(
+                this.parent,
+                this[type+"Sel"],
+                data[type]
+            );
             return;
         }
         this[type] = null;
     }
     private initCategories (data: any): void {
-        _.forEach(data.meta.categpries, (category) => {
-            (<Array<View>>this.elements).push(
-                ViewRegistry.getEntry("ProjectManagerCategoryView").create(
-                    this.parent,
-                    {
-                        "meta": category,
-                        "project": data.project,
-                        "path": (data.path ? data.path+"$" : "")+this.id
-                    }
-                )
+        this.elements = new Array<View>();
+        _.forEach(data.meta.categories, (category) => {
+            let categView = ViewRegistry.getEntry("ProjectManagerCategoryView").create(
+                this.parent,
+                this.categElemsSel,
+                {
+                    "meta": category,
+                    "project": data.project,
+                    "path": (data.path ? data.path+"$" : "")+this.id
+                }
             );
+            categView.clearSelectorArea = false;
+            this.elements.push(categView);
         });
     }
     private initElements (data: any): void {
@@ -175,6 +191,11 @@ export class ProjectManagerCategoryView extends View {
                 this.jstreeMenuItems[item.type][menuItem.title] = this.constructMenuItem(menuItem, data);
             });
         });
+    }
+
+    private initWithoutItems (data: any) {
+        this.jstreeTypes = {};
+        this.jstreeTypes["#"] = { "max_children": 1, "max_depth": 4, "valid_children": [data.meta.type] };
     }
 
     private constructMenuItem(item: IMenuItem, data: any): JSTreeMenuItemData {

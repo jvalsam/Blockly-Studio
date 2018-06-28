@@ -41,13 +41,14 @@ export class ProjectManagerActionsView extends View {
         data: any
     ) {
         super(parent, name, templateHTML, hookSelector);
-        data.id = this.id;
-        this.info = (({id, actions}) => ({id, actions}))(data);
+        this.info = {
+            id: this.id,
+            actions: data.actions
+        };
     }
 
     public render(): void {
         this.renderTmplEl(this.info);
-        this.setStyle();
     }
 
     public registerEvents(): void {
