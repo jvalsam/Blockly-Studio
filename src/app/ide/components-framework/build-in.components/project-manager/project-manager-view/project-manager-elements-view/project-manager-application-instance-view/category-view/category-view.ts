@@ -10,7 +10,8 @@ import { ProjectManagerMenuView as MenuView } from "../menu-view/menu-view";
 import { ViewRegistry } from "../../../../../../component/registry";
 import { IProjectManagerElementData } from "../../../../project-manager";
 
-import $ from "jstree";
+// /// <reference path="../../../../"/>
+// import $ from "jstree";
 
 interface IMenuItem {
     title: string;
@@ -39,6 +40,7 @@ interface ICategoryItem {
 }
 
 interface ICategoryMetaData {
+    id: string;
     title: string;
     type: string;
     isLeaf: boolean;
@@ -133,10 +135,11 @@ export class ProjectManagerCategoryView extends View {
     ) {
         super(parent, name, templateHTML, hookSelector);
         data.meta.isLeaf = "categories" in data.meta;
+        data.meta.id = this.id;
         this.menuSel = "#category-menu-"+this.id;
         this.actionsSel = "#category-actions-"+this.id;
         this.categElemsSel = "#category-elements-"+this.id;
-        this.info = (({ title, type, isLeaf, img }) => ({ title, type, isLeaf, img })) (data.meta);
+        this.info = (({ id, title, type, isLeaf, img }) => ({ id, title, type, isLeaf, img })) (data.meta);
         this.initContainer("actions", data.meta);
         this.initContainer("menu", data.meta);
         if (this.info.isLeaf) {
@@ -225,7 +228,6 @@ export class ProjectManagerCategoryView extends View {
     private renderElem(type: string): void {
         if (this[type] !== null) {
             this[type].render();
-            this.appendLocal(".app-instance-" + type, this[type].$el);
         }
     }
 
@@ -233,7 +235,6 @@ export class ProjectManagerCategoryView extends View {
         this.renderTmplEl(this.info);
         this.renderElem("actions");
         this.renderElem("menu");
-        this.setStyle();
         if (this.info.isLeaf) {
             _.forEach(<Array<View>>this.elements, (value) => {
                 value.render();

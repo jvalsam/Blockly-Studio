@@ -46,7 +46,6 @@ export class ProjectManagerMenuView extends View {
 
     public render(): void {
         this.renderTmplEl(this.info);
-        this.setStyle();
     }
 
     public registerEvents(): void {

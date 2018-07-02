@@ -19,7 +19,7 @@
     "html-webpack-externals-plugin": "^3.4.0",
     "html-webpack-plugin": "^2.30.1",
     "image-webpack-loader": "^3.3.1",
-    "jquery": "^3.2.1",
+    "jquery": "^3.3.1",
     "lodash-ts-imports-loader": "^1.1.2",
     "node-sass": "^4.9.0",
     "path": "^0.12.7",
@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@types/jqueryui": "^1.11.36",
+    "@types/jstree": "^3.3.37",
     "@types/lodash": "^4.14.74",
     "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",

@@ -8,7 +8,8 @@ import { ProjectManagerMenuView as MenuView } from "./menu-view/menu-view";
 import { IProjectManagerElementData } from "../../../project-manager";
 
 import * as _ from "lodash";
-import * as $ from "jstree";
+
+//import * as $ from "../../../../../../../../../node_modules/jstree/dist/jstree";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import ProjectManagerAppInstanceViewTmpl from "./project-manager-app-instance-view.html";
@@ -109,9 +110,10 @@ export class ProjectManagerAppInstanceView extends View {
         this.renderTmplEl(this.renderData);
         this.renderElem("actions");
         this.renderElem("menu");
+
+        $(this.categoriesViewSelector).empty();
         _.forEach(this.categories, (category) => {
             category.render();
-            this.$el.find("#categories-"+this.id).append(category.$el);
         });
     }
 
