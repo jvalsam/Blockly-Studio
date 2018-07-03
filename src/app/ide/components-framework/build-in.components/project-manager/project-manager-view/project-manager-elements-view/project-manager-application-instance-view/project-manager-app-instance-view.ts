@@ -13,6 +13,7 @@ import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import ProjectManagerAppInstanceViewTmpl from "./project-manager-app-instance-view.html";
+import { PageFoldingView } from './../../../../../common-views/page-folding-view/page-folding-view';
 
 
 interface IAppInstanceEvent {
@@ -43,6 +44,7 @@ interface IAppInstanceData {
 })
 export class ProjectManagerAppInstanceView extends View {
     private readonly categoriesViewSelector;
+    private foldingView: PageFoldingView;
 
     private renderData: any;
     private actions: ActionsView;
@@ -67,10 +69,15 @@ export class ProjectManagerAppInstanceView extends View {
             },
             defaultDomainImg: data.meta.defaultDomainImg
         };
+
+        this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#project-folding-"+this.id);
+        this.foldingView.setDefault();
+
         this.initElem("actions", data.meta.actions);
         this.initElem("menu", data.meta.actions);
         this.categories = new Array<CategoryView>();
         _.forEach(data.meta.categories, (category) => {
+            category.isSubCategory = false;
             let categoryIndex: number = data.project.categories.map(e => e.type).indexOf(category.type);
             assert(categoryIndex >= 0);
             let categView = <CategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create (
@@ -108,6 +115,7 @@ export class ProjectManagerAppInstanceView extends View {
 
     public render(): void {
         this.renderTmplEl(this.renderData);
+        this.foldingView.render();
         this.renderElem("actions");
         this.renderElem("menu");
 

@@ -45,6 +45,7 @@ interface ICategoryMetaData {
     type: string;
     isLeaf: boolean;
     img?: string;
+    isSubCategory: boolean;
 
     // elements for leaf category (not include categories element)
     validChildren?: Array<string>;
@@ -139,7 +140,7 @@ export class ProjectManagerCategoryView extends View {
         this.menuSel = "#category-menu-"+this.id;
         this.actionsSel = "#category-actions-"+this.id;
         this.categElemsSel = "#category-elements-"+this.id;
-        this.info = (({ id, title, type, isLeaf, img }) => ({ id, title, type, isLeaf, img })) (data.meta);
+        this.info = (({ id, title, type, isLeaf, isSubCategory, img }) => ({ id, title, type, isLeaf, isSubCategory, img })) (data.meta);
         this.initContainer("actions", data.meta);
         this.initContainer("menu", data.meta);
         if (this.info.isLeaf) {
@@ -168,6 +169,7 @@ export class ProjectManagerCategoryView extends View {
     private initCategories (data: any): void {
         this.elements = new Array<View>();
         _.forEach(data.meta.categories, (category) => {
+            category.isSubCategory = true;
             let categView = ViewRegistry.getEntry("ProjectManagerCategoryView").create(
                 this.parent,
                 this.categElemsSel,
