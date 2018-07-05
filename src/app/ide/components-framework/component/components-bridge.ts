@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2018-07-02 14:15:08.700000
+ * 2018-07-04 12:59:46.134000
  */
 
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
@@ -34,6 +34,7 @@ import { StartPageView } from "../../../../../src/app/ide/components-framework/b
 import { StartPageComponent } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page";
 import { DomainView } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/domain-view/domain-view";
 import { StartPageMenuViewElement } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-menu/start-page-menu";
+import { PageFoldingView } from "../../../../../src/app/ide/components-framework/common-views/page-folding-view/page-folding-view";
 import { ShellView } from "../../../../../src/app/ide/components-framework/common.components/shell/shell-view";
 import { Shell } from "../../../../../src/app/ide/components-framework/common.components/shell/shell";
 import { MainArea } from "../../../../../src/app/ide/components-framework/common.components/shell/main-area/main-area";
@@ -84,6 +85,7 @@ export class ComponentsBridge {
 		StartPageComponent.onInit();
 		DomainView.onInit();
 		StartPageMenuViewElement.onInit();
+		PageFoldingView.onInit();
 		ShellView.onInit();
 		Shell.onInit();
 		MainArea.onInit();

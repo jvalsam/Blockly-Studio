@@ -10,8 +10,9 @@ import { ProjectManagerMenuView as MenuView } from "../menu-view/menu-view";
 import { ViewRegistry } from "../../../../../../component/registry";
 import { IProjectManagerElementData } from "../../../../project-manager";
 
-// /// <reference path="../../../../"/>
-// import $ from "jstree";
+import * as $ from "jquery";
+import "jstree";
+import { PageFoldingView } from './../../../../../../common-views/page-folding-view/page-folding-view';
 
 interface IMenuItem {
     title: string;
@@ -46,6 +47,7 @@ interface ICategoryMetaData {
     isLeaf: boolean;
     img?: string;
     isSubCategory: boolean;
+    nesting: number;
 
     // elements for leaf category (not include categories element)
     validChildren?: Array<string>;
@@ -126,6 +128,7 @@ export class ProjectManagerCategoryView extends View {
     private jstreeElements: Array<JSTreeElementData>;
     private jstreeTypes: { [type: string]: JSTreeTypeItemData };
     private jstreeMenuItems: {[type: string] : JSTreeMenuData};
+    private foldingView: PageFoldingView;
 
     constructor(
         parent: IDEUIComponent,
@@ -140,7 +143,16 @@ export class ProjectManagerCategoryView extends View {
         this.menuSel = "#category-menu-"+this.id;
         this.actionsSel = "#category-actions-"+this.id;
         this.categElemsSel = "#category-elements-"+this.id;
-        this.info = (({ id, title, type, isLeaf, isSubCategory, img }) => ({ id, title, type, isLeaf, isSubCategory, img })) (data.meta);
+        this.info = (({ id, title, type, isLeaf, isSubCategory, img, nesting }) => ({ id, title, type, isLeaf, isSubCategory, img, nesting })) (data.meta);
+        
+        this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#category-folding-"+this.id);
+        this.foldingView.setPFSelector("#category-elements-"+this.id);
+        this.foldingView.setFoldIcon(
+            this.info.isSubCategory ?
+                { plus: "fa fa-angle-right", minus: "fa fa-angle-down" } :
+                { plus: "fa fa-caret-right", minus: "fa fa-caret-down" }
+            );
+
         this.initContainer("actions", data.meta);
         this.initContainer("menu", data.meta);
         if (this.info.isLeaf) {
@@ -170,6 +182,7 @@ export class ProjectManagerCategoryView extends View {
         this.elements = new Array<View>();
         _.forEach(data.meta.categories, (category) => {
             category.isSubCategory = true;
+            category.nesting = this.info.nesting+1;
             let categView = ViewRegistry.getEntry("ProjectManagerCategoryView").create(
                 this.parent,
                 this.categElemsSel,
@@ -235,16 +248,17 @@ export class ProjectManagerCategoryView extends View {
 
     public render(): void {
         this.renderTmplEl(this.info);
+        this.foldingView.render();
         this.renderElem("actions");
         this.renderElem("menu");
         if (this.info.isLeaf) {
             _.forEach(<Array<View>>this.elements, (value) => {
                 value.render();
-                this.appendLocal("#category-elements-" + this.id, value.$el);
             });
         }
         else {
-            $("#category-elements-" + this.id).jstree({
+            let $el = $("#category-elements-" + this.id);
+            $el.jstree({
                 core: {
                     "check_callback": true,
                     "data": this.elements
@@ -257,6 +271,10 @@ export class ProjectManagerCategoryView extends View {
                     items: (node) => this.jstreeMenuItems[node.type]
                 }
             });
+            if($el.jstree(true).get_json('#', { "flat" : true }).length === 0) {
+                $el.empty();
+                $el.append("<div class='small text-center align-middle' style='padding-top:15px; padding-bottom:15px; width:100%'>No "+this.info.title+" are defined yet.</div>");
+            }
         }
     }
 

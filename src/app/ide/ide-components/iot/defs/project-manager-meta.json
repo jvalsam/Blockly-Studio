@@ -283,7 +283,7 @@
             },
             {
                 "type": "IoTEvents",
-                "title": "IoT Events",
+                "title": "Environment Events",
                 "img": "./images/iot/iot-events.png",
                 "actions": [
                     {

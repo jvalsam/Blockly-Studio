@@ -1,23 +1,22 @@
 <% if (isSubCategory) { %>
-    <div class="col project-manager-category-container">
+    <div class="col-12 project-manager-category-container" style="border: solid 2px aliceblue;">
         <div class="row">
+                <!-- <div class="col-1"></div> -->
 <% } else { %>
-    <div class="row project-manager-category-container">
+    <div class="row project-manager-category-container" style="border: solid 2px aliceblue;">
 <% } %>
     <div class="col">
-        <div class="row project-manager-category-header-area">
-            <div class="col project-category-header">
+        <div class="row project-manager-category-header-area" style="border: solid 2px aliceblue; background-color: rgb(117, 115, 115);">
+            <div class="col-1" style="margin-left: <%= nesting * 15 %>px;" id="category-folding-<%= id %>"></div>
+            <div class="col-9 project-category-header">
                 <%= title %>
             </div>
-            <div class="col category-actions" id="category-actions-<%= id %>">
+            <div class="col-1 category-actions" id="category-actions-<%= id %>">
 
-            </div>
-            <div class="col category-menu" id="category-menu-<%= id %>">
-                
             </div>
         </div>
-        <div class="row category-elements-view-area" id="category-elements-<%= id %>">
-
+        <div class="row category-elements-view-area" id="category-elements-<%= id %>" style="background-color: #dad9d9; color:black;">
+            
         </div>
     </div>
 </div>

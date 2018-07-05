@@ -71,13 +71,14 @@ export class ProjectManagerAppInstanceView extends View {
         };
 
         this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#project-folding-"+this.id);
-        this.foldingView.setDefault();
+        this.foldingView.setPFSelector("#folding-app-instance-categories-"+this.id);
 
         this.initElem("actions", data.meta.actions);
         this.initElem("menu", data.meta.actions);
         this.categories = new Array<CategoryView>();
         _.forEach(data.meta.categories, (category) => {
             category.isSubCategory = false;
+            category.nesting = 1;
             let categoryIndex: number = data.project.categories.map(e => e.type).indexOf(category.type);
             assert(categoryIndex >= 0);
             let categView = <CategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create (
