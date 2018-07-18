@@ -9,19 +9,8 @@
                         </strong>
                     </p>
                 </div>
-                <div class="col-sm-2 col-xs-2">
-                    <span>
-                        <a class="btn" href="#" id="dropdownMenu<%= id %>" style="background-color: Transparent;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenu<%= id %>">
-                            <% _.forEach(actions, (action) => { %>
-                                <a class="dropdown-item ts-application-action-<%= action %>" href="#">
-                                    <%= action %>
-                                </a>
-                                <% }); %>
-                        </div>
-                    </span>
+                <div class="col-sm-2 col-xs-2" id="application-box-actions-<%= id %>">
+                    
                 </div>
             </div>
         </div>

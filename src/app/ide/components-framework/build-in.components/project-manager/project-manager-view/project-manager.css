@@ -16,3 +16,19 @@
 .project-manager-container {
     height: 100%;
 }
+
+.project-manager-domain-title-label {
+    border: 2px solid rgb(65, 113, 156);
+    background-color: rgb(91, 155, 213);
+    color: black;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.project-manager-application-title-label {
+    border: 2px solid rgb(65, 113, 156);
+    background-color: rgb(182, 210, 236);
+    color: black;
+    font-size: 1.25rem;
+    font-weight: 600;
+}

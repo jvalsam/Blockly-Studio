@@ -1,12 +1,13 @@
 var webpack = require('webpack');
 var path = require('path');
 const WebpackShellPlugin = require('webpack-shell-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 module.exports = {
-    entry: [
-        //'webpack-jquery-ui',
-        './app.ts'
-    ],
+    devtool: "source-map",
+    entry: {
+        main: './app.ts'
+    },
     resolve: {
         extensions: ['.webpack.js', '.web.js', '.ts', '.js', '.html']
     },
@@ -72,6 +73,14 @@ module.exports = {
             // In case you imported plugins individually, you must also require them here:
             // Util: "exports-loader?Util!bootstrap/js/dist/util",
             // Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
+        }),
+        new BrowserSyncPlugin({
+            host: 'localhost',
+            port: 8080,
+            server: {
+                baseDir: ['./'],
+                directory: true
+            }
         })
     ]
 }

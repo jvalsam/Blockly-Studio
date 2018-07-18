@@ -5,6 +5,8 @@ import {
     UIComponentMetadata
 } from "../../component/component-loader";
 import { ComponentsCommunication } from "../../component/components-communication";
+import { ModalView } from "../../component/view";
+import { ViewRegistry } from "../../component/registry";
 
 
 @UIComponentMetadata({
@@ -71,18 +73,25 @@ export class StartPageComponent extends IDEUIComponent {
      */
 
     @RequiredFunction("ApplicationWSPManager", "openApplication")
-    public openApplication (applicationID: string): void {
+    public action_open (applicationID: string): void {
         ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "openApplication", [applicationID]);
     }
 
     @RequiredFunction("ApplicationWSPManager", "deleteApplication")
-    public deleteApplication (applicationID: string): void {
+    public action_delete (applicationID: string): void {
         ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "deleteApplication", [applicationID]);
     }
 
     @RequiredFunction("ApplicationWSPManager", "shareApplication")
-    public shareApplication (applicationID: string, shareData: any): void {
+    public action_share (applicationID: string, shareData: any): void {
         alert("Functionality of share is not implemented yet!");
         ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "shareApplication", [applicationID]);
     }
+
+    @RequiredFunction("ApplicationWSPManager", "shareApplication")
+    public action_details (application: any): void {
+        let detailsBox = <ModalView>ViewRegistry.getEntry("ApplicationViewDetailsModal").create(this, ".modal-platform-container", application);
+        detailsBox.open();
+    }
+
 }
