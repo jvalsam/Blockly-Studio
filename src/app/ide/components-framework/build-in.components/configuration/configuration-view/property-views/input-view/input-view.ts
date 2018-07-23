@@ -1,5 +1,5 @@
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
-import { ViewMetadata } from "../../../../../component/view";
+import { ViewMetadata, IViewStyleData } from "../../../../../component/view";
 import { IPropertyData, PropertyView } from "../property-view";
 import { FontView } from "../font-view/font-view";
 
@@ -42,10 +42,11 @@ export class InputView extends PropertyView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         data: any
     ) {
-        super(parent,name,templateHTML, hookSelector, data);
+        super(parent,name,templateHTML, style, hookSelector, data);
         this.data = IInputDataConverter(data);
     }
 

@@ -1,5 +1,5 @@
 import { IDEUIComponent } from "../../component/ide-ui-component";
-import { View, ViewMetadata } from "../../component/view";
+import { View, ViewMetadata, IViewStyleData } from "../../component/view";
 
 /// <reference path="../../../../../../node.d.ts"/>
 import PageFoldingViewTmpl from "./page-folding-view.html";
@@ -37,10 +37,11 @@ export class PageFoldingView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         private data: PageFoldingData
     ) {
-        super(parent, name, templateHTML, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector);
         if(!data) {
             this.setDefault();
         }

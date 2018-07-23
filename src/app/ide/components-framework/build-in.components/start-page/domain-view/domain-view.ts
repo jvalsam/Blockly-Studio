@@ -2,7 +2,7 @@ import { ViewRegistry } from './../../../component/registry';
 import { ISelectData } from './../../configuration/configuration-view/property-views/select-view/select-view';
 /// <reference path="../../../../../../../node.d.ts"/>
 import DomainTmpl from "./domain-view.html";
-import { View, ViewMetadata } from "../../../component/view";
+import { View, ViewMetadata, IViewStyleData } from "../../../component/view";
 import { ApplicationListSP } from "../../applications-view/application-list-s-p/application-list-s-p";
 import { DomainsAdministration } from "./../../applications-admin-sc/domains-admin";
 import { SelectView } from "../../configuration/configuration-view/property-views/select-view/select-view";
@@ -23,9 +23,10 @@ export class DomainView extends ComponentViewElement {
         protected parent: IDEUIComponent,
         public readonly name: string,
         protected readonly _templateHTML: string,
+        protected _style: IViewStyleData,
         protected _selector: string
     ) {
-        super(parent, name, _templateHTML, _selector);
+        super(parent, name, _templateHTML, _style, _selector);
         this.selectedValue = null;
         this.selectionView = null;
         this.domainsAppsView = null;

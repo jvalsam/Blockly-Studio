@@ -2,7 +2,7 @@
 import IoTAutomationListTmpl from "./iot-automation-list.html";
 import IoTAutomationCategoryTmpl from "./iot-automation-category.html";
 import { ViewRegistry } from "../../../../components-framework/component/registry";
-import { View, IViewElement, ViewMetadata } from "../../../../components-framework/component/view";
+import { View, IViewElement, ViewMetadata, IViewStyleData } from "../../../../components-framework/component/view";
 import { IDEUIComponent } from "../../../../components-framework/component/ide-ui-component";
 import { IoTApplication } from "../../application/iot-application";
 import { IoTAutomationViewBox } from "./iot-automation-view-box/iot-automation-view-box";
@@ -23,10 +23,11 @@ export class IoTAutomationList extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         private app: IoTApplication
     ) {
-        super(parent, name, templateHTML, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector);
         this.cTemplate = _.template(IoTAutomationCategoryTmpl);
     }
 

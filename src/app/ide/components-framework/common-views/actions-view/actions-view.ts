@@ -1,9 +1,22 @@
 
 /// <reference path="../../../../../../node.d.ts"/>
 import ActionsViewTmpl from "./actions-view.html";
-import { View, ViewMetadata, IViewEventRegistration } from "../../component/view";
+import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../component/view";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import * as _ from "lodash";
+
+interface IEventData {
+    type: string;
+    callback: string | Function;
+    providedBy?: string;
+}
+
+interface IActionData {
+    title: string;
+    img?: string;
+    help?: string;
+    events: Array<IEventData>;
+}
 
 @ViewMetadata({
     name: "ActionsView",
@@ -14,10 +27,11 @@ export class ActionsView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
-        private data
+        private data: { id:string, actions: Array<IActionData>, style?: {} }
     ) {
-        super(parent, name, templateHTML, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector);
         this.data.id = this.id;
     }
 
@@ -27,8 +41,13 @@ export class ActionsView extends View {
             _.forEach(action.events, (event) => {
                 events.push({
                     eventType: event.type,
-                    selector: ".ts-application-action-"+action.title,
-                    handler: () => event.callback()
+                    selector: "#" + action.title.replace(/ /g, '') + "_" + this.id,
+                    handler: () => typeof event.callback === "string" ?
+                                        (event.providedBy === "Platform" ?
+                                            this.parent[event.callback]() :
+                                            this.parent["onOuterFunctionRequest"](event.providedBy, event.callback)
+                                        ) :
+                                        event.callback()
                 });
             });
         });

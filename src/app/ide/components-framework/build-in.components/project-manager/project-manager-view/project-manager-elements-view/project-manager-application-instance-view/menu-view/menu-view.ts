@@ -1,5 +1,5 @@
 import { IDEUIComponent } from "../../../../../../component/ide-ui-component";
-import { View, ViewMetadata } from "../../../../../../component/view";
+import { View, ViewMetadata, IViewStyleData } from "../../../../../../component/view";
 import { IViewEventRegistration } from "../../../../../../component/view";
 
 import * as _ from "lodash";
@@ -36,10 +36,11 @@ export class ProjectManagerMenuView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector);
         data.id = this.id;
         this.info = (({ id, menuItems }) => ({ id, menuItems }))(data);
     }

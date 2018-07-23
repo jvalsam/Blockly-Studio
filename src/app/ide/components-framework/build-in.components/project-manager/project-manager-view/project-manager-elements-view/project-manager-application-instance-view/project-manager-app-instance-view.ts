@@ -1,7 +1,7 @@
 import { assert } from "./../../../../../../shared/ide-error/ide-error";
 import { ViewRegistry } from "./../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
-import { View, ViewMetadata, IViewEventRegistration } from "../../../../../component/view";
+import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../../../../component/view";
 import { ProjectManagerCategoryView as CategoryView } from "./category-view/category-view";
 import { ProjectManagerActionsView as ActionsView } from "./actions-view/actions-view";
 import { ProjectManagerMenuView as MenuView } from "./menu-view/menu-view";
@@ -54,10 +54,11 @@ export class ProjectManagerAppInstanceView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector);
         data.id = this.id;
         this.categoriesViewSelector = "#categories-" + this.id;
         this.renderData = {

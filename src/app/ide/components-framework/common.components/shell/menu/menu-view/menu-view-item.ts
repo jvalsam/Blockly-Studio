@@ -1,6 +1,6 @@
 import MenuItemTmpl from "./templates/menu-item.html";
 import { MenuItemLeafData } from "../menu";
-import { View, ViewMetadata, IViewEventRegistration } from "../../../../component/view";
+import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../../../component/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { ComponentsCommunication } from "./../../../../component/components-communication";
 import { IDEError } from "../../../../../shared/ide-error/ide-error";
@@ -17,10 +17,11 @@ export class MenuViewItem extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         private menuElem: MenuItemLeafData
     ) {
-        super(parent, name, templateHTML, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector);
         this.events = new Array<IViewEventRegistration>();
         this.menuElem["id"] = this.id;
         if (this.menuElem.type === "leaf") {

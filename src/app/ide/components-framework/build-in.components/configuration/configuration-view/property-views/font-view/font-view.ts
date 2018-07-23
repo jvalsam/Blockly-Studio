@@ -7,7 +7,7 @@ import { ISelectData } from "../select-view/select-view";
 import { ViewRegistry } from "../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { IAggregateData, AggregateView } from "./../aggregate-view/aggregate-view";
-import { ViewMetadata } from "./../../../../../component/view";
+import { ViewMetadata, IViewStyleData } from "./../../../../../component/view";
 import { PropertyView, PropertyType, IPropertyData, StyleObjectToString } from "../property-view";
 
 const font_family_values: Array<string> = [
@@ -62,6 +62,7 @@ export class FontView extends AggregateView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         data: any
     ) {
@@ -77,7 +78,7 @@ export class FontView extends AggregateView {
         if (data.updateParent) {
             aggregateData.updateParent = data.updateParent;
         }
-        super(parent, name, templateHTML, hookSelector, aggregateData);
+        super(parent, name, templateHTML, style, hookSelector, aggregateData);
         this.addFamily(data.font["Family"], data.style);
         this.addTextColor(data.font["Text Colour"], data.style);
         this.addSize(data.font["Size"], data.style);

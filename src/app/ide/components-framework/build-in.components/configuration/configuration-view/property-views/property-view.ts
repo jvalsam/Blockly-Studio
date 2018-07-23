@@ -1,6 +1,6 @@
 import { PropertyType } from "./property-view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
-import { View } from "../../../../component/view";
+import { View, IViewStyleData } from "../../../../component/view";
 
 export type PropertyType =
     "number"    | "percentage" | "text" | "color" | "date" | "checkbox" | "file" | "image" | // input
@@ -28,10 +28,11 @@ export abstract class PropertyView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         selector: string,
         protected _data: any
     ) {
-        super(parent, name, templateHTML, selector);
+        super(parent, name, templateHTML, style, selector);
         // this.selector = "#input_"+this.id;
         this._data.id = this.id;
         this._renderInnerHTML = false;

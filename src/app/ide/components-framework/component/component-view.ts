@@ -17,12 +17,13 @@ export abstract class ComponentViewElement extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         selector: string,
         protected renderData: any = {},
         protected eventRegData: Array<IViewEventRegistration> = new Array<IViewEventRegistration>(),
         protected styleData: Array<IViewStyleData> = new Array<IViewStyleData>()
     ) {
-        super(parent, name, templateHTML, selector);
+        super(parent, name, templateHTML, style, selector);
     }
 
     set selector (newSel: string) { this._selector = newSel; }
@@ -87,6 +88,7 @@ export class ComponentView extends ComponentViewElement {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         selector: string,
         mainViews: Array<IComponentViewDataElement> = new Array<IComponentViewDataElement>(),
         menuViews: { [category: string/*MenuCategory*/]: Array<IComponentViewDataElement> } =
@@ -95,7 +97,7 @@ export class ComponentView extends ComponentViewElement {
         renderData: Object = {},
         eventRegdata: Array<IViewEventRegistration> = new Array<IViewEventRegistration>()
     ) {
-        super(parent, name, templateHTML, selector, renderData, eventRegdata);
+        super(parent, name, templateHTML, style, selector, renderData, eventRegdata);
         this.mainViewElems = this.initViews(mainViews, parent);
         this.menuViewElems = { OnRegistration: {}, OnInstantiation: {} };
         this.menuViewElems.OnRegistration = this.initViews(menuViews["OnRegistration"], parent);
@@ -193,7 +195,10 @@ function DeclareComponentViewElement (data: IViewElementData) {
             );
         }
 
-        var initData: any = [data.templateHTML];
+        var initData: any = [
+            data.templateHTML,
+            data.style ? data.style : { user:[], system: "" }
+        ];
         if (data.initData) {
             initData.push(data.initData);
         }
@@ -223,6 +228,7 @@ function DeclareComponentView (data: IComponentViewData) {
             create,
             [
                 data.templateHTML,
+                data.style ? data.style : { user:[], system: "" },
                 data.mainElems,
                 data.menuElems,
                 data.toolsElems,

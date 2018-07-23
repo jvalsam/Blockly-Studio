@@ -1,6 +1,6 @@
 import { IDEError } from "../../../../../../../shared/ide-error/ide-error";
 import { IDEUIComponent } from "../../../../../../component/ide-ui-component";
-import { View, ViewMetadata } from "../../../../../../component/view";
+import { View, ViewMetadata, IViewStyleData } from "../../../../../../component/view";
 import { IViewEventRegistration } from "../../../../../../component/view";
 
 import * as _ from "lodash";
@@ -37,10 +37,11 @@ export class ProjectManagerActionsView extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector);
         this.info = {
             id: this.id,
             actions: data.actions

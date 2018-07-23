@@ -1,18 +1,9 @@
 import { ViewRegistry } from "./../../../component/registry";
 import { ComponentView, ComponentViewMetadata } from "../../../../components-framework/component/component-view";
-import {
-    ProjectManagerAppInstanceView as InstanceView
-} from "./project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view";
-import {
-    ProjectManagerActionsView as ActionsView
-} from "./project-manager-elements-view/project-manager-application-instance-view/actions-view/actions-view";
-import {
-    ProjectManagerMenuView as MenuView
-} from "./project-manager-elements-view/project-manager-application-instance-view/menu-view/menu-view";
-import {
-    IProjectManagerElementData
-} from "../project-manager";
-
+import { ProjectManagerAppInstanceView as InstanceView } from "./project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view";
+import { ActionsView } from "./../../../common-views/actions-view/actions-view";
+import { ProjectManagerMenuView as MenuView } from "./project-manager-elements-view/project-manager-application-instance-view/menu-view/menu-view";
+import { IProjectManagerElementData } from "../project-manager";
 
 /// <reference path="../../../../../../../node.d.ts"/>
 import ProjectManagerTmpl from "./project-manager.html";
@@ -84,7 +75,7 @@ export class ProjectManagerView extends ComponentView {
     }
 
     public loadActions (data: any): void {
-        this.actions = <ActionsView>ViewRegistry.getEntry("ProjectManagerActionsView").create(
+        this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(
             this.parent,
             ".project-manager-actions-area",
             { "actions": data }

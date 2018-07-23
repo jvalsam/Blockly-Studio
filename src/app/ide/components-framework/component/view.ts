@@ -23,10 +23,19 @@ export interface IViewEventRegistration {
     handler: (eventObject?: JQueryEventObject) => any;
 }
 
-export interface IViewStyleData {
+export interface IViewUserStyleData {
     selector: string;
-    style: string;
+    styles: {
+        css: {}, // e.g. color: "#ddd"
+        class: Array<string> // bootstrap, or css styles class are already loaded
+    }
 }
+
+export interface IViewStyleData {
+    system: string;
+    user: Array<IViewUserStyleData>;
+}
+
 
 export interface IViewEventData {
     type: string;
@@ -52,6 +61,7 @@ export abstract class View {
         protected parent: IDEUIComponent,
         public readonly name: string,
         protected readonly _templateHTML: string,
+        protected _style: IViewStyleData,
         protected _selector: string,
         private _clearSelectorArea: boolean = true
     ) {
@@ -115,7 +125,7 @@ export abstract class View {
         this.$el = $(this._template(data));
         this.$el.attr("id", this._id);
         this.registerEvents();
-        this.setStyle();
+        this.applyUserStyles();
     }
 
     protected attachTmplEl(): void {
@@ -132,7 +142,50 @@ export abstract class View {
 
     public abstract render(callback?: Function): void;
     public abstract registerEvents(): void;
-    public abstract setStyle(): void;
+
+    public set userStyle (data: IViewUserStyleData) {
+        this._style.user[this._style.user.map(x=>x.selector).indexOf(data.selector)].styles = data.styles;
+    }
+
+    public get styles (): Array<IViewStyleData> {
+        return this.styles;
+    }
+
+    public set styles (styles: Array<IViewStyleData>) {
+        this.styles = styles;
+    }
+
+    private applyStyle (data: IViewUserStyleData): void {
+        const $el: JQuery = $(data.selector);
+        if (!$el.length) {
+            IDEError.raise (
+                "View - Apply Style",
+                "Selector " + data.selector + " is not found in View: " + this.name + "."
+            );
+        }
+        if (data.styles.css) {
+            $el.css(data.styles.css);
+        }
+        if (data.styles.class) {
+            _.forEach(data.styles.class, (classElement) => {
+                $el.addClass(classElement);
+            });
+        }
+    }
+
+    private applyUserStyles(): void {
+        _.forEach(this._style.user, (data) => this.applyStyle(data));
+    }
+
+    public updateUserStyle(style: IViewUserStyleData): void {
+        let index = this._style.user.map(x=>x.selector).indexOf(style.selector);
+        this._style.user[index].styles = style.styles;
+    }
+
+    public updateUserStyles(style: Array<IViewUserStyleData>): void {
+        this._style.user = style;
+        this.applyUserStyles();
+    }
 
     public get id(): string {
         return this._id;
@@ -213,9 +266,10 @@ export abstract class ModalView extends View {
     constructor(
         protected parent: IDEUIComponent,
         public readonly name: string,
-        protected readonly _templateHTML: string
+        protected readonly _templateHTML: string,
+        styles: IViewStyleData
     ) {
-        super(parent, name, _templateHTML, "modal-area");
+        super(parent, name, _templateHTML, styles, ".modal-platform-container");
     }
 
     public open(): void {
@@ -237,6 +291,7 @@ export abstract class ModalView extends View {
 export interface IViewElementData {
     name: string;
     templateHTML: string;
+    style?: IViewStyleData;
     initData?: Array<any>;
 }
 
@@ -255,7 +310,11 @@ function DeclareViewElement (data: IViewElementData) {
         ViewRegistry.createEntry(
             data.name,
             create,
-            [data.templateHTML, ...initData]
+            [
+                data.templateHTML,
+                data.style ? data.style : { user:[], system: "" },
+                ...initData
+            ]
         );
     };
 }

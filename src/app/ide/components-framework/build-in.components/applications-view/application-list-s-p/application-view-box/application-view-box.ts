@@ -1,7 +1,7 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import ApplicationViewBoxTmpl from "./application-view-box.html";
-import { View, ViewMetadata, ModalView } from "../../../../component/view";
+import { View, ViewMetadata, ModalView, IViewStyleData } from "../../../../component/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { ActionsView } from "../../../../common-views/actions-view/actions-view";
 import { ViewRegistry } from './../../../../component/registry';
@@ -17,10 +17,11 @@ export class ApplicationViewBox extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
+        style: IViewStyleData,
         hookSelector: string,
         private application
     ) {
-        super(parent, name, templateHTML, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector);
         this.application.id = this.id;
         this.application.lastModified = new Date(this.application.lastModified).toUTCString();
         var data = { actions: [] };
