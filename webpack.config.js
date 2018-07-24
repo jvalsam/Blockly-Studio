@@ -9,7 +9,7 @@ module.exports = {
         main: './app.ts'
     },
     resolve: {
-        extensions: ['.webpack.js', '.web.js', '.ts', '.js', '.html']
+        extensions: ['.webpack.js', '.web.js', '.ts', '.js', '.html', '.css']
     },
     module: {
         rules: [
@@ -33,8 +33,8 @@ module.exports = {
                 ]
             },
             {
-                test: /\.css$/,
-                loaders: ['style-loader!css-loader', "style-loader", "css-loader"]
+                test: /\.sycss$/,
+                use:[ {loader: "html-loader?exportAsEs6Default"} ]
             },
             {
                 test: require.resolve("jquery"),
@@ -43,6 +43,10 @@ module.exports = {
                     { loader: 'expose-loader', options: 'jQuery' },
                     { loader: 'expose-loader', options: '$' }
                 ] 
+            },
+            {
+                test: /\.ducss$/,
+                loader: 'json-loader'
             },
             {
                 test: require.resolve('tether'),

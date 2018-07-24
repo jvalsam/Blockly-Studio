@@ -32,10 +32,14 @@ export interface IViewUserStyleData {
 }
 
 export interface IViewStyleData {
-    system: string;
-    user: Array<IViewUserStyleData>;
+    system ?: string;
+    user ?: Array<IViewUserStyleData>;
 }
 
+export interface IViewRegisterStyleData {
+    system ?: string;
+    user ?: Array<IViewUserStyleData> | string;
+}
 
 export interface IViewEventData {
     type: string;
@@ -156,7 +160,7 @@ export abstract class View {
     }
 
     private applyStyle (data: IViewUserStyleData): void {
-        const $el: JQuery = $(data.selector);
+        const $el: JQuery = this.$el.find(data.selector);
         if (!$el.length) {
             IDEError.raise (
                 "View - Apply Style",
@@ -185,6 +189,7 @@ export abstract class View {
     public updateUserStyles(style: Array<IViewUserStyleData>): void {
         this._style.user = style;
         this.applyUserStyles();
+        this.attachTmplEl();
     }
 
     public get id(): string {
@@ -291,7 +296,7 @@ export abstract class ModalView extends View {
 export interface IViewElementData {
     name: string;
     templateHTML: string;
-    style?: IViewStyleData;
+    style?: IViewRegisterStyleData;
     initData?: Array<any>;
 }
 
@@ -305,8 +310,12 @@ function DeclareViewElement (data: IViewElementData) {
             );
         }
 
-        var initData = (data.initData) ? data.initData : [];
+        if (data.style && typeof data.style.user === "string") {
+            data.style.user = JSON.parse(data.style.user);
+        }
 
+        var initData = (data.initData) ? data.initData : [];
+        
         ViewRegistry.createEntry(
             data.name,
             create,

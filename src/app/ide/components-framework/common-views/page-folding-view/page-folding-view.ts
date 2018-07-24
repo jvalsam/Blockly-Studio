@@ -3,6 +3,8 @@ import { View, ViewMetadata, IViewStyleData } from "../../component/view";
 
 /// <reference path="../../../../../../node.d.ts"/>
 import PageFoldingViewTmpl from "./page-folding-view.html";
+import PageFoldingViewSYCSS from "./page-folding-view.sycss";
+import PageFoldingViewDUCSS from "./page-folding-view.ducss";
 
 import * as $ from "jquery";
 import "../../../../../../libs/paperfold";
@@ -28,7 +30,11 @@ interface PageFoldingData {
 
 @ViewMetadata({
     name: "PageFoldingView",
-    templateHTML: PageFoldingViewTmpl
+    templateHTML: PageFoldingViewTmpl,
+    style: {
+        system: PageFoldingViewSYCSS,
+        user:  PageFoldingViewDUCSS
+    }
 })
 export class PageFoldingView extends View {
     private readonly pfStyleSelector = ".page-folding-link-icon";
@@ -55,11 +61,7 @@ export class PageFoldingView extends View {
             imgSet: {
                 plus: "fa fa-plus-square",
                 minus: "fa fa-minus-square"
-            },
-            style: {
-                color: "#f0f8ff"
-            },
-            size: "fa-lg"
+            }
         };
     }
 
@@ -104,16 +106,6 @@ export class PageFoldingView extends View {
                 handler: () => this.onClick()
             }
         );
-    }
-
-    public setStyle(): void {
-        if (this.data.style) {
-            let $el = this.$el.find(this.pfStyleSelector);
-            $el.css(this.data.style);
-            if (this.data.size) {
-                $el.addClass(this.data.size);
-            }
-        }
     }
 
     public fold(): void {

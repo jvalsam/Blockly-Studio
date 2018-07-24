@@ -36,9 +36,19 @@ export class Entry<T> {
     }
   }
 
-  public create(parent: IDEUIComponent, ...extraElements: Array<any>): T {
-    let selector = extraElements.shift();
-    const newInst: T = new (this._creationFunc) (parent, this.name, this._html, this._style,  selector, ...this._args, ...extraElements);
+  private isInstArgStyle(instArg) {
+    return  Array.isArray(instArg) && instArg.length>0 &&
+            typeof instArg === "object" &&
+            instArg[0].selector && instArg[0].styles;
+  }
+
+  public create(parent: IDEUIComponent, ...instArgs: Array<any>): T {
+    let selector = instArgs.shift();
+    let style = this._style;
+    if (this.isInstArgStyle(instArgs[0])) {
+      style.user = instArgs.shift();
+    }
+    const newInst: T = new (this._creationFunc) (parent, this.name, this._html, style,  selector, ...this._args, ...instArgs);
     this._instanceList.push(newInst);
     if (this._instanceList.length === 1) {
       // care for loading css from the system using: this._style.system === css file name path

@@ -1,7 +1,6 @@
 import ErrorViewTmpl from "./ide-error.html";
 import { View, ViewMetadata } from "../../components-framework/component/view";
 
-
 @ViewMetadata({
     name: "IDEErrorView",
     templateHTML: ErrorViewTmpl
