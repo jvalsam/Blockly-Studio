@@ -1,7 +1,7 @@
 
 
 /// <reference path="../../../../../node.d.ts"/>
-import ICETmpl from "./ice.html";
+import ICETmpl from "./ice.tmpl";
 
 import {
     ComponentView,

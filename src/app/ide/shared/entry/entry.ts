@@ -7,12 +7,12 @@
 
 import { IDEUIComponent } from "../../components-framework/component/ide-ui-component";
 import { IDEError } from "../../shared/ide-error/ide-error";
-import { IViewStyleData } from './../../components-framework/component/view';
+import { IViewRegisterStyleData } from './../../components-framework/component/view';
 
 export class Entry<T> {
   protected _instanceList: Array<T>;
   protected _html: string;
-  protected _style: IViewStyleData;
+  protected _style: IViewRegisterStyleData;
   protected _args: Array<any>;
 
   constructor(
@@ -48,10 +48,29 @@ export class Entry<T> {
     if (this.isInstArgStyle(instArgs[0])) {
       style.user = instArgs.shift();
     }
-    const newInst: T = new (this._creationFunc) (parent, this.name, this._html, style,  selector, ...this._args, ...instArgs);
+    
+    const newInst: T = new (this._creationFunc) (
+      parent,
+      this.name,
+      this._html,
+      {
+        elements: style.user
+      },
+      selector,
+      ...this._args,
+      ...instArgs
+    );
+    newInst["_shared"] = this;
     this._instanceList.push(newInst);
-    if (this._instanceList.length === 1) {
-      // care for loading css from the system using: this._style.system === css file name path
+    if (this._instanceList.length === 1 && style.system) {
+      // create css element for the view
+      let css = document.createElement("style");
+      css.setAttribute("id", "stylesheet_"+this.name);
+      css.setAttribute("type", "text/css");
+      css.innerHTML = style.system;
+
+      // pin css in DOM
+      document.getElementsByTagName('head')[0].appendChild(css);
     }
     return newInst;
   }
@@ -66,8 +85,9 @@ export class Entry<T> {
       );
     }
     this._instanceList.splice(this._instanceList.indexOf(inst), 1);
-    if (this._instanceList.length === 0) {
-      // care for unloading css from the system
+
+    if (this._instanceList.length === 0 && this._style.system) {
+      document.getElementById("stylesheet_"+this.name).remove();
     }
   }
 }

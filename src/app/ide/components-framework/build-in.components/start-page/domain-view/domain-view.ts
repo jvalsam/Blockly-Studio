@@ -1,7 +1,7 @@
 import { ViewRegistry } from './../../../component/registry';
 import { ISelectData } from './../../configuration/configuration-view/property-views/select-view/select-view';
 /// <reference path="../../../../../../../node.d.ts"/>
-import DomainTmpl from "./domain-view.html";
+import DomainTmpl from "./domain-view.tmpl";
 import { View, ViewMetadata, IViewStyleData } from "../../../component/view";
 import { ApplicationListSP } from "../../applications-view/application-list-s-p/application-list-s-p";
 import { DomainsAdministration } from "./../../applications-admin-sc/domains-admin";

@@ -1,13 +1,8 @@
     
 
 /// <reference path="../../../../../../node.d.ts"/>
-import IoTWSPEditorTmpl from "./iot-wsp-editor.html";
-import {
-    ComponentView,
-    ComponentViewElement,
-    ComponentViewElementMetadata,
-    ComponentViewMetadata,
-} from "../../../components-framework/component/component-view";
+import IoTWSPEditorTmpl from "./iot-wsp-editor.tmpl";
+import { ComponentView, ComponentViewMetadata } from "../../../components-framework/component/component-view";
 
 
 @ComponentViewMetadata({

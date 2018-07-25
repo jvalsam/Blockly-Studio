@@ -1,6 +1,6 @@
 /// <reference path="../../../../../../../node.d.ts"/>
-import IoTAutomationListTmpl from "./iot-automation-list.html";
-import IoTAutomationCategoryTmpl from "./iot-automation-category.html";
+import IoTAutomationListTmpl from "./iot-automation-list.tmpl";
+import IoTAutomationCategoryTmpl from "./iot-automation-category.tmpl";
 import { ViewRegistry } from "../../../../components-framework/component/registry";
 import { View, IViewElement, ViewMetadata, IViewStyleData } from "../../../../components-framework/component/view";
 import { IDEUIComponent } from "../../../../components-framework/component/ide-ui-component";

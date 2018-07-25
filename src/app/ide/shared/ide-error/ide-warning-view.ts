@@ -1,4 +1,4 @@
-import WarningViewTmpl from "./ide-warning.html";
+import WarningViewTmpl from "./ide-warning.tmpl";
 import { View, ViewMetadata } from "../../components-framework/component/view";
 
 

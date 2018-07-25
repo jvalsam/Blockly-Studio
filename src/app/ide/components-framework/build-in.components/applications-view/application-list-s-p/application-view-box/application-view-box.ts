@@ -1,6 +1,6 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
-import ApplicationViewBoxTmpl from "./application-view-box.html";
+import ApplicationViewBoxTmpl from "./application-view-box.tmpl";
 import { View, ViewMetadata, ModalView, IViewStyleData } from "../../../../component/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { ActionsView } from "../../../../common-views/actions-view/actions-view";

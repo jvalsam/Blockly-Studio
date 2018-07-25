@@ -1,4 +1,4 @@
-import MenuItemTmpl from "./templates/menu-item.html";
+import MenuItemTmpl from "./templates/menu-item.tmpl";
 import { MenuItemLeafData } from "../menu";
 import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../../../component/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";

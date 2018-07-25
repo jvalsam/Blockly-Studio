@@ -6,7 +6,7 @@ import { IViewEventRegistration } from "../../../../../../component/view";
 import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
-import ActionsViewTmpl from "./actions-view.html";
+import ActionsViewTmpl from "./actions-view.tmpl";
 
 
 interface IEventData {

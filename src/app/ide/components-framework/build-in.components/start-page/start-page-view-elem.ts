@@ -6,14 +6,13 @@
  */
 
 /// <reference path="../../../../../../node.d.ts"/>
-import StartPageTmpl from "./start-page.html";
+import StartPageTmpl from "./start-page.tmpl";
 import { ComponentViewElement, ComponentViewElementMetadata } from "../../component/component-view";
 import { ApplicationListSP } from "../applications-view/application-list-s-p/application-list-s-p";
 
 
 @ComponentViewElementMetadata({
     name: "StartPageViewElement",
-    //selector: ".start-page-container",
     templateHTML: StartPageTmpl
 })
 export class StartPageViewElement extends ComponentViewElement {

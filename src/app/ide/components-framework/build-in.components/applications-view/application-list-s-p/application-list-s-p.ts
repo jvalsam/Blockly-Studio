@@ -10,7 +10,7 @@
  */
 
 /// <reference path="../../../../../../../node.d.ts"/>
-import ApplicationsListTmpl from "./application-list-s-p.html";
+import ApplicationsListTmpl from "./application-list-s-p.tmpl";
 
 import * as _ from "lodash";
 

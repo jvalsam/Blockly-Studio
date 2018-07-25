@@ -1,12 +1,11 @@
-/// <reference path="../../../../../../node.d.ts"/>
-import StartPageTmpl from "./start-page.html";
-import { ComponentView, ComponentViewMetadata } from "../../../components-framework/component/component-view";
-import { DomainView } from "./domain-view/domain-view";
 
+/// <reference path="../../../../../../node.d.ts"/>
+import StartPageTmpl from "./start-page.tmpl";
+
+import { ComponentView, ComponentViewMetadata } from "../../../components-framework/component/component-view";
 
 @ComponentViewMetadata({
     name: "StartPageView",
-    //selector: ".start-page-container",
     templateHTML: StartPageTmpl,
     mainElems: [
         {

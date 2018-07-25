@@ -1,4 +1,4 @@
-import MenuAggregateItemTmpl from "./templates/menu-aggregate-item.html";
+import MenuAggregateItemTmpl from "./templates/menu-aggregate-item.tmpl";
 import { MenuViewItem } from "./menu-view-item";
 import {
     MenuItemLeafData,

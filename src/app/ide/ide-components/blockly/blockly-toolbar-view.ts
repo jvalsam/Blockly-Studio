@@ -1,5 +1,5 @@
 import { ComponentsCommunication } from "../../components-framework/component/components-communication";
-import BlocklyToolbarTmpl from "./blockly-toolbar.html";
+import BlocklyToolbarTmpl from "./blockly-toolbar.tmpl";
 import { ComponentViewElementMetadata } from "../../components-framework/component/component-view";
 import { ComponentViewElement } from "../../components-framework/component/component-view";
 import { BlocklyVPL } from "./blockly";

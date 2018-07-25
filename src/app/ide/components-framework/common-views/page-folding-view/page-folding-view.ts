@@ -2,7 +2,7 @@ import { IDEUIComponent } from "../../component/ide-ui-component";
 import { View, ViewMetadata, IViewStyleData } from "../../component/view";
 
 /// <reference path="../../../../../../node.d.ts"/>
-import PageFoldingViewTmpl from "./page-folding-view.html";
+import PageFoldingViewTmpl from "./page-folding-view.tmpl";
 import PageFoldingViewSYCSS from "./page-folding-view.sycss";
 import PageFoldingViewDUCSS from "./page-folding-view.ducss";
 
@@ -22,10 +22,6 @@ interface PageFoldingData {
     folding: boolean;
     selector: string;
     imgSet: FoldIcon;
-    style?: {
-        color: string
-    };
-    size ?: FASize;
 }
 
 @ViewMetadata({

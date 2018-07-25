@@ -1,5 +1,5 @@
 /// <reference path="../../../../../../../../node.d.ts"/>
-import ApplicationViewDetailsTmpl from "./application-view-details-modal.html";
+import ApplicationViewDetailsTmpl from "./application-view-details-modal.tmpl";
 import { ViewMetadata, View } from "../../../../component/view";
 
 

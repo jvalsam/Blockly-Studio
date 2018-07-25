@@ -15,6 +15,7 @@ module.exports = {
         rules: [
             { test: /\.ts$/, use:[ {loader: 'ts-loader'} ] },
             { test: /\.html/, use:[ {loader: "html-loader?exportAsEs6Default"} ] },
+            { test: /\.tmpl/, use:[ {loader: "html-loader?exportAsEs6Default"} ] },
             { test: /\.xml$/, use:[ {loader: 'xml-loader' } ] },
             {
                 test: /\.(jpe?g|png|gif|svg)$/i,
@@ -25,6 +26,12 @@ module.exports = {
             },
             { test: /\.(woff2?|ttf|eot|svg)$/, use:[ {loader: 'url?limit=10000' } ] },
             { test: /bootstrap\/dist\/js\/umd\//, use: [ {loader: 'imports?jQuery=jquery' } ] },
+            {
+                test: /\.css$/,
+                use: [
+                    { loader: 'css-to-string-loader!css-loader' }
+                ]
+            },
             {
                 test: /\.scss/,
                 exclude: /node_modules/,

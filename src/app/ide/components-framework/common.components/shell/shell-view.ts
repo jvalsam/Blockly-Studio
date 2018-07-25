@@ -1,5 +1,5 @@
 /// <reference path="../../../../../../node.d.ts"/>
-import ShellTmpl from "./shell.html";
+import ShellTmpl from "./shell.tmpl";
 import { ComponentView, ComponentViewMetadata } from "../../component/component-view";
 import * as _ from "lodash";
 

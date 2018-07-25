@@ -1,14 +1,9 @@
 
 
 /// <reference path="../../../../../node.d.ts"/>
-import BlocklyTmpl from "./blockly.html";
+import BlocklyTmpl from "./blockly.tmpl";
 
-import {
-    ComponentView,
-    ComponentViewElement,
-    ComponentViewElementMetadata,
-    ComponentViewMetadata,
-} from "../../components-framework/component/component-view";
+import { ComponentView, ComponentViewMetadata } from "../../components-framework/component/component-view";
 
 
 @ComponentViewMetadata({

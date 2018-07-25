@@ -1,5 +1,5 @@
 
-import EditorManagerTmpl from "./editor-manager.html";
+import EditorManagerTmpl from "./editor-manager.tmpl";
 import { ComponentView, ComponentViewMetadata } from "../../component/component-view";
 import { Editor } from "./editor";
 

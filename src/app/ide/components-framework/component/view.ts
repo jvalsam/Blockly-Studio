@@ -32,8 +32,7 @@ export interface IViewUserStyleData {
 }
 
 export interface IViewStyleData {
-    system ?: string;
-    user ?: Array<IViewUserStyleData>;
+    elements: Array<IViewUserStyleData>;
 }
 
 export interface IViewRegisterStyleData {
@@ -60,6 +59,8 @@ export abstract class View {
     private _template: Function;
     private _nextEventID: number;
     private _events: { [key: number]: IViewEventData };
+
+    private _shared: any; // Entry object of the View creator, access in shared data like style css, default data etc
 
     constructor(
         protected parent: IDEUIComponent,
@@ -148,7 +149,7 @@ export abstract class View {
     public abstract registerEvents(): void;
 
     public set userStyle (data: IViewUserStyleData) {
-        this._style.user[this._style.user.map(x=>x.selector).indexOf(data.selector)].styles = data.styles;
+        this._style.elements[this._style.elements.map(x=>x.selector).indexOf(data.selector)].styles = data.styles;
     }
 
     public get styles (): Array<IViewStyleData> {
@@ -178,16 +179,16 @@ export abstract class View {
     }
 
     private applyUserStyles(): void {
-        _.forEach(this._style.user, (data) => this.applyStyle(data));
+        _.forEach(this._style.elements, (data) => this.applyStyle(data));
     }
 
     public updateUserStyle(style: IViewUserStyleData): void {
-        let index = this._style.user.map(x=>x.selector).indexOf(style.selector);
-        this._style.user[index].styles = style.styles;
+        let index = this._style.elements.map(x=>x.selector).indexOf(style.selector);
+        this._style.elements[index].styles = style.styles;
     }
 
     public updateUserStyles(style: Array<IViewUserStyleData>): void {
-        this._style.user = style;
+        this._style.elements = style;
         this.applyUserStyles();
         this.attachTmplEl();
     }

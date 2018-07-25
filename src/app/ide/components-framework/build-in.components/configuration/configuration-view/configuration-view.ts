@@ -1,5 +1,5 @@
 /// <reference path="../../../../../../../node.d.ts"/>
-import ConfigurationViewTmpl from "./configuration.html";
+import ConfigurationViewTmpl from "./configuration.tmpl";
 import { ComponentViewMetadata } from "../../../component/component-view";
 import { ComponentView } from "../../../component/component-view";
 import { PropertyView } from "./property-views/property-view";
@@ -13,7 +13,6 @@ import { ViewRegistry } from "../../../component/registry";
 @ComponentViewMetadata({
     name: "ConfigurationView",
     templateHTML: ConfigurationViewTmpl
-    //menuElems:[]
 })
 export class ConfigurationView extends ComponentView {
     private propsView: AggregateView;

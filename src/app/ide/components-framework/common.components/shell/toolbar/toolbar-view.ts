@@ -1,4 +1,4 @@
-import ToolbarTmpl from "./toolbar.html";
+import ToolbarTmpl from "./toolbar.tmpl";
 import {
     ComponentView,
     ComponentViewMetadata,

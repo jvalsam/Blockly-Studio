@@ -1,4 +1,4 @@
-import StartPageMenuTmpl from "./start-page-menu.html";
+import StartPageMenuTmpl from "./start-page-menu.tmpl";
 import {
     ComponentViewElementMetadata,
     ComponentViewElement

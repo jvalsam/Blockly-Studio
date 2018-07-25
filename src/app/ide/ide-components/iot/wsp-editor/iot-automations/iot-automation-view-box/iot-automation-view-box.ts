@@ -1,6 +1,6 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
-import AutomationViewBoxTmpl from "./iot-automation-view-box.html";
+import AutomationViewBoxTmpl from "./iot-automation-view-box.tmpl";
 import { View, ViewMetadata, IViewStyleData } from "../../../../../components-framework/component/view";
 import { IDEUIComponent } from "../../../../../components-framework/component/ide-ui-component";
 import { Automation } from "../../../application/automation"

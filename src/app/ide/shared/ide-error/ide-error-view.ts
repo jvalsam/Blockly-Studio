@@ -1,4 +1,4 @@
-import ErrorViewTmpl from "./ide-error.html";
+import ErrorViewTmpl from "./ide-error.tmpl";
 import { View, ViewMetadata } from "../../components-framework/component/view";
 
 @ViewMetadata({

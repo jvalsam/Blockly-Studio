@@ -4,6 +4,16 @@ declare module "*.html" {
     export default content;
 }
 
+declare module "*.tmpl" {
+    const content: string;
+    export default content;
+}
+
+declare module "*.css" {
+    const content: string;
+    export default content;
+}
+
 declare module "*.sycss" {
     const content: string;
     export default content;

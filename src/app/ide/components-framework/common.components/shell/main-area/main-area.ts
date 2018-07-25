@@ -1,5 +1,5 @@
 /// <reference path="../../../../../../../node.d.ts"/>
-import MainAreaTmpl from "./main-area.html";
+import MainAreaTmpl from "./main-area.tmpl";
 import { View, IViewElement, ViewMetadata } from "../../../component/view";
 
 export interface IShellMainAreaViewElement extends IViewElement {

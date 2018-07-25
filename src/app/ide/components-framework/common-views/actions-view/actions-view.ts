@@ -1,6 +1,6 @@
 
 /// <reference path="../../../../../../node.d.ts"/>
-import ActionsViewTmpl from "./actions-view.html";
+import ActionsViewTmpl from "./actions-view.tmpl";
 import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../component/view";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import * as _ from "lodash";
