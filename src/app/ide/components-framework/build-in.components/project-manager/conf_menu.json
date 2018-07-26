@@ -6,12 +6,7 @@
             "data": {
                 "title": "ProjectManager",
                 "help": "Configuration of the project manager of the Platform",
-                "type": "leaf",
-                "events": [
-                    {
-                        "click": "onConfig"
-                    }
-                ]
+                "type": "sub-menu"
             }
         }
     ]

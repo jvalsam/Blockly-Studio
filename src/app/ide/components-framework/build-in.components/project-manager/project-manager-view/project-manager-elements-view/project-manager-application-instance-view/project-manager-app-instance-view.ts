@@ -12,7 +12,7 @@ import * as _ from "lodash";
 //import * as $ from "../../../../../../../../../node_modules/jstree/dist/jstree";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
-import ProjectManagerAppInstanceViewTmpl from "./project-manager-app-instance-view.html";
+import ProjectManagerAppInstanceViewTmpl from "./project-manager-app-instance-view.tmpl";
 import { PageFoldingView } from './../../../../../common-views/page-folding-view/page-folding-view';
 
 

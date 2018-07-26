@@ -6,11 +6,14 @@ import {
     UIComponentMetadata,
     RequiredFunction
 } from "../../component/component-loader";
-import { GetProjectManagerMetaData } from "./project-manager-meta-map";
+import { GetProjectManagerMetaData, GetProjectManagerMenuJSON, GetProjectManagerDomainNames, GetDomainsConfigJSON } from "./project-manager-meta-map";
 import { ProjectManagerView } from './project-manager-view/project-manager-view';
 
-var menuJson: any = require("./conf_menu.json");
-var configJson: any = require("./conf_props.json");
+import * as _ from "lodash";
+
+var menuJson = GetProjectManagerMenuJSON();
+var configJson = GetDomainsConfigJSON();
+
 
 export interface IProjectManagerElementData {
     id: string;
@@ -43,6 +46,9 @@ export class ProjectManager extends IDEUIComponent {
         if (this.isOpen) {
             this.initialize();
         }
+        _.forEach(GetProjectManagerDomainNames(), (domain: string) => {
+            this["onConfig"+domain] = () => this.onConfig(domain)
+        })
     }
 
     @ExportedFunction

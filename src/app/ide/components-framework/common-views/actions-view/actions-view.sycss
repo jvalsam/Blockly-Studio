@@ -1,4 +1,4 @@
 
-.test {
-    color: black;
+.actions-view-title {
+    background-color: Transparent;
 }

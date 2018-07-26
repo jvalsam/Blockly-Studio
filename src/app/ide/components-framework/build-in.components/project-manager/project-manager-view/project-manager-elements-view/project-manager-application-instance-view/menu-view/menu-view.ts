@@ -5,7 +5,7 @@ import { IViewEventRegistration } from "../../../../../../component/view";
 import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
-import MenuViewTmpl from "./menu-view.html";
+import MenuViewTmpl from "./menu-view.tmpl";
 
 
 interface IEventData {

@@ -47,12 +47,12 @@ export class ComponentEntry extends Entry<Component> {
     return this._menuData;
   }
 
-  public getConfigMetadata():any {
-    return this._configData;
+  public getConfigMetadata(instType: string):any {
+    return instType? this._configData[instType] : this._configData;
   }
 
-  public getCurrentConfigValues(): any {
-    return this._creationFunc.getConfigProperties();
+  public getCurrentConfigValues(instType?: string): any {
+    return this._creationFunc.getConfigProperties(instType);
   }
 
   public updateConfigValues(values: any): void {
@@ -78,6 +78,7 @@ export class ComponentEntry extends Entry<Component> {
       newComp["getConfigProperties"] = this._creationFunc.getConfigProperties;
       newComp["setConfigProperties"] = this._creationFunc.setConfigProperties;
     }
+    newComp["_entry"] = this;
     this._instanceList.push(newComp);
     return newComp;
   }

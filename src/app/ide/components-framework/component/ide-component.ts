@@ -28,9 +28,9 @@ export abstract class IDEComponent extends Component {
   }
 
   @ExportedFunction
-  public onConfig(): void {
+  public onConfig(instType?: string): void {
     let configuration: Configuration = (<Configuration>ComponentRegistry.getEntry("Configuration").getInstances()[0]);
-    configuration.openComponentConfig(this.name);
+    configuration.openComponentConfig(this.name, instType);
   }
 
 }

@@ -6,9 +6,11 @@ import { ProjectManagerMenuView as MenuView } from "./project-manager-elements-v
 import { IProjectManagerElementData } from "../project-manager";
 
 /// <reference path="../../../../../../../node.d.ts"/>
-import ProjectManagerTmpl from "./project-manager.html";
+import ProjectManagerTmpl from "./project-manager.tmpl";
+import ProjectManagerSYCSS from "./project-manager.sycss";
 
 import * as _ from "lodash";
+import { runInDebugContext } from "vm";
 
 
 interface IProjectManagerEvent {
@@ -33,8 +35,10 @@ interface IProjectManagerData {
 
 @ComponentViewMetadata({
     name: "ProjectManagerView",
-    //selector: ".project-elements-view-area",
-    templateHTML: ProjectManagerTmpl
+    templateHTML: ProjectManagerTmpl,
+    style: {
+        system: ProjectManagerSYCSS
+    }
 })
 export class ProjectManagerView extends ComponentView {
     private readonly appInstancesSelector = ".project-manager-app-instances-view-area";
@@ -78,6 +82,7 @@ export class ProjectManagerView extends ComponentView {
         this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(
             this.parent,
             ".project-manager-actions-area",
+            [ {selector: ".actions-view-title-fa", styles: { css: { color: "white" } }} ],
             { "actions": data }
         );
     }

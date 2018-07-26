@@ -210,13 +210,13 @@ export class Menu extends IDEUIComponent {
                     }
                     else {
                         newElem.path = path + menuElem.title + "/";
-                        if (prvNode === null) {
-                            let index = this.findIndex(pathElems[0], node);
+                        // if (prvNode === null) {
+                            let index = this.findIndex(pathElems[pathElems.length-1], node);
                             (<MenuItemData>node[index].data).children[0] = newElem;
-                        }
-                        else {
-                            (<MenuItemData>node[0].data).children[0] = newElem;
-                        }
+                        // }
+                        // else {
+                        //     (<MenuItemData>node[0].data).children[0] = newElem;
+                        // }
                     }
                 }
             }

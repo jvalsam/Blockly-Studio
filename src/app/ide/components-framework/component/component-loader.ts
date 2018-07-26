@@ -65,19 +65,32 @@ function checkIDEComponentValidity(name: string, create: Function, data: ICompon
     });
 }
 
-function declareComponentConfigProperties(create: Function, configData: any): void {
-    if (typeof(configData) === "undefined") {
-        return;
-    }
-
+function configPropertiesInst (configData) {
     // TODO: apply json schema validator
-
     let configProperties: Object = {};
     _.forEach(configData.properties, (property) => {
         configProperties[property.name] = property.value;
     });
+}
+
+function declareComponentConfigProperties(create: Function, configData: any): void {
+    if (typeof(configData) === "undefined") {
+        return;
+    }
+    
+    let configProperties;
+    if (configData.properties) {
+        configProperties = configPropertiesInst (configData);
+    }
+    else {
+        configProperties = {};
+        _.forEach(Object.keys(configData), (instType) => {
+            configProperties[instType] = configPropertiesInst (configData[instType]);
+        });
+    }
+
     create["_configProperties"] = configProperties;
-    create["getConfigProperties"] = function() { return this._configProperties; };
+    create["getConfigProperties"] = function(instType?: string) { return instType ? this._configProperties[instType] : this._configProperties; };
     create["setConfigProperties"] = function (values: Object) {
         // if (typeof (this._configProperties) === "undefined") { this._configProperties = {}; }
         _.forOwn(values, (value, key) => {

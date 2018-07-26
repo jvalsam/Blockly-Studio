@@ -1,6 +1,7 @@
 
 /// <reference path="../../../../../../node.d.ts"/>
 import ActionsViewTmpl from "./actions-view.tmpl";
+import ActionsViewSYCSS from "./actions-view.sycss";
 import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../component/view";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import * as _ from "lodash";
@@ -20,7 +21,10 @@ interface IActionData {
 
 @ViewMetadata({
     name: "ActionsView",
-    templateHTML: ActionsViewTmpl
+    templateHTML: ActionsViewTmpl,
+    style: {
+        system: ActionsViewSYCSS
+    }
 })
 export class ActionsView extends View {
     constructor(

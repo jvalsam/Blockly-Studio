@@ -1,0 +1,12 @@
+{
+    "data": {
+        "title": "InternetOfThings",
+        "help": "Configuration of the project manager for IoT Automations",
+        "type": "leaf",
+        "events": [
+            {
+                "click": "onConfig"
+            }
+        ]
+    }
+}

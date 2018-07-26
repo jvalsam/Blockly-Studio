@@ -4,7 +4,7 @@ import { View, ViewMetadata, IViewStyleData } from "../../../../../../component/
 import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
-import CategoryViewTmpl from "./category-view.html";
+import CategoryViewTmpl from "./category-view.tmpl";
 import { ProjectManagerActionsView as ActionsView } from "../actions-view/actions-view";
 import { ProjectManagerMenuView as MenuView } from "../menu-view/menu-view";
 import { ViewRegistry } from "../../../../../../component/registry";
