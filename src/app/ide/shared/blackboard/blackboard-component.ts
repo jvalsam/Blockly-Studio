@@ -185,7 +185,7 @@ export class BlackboardComponent {
       );
     }
 
-    if (func.argsLen !== args.length) {
+    if (func.hasArgsLenRestriction && func.argsLen !== args.length) {
       IDEError.raise(
           BlackboardComponent.name,
           "CallFunction: function " + funcName + " of component " + this._componentName + " requires " + func.argsLen +

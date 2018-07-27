@@ -1,5 +1,5 @@
 import { assert } from './../../../shared/ide-error/ide-error';
-import { ComponentsCommunication } from './../../component/components-communication';
+import { ComponentsCommunication, ComponentCommAddFunction } from './../../component/components-communication';
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import {
     ExportedFunction,
@@ -47,7 +47,9 @@ export class ProjectManager extends IDEUIComponent {
             this.initialize();
         }
         _.forEach(GetProjectManagerDomainNames(), (domain: string) => {
-            this["onConfig"+domain] = () => this.onConfig(domain)
+            let funcName = "onConfig"+domain;
+            this[funcName] = () => this.onConfig(domain);
+            ComponentCommAddFunction(this.name, funcName, 0);
         })
     }
 

@@ -5,7 +5,9 @@
         "type": "leaf",
         "events": [
             {
-                "click": "onConfig"
+                "type": "click",
+                "handler": "onConfig",
+                "args": [ "IoT" ]
             }
         ]
     }

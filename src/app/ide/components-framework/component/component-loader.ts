@@ -65,12 +65,13 @@ function checkIDEComponentValidity(name: string, create: Function, data: ICompon
     });
 }
 
-function configPropertiesInst (configData) {
+function configPropertiesInst (configData): Object {
     // TODO: apply json schema validator
     let configProperties: Object = {};
     _.forEach(configData.properties, (property) => {
         configProperties[property.name] = property.value;
     });
+    return configProperties;
 }
 
 function declareComponentConfigProperties(create: Function, configData: any): void {
@@ -346,6 +347,22 @@ export function ExportedFunction(
     );
 }
 
+export function ExportedFunctionAR(argsLenRestriction: boolean) {
+    return (
+        target: any,
+        propertyKey: string,
+        descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>
+    ) => {
+        FunctionHelper(
+            target.constructor.name,
+            propertyKey,
+            argsLenRestriction ? getParamNames(descriptor.value).length : -1,
+            target.__proto__.constructor.name,
+            descriptor.value
+        );
+    }
+}
+
 // Used as decorator
 // publishes required functionality (from other components) of the component
 export function RequiredFunction(
@@ -353,8 +370,11 @@ export function RequiredFunction(
     funcName: string,
     argsLen?: number
 ) {
-    return (target: any, propertyKey: string,
-        descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>) => {
+    return (
+        target: any,
+        propertyKey: string,
+        descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>
+    ) => {
         RequiredFunctionHelper(
             component,
             funcName,

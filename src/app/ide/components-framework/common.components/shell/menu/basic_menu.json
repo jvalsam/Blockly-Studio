@@ -10,7 +10,8 @@
                 "type" : "leaf",
                 "events": [
                     {
-                        "click": "onClickHomePage"
+                        "type": "click",
+                        "handler": "onClickHomePage"
                     }
                 ]
             }
@@ -23,7 +24,8 @@
                 "type": "leaf",
                 "events": [
                     {
-                        "click": "onConfig"
+                        "type": "click",
+                        "handler": "onConfig"
                     }
                 ]
             }

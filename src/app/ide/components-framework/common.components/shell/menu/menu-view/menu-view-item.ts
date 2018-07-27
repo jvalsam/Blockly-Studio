@@ -27,19 +27,19 @@ export class MenuViewItem extends View {
         if (this.menuElem.type === "leaf") {
             for (let evtData of this.menuElem.events) {
                 let evts = Object.keys(evtData);
-                if (evts.length !== 1) {
+                if (!evtData["type"] || !evtData["handler"]) {
                     IDEError.raise(
                         "MenuViewItem",
                         "Invalid event definition for view item in " + this.name +
                         " in Component " + this.parent.name
                     );
                 }
-                let eventName = evts[0];
-                let callback = evtData[evts[0]];
                 this.events.push({
-                    eventType: eventName,
+                    eventType: evtData["type"],
                     selector: this.menuItemBtn,
-                    handler: () => ComponentsCommunication.functionRequest(this.parent.name, this.menuElem.compName, callback)
+                    handler: evtData["args"] ?
+                        () => ComponentsCommunication.functionRequest(this.parent.name, this.menuElem.compName, evtData["handler"], evtData["args"]) :
+                        () => ComponentsCommunication.functionRequest(this.parent.name, this.menuElem.compName, evtData["handler"])
                 });
             }
         }

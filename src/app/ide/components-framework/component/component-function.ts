@@ -30,6 +30,9 @@ export class ComponentFunction extends ComponentCommunicationElement {
     }
 
     get argsLen(): number { return this._argsLen; }
+
+    get hasArgsLenRestriction (): boolean { return this._argsLen !== -1; }
+
     // get returnType(): string { return this._retType; }
     get responseCallback(): string { return this._responseCallback; }
 

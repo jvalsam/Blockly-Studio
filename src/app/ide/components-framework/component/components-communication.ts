@@ -76,6 +76,10 @@ function establishSignals() {
   }
 }
 
+export function ComponentCommAddFunction(compName: string, funcName: string, argsLen?: number) {
+  BlackboardComponentRegistry.getBlackboard(compName).addFunction(funcName, argsLen);
+}
+
 function establishFunctions() {
   // Add function in Blackboard
   for(const compName of FunctionsHolder.getKeys()) {
@@ -86,7 +90,7 @@ function establishFunctions() {
     if (funcsMap) {
       for(const key of Object.keys(funcsMap)) {
         const compFunc = funcsMap[key];
-        BlackboardComponentRegistry.getBlackboard(compName).addFunction(compFunc.name, compFunc.argsLen);
+        ComponentCommAddFunction(compName, compFunc.name, compFunc.argsLen);
       }
     }
   }

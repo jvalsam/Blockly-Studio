@@ -7,7 +7,7 @@
 
 import { Configuration } from "./../build-in.components/configuration/configuration";
 import { ComponentRegistry } from "./component-entry";
-import { ExportedFunction } from "./component-loader";
+import { ExportedFunction, ExportedFunctionAR } from "./component-loader";
 import { Component } from "./component";
 
 export abstract class IDEComponent extends Component {
@@ -27,7 +27,7 @@ export abstract class IDEComponent extends Component {
     // this functionality has to be exported in the component framework
   }
 
-  @ExportedFunction
+  @ExportedFunctionAR(false)
   public onConfig(instType?: string): void {
     let configuration: Configuration = (<Configuration>ComponentRegistry.getEntry("Configuration").getInstances()[0]);
     configuration.openComponentConfig(this.name, instType);

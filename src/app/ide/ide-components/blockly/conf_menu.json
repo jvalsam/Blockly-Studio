@@ -9,7 +9,6 @@
                 "help": "Edit Blockly Editor Properties"
             }
         },
-
         {
             "path": "/Configure/Configuration|DividerConfiguration|Menu|",
             "data": {
@@ -18,7 +17,8 @@
                 "type": "leaf",
                 "events": [
                     {
-                        "click": "onConfig"
+                        "type": "click",
+                        "handler": "onConfig"
                     }
                 ]
             }
