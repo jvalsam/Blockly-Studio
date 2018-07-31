@@ -6,6 +6,7 @@
 
 # git repos
 /src/app/ide/ide-components/blockly/google_blockly
+app.ts
 
 # dependencies
 /node_modules
