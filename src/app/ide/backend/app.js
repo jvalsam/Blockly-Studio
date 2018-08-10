@@ -33,5 +33,8 @@ app.use('/domains', authentication.check, DomainController);
 var UserController = require('./user/UserController');
 app.use('/users', authentication.check, UserController);
 
+var DebuggerController = require('./debugger/DebuggerController');
+app.use('/debugger', DebuggerController);
+
 
 module.exports = app;

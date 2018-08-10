@@ -1,7 +1,7 @@
 
 import { IDEError } from "../../../shared/ide-error/ide-error";
 import { Automation } from "./automation";
-import * as _ from "lodash";
+//import * as _ from "lodash";
 
 
 export interface IAutomationsMap {
