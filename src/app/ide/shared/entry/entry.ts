@@ -9,7 +9,10 @@ import { IDEUIComponent } from "../../components-framework/component/ide-ui-comp
 import { IDEError } from "../../shared/ide-error/ide-error";
 import { IViewRegisterStyleData } from './../../components-framework/component/view';
 
+import * as _ from "lodash";
+
 export class Entry<T> {
+  protected _refTypesCounter: { [type: string]: number };
   protected _instanceList: Array<T>;
   protected _html: string;
   protected _style: IViewRegisterStyleData;
@@ -21,6 +24,7 @@ export class Entry<T> {
     _args?: Array<any>
   ) {
     this._instanceList = new Array<T>();
+    this._refTypesCounter = {};
     this.setArgs(_args);
   }
 
@@ -41,6 +45,9 @@ export class Entry<T> {
             typeof instArg === "object" &&
             instArg[0].selector && instArg[0].styles;
   }
+  private includesTypeOfView (instArg) {
+    return typeof instArg === "object" && instArg.type;
+  }
 
   public create(parent: IDEUIComponent, ...instArgs: Array<any>): T {
     let selector = instArgs.shift();
@@ -48,24 +55,53 @@ export class Entry<T> {
     if (this.isInstArgStyle(instArgs[0])) {
       style.user = instArgs.shift();
     }
-    
-    const newInst: T = new (this._creationFunc) (
-      parent,
-      this.name,
-      this._html,
-      {
-        elements: style.user
-      },
-      selector,
-      ...this._args,
-      ...instArgs
-    );
+
+    let newInst = null;
+    let type = "no_type";
+
+    if (this.includesTypeOfView(instArgs[0])) {
+      type = instArgs.shift();
+      newInst = new (this._creationFunc) (
+        parent,
+        this.name,
+        this._html,
+        {
+          elements: style.user
+        },
+        selector,
+        type,
+        ...this._args,
+        ...instArgs
+      );
+    }
+    else {
+      newInst = new (this._creationFunc) (
+        parent,
+        this.name,
+        this._html,
+        {
+          elements: style.user
+        },
+        selector,
+        ...this._args,
+        ...instArgs
+      );
+    }
+
+    newInst["_type"] = type;
     newInst["_shared"] = this;
     this._instanceList.push(newInst);
-    if (this._instanceList.length === 1 && style.system) {
+    if (!this._refTypesCounter[type]) {
+      this._refTypesCounter[type] = 1;
+    }
+    else {
+      ++this._refTypesCounter[type];
+    }
+
+    if (this._refTypesCounter[type] === 1 && style.system) {
       // create css element for the view
       let css = document.createElement("style");
-      css.setAttribute("id", "stylesheet_"+this.name);
+      css.setAttribute("id", "stylesheet_"+this.name+"_"+type);
       css.setAttribute("type", "text/css");
       css.innerHTML = style.system;
 
@@ -85,9 +121,10 @@ export class Entry<T> {
       );
     }
     this._instanceList.splice(this._instanceList.indexOf(inst), 1);
+    --this._refTypesCounter[inst["_type"]];
 
-    if (this._instanceList.length === 0 && this._style.system) {
-      document.getElementById("stylesheet_"+this.name).remove();
+    if (this._refTypesCounter[inst["_type"]] === 0 && this._style.system) {
+      document.getElementById("stylesheet_"+this.name+"_"+inst["_type"]).remove();
     }
   }
 }
