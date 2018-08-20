@@ -301,7 +301,17 @@
                         "type": "ConditionEVT",
                         "title": "Condition Events",
                         "img": "./images/iot/condition-events.png",
-                        "actions": [],
+                        "actions": [
+                            {
+                                "title": "Delete",
+                                "img": "fa-trash",
+                                "help": "Delete condition event",
+                                "events": [{
+                                    "click": "onDeleteProjectItem",
+                                    "providedBy": "Platform"
+                                }]
+                            }
+                        ],
                         "menu": []
                     },
                     {

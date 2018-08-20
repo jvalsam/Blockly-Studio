@@ -12,6 +12,23 @@ CategoryElementSchema.add({
     children: [ this ]
 });
 
+var ElementSchema = new mongoose.Schema({}, {_id: false});
+ElementSchema.add({
+    type: { type: String, required: [true, 'project element type not exist'] },
+    systemID: { type: String, required: [true, 'project element systemID not exist'] },
+    editorData: {
+        refs: [ String ]
+    },
+    renderParts: [
+        {
+            type: { type: String, required: [true, 'project renderParts type not exist'] },
+            value: {}
+        }
+    ],
+    innerdata : [ ],
+    children:  [ this ]
+});
+
 var ApplicationSchema = new mongoose.Schema({
     title: { type: String, unique: true, required: [ (value) => value && value.length >= 1, "Title of application cannot be empty" ] },
     author: {
@@ -26,16 +43,7 @@ var ApplicationSchema = new mongoose.Schema({
     categories: [
         {
             type: { type: String, required: [true, 'categories.type not exist'] },
-            elements: [
-                {
-                    type: { type: String, required: [true, 'category element type not exist'] },
-                    title: { type: String, unique: false, required: [true, 'category element title not exist'] },
-                    img: { data: Buffer, contentType: String, fa: String },
-                    id: { type: String, required: [true, 'categories.elements.children.id not exist'] },
-                    innerdata: [],
-                    children: [ CategoryElementSchema ]
-                }
-            ]
+            elements: [ ElementSchema ]
         }
     ]
 });

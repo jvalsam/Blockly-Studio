@@ -33,5 +33,8 @@ app.use('/domains', authentication.check, DomainController);
 var UserController = require('./user/UserController');
 app.use('/users', authentication.check, UserController);
 
+var WSPDomainController = require('./wsp-domains/WSPDomainController');
+app.use('/wsp_domains', authentication.check, WSPDomainController);
+
 
 module.exports = app;

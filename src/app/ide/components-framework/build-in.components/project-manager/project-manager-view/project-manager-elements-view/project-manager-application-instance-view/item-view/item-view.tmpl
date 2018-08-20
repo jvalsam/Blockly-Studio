@@ -1,0 +1,32 @@
+<div class="col-12 item-view-area">
+    <div class="row item-header-area">
+        <% if(hasChildren) { %>
+        <div class="col-1 item-folding-view-area" id="item-folding-<%= id %>"></div>
+        <% } %>
+        <div class="col-10 item-info-area">
+            <div class="row">
+                <div class="col-1 item-icon-view-area">
+                        <% if(typeof(renderParts.img)!== 'undefined') { %>
+                            <% if (typeof(renderParts.img.value.fa) !== 'undefined') { %>
+                                <i class="fa <%= renderParts.img.value.fa %> project-category-header-img-<%= type %>"></i>
+                            <% } else { %>
+                                <img class="project-category-header-img-<%= type %>" src="<%= renderParts.img.value.fa %>" />
+                            <% } %>
+                        <% } %>
+                </div>
+                <div class="col-10 item-title-view-area">
+                        <%= renderParts.title.value.text %>
+                </div>
+                <% if(typeof(renderParts.state)!== 'undefined') { %>
+                <div class="col-1 item-state-view-area" id="item-state-<%= id %>">
+                </div>
+                <% } %>
+            </div>
+        </div>
+        <div class="col-1 item-actions-view-area"></div>
+    </div>
+    <% if(hasChildren) { %>
+    <div class="row item-children-view-area" id="item-children-<%= id %>" style="background-color: #dad9d9; color:black;">
+    </div>
+    <% } %>
+</div>

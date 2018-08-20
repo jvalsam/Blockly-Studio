@@ -14,4 +14,17 @@ export class DomainsAdministration {
             }
         });
     }
+
+    public static requestWSPDomains(callback: (wsps) => void): void {
+        $.ajax({
+            url: URL + "wsp_domains/all",
+            type: "GET",
+            success: function (data) {
+                callback(data);
+            },
+            error: function (data) {
+                IDEError.raise(data.statusText, data.responseText);
+            }
+        });
+    }
 }

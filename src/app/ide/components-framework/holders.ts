@@ -3,14 +3,18 @@
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
  * July 2017
+ * 
+ * updated by jvalsam: DataLoader for DB data are retrieved
+ * August 2018
  */
 
-import { Component } from './component/component';
 import { ComponentSignal, ComponentSignalData } from './component/component-signal';
 import { ComponentFunction } from './component/component-function';
 import { ApplicationModel } from "../shared/models/application.model";
-
 import { MapHolder } from '../shared/map-holder';
+import { ProjectManagerMetaDataHolder } from './build-in.components/project-manager/project-manager-meta-map';
+
+
 
 
 export interface FuncsMap {
@@ -49,3 +53,9 @@ export let RequiredFunctionsHolder =
  */
 export let ApplicationsHolder =
 new MapHolder<ApplicationModel>("ApplicationModel");
+
+export class DataLoader {
+  public static start(callback: Function) {
+    ProjectManagerMetaDataHolder.load(callback);
+  }
+}

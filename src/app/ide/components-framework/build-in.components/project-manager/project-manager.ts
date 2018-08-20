@@ -6,14 +6,15 @@ import {
     UIComponentMetadata,
     RequiredFunction
 } from "../../component/component-loader";
-import { GetProjectManagerMetaData, GetProjectManagerMenuJSON, GetProjectManagerDomainNames, GetDomainsConfigJSON } from "./project-manager-meta-map";
+import { ProjectManagerMetaDataHolder } from "./project-manager-meta-map";
 import { ProjectManagerView } from './project-manager-view/project-manager-view';
 
 import * as _ from "lodash";
 
-var menuJson = GetProjectManagerMenuJSON();
-var configJson = GetDomainsConfigJSON();
-
+// initialize the metadata of the project manager component for registration in the platform
+ProjectManagerMetaDataHolder.initialize();
+var menuJson = ProjectManagerMetaDataHolder.getDomainsMenuJSON();
+var configJson = ProjectManagerMetaDataHolder.getDomainsConfigJSON();
 
 export interface IProjectManagerElementData {
     id: string;
@@ -46,7 +47,7 @@ export class ProjectManager extends IDEUIComponent {
         if (this.isOpen) {
             this.initialize();
         }
-        _.forEach(GetProjectManagerDomainNames(), (domain: string) => {
+        _.forEach(ProjectManagerMetaDataHolder.getDomainNames(), (domain: string) => {
             let funcName = "onConfig"+domain;
             this[funcName] = () => this.onConfig(domain);
             ComponentCommAddFunction(this.name, funcName, 0);
@@ -55,7 +56,7 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     initialize(): void {
-        let metadata = GetProjectManagerMetaData(this.domainType);
+        let metadata = ProjectManagerMetaDataHolder.getWSPDomainMetaData(this.domainType);
         this._view.setRenderData(metadata);
         this._view.initialize();
     }

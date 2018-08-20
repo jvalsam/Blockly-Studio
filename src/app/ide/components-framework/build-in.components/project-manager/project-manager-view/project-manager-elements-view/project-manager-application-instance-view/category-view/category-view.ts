@@ -42,12 +42,11 @@ interface ICategoryItem {
 
 interface ICategoryMetaData {
     id: string;
-    title: string;
     type: string;
     isLeaf: boolean;
-    img?: string;
     isSubCategory: boolean;
     nesting: number;
+    renderParts: {};
 
     // elements for leaf category (not include categories element)
     validChildren?: Array<string>;
@@ -144,7 +143,12 @@ export class ProjectManagerCategoryView extends View {
         this.menuSel = "#category-menu-"+this.id;
         this.actionsSel = "#category-actions-"+this.id;
         this.categElemsSel = "#category-elements-"+this.id;
-        this.info = (({ id, title, type, isLeaf, isSubCategory, img, nesting }) => ({ id, title, type, isLeaf, isSubCategory, img, nesting })) (data.meta);
+        this.info = (({ id, type, renderParts, isLeaf, isSubCategory, nesting }) => ({ id, type, renderParts, isLeaf, isSubCategory, nesting })) (data.meta);
+        let renderParts = {};
+        _.forEach(this.info.renderParts, (elem) => {
+            renderParts[elem["type"]] = elem; 
+        });
+        this.info.renderParts = renderParts;
         
         this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#category-folding-"+this.id);
         this.foldingView.setPFSelector("#category-elements-"+this.id);
@@ -274,7 +278,7 @@ export class ProjectManagerCategoryView extends View {
             });
             if($el.jstree(true).get_json('#', { "flat" : true }).length === 0) {
                 $el.empty();
-                $el.append("<div class='small text-center align-middle' style='padding-top:15px; padding-bottom:15px; width:100%'>No "+this.info.title+" are defined yet.</div>");
+                $el.append("<div class='small text-center align-middle' style='padding-top:15px; padding-bottom:15px; width:100%'>No " + this.info.renderParts["title"] + " are defined yet.</div>");
             }
         }
     }
