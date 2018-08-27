@@ -36,5 +36,7 @@ app.use('/users', authentication.check, UserController);
 var DebuggerController = require('./debugger/DebuggerController');
 app.use('/debugger', DebuggerController);
 
+var SmartObjectController = require('./smart-objects/smartObjectController');
+app.use('/smart-objects', authentication.check, SmartObjectController);
 
 module.exports = app;
