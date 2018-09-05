@@ -1,7 +1,7 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import ApplicationViewBoxTmpl from "./application-view-box.tmpl";
-import { View, ViewMetadata, ModalView, IViewStyleData } from "../../../../component/view";
+import { View, ViewMetadata, ModalView, IViewUserStyleData } from "../../../../component/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { ActionsView } from "../../../../common-views/actions-view/actions-view";
 import { ViewRegistry } from './../../../../component/registry';
@@ -17,7 +17,7 @@ export class ApplicationViewBox extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         private application
     ) {

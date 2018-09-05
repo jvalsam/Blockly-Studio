@@ -3,7 +3,7 @@ import { IFontData, FontView } from "./../font-view/font-view";
 import { ISelectData } from "./../select-view/select-view";
 import { IPropertyData, PropertyView, PropertyType } from "./../property-view";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
-import { ViewMetadata, IViewStyleData } from "../../../../../component/view";
+import { ViewMetadata, IViewUserStyleData } from "../../../../../component/view";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import SelectViewTmpl from "./dynamic-extra-view.html";
@@ -48,7 +48,7 @@ export class DynamicExtraView extends PropertyView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         data: any
     ) {

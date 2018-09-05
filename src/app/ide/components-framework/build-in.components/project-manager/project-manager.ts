@@ -17,9 +17,12 @@ var menuJson = ProjectManagerMetaDataHolder.getDomainsMenuJSON();
 var configJson = ProjectManagerMetaDataHolder.getDomainsConfigJSON();
 
 export interface IProjectManagerElementData {
-    id: string;
+    systemID: string;
+    path: string;
+    orderNO: number;
     type: string;
-    title: string;
+    editorData: {};
+    renderParts: {};
 }
 
 @UIComponentMetadata({
@@ -33,6 +36,7 @@ export interface IProjectManagerElementData {
     version: "1.0"
 })
 export class ProjectManager extends IDEUIComponent {
+    private loadedProjects: {[projectID: string]: any};
     private isOpen: Boolean;
 
     constructor(
@@ -44,6 +48,7 @@ export class ProjectManager extends IDEUIComponent {
     ) {
         super(name, description, componentView, hookSelector);
         this.isOpen = this.domainType ? true : false;
+        this.loadedProjects = [];
         if (this.isOpen) {
             this.initialize();
         }
@@ -80,12 +85,13 @@ export class ProjectManager extends IDEUIComponent {
         }
         assert(this.domainType === project.domainType);
         ComponentsCommunication.functionRequest(this.name, "Shell", "openComponent", [this]);
-        (<ProjectManagerView>this._view).loadProject(project);
+        this.loadProject(project);
     }
 
     @ExportedFunction
     public loadProject(project): void {
-
+        this.loadedProjects[project._id] = project;
+        (<ProjectManagerView>this._view).loadProject(project);
     }
 
     @ExportedFunction
@@ -145,8 +151,8 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public addProjectElement(projectId: string, path: string, elementData: IProjectManagerElementData): void {
-        this._view["addElement"](projectId, path, elementData);
+    public addProjectElement(projectID: string, element: IProjectManagerElementData): void {
+        this._view["addElement"] (projectID, element);
     }
 
     public onClickMenuItem (itemId: string, action: {callback: string, providedBy: string}, projectId: string): void {
@@ -160,5 +166,9 @@ export class ProjectManager extends IDEUIComponent {
 
     public onRemoveElement(elementId: string, projectId: string): boolean {
         return this._view["removeElement"] (projectId, elementId);
+    }
+
+    public onClickProjectElement(projectID: string, systemID: string): void {
+        alert("clicked proj elem: projID( "+projectID+" ), systemID( "+systemID+" )");
     }
 }

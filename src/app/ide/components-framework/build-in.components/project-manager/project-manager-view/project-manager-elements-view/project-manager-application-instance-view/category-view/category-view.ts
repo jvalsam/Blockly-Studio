@@ -1,17 +1,15 @@
 import { IDEUIComponent } from "../../../../../../component/ide-ui-component";
-import { View, ViewMetadata, IViewStyleData } from "../../../../../../component/view";
+import { View, ViewMetadata, IViewUserStyleData } from "../../../../../../component/view";
 
 import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import CategoryViewTmpl from "./category-view.tmpl";
-import { ProjectManagerActionsView as ActionsView } from "../actions-view/actions-view";
+import { ActionsView } from "./../../../../../../common-views/actions-view/actions-view";
 import { ProjectManagerMenuView as MenuView } from "../menu-view/menu-view";
 import { ViewRegistry } from "../../../../../../component/registry";
-import { IProjectManagerElementData } from "../../../../project-manager";
+import { ProjectManagerItemView } from "../item-view/item-view";
 
-import * as $ from "jquery";
-import "jstree";
 import { PageFoldingView } from './../../../../../../common-views/page-folding-view/page-folding-view';
 
 interface IMenuItem {
@@ -113,9 +111,10 @@ interface JSTreeMenuData {
     templateHTML: CategoryViewTmpl
 })
 export class ProjectManagerCategoryView extends View {
+    private path: string;
     private readonly menuSel;
     private readonly actionsSel;
-    private readonly categElemsSel;
+    private readonly elemsSel;
     private info: ICategoryMetaData;
     private actions: ActionsView;
     private menu: MenuView;
@@ -123,26 +122,24 @@ export class ProjectManagerCategoryView extends View {
     // only for category includes categories
     private elements?: Array<View>;
     // only for category not include categories
-    private items: Array<IProjectCategoryItemData>;
-    private jstreeElements: Array<JSTreeElementData>;
-    private jstreeTypes: { [type: string]: JSTreeTypeItemData };
-    private jstreeMenuItems: {[type: string] : JSTreeMenuData};
+    private items: Array<ProjectManagerItemView>;
     private foldingView: PageFoldingView;
 
     constructor(
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         data: any
     ) {
         super(parent, name, templateHTML, style, hookSelector);
-        data.meta.isLeaf = "categories" in data.meta;
+        this.path = data.path + data.meta.type + "/";
+        data.meta.isLeaf = ("categories" in data.meta) && data.meta.categories.length > 0;
         data.meta.id = this.id;
         this.menuSel = "#category-menu-"+this.id;
         this.actionsSel = "#category-actions-"+this.id;
-        this.categElemsSel = "#category-elements-"+this.id;
+        this.elemsSel = "#category-elements-"+this.id;
         this.info = (({ id, type, renderParts, isLeaf, isSubCategory, nesting }) => ({ id, type, renderParts, isLeaf, isSubCategory, nesting })) (data.meta);
         let renderParts = {};
         _.forEach(this.info.renderParts, (elem) => {
@@ -150,39 +147,41 @@ export class ProjectManagerCategoryView extends View {
         });
         this.info.renderParts = renderParts;
         
+        this.initFolding();
+        this.initActions(data.meta.actions);
+        //TODO: fix right click menu
+
+        if (this.info.isLeaf) {
+            this.initCategories(data);
+        }
+        // in case try to load project
+        this.items = [];
+        if (data.project && data.project.elements) {
+            this.initElements(data.project.elements, data.meta, data.project._id);
+        }
+    }
+
+    private initFolding() {
         this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#category-folding-"+this.id);
         this.foldingView.setPFSelector("#category-elements-"+this.id);
         this.foldingView.setFoldIcon(
             this.info.isSubCategory ?
                 { plus: "fa fa-angle-right", minus: "fa fa-angle-down" } :
                 { plus: "fa fa-caret-right", minus: "fa fa-caret-down" }
-            );
+        );
+    }
 
-        this.initContainer("actions", data.meta);
-        this.initContainer("menu", data.meta);
-        if (this.info.isLeaf) {
-            this.initCategories(data);
-        }
-        else if (data.meta.items) {
-            this.initElements(data);
-        }
-        // create empty root with no items
-        else {
-            this.initWithoutItems(data);
-        }
-    }
-    private initContainer(type: string, data: any): void {
-        if (data[type]) {
-            let typeFU: string = type[0].toUpperCase() + type.substr(1);
-            this[type] = ViewRegistry.getEntry("ProjectManager" + typeFU + "View").create(
+    private initActions(data:any) {
+        if (data.length > 0) {
+            this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(
                 this.parent,
-                this[type+"Sel"],
-                data[type]
+                "#category-actions-"+this.id,
+                [ {selector: ".actions-view-title-fa", styles: { css: { color: "white" } }} ],
+                { "actions": data }
             );
-            return;
         }
-        this[type] = null;
     }
+
     private initCategories (data: any): void {
         this.elements = new Array<View>();
         _.forEach(data.meta.categories, (category) => {
@@ -190,35 +189,38 @@ export class ProjectManagerCategoryView extends View {
             category.nesting = this.info.nesting+1;
             let categView = ViewRegistry.getEntry("ProjectManagerCategoryView").create(
                 this.parent,
-                this.categElemsSel,
+                this.elemsSel,
                 {
                     "meta": category,
                     "project": data.project,
-                    "path": (data.path ? data.path+"$" : "")+this.id
+                    "path": this.path
                 }
             );
             categView.clearSelectorArea = false;
             this.elements.push(categView);
         });
     }
-    private initElements (data: any): void {
-        this.items = data.meta.items;
-        // jstree types
-        this.jstreeTypes = {};
-        this.jstreeTypes["#"] = { "max_children": 1, "max_depth": 4, "valid_children": this.items.map(x=>x.type) };
-        this.jstreeMenuItems = {};
-        _.forEach(this.items, (item) => {
-            this.jstreeTypes[item.type] = { "icon": item.img, "valid_children": item.validChildren };
-            this.jstreeMenuItems[item.type] = {};
-            _.forEach(item.menu, (menuItem) => {
-                this.jstreeMenuItems[item.type][menuItem.title] = this.constructMenuItem(menuItem, data);
-            });
-        });
-    }
-
-    private initWithoutItems (data: any) {
-        this.jstreeTypes = {};
-        this.jstreeTypes["#"] = { "max_children": 1, "max_depth": 4, "valid_children": [data.meta.type] };
+    private initElements (elements: Array<any>, meta: any, projectID: string): void {
+        // filter elements
+        let catElements = elements.filter(obj => { return obj.path === this.path });
+        //
+        for(let i=1; i<=catElements.length; ++i) {
+            let itemData = catElements[ catElements.map(x=>x.orderNO).indexOf(i) ];
+            let metaIndex = meta.items.map(x=>x.type).indexOf(itemData.type);
+            let itemView = <ProjectManagerItemView>ViewRegistry.getEntry("ProjectManagerItemView").create(
+                this.parent,
+                this.elemsSel,
+                {
+                    "meta": meta.items[metaIndex],
+                    "projectID": projectID,
+                    "item": itemData,
+                    "path": this.path,
+                    "nesting": this.info.nesting+1
+                }
+            );
+            itemView.clearSelectorArea = false;
+            this.items.push(itemView);
+        }
     }
 
     private constructMenuItem(item: IMenuItem, data: any): JSTreeMenuItemData {
@@ -246,8 +248,9 @@ export class ProjectManagerCategoryView extends View {
     }
 
     private renderElem(type: string): void {
-        if (this[type] !== null) {
+        if (this[type] && this[type] !== null) {
             this[type].render();
+            this[type].hide();
         }
     }
 
@@ -255,77 +258,69 @@ export class ProjectManagerCategoryView extends View {
         this.renderTmplEl(this.info);
         this.foldingView.render();
         this.renderElem("actions");
-        this.renderElem("menu");
+        
+        _.forEach(this.items, (item)=> item.render());
+
         if (this.info.isLeaf) {
             _.forEach(<Array<View>>this.elements, (value) => {
                 value.render();
             });
         }
-        else {
-            let $el = $("#category-elements-" + this.id);
-            $el.jstree({
-                core: {
-                    "check_callback": true,
-                    "data": this.elements
-                },
-                types: this.jstreeTypes,
-                plugins: [
-                    "contextmenu", "dnd", "search", "state", "types", "wholerow"
-                ],
-                contextmenu: {
-                    items: (node) => this.jstreeMenuItems[node.type]
-                }
-            });
-            if($el.jstree(true).get_json('#', { "flat" : true }).length === 0) {
-                $el.empty();
-                $el.append("<div class='small text-center align-middle' style='padding-top:15px; padding-bottom:15px; width:100%'>No " + this.info.renderParts["title"] + " are defined yet.</div>");
-            }
+        else if(this.items.length === 0) {
+            $(this.elemsSel).empty();
+            $(this.elemsSel).css("background", "rgb(230, 230, 230)");
+            $(this.elemsSel).append("<div class='small text-center align-middle' style='padding-top:15px; padding-bottom:15px; width:100%'>No " + this.info.renderParts["title"].value.text + " are defined yet.</div>");
         }
+
+        //bootstrap adds hidden in overflow which destroys z-index in dropdown menu
+        $("#category-elements-"+this.id).css("overflow", "");
     }
 
-    public registerEvents(): void {;}
+    public registerEvents(): void {
+        this.attachEvents(
+            {
+                eventType: "click",
+                selector: ".project-manager-category-header-area",
+                handler: (evt) => {
+                    if (evt.target.classList[0] !== "page-folding-link-icon") {
+                        if(this.foldingView) {
+                            this.foldingView.onClick();
+                        }
+                    }
+                }
+            },
+            {
+                eventType: "mouseover",
+                selector: ".project-manager-category-header-area",
+                handler: (evt) => {
+                    if (this.actions) {
+                        this.actions.show();
+                    }
+                    // TODO: check if has to change colour and which colour has to set as new
+                    $("#project-manager-category-header-area-"+this.id).css("background-color", "rgb(117, 115, 115)");
+                }
+            },
+            {
+                eventType: "mouseout",
+                selector: ".project-manager-category-header-area",
+                handler: (evt) => {
+                    if (this.actions) {
+                        this.actions.hide();
+                    }
+                    // TODO: check if has to change colour and which colour has to set as new
+                    $("#project-manager-category-header-area-"+this.id).css("background-color", "rgb(80, 80, 80)");
+                }
+            }
+        );
+    }
 
     public setStyle(): void { ; }
 
-    public removeElement(ids: Array<string>): boolean {
-        if (this.info.isLeaf) {
-            let tree = $("#category-elements-" + this.id).jstree(true);
-            tree.delete_node([
-                tree.get_node("#" + ids[0])
-            ]);
-        }
-        else {
-            return this.elements.map(scat => scat.id).indexOf(ids.shift())["removeElement"](ids);
-        }
+    public addElement (ids, element): void {
+        
     }
 
-    public addElement(ids: Array<string>, elementData: IProjectManagerElementData): void {
-        if (this.info.isLeaf) {
-            // case to add element in the root of the category => "first"
-            // case to add element inside jstree => "inside"
-            let position = ids[0] === this.id ? "first" : "inside";
-
-            let parent = $("#category-elements-" + this.id).jstree(true).get_node("#"+ids[0]);
-            let newNode = {
-                state: "open",
-                data: {
-                    id: elementData.id,
-                    type: elementData.type,
-                    text: elementData,
-                    parent: ids[0]
-                }
-            };
-            $("#category-elements-" + this.id).jstree(
-                "create_node",
-                parent,
-                newNode,
-                position,
-                false,
-                false
-            );
-        }
-        else {
-            this.elements.map(scat => scat.id).indexOf(ids.shift())["addElement"](ids, elementData);
-        }
+    public removeElement (id: string): void {
+        
     }
 }

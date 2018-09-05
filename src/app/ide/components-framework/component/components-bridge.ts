@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2018-08-16 13:10:22.801000
+ * 2018-08-30 16:43:23.944000
  */
 
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
@@ -28,6 +28,7 @@ import { ProjectManagerView } from "../../../../../src/app/ide/components-framew
 import { ProjectManagerAppInstanceView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view";
 import { ProjectManagerActionsView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/actions-view/actions-view";
 import { ProjectManagerCategoryView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/category-view/category-view";
+import { ProjectManagerItemView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view";
 import { ProjectManagerMenuView } from "../../../../../src/app/ide/components-framework/build-in.components/project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/menu-view/menu-view";
 import { StartPageViewElement } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-view-elem";
 import { StartPageView } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-view";
@@ -35,6 +36,7 @@ import { StartPageComponent } from "../../../../../src/app/ide/components-framew
 import { DomainView } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/domain-view/domain-view";
 import { StartPageMenuViewElement } from "../../../../../src/app/ide/components-framework/build-in.components/start-page/start-page-menu/start-page-menu";
 import { ActionsView } from "../../../../../src/app/ide/components-framework/common-views/actions-view/actions-view";
+import { BoxLabelView } from "../../../../../src/app/ide/components-framework/common-views/box-label-view/box-label-view";
 import { PageFoldingView } from "../../../../../src/app/ide/components-framework/common-views/page-folding-view/page-folding-view";
 import { ShellView } from "../../../../../src/app/ide/components-framework/common.components/shell/shell-view";
 import { Shell } from "../../../../../src/app/ide/components-framework/common.components/shell/shell";
@@ -80,6 +82,7 @@ export class ComponentsBridge {
 		ProjectManagerAppInstanceView.onInit();
 		ProjectManagerActionsView.onInit();
 		ProjectManagerCategoryView.onInit();
+		ProjectManagerItemView.onInit();
 		ProjectManagerMenuView.onInit();
 		StartPageViewElement.onInit();
 		StartPageView.onInit();
@@ -87,6 +90,7 @@ export class ComponentsBridge {
 		DomainView.onInit();
 		StartPageMenuViewElement.onInit();
 		ActionsView.onInit();
+		BoxLabelView.onInit();
 		PageFoldingView.onInit();
 		ShellView.onInit();
 		Shell.onInit();

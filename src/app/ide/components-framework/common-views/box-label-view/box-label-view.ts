@@ -2,39 +2,33 @@
 /// <reference path="../../../../../../node.d.ts"/>
 import BoxLabelViewTmpl from "./box-label-view.tmpl";
 import BoxLabalViewSYCSS from "./box-label-view.sycss";
-import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../component/view";
+import { View, ViewMetadata, IViewEventRegistration, IViewUserStyleData } from "../../component/view";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import * as _ from "lodash";
-
-interface IEventData {
-    type: string;
-    callback: string | Function;
-    providedBy?: string;
-}
-
-interface IActionData {
-    title: string;
-    img?: string;
-    help?: string;
-    events: Array<IEventData>;
-}
+import { PageFoldingView } from "../page-folding-view/page-folding-view";
+import { ViewRegistry } from "../../component/registry";
 
 @ViewMetadata({
     name: "BoxLabelView",
     templateHTML: BoxLabelViewTmpl,
     style: { system: BoxLabalViewSYCSS }
 })
-export class ActionsView extends View {
+export class BoxLabelView extends View {
+    private foldingView: PageFoldingView;
+
     constructor(
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
-        private data: { id:string, actions: Array<IActionData>, style?: {} }
+        private data: any
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         this.data.id = this.id;
+
+        this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#folding-area-"+this.id);
+        this.foldingView.setPFSelector("#box-elements-"+this.id);
     }
 
     public registerEvents(): void {
@@ -58,10 +52,8 @@ export class ActionsView extends View {
     public setStyle(): void {}
 
     public render(): void {
+        this.data.type = this.type;
         this.renderTmplEl(this.data);
-    }
 
-    public targetIsOnViewParts (targetId: string): boolean {
-        return targetId === "dropdownMenu"+this.id || targetId === "target-"+this.id;
     }
 }

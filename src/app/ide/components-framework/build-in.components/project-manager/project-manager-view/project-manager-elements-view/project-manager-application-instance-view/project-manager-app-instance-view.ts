@@ -1,10 +1,9 @@
 import { assert } from "./../../../../../../shared/ide-error/ide-error";
 import { ViewRegistry } from "./../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
-import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../../../../component/view";
+import { View, ViewMetadata, IViewUserStyleData } from "../../../../../component/view";
 import { ProjectManagerCategoryView as CategoryView } from "./category-view/category-view";
-import { ProjectManagerActionsView as ActionsView } from "./actions-view/actions-view";
-import { ProjectManagerMenuView as MenuView } from "./menu-view/menu-view";
+import { ActionsView } from "./../../../../../common-views/actions-view/actions-view";
 import { IProjectManagerElementData } from "../../../project-manager";
 
 import * as _ from "lodash";
@@ -48,13 +47,12 @@ export class ProjectManagerAppInstanceView extends View {
 
     private renderData: any;
     private actions: ActionsView;
-    private menu: MenuView;
     private categories: Array<CategoryView>;
     private constructor(
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         data: any
     ) {
@@ -74,25 +72,37 @@ export class ProjectManagerAppInstanceView extends View {
         this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#project-folding-"+this.id);
         this.foldingView.setPFSelector("#folding-app-instance-categories-"+this.id);
 
-        this.initElem("actions", data.meta.actions);
+        this.initActions(data.meta.actions);
+        
         this.initElem("menu", data.meta.actions);
         this.categories = new Array<CategoryView>();
         _.forEach(data.meta.categories, (category) => {
             category.isSubCategory = false;
             category.nesting = 1;
-            let categoryIndex: number = data.project.categories.map(e => e.type).indexOf(category.type);
-            assert(categoryIndex >= 0);
+            
             let categView = <CategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create (
                 this.parent,
                 this.categoriesViewSelector,
                 {
                     "meta": category,
-                    "project": data.project.categories[categoryIndex]
+                    "project": data.project,
+                    "path": "/"
                 }
             );
             categView.clearSelectorArea = false;
             this.categories.push(categView);
         });
+    }
+
+    private initActions(data) {
+        if (data.length > 0) {
+            this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(
+                this.parent,
+                "#app-instance-actions-"+this.id,
+                [ {selector: ".actions-view-title-fa", styles: { css: { color: "white" } }} ],
+                { "actions": data }
+            );
+        }
     }
 
     private initElem (type: string, data: any): void {
@@ -125,14 +135,57 @@ export class ProjectManagerAppInstanceView extends View {
         _.forEach(this.categories, (category) => {
             category.render();
         });
+
+        //bootstrap adds hidden in overflow which destroys z-index in dropdown menu
+        $("#folding-app-instance-categories-"+this.id).css("overflow", "");
     }
 
     public registerEvents(): void {
-        this.attachEvents({
-            eventType: "contextmenu",
-            selector: ".project-manager-app-instance-info-actions-area",
-            handler: (e) => this.menu.onRightClick(e)
-        });
+        this.attachEvents(
+            {
+                eventType: "contextmenu",
+                selector: ".project-manager-app-instance-info-actions-area",
+                handler: (evt) => {
+                    evt.preventDefault();
+                    this.actions.open(evt);
+                }
+            },
+            {
+                eventType: "click",
+                selector: ".project-manager-app-instance-info-actions-area",
+                handler: (evt) => {
+                    if (!this.actions.isOnTarget(evt.target)) {
+                        if(this.foldingView) {
+                            this.foldingView.onClick();
+                        }
+                    }
+                }
+            },
+            {
+                eventType: "mouseover",
+                selector: ".project-manager-app-instance-info-actions-area",
+                handler: (evt) => {
+                    //TODO: check if functionality of actions hidden is enable
+                    if (this.actions) {
+                        this.actions.show();
+                    }
+                    //TODO: check if mouseover changes colour in current domain meta and set respective style
+                    $("#project-manager-app-instance-info-"+this.id).css("background-color", "rgb(117, 115, 115)");
+                }
+            },
+            {
+                eventType: "mouseout",
+                selector: ".project-manager-app-instance-info-actions-area",
+                handler: (evt) => {
+                    //check if functionality of actions hidden is enable
+                    if (this.actions) {
+                        this.actions.hide();
+                    }
+                    //check if mouseover changes colour in current domain meta and set respective style
+                    $("#project-manager-app-instance-info-"+this.id).css("background-color", "rgb(80, 80, 80)");
+                }
+            }
+        );
     }
 
     public setStyle(): void {
@@ -151,8 +204,8 @@ export class ProjectManagerAppInstanceView extends View {
         return this.categories.map(cat=>cat.id).indexOf(ids.shift())["removeElement"](ids);
     }
 
-    public addElement(path: string, elementData: IProjectManagerElementData): void {
-        let ids = path.split("$");
-        this.categories.map(cat=>cat.id).indexOf(ids.shift())["addElement"](ids, elementData);
+    public addElement(element: IProjectManagerElementData): void {
+        let ids = element.path.split("/");
+        this.categories.map(cat=>cat.id).indexOf(ids.shift())["addElement"](ids, element);
     }
 }

@@ -1,6 +1,6 @@
 import MenuItemTmpl from "./templates/menu-item.tmpl";
 import { MenuItemLeafData } from "../menu";
-import { View, ViewMetadata, IViewEventRegistration, IViewStyleData } from "../../../../component/view";
+import { View, ViewMetadata, IViewEventRegistration, IViewUserStyleData } from "../../../../component/view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { ComponentsCommunication } from "./../../../../component/components-communication";
 import { IDEError } from "../../../../../shared/ide-error/ide-error";
@@ -17,7 +17,7 @@ export class MenuViewItem extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         private menuElem: MenuItemLeafData
     ) {

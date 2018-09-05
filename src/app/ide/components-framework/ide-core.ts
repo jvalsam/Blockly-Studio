@@ -16,6 +16,7 @@ import {
   DataLoader
 } from "./holders";
 
+import { DomainLibsHolder } from "../domain-manager/domain-libs-holder";
 import { ComponentsBridge } from "./component/components-bridge";
 
 import { ComponentRegistry } from "./component/component-entry";
@@ -34,6 +35,7 @@ export class IDECore {
     FunctionsHolder.initialize();
     RequiredFunctionsHolder.initialize();
     ComponentLoader.initialize();
+    DomainLibsHolder.initialize();
 
     ComponentRegistry.initialize();
     ComponentsBridge.initialize();

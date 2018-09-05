@@ -1,0 +1,47 @@
+<% if (isParentRow) { %>
+    <div class="col-12 box-label-container <%= type %>" style="border: solid 2px aliceblue;">
+        <div class="row">
+                <!-- <div class="col-1"></div> -->
+<% } else { %>
+    <div class="row box-label-container <%= type %>" style="border: solid 2px aliceblue;">
+<% } %>
+        <div class="col">
+            <div class="row box-label-header-area">
+                <% if(hasFoldSpace) { %>
+                <div class="col-1" id="folding-area-<%= id %>">
+                    <!-- injected by the class view -->
+                </div>
+                <% } %>
+                <div class="col-10 box-label-header-info-area">
+                    <div class="row">
+                        <div class="col-1 box-label-img-area">
+                                <% if(typeof(img)!== 'undefined') { %>
+                                    <% if (typeof(img.value.fa) !== 'undefined') { %>
+                                        <i class="fa <%= img.value.fa %> box-label-img-<%= type %>"></i>
+                                    <% } else { %>
+                                        <img class="box-label-img-<%= type %>" src="<%= img.value.path %>" />
+                                    <% } %>
+                                <% } %>
+                        </div>
+                        <div class="col-10 box-label-text-area">
+                            <%= title.value.text %>
+                        </div>
+                        <div class="col-1 box-label-state-area" id="box-label-state-<%= id %>">
+                            <!-- injected by the class view -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1" id="actions-btn-area-<%= id %>">
+                    <!-- injected by the class view -->
+                </div>
+            </div>
+            <div class="row box-elements-view-area" id="box-elements-<%= id %>" style="background-color: #dad9d9; color:black;">
+            
+            </div>
+        </div>
+<% if (isParentRow) { %>
+    </div>
+</div>
+<% } else { %>
+</div>
+<% } %>

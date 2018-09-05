@@ -6,7 +6,7 @@ import {
 } from "../../../component/component-view";
 import { ComponentViewElement } from "../../../component/component-view";
 import { IDEUIComponent } from "../../../component/ide-ui-component";
-import { IViewStyleData } from "../../../component/view";
+import { IViewUserStyleData } from "../../../component/view";
 
 @ComponentViewMetadata({
     name: "ToolbarView",
@@ -20,7 +20,7 @@ export class ToolbarView extends ComponentView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         selector: string
     ) {
         super(parent, name, templateHTML, style, selector);

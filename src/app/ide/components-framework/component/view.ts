@@ -31,10 +31,6 @@ export interface IViewUserStyleData {
     }
 }
 
-export interface IViewStyleData {
-    elements: Array<IViewUserStyleData>;
-}
-
 export interface IViewRegisterStyleData {
     system ?: string;
     user ?: Array<IViewUserStyleData> | string;
@@ -66,7 +62,7 @@ export abstract class View {
         protected parent: IDEUIComponent,
         public readonly name: string,
         protected readonly _templateHTML: string,
-        protected _style: IViewStyleData,
+        protected _styles: Array<IViewUserStyleData>,
         protected _selector: string,
         private _clearSelectorArea: boolean = true
     ) {
@@ -80,9 +76,21 @@ export abstract class View {
             this._id = this.name + (View.numOfViews++);
         }
         this._template = _.template(this._templateHTML);
+
+        if (!this._styles) {
+            this._styles = [];
+        }
+        else {
+            let styles = [];
+            _.forEach(this._styles, (style) => {
+                styles.push($.extend(true, {}, style));
+            });
+            this._styles = styles;
+        }
     }
 
     get selector (): string { return this._selector; }
+    get type (): string { return this["_type"]; }
 
     get clearSelectorArea (): boolean { return this._clearSelectorArea; }
     set clearSelectorArea (csa: boolean) { this._clearSelectorArea = csa; }
@@ -148,16 +156,21 @@ export abstract class View {
     public abstract render(callback?: Function): void;
     public abstract registerEvents(): void;
 
-    public set userStyle (data: IViewUserStyleData) {
-        this._style.elements[this._style.elements.map(x=>x.selector).indexOf(data.selector)].styles = data.styles;
+    public userStyle (data: IViewUserStyleData) {
+        let index = this._styles.map(x=>x.selector).indexOf(data.selector);
+        this._styles[index].styles = data.styles;
     }
 
-    public get styles (): Array<IViewStyleData> {
-        return this.styles;
+    public userStyles (data: Array<IViewUserStyleData>) {
+        _.forEach(data, (style) => this.userStyle(style) );
     }
 
-    public set styles (styles: Array<IViewStyleData>) {
-        this.styles = styles;
+    public get styles (): Array<IViewUserStyleData> {
+        return this._styles;
+    }
+
+    public set styles (styles: Array<IViewUserStyleData>) {
+        this._styles = styles;
     }
 
     private applyStyle (data: IViewUserStyleData): void {
@@ -179,16 +192,16 @@ export abstract class View {
     }
 
     private applyUserStyles(): void {
-        _.forEach(this._style.elements, (data) => this.applyStyle(data));
+        this._styles.forEach((data)=> this.applyStyle(data));
     }
 
     public updateUserStyle(style: IViewUserStyleData): void {
-        let index = this._style.elements.map(x=>x.selector).indexOf(style.selector);
-        this._style.elements[index].styles = style.styles;
+        let index = this._styles.map(x=>x.selector).indexOf(style.selector);
+        this._styles[index].styles = style.styles;
     }
 
-    public updateUserStyles(style: Array<IViewUserStyleData>): void {
-        this._style.elements = style;
+    public updateUserStyles(styles: Array<IViewUserStyleData>): void {
+        this._styles = styles;
         this.applyUserStyles();
         this.attachTmplEl();
     }
@@ -273,7 +286,7 @@ export abstract class ModalView extends View {
         protected parent: IDEUIComponent,
         public readonly name: string,
         protected readonly _templateHTML: string,
-        styles: IViewStyleData
+        styles: Array<IViewUserStyleData>
     ) {
         super(parent, name, _templateHTML, styles, ".modal-platform-container");
     }

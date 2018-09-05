@@ -6,7 +6,7 @@ import {
     MenuElem
 } from "../menu";
 import { IDEError } from "./../../../../../shared/ide-error/ide-error";
-import { View, ViewMetadata, IViewStyleData } from "../../../../component/view";
+import { View, ViewMetadata, IViewUserStyleData } from "../../../../component/view";
 import { ViewRegistry } from "../../../../component/registry";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 
@@ -52,7 +52,7 @@ export class MenuAggregateViewItem extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         private menuItem: MenuItemData
     ) {

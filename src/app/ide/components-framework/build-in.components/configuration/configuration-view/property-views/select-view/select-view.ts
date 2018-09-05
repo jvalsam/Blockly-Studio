@@ -1,5 +1,5 @@
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
-import { ViewMetadata, IViewStyleData } from "../../../../../component/view";
+import { ViewMetadata, IViewUserStyleData } from "../../../../../component/view";
 import { IPropertyData, PropertyView } from "../property-view";
 import { FontView } from "../font-view/font-view";
 
@@ -37,7 +37,7 @@ export class SelectView extends PropertyView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         data: any
     ) {

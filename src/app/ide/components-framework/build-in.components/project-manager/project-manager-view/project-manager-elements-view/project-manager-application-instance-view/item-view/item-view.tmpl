@@ -1,10 +1,13 @@
-<div class="col-12 item-view-area">
-    <div class="row item-header-area">
+<div class="col-12 item-view-area" style="border-left: solid 2px aliceblue;">
+    <div class="row item-header-area" id="project-manager-item-<%= id %>"
+     style="border: solid 2px aliceblue; border-top: solid 1px aliceblue; background-color: rgb(218, 217, 217); padding-top: 6px; padding-bottom:6px;">
         <% if(hasChildren) { %>
-        <div class="col-1 item-folding-view-area" id="item-folding-<%= id %>"></div>
+        <div class="col-1 item-folding-view-area" id="item-folding-<%= id %>" style="margin-left: <%= nesting * 15 %>px;"></div>
+        <% } else { %>
+            <div style="margin-left: <%= nesting * 15 %>px;"></div>
         <% } %>
-        <div class="col-10 item-info-area">
-            <div class="row">
+        <div class="col-9 item-info-area">
+            <div class="row project-manager-item-header-area">
                 <div class="col-1 item-icon-view-area">
                         <% if(typeof(renderParts.img)!== 'undefined') { %>
                             <% if (typeof(renderParts.img.value.fa) !== 'undefined') { %>
@@ -23,7 +26,10 @@
                 <% } %>
             </div>
         </div>
-        <div class="col-1 item-actions-view-area"></div>
+        <% if(!hasChildren && nesting <= 2) { %>
+            <div class="col-1"></div>
+        <% } %>
+        <div class="col-1 item-actions-view-area" id="item-actions-view-<%= id %>"></div>
     </div>
     <% if(hasChildren) { %>
     <div class="row item-children-view-area" id="item-children-<%= id %>" style="background-color: #dad9d9; color:black;">

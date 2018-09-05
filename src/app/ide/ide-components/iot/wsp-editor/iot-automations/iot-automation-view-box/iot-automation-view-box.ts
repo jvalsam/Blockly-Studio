@@ -1,7 +1,7 @@
 
 /// <reference path="../../../../../../../../node.d.ts"/>
 import AutomationViewBoxTmpl from "./iot-automation-view-box.tmpl";
-import { View, ViewMetadata, IViewStyleData } from "../../../../../components-framework/component/view";
+import { View, ViewMetadata, IViewUserStyleData } from "../../../../../components-framework/component/view";
 import { IDEUIComponent } from "../../../../../components-framework/component/ide-ui-component";
 import { Automation } from "../../../application/automation"
 
@@ -14,7 +14,7 @@ export class IoTAutomationViewBox extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         private automation: Automation
     ) {

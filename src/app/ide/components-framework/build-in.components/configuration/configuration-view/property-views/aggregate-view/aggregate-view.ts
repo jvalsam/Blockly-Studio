@@ -1,6 +1,6 @@
 import { IDEError } from "../../../../../../shared/ide-error/ide-error";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
-import { ViewMetadata, IViewStyleData } from "../../../../../component/view";
+import { ViewMetadata, IViewUserStyleData } from "../../../../../component/view";
 import { PropertyView, IPropertyData, TypeToNameOfPropertyView } from "../property-view";
 import { ViewRegistry } from "../../../../../component/registry";
 import * as _ from "lodash";
@@ -41,7 +41,7 @@ export class AggregateView extends PropertyView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         data: any
     ) {

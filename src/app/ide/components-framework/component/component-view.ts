@@ -3,7 +3,7 @@ import {
     View,
     IViewElementData,
     IViewEventRegistration,
-    IViewStyleData,
+    IViewUserStyleData,
     IViewElement
 } from "./view";
 import { IDEError } from "../../shared/ide-error/ide-error";
@@ -17,11 +17,11 @@ export abstract class ComponentViewElement extends View {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         selector: string,
         protected renderData: any = {},
         protected eventRegData: Array<IViewEventRegistration> = new Array<IViewEventRegistration>(),
-        protected styleData: Array<IViewStyleData> = new Array<IViewStyleData>()
+        protected styleData: Array<Array<IViewUserStyleData>> = new Array<Array<IViewUserStyleData>>()
     ) {
         super(parent, name, templateHTML, style, selector);
     }
@@ -52,7 +52,7 @@ export abstract class ComponentViewElement extends View {
     }
 
     public setStyle(): void {
-        _.forEach(this.styleData, (style: IViewStyleData) => {
+        _.forEach(this.styleData, (style: Array<IViewUserStyleData>) => {
             
         });
     }
@@ -88,7 +88,7 @@ export class ComponentView extends ComponentViewElement {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         selector: string,
         mainViews: Array<IComponentViewDataElement> = new Array<IComponentViewDataElement>(),
         menuViews: { [category: string/*MenuCategory*/]: Array<IComponentViewDataElement> } =

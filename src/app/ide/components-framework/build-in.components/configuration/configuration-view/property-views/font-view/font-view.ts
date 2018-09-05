@@ -7,7 +7,7 @@ import { ISelectData } from "../select-view/select-view";
 import { ViewRegistry } from "../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { IAggregateData, AggregateView } from "./../aggregate-view/aggregate-view";
-import { ViewMetadata, IViewStyleData } from "./../../../../../component/view";
+import { ViewMetadata, IViewUserStyleData } from "./../../../../../component/view";
 import { PropertyView, PropertyType, IPropertyData, StyleObjectToString } from "../property-view";
 
 const font_family_values: Array<string> = [
@@ -62,7 +62,7 @@ export class FontView extends AggregateView {
         parent: IDEUIComponent,
         name: string,
         templateHTML: string,
-        style: IViewStyleData,
+        style: Array<IViewUserStyleData>,
         hookSelector: string,
         data: any
     ) {

@@ -1,9 +1,12 @@
 <div class="actions-view-container">
-    <span>
-        <a class="btn actions-view-title target-<%= id %>" href="#" id="dropdownMenu<%= id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span id="test-<%= id %>">
+        <a class="btn actions-view-title target-<%= id %>" href="#" id="dropdownMenu<%= id %>"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+            style="padding-top: 0px; padding-bottom:0px;"
+        >
             <i class="fa fa-ellipsis-v actions-view-title-fa" id="target-<%= id %>" aria-hidden="true"></i>
         </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenu<%= id %>">
+        <div class="dropdown-menu" id="dropdown-menu-<%= id %>" aria-labelledby="dropdownMenu<%= id %>">
             <% _.forEach(actions, (action) => { %>
                 <a class="dropdown-item"
                     id="<%= action.title.replace(/ /g, '') %>_<%= id %>"

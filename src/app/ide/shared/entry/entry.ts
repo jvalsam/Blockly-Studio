@@ -46,47 +46,31 @@ export class Entry<T> {
             instArg[0].selector && instArg[0].styles;
   }
   private includesTypeOfView (instArg) {
-    return typeof instArg === "object" && instArg.type;
+    return typeof instArg === "object" && instArg._atype;
   }
 
   public create(parent: IDEUIComponent, ...instArgs: Array<any>): T {
     let selector = instArgs.shift();
+    
     let style = this._style;
     if (this.isInstArgStyle(instArgs[0])) {
       style.user = instArgs.shift();
     }
 
-    let newInst = null;
-    let type = "no_type";
-
+    let type = "default";
     if (this.includesTypeOfView(instArgs[0])) {
       type = instArgs.shift();
-      newInst = new (this._creationFunc) (
-        parent,
-        this.name,
-        this._html,
-        {
-          elements: style.user
-        },
-        selector,
-        type,
-        ...this._args,
-        ...instArgs
-      );
     }
-    else {
-      newInst = new (this._creationFunc) (
-        parent,
-        this.name,
-        this._html,
-        {
-          elements: style.user
-        },
-        selector,
-        ...this._args,
-        ...instArgs
-      );
-    }
+
+    const newInst = new (this._creationFunc) (
+      parent,
+      this.name,
+      this._html,
+      style.user,
+      selector,
+      ...this._args,
+      ...instArgs
+    );
 
     newInst["_type"] = type;
     newInst["_shared"] = this;
