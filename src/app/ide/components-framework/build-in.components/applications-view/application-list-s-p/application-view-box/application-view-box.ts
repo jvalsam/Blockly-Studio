@@ -24,7 +24,7 @@ export class ApplicationViewBox extends View {
         super(parent, name, templateHTML, style, hookSelector);
         this.application.id = this.id;
         this.application.lastModified = new Date(this.application.lastModified).toUTCString();
-        var data = { actions: [] };
+        var data = { actions: [], concerned: this };
         _.forEach(this.application.actions, (action) => {
             data.actions.push({
                 title: action,

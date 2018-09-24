@@ -8,8 +8,10 @@
 import { IDEUIComponent } from "../../components-framework/component/ide-ui-component";
 import { IDEError } from "../../shared/ide-error/ide-error";
 import { IViewRegisterStyleData } from './../../components-framework/component/view';
+import { LoadStyle, UnloadStyle } from './../style-loader';
 
 import * as _ from "lodash";
+
 
 export class Entry<T> {
   protected _refTypesCounter: { [type: string]: number };
@@ -83,14 +85,7 @@ export class Entry<T> {
     }
 
     if (this._refTypesCounter[type] === 1 && style.system) {
-      // create css element for the view
-      let css = document.createElement("style");
-      css.setAttribute("id", "stylesheet_"+this.name+"_"+type);
-      css.setAttribute("type", "text/css");
-      css.innerHTML = style.system;
-
-      // pin css in DOM
-      document.getElementsByTagName('head')[0].appendChild(css);
+      LoadStyle(this.name, type, style.system);
     }
     return newInst;
   }
@@ -108,7 +103,7 @@ export class Entry<T> {
     --this._refTypesCounter[inst["_type"]];
 
     if (this._refTypesCounter[inst["_type"]] === 0 && this._style.system) {
-      document.getElementById("stylesheet_"+this.name+"_"+inst["_type"]).remove();
+      UnloadStyle(this.name, inst["_type"]);
     }
   }
 }

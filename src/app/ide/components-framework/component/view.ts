@@ -297,7 +297,7 @@ export abstract class ModalView extends View {
         );
     }
 
-    private close(): void {
+    protected close(): void {
         $("#" + this.id + " .close").click();
     }
 }

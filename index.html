@@ -7,8 +7,22 @@
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.5/themes/default/style.min.css" />
         <link href="app.css" rel="stylesheet">
         <script src="/dist/bundle.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+            document.onErrorDialog = () =>
+                $( function() {
+                  $( "#error_dialog" ).dialog({
+                        draggable: false,
+                        modal: true,
+                        dialogClass: 'no-close error-dialog'
+                    }).prev(".ui-dialog-titlebar").css("background","red");;
+                } );
+        </script>
     </head>
     <body>
+        <div id="error_dialog" title="Platform Error Dialog">
+        </div>
         <div class="modal-platform-container">
         </div>
         <!-- <div class="login-area">

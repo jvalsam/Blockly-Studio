@@ -9,6 +9,10 @@ import { IDEErrorView } from "./ide-error-view";
 import { IDEWarningView } from "./ide-warning-view";
 import { ViewRegistry } from "../../components-framework/component/registry";
 import { MODAL_SELECTOR } from "../data";
+import * as $ from "jquery";
+import jquery_ui_css from "../../../../../libs/jquery-ui.sycss";
+import { LoadStyle } from './../style-loader';
+
 
 class _IDEError {
     private errorView: IDEErrorView;
@@ -31,9 +35,12 @@ class _IDEError {
             this.warningView = <IDEWarningView>ViewRegistry.getEntry("IDEWarningView").create(null, MODAL_SELECTOR);
         }
         window.onerror = function (message, source, lineno, colno, error) {
+            LoadStyle("jquery_ui", "third_party", jquery_ui_css);
             let msg = "Error:\nMessage: " + message + "\source: " + source +
-                "\nlineno: " + lineno + "\ncolno: " + colno + "\nerror: " + error;
-            alert(msg);
+                 "\nlineno: " + lineno + "\ncolno: " + colno + "\nerror: " + error;
+            $("#error_dialog").empty();
+            $("#error_dialog").append("<p>"+msg+"</p>");
+            document["onErrorDialog"]();
         };
     }
 

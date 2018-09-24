@@ -14,6 +14,16 @@ import { ExportedFunction } from "../../component/component-loader";
 // }
 // export { EditorRenderState };
 
+export interface INewItemData {
+    name: string;
+    imgPath?: string;
+    mission: string;
+}
+
+export interface IEditorSrcData {
+
+}
+
 export abstract class Editor extends IDEUIComponent {
     private _isRendered: boolean;
 
@@ -32,6 +42,8 @@ export abstract class Editor extends IDEUIComponent {
 
     public abstract copy(): void;
     public abstract paste(): void;
+
+    // public create_src(data: INewItemData): string;
 
     public get isRendered(): boolean {
         return this._isRendered;

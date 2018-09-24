@@ -23,6 +23,7 @@ export interface ComponentEntryInfo {
 export class ComponentEntry extends Entry<Component> {
   private _signalList: Array<string>;
   private _signalListensList: Array<ComponentSignal>;
+  private _missions: Array<string>;
 
   constructor(
     private readonly _compInfo?: ComponentEntryInfo,
@@ -58,6 +59,22 @@ export class ComponentEntry extends Entry<Component> {
   public updateConfigValues(values: any): void {
     this._creationFunc.setConfigProperties(values);
   }
+  
+  ///// below methods are for visual editors only //////
+  
+  public setMissions(missions: Array<string>) {
+    this._missions = missions;
+  }
+
+  public addMission(mission: string) {
+    this._missions.push(mission);
+  }
+
+  public removeMission(mission: string) {
+    _.remove(this._missions, function(el) { return el === mission; } );
+  }
+
+  ///// above methods are for visual editors only //////
 
   public isUnique(): boolean { return this._isUnique; }
 

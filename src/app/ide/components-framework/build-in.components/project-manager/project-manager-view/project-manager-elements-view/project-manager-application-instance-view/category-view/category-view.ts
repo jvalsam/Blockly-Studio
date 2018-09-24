@@ -11,6 +11,7 @@ import { ViewRegistry } from "../../../../../../component/registry";
 import { ProjectManagerItemView } from "../item-view/item-view";
 
 import { PageFoldingView } from './../../../../../../common-views/page-folding-view/page-folding-view';
+import { ProjectManagerElementView } from "../project-manager-element-view";
 
 interface IMenuItem {
     title: string;
@@ -110,20 +111,17 @@ interface JSTreeMenuData {
     name: "ProjectManagerCategoryView",
     templateHTML: CategoryViewTmpl
 })
-export class ProjectManagerCategoryView extends View {
-    private path: string;
+export class ProjectManagerCategoryView extends ProjectManagerElementView {
     private readonly menuSel;
     private readonly actionsSel;
     private readonly elemsSel;
     private info: ICategoryMetaData;
-    private actions: ActionsView;
     private menu: MenuView;
 
     // only for category includes categories
     private elements?: Array<View>;
     // only for category not include categories
     private items: Array<ProjectManagerItemView>;
-    private foldingView: PageFoldingView;
 
     constructor(
         parent: IDEUIComponent,
@@ -133,8 +131,7 @@ export class ProjectManagerCategoryView extends View {
         hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, style, hookSelector);
-        this.path = data.path + data.meta.type + "/";
+        super(parent, name, templateHTML, style, hookSelector, data.meta, data.path + data.meta.type + "/");
         data.meta.isLeaf = ("categories" in data.meta) && data.meta.categories.length > 0;
         data.meta.id = this.id;
         this.menuSel = "#category-menu-"+this.id;
@@ -147,8 +144,16 @@ export class ProjectManagerCategoryView extends View {
         });
         this.info.renderParts = renderParts;
         
-        this.initFolding();
-        this.initActions(data.meta.actions);
+        let faType = this.info.isSubCategory ? "angle" : "caret";
+        this.initFolding(
+            "#category-folding-"+this.id,
+            "#category-elements-"+this.id,
+            { plus: "fa fa-"+faType+"-right", minus: "fa fa-"+faType+"-down" }
+        );
+        this.initActions(
+            "#category-actions-"+this.id,
+            [ {selector: ".actions-view-title-fa", styles: { css: { color: "white" } }} ]
+        );
         //TODO: fix right click menu
 
         if (this.info.isLeaf) {
@@ -161,26 +166,15 @@ export class ProjectManagerCategoryView extends View {
         }
     }
 
-    private initFolding() {
-        this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#category-folding-"+this.id);
-        this.foldingView.setPFSelector("#category-elements-"+this.id);
-        this.foldingView.setFoldIcon(
-            this.info.isSubCategory ?
-                { plus: "fa fa-angle-right", minus: "fa fa-angle-down" } :
-                { plus: "fa fa-caret-right", minus: "fa fa-caret-down" }
-        );
-    }
-
-    private initActions(data:any) {
-        if (data.length > 0) {
-            this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(
-                this.parent,
-                "#category-actions-"+this.id,
-                [ {selector: ".actions-view-title-fa", styles: { css: { color: "white" } }} ],
-                { "actions": data }
-            );
-        }
-    }
+    // private initFolding() {
+    //     this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#category-folding-"+this.id);
+    //     this.foldingView.setPFSelector("#category-elements-"+this.id);
+    //     this.foldingView.setFoldIcon(
+    //         this.info.isSubCategory ?
+    //             { plus: "fa fa-angle-right", minus: "fa fa-angle-down" } :
+    //             { plus: "fa fa-caret-right", minus: "fa fa-caret-down" }
+    //     );
+    // }
 
     private initCategories (data: any): void {
         this.elements = new Array<View>();

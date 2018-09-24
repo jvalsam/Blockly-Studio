@@ -16,6 +16,7 @@ print('Starts Components Bridge Codegeneration...')
 ProjectPath = './src/app/ide/'
 
 DecoratorsComponentsList = [
+    '@PlatformEditorMetadata', '@PlatformEditorMetadata(', '@PlatformEditorMetadata({',
     '@UIComponentMetadata', '@UIComponentMetadata(', '@UIComponentMetadata({',
     '@ComponentMetadata', '@ComponentMetadata(', '@ComponentMetadata({',
     '@ViewMetadata', '@ViewMetadata(', '@ViewMetadata({',

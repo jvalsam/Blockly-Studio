@@ -38,23 +38,22 @@ export interface IUIComponentData extends IComponentData {
     componentView: string;
 }
 
+export interface ΙEditorData extends IUIComponentData {
+    missions?: Array<string>;
+}
+
 function isIUIComponentData(data: IComponentData | IUIComponentData): data is IUIComponentData {
     return (<IUIComponentData>data).componentView !== undefined;
 }
 
-function checkIDEComponentValidity(name: string, create: Function, data: IComponentData | IUIComponentData): void {
+
+function checkIDEComponentValidityHelper(name: string, create: Function, data: IComponentData | IUIComponentData, funcNames: Array<string>=[]): void {
     if (ComponentRegistry.hasEntry(name)) {
         IDEError.raise(
             "DeclareIDEComponent",
             "Component " + name + " is already defined!"
         );
     }
-    if (!data.configDef || name === "IDEComponent" || name === "IDEUIComponent") {
-        return;
-    }
-    let funcNames: Array<string> = [
-        "onChangeConfig"
-    ];
     _.forEach (funcNames, (funcName:string) => {
         if (!create[funcName] && !create.prototype[funcName]) {
             IDEError.raise(
@@ -63,6 +62,27 @@ function checkIDEComponentValidity(name: string, create: Function, data: ICompon
             );
         }
     });
+}
+
+function checkIDEComponentValidity(name: string, create: Function, data: IComponentData | IUIComponentData): void {
+    let funcNames = [];
+    if (data.configDef && !(name === "IDEComponent" || name === "IDEUIComponent")) {
+        funcNames.push("onChangeConfig");
+    }
+    checkIDEComponentValidityHelper(name, create, data, funcNames);
+}
+
+function checkIDEEditorValidity(name: string, create: Function, data: IComponentData | IUIComponentData): void {
+    let funcNames = [];
+    if (data.configDef) {
+        funcNames.push("onChangeConfig");
+    }
+    if (data["missions"]) {
+        _.forEach(data["missions"], (mission) => {
+                funcNames.push("create"+mission);
+        });
+    }
+    checkIDEComponentValidityHelper(name, create, data, funcNames);
 }
 
 function configPropertiesInst (configData): Object {
@@ -104,34 +124,43 @@ function declareComponentConfigProperties(create: Function, configData: any): vo
     };
 }
 
+function registerIDEComponent (name: string, data: IComponentData | IUIComponentData, create: Function) {
+    declareComponentConfigProperties(create, data.configDef);
+    BlackboardComponentRegistry.createBlackboard(create.name);
+    var initData = (data.initData) ? data.initData : [];
+
+    var compEntry: ComponentEntry = ComponentRegistry.createEntry(
+        create.name,
+        data.description,
+        data.version,
+        create,
+        data.initData,
+        data.menuDef,
+        data.configDef,
+        data.isUnique
+    );
+
+    if (isIUIComponentData(data)) {
+        initData = [(<IUIComponentData>data).componentView, ...initData];
+    }
+    compEntry.setArgs(initData);
+    return compEntry;
+}
+
 function declareIDEComponentHelper(data: IComponentData | IUIComponentData) {
     return (create: Function) => {
         let name: string = create["name"];
-
         checkIDEComponentValidity(name, create, data);
+        registerIDEComponent(name, data, create);
+    };
+}
 
-        declareComponentConfigProperties(create, data.configDef);
-
-        BlackboardComponentRegistry.createBlackboard(create.name);
-
-        var initData = (data.initData) ? data.initData : [];
-
-        var compEntry: ComponentEntry = ComponentRegistry.createEntry(
-            create.name,
-            data.description,
-            data.version,
-            create,
-            data.initData,
-            data.menuDef,
-            data.configDef,
-            data.isUnique
-        );
-
-        if (isIUIComponentData(data)) {
-            initData = [(<IUIComponentData>data).componentView, ...initData];
-        }
-
-        compEntry.setArgs(initData);
+function declareIDEEditorHelper(data: ΙEditorData) {
+    return (create: Function) => {
+        let name: string = create["name"];
+        checkIDEEditorValidity(name, create, data);
+        let compEntry = registerIDEComponent(name, data, create);
+        compEntry.setMissions(data.missions);
     };
 }
 
@@ -143,6 +172,11 @@ export function ComponentMetadata(data: IComponentData) {
 // Used as decorator, declares IDEUIComponent
 export function UIComponentMetadata(data: IUIComponentData) {
     return declareIDEComponentHelper(data);
+}
+
+// Used as decorator, declares Platform Editor
+export function PlatformEditorMetadata(data: ΙEditorData) {
+    return declareIDEEditorHelper(data);
 }
 
 export function ComponentSignalKey(componentName: string, signal: string) {

@@ -6,14 +6,15 @@ import {
   ExportedSignal,
   ExportedFunction,
   RequiredFunction,
-  ListensSignal
+  ListensSignal,
+  PlatformEditorMetadata
 } from "../../components-framework/component/component-loader";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
 var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
 
-@UIComponentMetadata({
+@PlatformEditorMetadata({
   description: "VPL uses jigsaws",
   authors: [
     {
@@ -21,6 +22,11 @@ var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
       email: "jvalsam@ics.forth.gr",
       date: "October 2017"
     }
+  ],
+  missions: [
+    "IoTHandling",
+    "LogicExprIoT",
+    "General"
   ],
   componentView: "BlocklyView",
   menuDef: menuJson,
@@ -176,6 +182,20 @@ export class BlocklyVPL extends Editor {
   @ExportedFunction
   public onChangeConfig(values: any): void {
     alert("on change config data not developed yet in Blockly Component");
+  }
+  
+  // Missions of the Editor
+
+  public static createGeneral(): string {
+    return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
+  }
+
+  public static createLogicExprIoT(): string {
+    return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
+  }
+
+  public static createIoTHandling(): string {
+    return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
   }
 
 }

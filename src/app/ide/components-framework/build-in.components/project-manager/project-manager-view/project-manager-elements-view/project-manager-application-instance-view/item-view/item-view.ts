@@ -12,18 +12,15 @@ import { IProjectManagerElementData } from "../../../../project-manager";
 import { PageFoldingView } from './../../../../../../common-views/page-folding-view/page-folding-view';
 import { ActionsView } from './../../../../../../common-views/actions-view/actions-view';
 import { DomainLibsHolder } from './../../../../../../../domain-manager/domain-libs-holder';
-
+import { ProjectManagerElementView } from "../project-manager-element-view";
 
 @ViewMetadata({
     name: "ProjectManagerItemView",
     templateHTML: ItemViewTmpl
 })
-export class ProjectManagerItemView extends View {
-    private foldingView: PageFoldingView;
+export class ProjectManagerItemView extends ProjectManagerElementView {
     private systemID: string;
     private projectID: string;
-    private path: string;
-    private actions: ActionsView;
     private renderInfo;
     private state;
 
@@ -35,7 +32,7 @@ export class ProjectManagerItemView extends View {
         hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, style, hookSelector);
+        super(parent, name, templateHTML, style, hookSelector, data.meta, data.path + data.systemID + "/");
         this.systemID = data.item.systemID;
         this.projectID = data.projectID;
         this.path = data.path + data.systemID + "/";
@@ -51,18 +48,21 @@ export class ProjectManagerItemView extends View {
 
         if (data.meta.validChildren && data.meta.validChildren.length>0) {
             this.renderInfo.hasChildren = true;
-            this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#item-folding-"+this.id);
-            this.foldingView.setPFSelector("#item-children-"+this.id);
-            this.foldingView.setFoldIcon({ plus: "fa fa-caret-right", minus: "fa fa-caret-down" });
-            this.foldingView.userStyles ( [{
-                    "selector": ".page-folding-link-icon",
-                    "styles": {
-                        "css": {
-                            "color": "black"
-                        },
-                        "class": ["fa-lg"]
+            this.initFolding(
+                "#item-folding-"+this.id,
+                "#item-children-"+this.id,
+                { plus: "fa fa-caret-right", minus: "fa fa-caret-down" },
+                [
+                    {
+                        "selector": ".page-folding-link-icon",
+                        "styles": {
+                            "css": {
+                                "color": "black"
+                            },
+                            "class": ["fa-lg"]
+                        }
                     }
-                }]
+                ]
             );
         }
         else {
@@ -70,18 +70,15 @@ export class ProjectManagerItemView extends View {
             this.renderInfo.hasChildren = false;
         }
         
-        if (data.meta.actions.length > 0) {
-            this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(
-                this.parent,
-                "#item-actions-view-"+this.id,
-                [ {selector: ".actions-view-title-fa", styles: { css: { color: "black" } }} ],
-                { "actions": data.meta.actions }
-            );
-        }
-        else {
-            this.actions = null;
-        }
+        this.initActions(
+            "#item-actions-view-"+this.id,
+            [ {selector: ".actions-view-title-fa", styles: { css: { color: "black" } }} ]
+        );
 
+        this.initState(data);
+    }
+
+    private initState(data) {
         let stateIndex = data.meta.renderParts.map(x=>x.type).indexOf("state");
         if(stateIndex>-1) {
             let retrieveState = data.meta.renderParts[stateIndex].value.retrieve;

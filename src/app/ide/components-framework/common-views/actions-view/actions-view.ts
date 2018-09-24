@@ -6,10 +6,11 @@ import { View, ViewMetadata, IViewEventRegistration, IViewUserStyleData } from "
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import * as _ from "lodash";
 
-interface IEventData {
+export interface IEventData {
     type: string;
-    callback: string | Function;
+    action: string | Function;
     providedBy?: string;
+    mission: string;
 }
 
 interface IActionData {
@@ -35,7 +36,7 @@ export class ActionsView extends View {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
-        private data: { id:string, actions: Array<IActionData>, style?: {} }
+        private data: { id:string, actions: Array<IActionData>, style?: {}, concerned: any }
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         this.data.id = this.id;
@@ -48,12 +49,12 @@ export class ActionsView extends View {
                 events.push({
                     eventType: event.type,
                     selector: "#" + action.title.replace(/ /g, '') + "_" + this.id,
-                    handler: () => typeof event.callback === "string" ?
+                    handler: () => typeof event.action === "string" ?
                                         (event.providedBy === "Platform" ?
-                                            this.parent[event.callback]() :
-                                            this.parent["onOuterFunctionRequest"](event.providedBy, event.callback)
+                                            this.parent[event.action](this.data.concerned) :
+                                            this.parent["onOuterFunctionRequest"](event, this.data.concerned)
                                         ) :
-                                        event.callback()
+                                        event.action(this.data.concerned)
                 });
             });
         });
