@@ -291,6 +291,13 @@ export abstract class ModalView extends View {
         super(parent, name, _templateHTML, styles, ".modal-platform-container");
     }
 
+    protected abstract justRender();
+
+    public render(callback: Function) {
+        this.justRender();
+        callback();
+    }
+
     public open(): void {
         this.render(
             () => $("#" + this.id)["modal"]("show")

@@ -1,6 +1,7 @@
 import { PropertyType } from "./property-view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { View, IViewUserStyleData } from "../../../../component/view";
+import _ from "lodash";
 
 export type PropertyType =
     "number"    | "percentage" | "text" | "color" | "date" | "checkbox" | "file" | "image" | // input
@@ -110,4 +111,36 @@ export function StyleObjectToString(data: any): string {
             value += data.main;
     }
     return value;
+}
+
+function convertPart(type, value) {
+    switch(type) {
+        case "img":
+            return {
+                name: "Image:",
+                type: "Image",
+                description: "Select image of the item.",
+                value: {
+                    default: value.default.path
+                }
+            };
+        case "title":
+            return {
+                name: "Title:",
+                type: "text",
+                description: "Select title of the item.",
+                value: {
+                    default: value.default.text
+                }
+            };
+    }
+}
+export function RenderPartsToPropertyData (renderParts) {
+    let properties = [];
+    _.forEach(renderParts, (part) => {
+        if (part.selectedBy === "user") {
+            properties.push(convertPart(part.type, part.value));
+        }
+    });
+    return properties;
 }

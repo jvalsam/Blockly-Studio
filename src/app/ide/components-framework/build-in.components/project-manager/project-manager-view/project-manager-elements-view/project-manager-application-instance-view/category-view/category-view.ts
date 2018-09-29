@@ -166,16 +166,6 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         }
     }
 
-    // private initFolding() {
-    //     this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#category-folding-"+this.id);
-    //     this.foldingView.setPFSelector("#category-elements-"+this.id);
-    //     this.foldingView.setFoldIcon(
-    //         this.info.isSubCategory ?
-    //             { plus: "fa fa-angle-right", minus: "fa fa-angle-down" } :
-    //             { plus: "fa fa-caret-right", minus: "fa fa-caret-down" }
-    //     );
-    // }
-
     private initCategories (data: any): void {
         this.elements = new Array<View>();
         _.forEach(data.meta.categories, (category) => {

@@ -5,8 +5,8 @@
         {
             "name": "property name",
             "description": "description help of the property (optional)",
+            "type": "checkbox | text | number | date | color | select | font | percentage | Image | Aggregate(i.e. pair<name, value{type,default}>)",
             "value": {
-                "type": "checkbox | text | number | date | color | select | font | percentage | Image | Aggregate(i.e. pair<name, value{type,default}>)",
                 "values": [], // exist only in case of enum type
                 "default": "depends of value (optional)"
             }

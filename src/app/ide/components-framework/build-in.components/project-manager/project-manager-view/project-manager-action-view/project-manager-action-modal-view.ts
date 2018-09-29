@@ -8,6 +8,7 @@ import { assert } from './../../../../../shared/ide-error/ide-error';
 
 export class ProjectManagerActionModalView extends ModalView {
     private _formElements: { [name: string]: PropertyView };
+    private _state: number;
 
     constructor(
         protected parent: IDEUIComponent,
@@ -18,29 +19,43 @@ export class ProjectManagerActionModalView extends ModalView {
     ) {
         super(parent, name, _templateHTML, styles);
         this._formElements = {};
+        this._state = 0;
     }
 
     public render() {
         this.renderTmplEl(this.data);
-        _.forOwn(this.data.formElems, (view, key) => {
+        _.forOwn(this.data.dialogueElems[this._state].formElems, (view, key) => {
             this._formElements[key] = <PropertyView>ViewRegistry.getEntry(view.name).create(this.parent, ".project-manager-action-form-elements", view.data);
             this._formElements[key].clearSelectorArea = false;
             this._formElements[key].render();
         });
     }
 
+    private createEvtHandler (choice) {
+        switch (choice) {
+            case 'Cancel':
+                return () => this.onClose();
+            case 'Next':
+                return () => {
+                    ++this._state;
+
+                };
+            case 'Back':
+                return () => {
+                    --this._state;
+
+                };
+            default:
+                return () => this.parent["onModalChoiceAction"] (choice, this.getDataFormElements(), ()=>this.onClose());
+        }
+    }
     public registerEvents() {
         let events: Array<IViewEventRegistration> = [];
-        events.push({
-            eventType: "click",
-            selector: ".ts-btn-action-cancel",
-            handler: () => this.onClose()
-        });
         _.forEach(this.data.choices, (choice) => {
             events.push({
                 eventType: "click",
-                selector: ".ts-btn-action-"+choice,
-                handler: () => this.parent["onModalChoiceAction"] (choice, this.getDataFormElements(), ()=>this.onClose())
+                selector: ".ts-btn-action-"+_.toLower(choice),
+                handler: this.createEvtHandler(choice)
             });
         });
     }

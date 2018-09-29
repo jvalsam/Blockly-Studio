@@ -12,6 +12,10 @@ import { ProjectManagerView } from './project-manager-view/project-manager-view'
 import { IEventData } from "../../common-views/actions-view/actions-view";
 
 import * as _ from "lodash";
+import { ViewRegistry } from './../../component/registry';
+import { ModalView } from '../../component/view';
+import { ProjectManagerElementView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view';
+import { RenderPartsToPropertyData } from '../configuration/configuration-view/property-views/property-view';
 
 // initialize the metadata of the project manager component for registration in the platform
 ProjectManagerMetaDataHolder.initialize();
@@ -125,80 +129,150 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     // callback function of project manager view actions are provided by outer Components
-    private onOuterFunctionRequest (event: IEventData, data: any): void {
+    private onOuterFunctionRequest (event: IEventData, concerned: any): void {
         if (event.providedBy === "EditorManager") {
-            ComponentsCommunication.functionRequest(this.name, event.providedBy, "onRequestEditorAction", [event, data]);
+            ComponentsCommunication.functionRequest(this.name, event.providedBy, "onRequestEditorAction", [event, concerned]);
         }
         else {
-            ComponentsCommunication.functionRequest(this.name, event.providedBy, <string>event.action, [{ mission: event.mission }, data]);
+            let evtData = {
+                mission: event.mission
+            };
+            if (event.data) {
+                evtData["data"] = event.data;
+            }
+            ComponentsCommunication.functionRequest(this.name, event.providedBy, <string>event.action, [evtData, concerned]);
         }
     }
 
     @ExportedFunction
-    public onCreateNewProject(data): void {
+    public onCreateNewProject(event: IEventData, concerned: any): void {
         alert("onCreateNewProject not developed yet!");
         this._view["openProject"]();
     }
 
     @ExportedFunction
-    public onOpenProject(data): void {
+    public onOpenProject(event: IEventData, concerned: any): void {
         alert("onOpenProject not developed yet!");
     }
 
     @ExportedFunction
-    public onCloseAllProjects(): void {
+    public onCloseAllProjects(event: IEventData, concerned: any): void {
         alert("onCloseAllProjects not developed yet!");
         this._view["closeAllProjects"]();
     }
 
     @ExportedFunction
-    public onDeleteProject(data): void {
-        this.deleteProject(data.id);
-        this._view["closeProject"](data.id);
+    public onDeleteProject(event: IEventData, concerned: any): void {
+        this.deleteProject(concerned.id);
+        this._view["closeProject"](concerned.id);
     }
 
     @ExportedFunction
-    public onDeleteAllProjects(): void {
+    public onDeleteAllProjects(event: IEventData, concerned: any): void {
         alert("onDeleteAllProjects not developed yet!");
         this._view["closeAllProjects"]();
     }
 
     @ExportedFunction
-    public addProjectElement(data): void {
-        this._view["addElement"] (data.projectID, data.element);
+    public addProjectElement(event: IEventData, concerned: any): void {
+        this._view["addElement"] (concerned.projectID, concerned.element);
     }
 
     @ExportedFunction
-    public onRenameProject(data): void {
+    public onRenameProject(event: IEventData, concerned: any): void {
         alert("onRenameProject not developed yet!");
     }
 
     @ExportedFunction
-    public onShareProject(data): void {
+    public onShareProject(event: IEventData, concerned: any): void {
         alert("onShareProject not developed yet!");
     }
 
     @ExportedFunction
-    public onClickProjectProperties(data): void {
+    public onClickProjectProperties(event: IEventData, concerned: any): void {
         alert("onClickProjectProperties not developed yet!");
     }
 
     @ExportedFunction
-    public onCloseProject(data): void {
+    public onCloseProject(event: IEventData, concerned: any): void {
         alert("onCloseProject not developed yet!");
     }
 
-    @ExportedFunction
-    public onAddProjectElement (data): void {
-        alert("onAddProjectElement not developed yet!");
+    private createDialogueTitle(renderData, type) {
+        let index = renderData.map(x=>x.type).indexOf("title");
+        return (index >= 0) ? renderData[index].value.default.text : type;
+    }
+    private createDialogue (renderData, type, actions) {
+        return {
+            type: "independent",
+            title: "Create new "+this.createDialogueTitle(renderData, type),
+            formElems: RenderPartsToPropertyData(renderData),
+            actions: actions
+        };
     }
 
     @ExportedFunction
-    public onDeleteAllElements(data): void {
+    public onAddProjectElement (event: IEventData, concerned: ProjectManagerElementView): void {
+        let dialoguesData = [];
+        // specific element to select
+        if (event.data["type"]) {
+            let renderData = concerned.getChildElementRenderData(event.data["type"]);
+            dialoguesData.push(this.createDialogue(
+                renderData,
+                event.data["type"],
+                [
+                    { choice:"Cancel", providedBy:"self" },
+                    { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
+                ]
+            ));
+        }
+        // first dialogue choose type of element
+        else {
+            let types = concerned.getValidChildren();
+            // 1st dialogue choose item to create
+            dialoguesData.push({
+                type: "independent",
+                title: "Select type of item",
+                formElems: [{
+                    name: "Type",
+                    style: "",
+                    selected: types[0],
+                    values: types,
+                    type: "aggregate",
+                    renderName: true,
+                    indepedent: true
+                }],
+                actions: [
+                    { choice:"Cancel", providedBy:"self" },
+                    { choice: "Next", providedBy: "self" }
+                ]
+            });
+            let dialogues = [];
+            _.forEach(types, (type)=> {
+                dialogues.push(this.createDialogue(
+                    concerned.getChildElementRenderData(type),
+                    type,
+                    [
+                        { choice:"Back", providedBy:"self" },
+                        { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
+                    ]
+                ));
+            });
+            dialoguesData.push({
+                type: "depends_on_prv",
+                dialogues: dialogues
+            });
+        }
+        let modalActionView = <ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(this, dialoguesData);
+        modalActionView.open();
+    }
+
+    @ExportedFunction
+    public onDeleteAllElements(event: IEventData, concerned: any): void {
         
     }
 
-    public onClickMenuItem (event: IEventData, data): void {
+    public onClickMenuItem (event: IEventData, data: any): void {
         if (event.providedBy === "Platform") {
             this[<string>event.action] (data.itemId, data.projectId);
         }
@@ -207,8 +281,8 @@ export class ProjectManager extends IDEUIComponent {
         }
     }
 
-    public onRemoveElement(data): boolean {
-        return this._view["removeElement"] (data.projectId, data.elementId);
+    public onRemoveElement(event: IEventData, concerned: any): boolean {
+        return this._view["removeElement"] (concerned.projectId, concerned.elementId);
     }
 
     public onClickProjectElement(data): void {

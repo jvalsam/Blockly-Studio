@@ -12,9 +12,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary ts-btn-action-cancel" data-dismiss="modal">Cancel</button>
+                <!-- <button type="button" class="btn btn-secondary ts-btn-action-cancel" data-dismiss="modal">Cancel</button> -->
                 <% _.forEach(choices, (choice) => { %>
-                    <button type="button" class="btn btn-secondary ts-btn-action-<%= choice %>"><%= choice %></button>
+                    <button type="button" class="btn btn-secondary ts-btn-action-<%= _.toLower(choice) %> <%= choice==='Cancel'?'data-dismiss='modal'':'' %>"><%= choice %></button>
                 <% } %>
             </div>
         </div>

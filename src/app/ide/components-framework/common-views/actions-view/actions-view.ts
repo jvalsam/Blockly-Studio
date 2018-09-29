@@ -11,6 +11,7 @@ export interface IEventData {
     action: string | Function;
     providedBy?: string;
     mission: string;
+    data: Array<any>;
 }
 
 interface IActionData {
@@ -51,7 +52,7 @@ export class ActionsView extends View {
                     selector: "#" + action.title.replace(/ /g, '') + "_" + this.id,
                     handler: () => typeof event.action === "string" ?
                                         (event.providedBy === "Platform" ?
-                                            this.parent[event.action](this.data.concerned) :
+                                            this.parent[event.action](event, this.data.concerned) :
                                             this.parent["onOuterFunctionRequest"](event, this.data.concerned)
                                         ) :
                                         event.action(this.data.concerned)
