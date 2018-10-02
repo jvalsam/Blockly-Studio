@@ -5,6 +5,8 @@ import { ActionsView } from "../../../../../common-views/actions-view/actions-vi
 import { ViewRegistry } from "../../../../../component/registry";
 import { PageFoldingView } from "../../../../../common-views/page-folding-view/page-folding-view";
 
+import * as _ from "lodash";
+
 
 export abstract class ProjectManagerElementView extends View {
     protected actions: ActionsView;
@@ -46,17 +48,17 @@ export abstract class ProjectManagerElementView extends View {
     }
 
     private getElementHelper(items, categories, type) {
-        if (items && items>0) {
-            return items[items.map(x=>x.type).indexOf(type)];
+        if (items && items.length>0) {
+            return items[items.map(x=>x.type).indexOf(type)].renderParts;
         }
-        if (categories && categories>0) {
-            return categories[categories.map(x=>x.type).indexOf(type)];
+        if (categories && categories.length>0) {
+            return categories[categories.map(x=>x.type).indexOf(type)].renderParts;
         }
         return null;
     }
     public getChildElementRenderData(type: string) {
-        assert (this.meta.validChildren && this.meta.validChildren[type], "Not valid children with name "+type+" in item view " + this.meta.type);
-        return this.getElementHelper(this.meta.items, this.meta.categories, type);
+        assert (this.meta.validChildren && _.findIndex(this.meta.validChildren, (value) => { return value === type; } ) > -1, "Not valid children with name "+type+" in item view " + this.meta.type);
+        return _.reverse(this.getElementHelper(this.meta.items, this.meta.categories, type));
     }
 
     public getValidChildren() {

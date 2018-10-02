@@ -12,7 +12,9 @@ import {
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
-var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
+// TODO:refactor use of Blockly via github as third-party-lib and not as node-blockly
+// var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
+var Blockly;
 
 @PlatformEditorMetadata({
   description: "VPL uses jigsaws",

@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import { ModalView, IViewUserStyleData, View, IViewEventRegistration, ViewMetadata } from "../../component/view";
 import { IDEUIComponent } from "../../component/ide-ui-component";
-import { PropertyView } from "../../build-in.components/configuration/configuration-view/property-views/property-view";
+import { PropertyView, TypeToNameOfPropertyView } from "../../build-in.components/configuration/configuration-view/property-views/property-view";
 import { ViewRegistry } from "../../component/registry";
 import SequentialDialoguesModalViewTmpl from "./sequential-dialogues-modal-view.tmpl";
 import { assert } from "../../../shared/ide-error/ide-error";
@@ -30,10 +30,10 @@ export class SequentialDialoguesModalView extends ModalView {
     private renderSimpleDialogue(data) {
         this.renderTmplEl(data);
         let formElems = {};
-        _.forOwn(data.formElems, (view, key) => {
-            formElems[key] = <PropertyView>ViewRegistry.getEntry(view.name).create(this.parent, ".project-manager-action-form-elements", view.data);
-            if (view.data.propertyID) {
-                formElems[key]["dialoguePropID"] = view.data.propertyID;
+        _.forOwn(data.formElems, (elem, key) => {
+            formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(this.parent, ".project-manager-action-form-elements", elem);
+            if (elem.propertyID) {
+                formElems[key]["dialoguePropID"] = elem.propertyID;
             }
             formElems[key].clearSelectorArea = false;
             formElems[key].render();

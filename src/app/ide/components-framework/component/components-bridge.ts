@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2018-09-20 17:28:50.845000
+ * 2018-10-02 16:42:33.406000
  */
 
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
@@ -38,6 +38,7 @@ import { StartPageMenuViewElement } from "../../../../../src/app/ide/components-
 import { ActionsView } from "../../../../../src/app/ide/components-framework/common-views/actions-view/actions-view";
 import { BoxLabelView } from "../../../../../src/app/ide/components-framework/common-views/box-label-view/box-label-view";
 import { PageFoldingView } from "../../../../../src/app/ide/components-framework/common-views/page-folding-view/page-folding-view";
+import { SequentialDialoguesModalView } from "../../../../../src/app/ide/components-framework/common-views/sequential-dialogues-modal-view/sequential-dialogues-modal-view";
 import { ShellView } from "../../../../../src/app/ide/components-framework/common.components/shell/shell-view";
 import { Shell } from "../../../../../src/app/ide/components-framework/common.components/shell/shell";
 import { MainArea } from "../../../../../src/app/ide/components-framework/common.components/shell/main-area/main-area";
@@ -92,6 +93,7 @@ export class ComponentsBridge {
 		ActionsView.onInit();
 		BoxLabelView.onInit();
 		PageFoldingView.onInit();
+		SequentialDialoguesModalView.onInit();
 		ShellView.onInit();
 		Shell.onInit();
 		MainArea.onInit();

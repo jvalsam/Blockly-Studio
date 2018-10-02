@@ -206,7 +206,7 @@ export class ProjectManager extends IDEUIComponent {
         return {
             type: "simple",
             data: {
-                title: "Create new "+this.createDialogueTitle(renderData, type),
+                title: "Create New "+this.createDialogueTitle(renderData, type),
                 formElems: RenderPartsToPropertyData(renderData),
                 actions: actions
             }
@@ -216,12 +216,15 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public onAddProjectElement (event: IEventData, concerned: ProjectManagerElementView): void {
         let dialoguesData = [];
+        let types = concerned.getValidChildren();
+
         // specific element to select
-        if (event.data["type"]) {
-            let renderData = concerned.getChildElementRenderData(event.data["type"]);
+        if ( (event.data && event.data["type"]) || types.length === 1 ) {
+            let type = types.length === 1 ? types[0] : event.data["type"];
+            let renderData = concerned.getChildElementRenderData(type);
             dialoguesData.push(this.createDialogue(
                 renderData,
-                event.data["type"],
+                type,
                 [
                     { choice:"Cancel", providedBy:"self" },
                     { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
@@ -230,46 +233,50 @@ export class ProjectManager extends IDEUIComponent {
         }
         // first dialogue choose type of element
         else {
-            let types = concerned.getValidChildren();
-            // 1st dialogue choose item to create
-            dialoguesData.push({
-                type: "simple",
-                data: {
-                    title: "Select type of item",
-                    formElems: [{
-                        propertyID: "select_type_new_item",
-                        name: "Type",
-                        style: "",
-                        selected: types[0],
-                        values: types,
-                        type: "aggregate",
-                        renderName: true,
-                        indepedent: true
-                    }],
-                    actions: [
-                        { choice:"Cancel", providedBy:"self" },
-                        { choice: "Next", providedBy: "self" }
-                    ]
-                }
-            });
-            let dialogues = [];
-            _.forEach(types, (type)=> {
-                let dialogue = this.createDialogue(
-                    concerned.getChildElementRenderData(type),
-                    type,
-                    [
-                        { choice:"Back", providedBy:"self" },
-                        { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
-                    ]
-                );
-                dialogue["dependsValue"] = type;
-                dialogues.push();
-            });
-            dialoguesData.push({
-                type: "depends_on",
-                depedency: { dialogueNO: 0, propertyID: "select_type_new_item" },
-                dialogues: dialogues
-            });
+            if (types.length > 1) {
+                // 1st dialogue choose item to create
+                dialoguesData.push({
+                    type: "simple",
+                    data: {
+                        title: "Select type of item",
+                        formElems: [{
+                            propertyID: "select_type_new_item",
+                            name: "Type",
+                            style: "",
+                            selected: types[0],
+                            values: types,
+                            type: "aggregate",
+                            renderName: true,
+                            indepedent: true
+                        }],
+                        actions: [
+                            { choice:"Cancel", providedBy:"self" },
+                            { choice: "Next", providedBy: "self" }
+                        ]
+                    }
+                });
+                let dialogues = [];
+                _.forEach(types, (type)=> {
+                    let dialogue = this.createDialogue(
+                        concerned.getChildElementRenderData(type),
+                        type,
+                        [
+                            { choice:"Back", providedBy:"self" },
+                            { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
+                        ]
+                    );
+                    dialogue["dependsValue"] = type;
+                    dialogues.push();
+                });
+                dialoguesData.push({
+                    type: "depends_on",
+                    depedency: { dialogueNO: 0, propertyID: "select_type_new_item" },
+                    dialogues: dialogues
+                });
+            }
+            else {
+                IDEError.raise()
+            }
         }
         let modalActionView = <ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(this, dialoguesData);
         modalActionView.open();

@@ -117,30 +117,28 @@ function convertPart(type, value) {
     switch(type) {
         case "img":
             return {
-                name: "Image:",
-                type: "Image",
+                name: value.property+":",
+                type: "file",
                 description: "Select image of the item.",
-                value: {
-                    default: value.default.path
-                }
+                value: value.default.path
             };
         case "title":
             return {
-                name: "Title:",
+                name: value.property+":",
                 type: "text",
                 description: "Select title of the item.",
-                value: {
-                    default: value.default.text
-                }
+                value: value.default.text
             };
     }
 }
-export function RenderPartsToPropertyData (renderParts) {
+export function RenderPartsToPropertyData (renderParts: Array<any>) {
     let properties = [];
-    _.forEach(renderParts, (part) => {
-        if (part.selectedBy === "user") {
-            properties.push(convertPart(part.type, part.value));
-        }
-    });
+    if (renderParts && renderParts.length>0) {
+        renderParts.forEach((part) => {
+            if (part.selectedBy === "user") {
+                properties.push(convertPart(part.type, part.value));
+            }
+        });
+    }
     return properties;
 }
