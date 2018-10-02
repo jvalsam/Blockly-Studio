@@ -275,7 +275,7 @@ export class ProjectManager extends IDEUIComponent {
                 });
             }
             else {
-                IDEError.raise()
+                // IDEError.raise()
             }
         }
         let modalActionView = <ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(this, dialoguesData);
