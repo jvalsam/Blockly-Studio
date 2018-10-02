@@ -14,6 +14,7 @@ import { assert } from "../../../shared/ide-error/ide-error";
 export class SequentialDialoguesModalView extends ModalView {
     private _dialoguesFormData: Array<{ [name: string]: PropertyView }>;
     private _state: number;
+    private _firstProperty: PropertyView;
 
     constructor(
         protected parent: IDEUIComponent,
@@ -30,6 +31,7 @@ export class SequentialDialoguesModalView extends ModalView {
     private renderSimpleDialogue(data) {
         this.renderTmplEl(data);
         let formElems = {};
+        let firstProperty: PropertyView = null;
         _.forOwn(data.formElems, (elem, key) => {
             formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(this.parent, ".project-manager-action-form-elements", elem);
             if (elem.propertyID) {
@@ -37,8 +39,13 @@ export class SequentialDialoguesModalView extends ModalView {
             }
             formElems[key].clearSelectorArea = false;
             formElems[key].render();
+            if (!firstProperty) {
+                this._firstProperty = formElems[key];
+            }
         });
         this._dialoguesFormData.push(formElems);
+        // needs time to set autofocus
+        setTimeout(()=>this._firstProperty.focus(), 500);
     }
 
     protected justRender() {

@@ -84,6 +84,17 @@ export class AggregateView extends PropertyView {
 
     public setStyle(): void { ; }
 
+    public focus() {
+        //TODO: fix it better...
+        let firstKey = null;
+        _.forOwn(this.data.props, (view, key) => {
+            if (firstKey === null) {
+                firstKey = null;
+            }
+        });
+        this.data.propsView[firstKey].focus();
+    }
+
     public get value(): any {
         let aggValue: Object = {};
         _.forOwn(this.data.propsView, (property: PropertyView, key: string) => {

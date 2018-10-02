@@ -74,6 +74,10 @@ export class SelectView extends PropertyView {
         }
     }
 
+    public focus(): void {
+        $("#input_"+this.id).focus();
+    }
+
     public get value(): any {
         return this.data.selected;
     }

@@ -129,6 +129,10 @@ export class DynamicExtraView extends PropertyView {
         };
     }
 
+    public focus(): void {
+        this.mainView.focus();
+    }
+
     public destroy(): void {
         this.destroyCurrentExtraView();
         this.mainView.destroy();

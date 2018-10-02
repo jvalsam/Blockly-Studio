@@ -54,6 +54,7 @@ export abstract class PropertyView extends View {
     }
 
     abstract get value(): any;
+    abstract focus(): void;
 
     public get data(): any {
         return this._data;
