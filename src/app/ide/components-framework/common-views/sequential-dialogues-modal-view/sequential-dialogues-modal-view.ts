@@ -4,14 +4,12 @@ import { IDEUIComponent } from "../../component/ide-ui-component";
 import { PropertyView } from "../../build-in.components/configuration/configuration-view/property-views/property-view";
 import { ViewRegistry } from "../../component/registry";
 import SequentialDialoguesModalViewTmpl from "./sequential-dialogues-modal-view.tmpl";
-import { assert } from '../../../shared/ide-error/ide-error';
+import { assert } from "../../../shared/ide-error/ide-error";
+
 
 @ViewMetadata({
     name: "SequentialDialoguesModalView",
-    templateHTML: SequentialDialoguesModalViewTmpl//,
-    // style: {
-    //     system: ActionsViewSYCSS
-    // }
+    templateHTML: SequentialDialoguesModalViewTmpl
 })
 export class SequentialDialoguesModalView extends ModalView {
     private _dialoguesFormData: Array<{ [name: string]: PropertyView }>;
@@ -29,24 +27,45 @@ export class SequentialDialoguesModalView extends ModalView {
         this._state = 0;
     }
 
+    private renderSimpleDialogue(data) {
+        this.renderTmplEl(data);
+        let formElems = {};
+        _.forOwn(data.formElems, (view, key) => {
+            formElems[key] = <PropertyView>ViewRegistry.getEntry(view.name).create(this.parent, ".project-manager-action-form-elements", view.data);
+            if (view.data.propertyID) {
+                formElems[key]["dialoguePropID"] = view.data.propertyID;
+            }
+            formElems[key].clearSelectorArea = false;
+            formElems[key].render();
+        });
+        this._dialoguesFormData.push(formElems);
+    }
+
     protected justRender() {
-        this.renderTmplEl(this.data[this._state]);
-        if (this._dialoguesFormData[this._state]) {
-            _.forEach(this._dialoguesFormData[this._state], (view) => view.render());
-        }
-        else {
-            let formElems = {};
-            _.forOwn(this.data[this._state].formElems, (view, key) => {
-                formElems[key] = <PropertyView>ViewRegistry.getEntry(view.name).create(this.parent, ".project-manager-action-form-elements", view.data);
-                formElems[key].clearSelectorArea = false;
-                formElems[key].render();
-            });
-            this._dialoguesFormData.push(formElems);
+        let current = this.data[this._state];
+
+        switch(current.type) {
+            case "simple":
+                this.renderSimpleDialogue(current.data);
+                break;
+            case "depends_on":
+                let depFormsData = Object["values"](this._dialoguesFormData[current.depedency.dialogueNO]);
+                let index = depFormsData.map(x=>x.dialoguePropID).indexOf(current.depedency.propertyID);
+                assert(index > -1);
+                let value = (<PropertyView>depFormsData[index]).value;
+                index = current.dialogues.map(x=>x.dependsValue).indexOf(value);
+                assert(index > -1);
+                this.renderSimpleDialogue(current.dialogues[index]);
+                break;
         }
     }
 
-    private createEvtHandler (choice) {
-        switch (choice) {
+    private createEvtHandler (action) {
+        if (action.callback) {
+            return () => action.callback(this.getDataFormElements());
+        }
+
+        switch (action.choice) {
             case 'Cancel':
                 return () => this.onClose();
             case 'Next':
@@ -56,22 +75,25 @@ export class SequentialDialoguesModalView extends ModalView {
                 };
             case 'Back':
                 return () => {
+                    this.destroyCurrentDialogue();
                     --this._state;
                     this.justRender();
                 };
             default:
-                return () => this.parent["onModalChoiceAction"] (choice, this.getDataFormElements(), ()=>this.onClose());
+                return () => this.parent["onModalChoiceAction"] (action.choice, this.getDataFormElements(), ()=>this.onClose());
         }
     }
+
     public registerEvents() {
         let events: Array<IViewEventRegistration> = [];
-        _.forEach(this.data.choices, (choice) => {
+        _.forEach(this.data.actions, (action) => {
             events.push({
                 eventType: "click",
-                selector: ".ts-btn-action-"+_.toLower(choice),
-                handler: this.createEvtHandler(choice)
+                selector: ".ts-btn-action-"+_.toLower(action.choice),
+                handler: this.createEvtHandler(action)
             });
         });
+        this.attachEvents(...events);
     }
 
     private getDataFormElements() {
@@ -91,13 +113,16 @@ export class SequentialDialoguesModalView extends ModalView {
         this.destroy();
     }
 
+    private destroyCurrentDialogue() {
+        let dialogue = this._dialoguesFormData.pop();
+        for (var member in dialogue) {
+            dialogue[member].destroy();
+            delete dialogue[member];
+        }
+    }
     public destroy() {
         while(this._dialoguesFormData.length > 0) {
-            let dialogue = this._dialoguesFormData.pop();
-            for (var member in dialogue) {
-                dialogue[member].destroy();
-                delete dialogue[member];
-            }
+            this.destroyCurrentDialogue();
         }
         super.destroy();
     }
