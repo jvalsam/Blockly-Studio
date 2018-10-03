@@ -234,6 +234,23 @@ export class ProjectManager extends IDEUIComponent {
         // first dialogue choose type of element
         else {
             if (types.length > 1) {
+                let titles = [];
+                let dialogues = [];
+                _.forEach(types, (type)=> {
+                    let renderData = concerned.getChildElementRenderData(type);
+                    let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default.text;
+                    titles.push(title);
+                    let dialogue = this.createDialogue(
+                        renderData,
+                        type,
+                        [
+                            { choice:"Back", providedBy:"self" },
+                            { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
+                        ]
+                    );
+                    dialogue["dependsValue"] = title;
+                    dialogues.push(dialogue);
+                });
                 // 1st dialogue choose item to create
                 dialoguesData.push({
                     type: "simple",
@@ -243,9 +260,9 @@ export class ProjectManager extends IDEUIComponent {
                             propertyID: "select_type_new_item",
                             name: "Type",
                             style: "",
-                            selected: types[0],
-                            values: types,
-                            type: "aggregate",
+                            selected: titles[0],
+                            values: titles,
+                            type: "select",
                             renderName: true,
                             indepedent: true
                         }],
@@ -255,19 +272,7 @@ export class ProjectManager extends IDEUIComponent {
                         ]
                     }
                 });
-                let dialogues = [];
-                _.forEach(types, (type)=> {
-                    let dialogue = this.createDialogue(
-                        concerned.getChildElementRenderData(type),
-                        type,
-                        [
-                            { choice:"Back", providedBy:"self" },
-                            { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
-                        ]
-                    );
-                    dialogue["dependsValue"] = type;
-                    dialogues.push();
-                });
+                // second dialogue which is based on the 1st selection
                 dialoguesData.push({
                     type: "depends_on",
                     depedency: { dialogueNO: 0, propertyID: "select_type_new_item" },

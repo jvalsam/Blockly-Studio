@@ -64,7 +64,7 @@ export abstract class View {
         protected readonly _templateHTML: string,
         protected _styles: Array<IViewUserStyleData>,
         protected _selector: string,
-        private _clearSelectorArea: boolean = true
+        protected _clearSelectorArea: boolean = true
     ) {
         this._events = {};
         this._nextEventID = 0;
@@ -227,6 +227,7 @@ export abstract class View {
 
     public destroy(): void {
         this.reset();
+        $(this._selector).empty();
     }
 
     get templateHTML(): string {
@@ -293,6 +294,17 @@ export abstract class ModalView extends View {
 
     protected abstract justRender();
 
+    protected attachTmplEl(): void {
+        let $elem = $(this._selector).find(">:first-child");
+        if ($elem.length === 0) {
+            $elem = $(this._selector);
+        } 
+        if (this._clearSelectorArea) {
+            $elem.empty();
+        }
+        $elem.append(this.$el);
+    }
+
     public render(callback: Function) {
         this.justRender();
         callback();
@@ -305,7 +317,8 @@ export abstract class ModalView extends View {
     }
 
     protected close(): void {
-        $("#" + this.id + " .close").click();
+        $("#" + this.id)["modal"]('hide');
+        $(".modal-backdrop").remove();
     }
 }
 

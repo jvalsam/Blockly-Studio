@@ -4,7 +4,7 @@ import { IDEUIComponent } from "../../component/ide-ui-component";
 import { PropertyView, TypeToNameOfPropertyView } from "../../build-in.components/configuration/configuration-view/property-views/property-view";
 import { ViewRegistry } from "../../component/registry";
 import SequentialDialoguesModalViewTmpl from "./sequential-dialogues-modal-view.tmpl";
-import { assert } from "../../../shared/ide-error/ide-error";
+import { assert, IDEError } from "../../../shared/ide-error/ide-error";
 
 
 @ViewMetadata({
@@ -13,6 +13,7 @@ import { assert } from "../../../shared/ide-error/ide-error";
 })
 export class SequentialDialoguesModalView extends ModalView {
     private _dialoguesFormData: Array<{ [name: string]: PropertyView }>;
+    private _currentActions;
     private _state: number;
 
     constructor(
@@ -28,6 +29,9 @@ export class SequentialDialoguesModalView extends ModalView {
     }
 
     private renderSimpleDialogue(data) {
+        // before render has to regulate actions of the events will be attached
+        this._currentActions = data.actions;
+
         this.renderTmplEl(data);
         let formElems = {};
         let firstProperty: PropertyView = null;
@@ -61,7 +65,8 @@ export class SequentialDialoguesModalView extends ModalView {
                 let value = (<PropertyView>depFormsData[index]).value;
                 index = current.dialogues.map(x=>x.dependsValue).indexOf(value);
                 assert(index > -1);
-                this.renderSimpleDialogue(current.dialogues[index]);
+                let currentDialogue = current.dialogues[index];
+                this.renderSimpleDialogue(currentDialogue.data);
                 break;
         }
     }
@@ -92,7 +97,8 @@ export class SequentialDialoguesModalView extends ModalView {
 
     public registerEvents() {
         let events: Array<IViewEventRegistration> = [];
-        _.forEach(this.data.actions, (action) => {
+
+        _.forEach(this._currentActions, (action) => {
             events.push({
                 eventType: "click",
                 selector: ".ts-btn-action-"+_.toLower(action.choice),
@@ -100,6 +106,12 @@ export class SequentialDialoguesModalView extends ModalView {
             });
         });
         this.attachEvents(...events);
+        // on click out of the window, call destroy function
+        // window.onclick = (event) => {
+        //     if (event.target == document.getElementById(this.id)) {
+        //         this.destroy();
+        //     }
+        // }
     }
 
     private getDataFormElements() {
