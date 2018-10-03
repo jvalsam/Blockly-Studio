@@ -242,7 +242,7 @@ export abstract class View {
         this.ensureElement();
 
         return _.map(eventRegs, (reg: IViewEventRegistration) => {
-            const $target: JQuery = this.$el.find(reg.selector);
+            const $target: JQuery = reg.selector === "this" ? this.$el : this.$el.find(reg.selector);
             if (!$target.length) {
                 IDEError.raise(
                     "View - Attach Event",

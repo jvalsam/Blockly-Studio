@@ -105,13 +105,12 @@ export class SequentialDialoguesModalView extends ModalView {
                 handler: this.createEvtHandler(action)
             });
         });
+        events.push({
+            eventType: "hidden.bs.modal",
+            selector: "this",
+            handler: () => this.destroy()
+        });
         this.attachEvents(...events);
-        // on click out of the window, call destroy function
-        // window.onclick = (event) => {
-        //     if (event.target == document.getElementById(this.id)) {
-        //         this.destroy();
-        //     }
-        // }
     }
 
     private getDataFormElements() {
@@ -126,10 +125,7 @@ export class SequentialDialoguesModalView extends ModalView {
         return data;
     }
 
-    private onClose(): void {
-        this.close();
-        this.destroy();
-    }
+    private onClose(): void { this.close(); }
 
     private destroyCurrentDialogue() {
         let dialogue = this._dialoguesFormData.pop();
