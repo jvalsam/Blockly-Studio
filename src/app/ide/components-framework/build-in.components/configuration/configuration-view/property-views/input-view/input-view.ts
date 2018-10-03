@@ -98,10 +98,15 @@ export class InputView extends PropertyView {
     }
 
     public focus() {
-        var input = $("#input_"+this.id);
-        var len = input.val().length;
-        input[0].focus();
-        input[0]["setSelectionRange"](len, len);
+        let input = $("#input_"+this.id);
+        if (this.data.type === "text") {
+            let len = input.val().length;
+            input[0].focus();
+            input[0]["setSelectionRange"](len, len);
+        }
+        else {
+            input[0].focus();
+        }
     }
 
     public get value(): any {

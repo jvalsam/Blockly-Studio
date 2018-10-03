@@ -14,7 +14,6 @@ import { assert } from "../../../shared/ide-error/ide-error";
 export class SequentialDialoguesModalView extends ModalView {
     private _dialoguesFormData: Array<{ [name: string]: PropertyView }>;
     private _state: number;
-    private _firstProperty: PropertyView;
 
     constructor(
         protected parent: IDEUIComponent,
@@ -40,12 +39,12 @@ export class SequentialDialoguesModalView extends ModalView {
             formElems[key].clearSelectorArea = false;
             formElems[key].render();
             if (!firstProperty) {
-                this._firstProperty = formElems[key];
+                firstProperty = formElems[key];
             }
         });
         this._dialoguesFormData.push(formElems);
         // needs time to set autofocus
-        setTimeout(()=>this._firstProperty.focus(), 500);
+        setTimeout(()=>firstProperty.focus(), 500);
     }
 
     protected justRender() {

@@ -51,7 +51,7 @@ export class ActionsView extends View {
                     eventType: event.type,
                     selector: "#" + action.title.replace(/ /g, '') + "_" + this.id,
                     handler: () => typeof event.action === "string" ?
-                                        (event.providedBy === "Platform" ?
+                                        (!event.providedBy || event.providedBy === "Platform" ?
                                             this.parent[event.action](event, this.data.concerned) :
                                             this.parent["onOuterFunctionRequest"](event, this.data.concerned)
                                         ) :
