@@ -53,6 +53,10 @@ export class SequentialDialoguesModalView extends ModalView {
 
     protected justRender() {
         let current = this.data[this._state];
+        if (this._firstRender) {
+            this.injectModalTmpl();
+            this._firstRender = false;
+        }
 
         switch(current.type) {
             case "simple":
@@ -104,11 +108,6 @@ export class SequentialDialoguesModalView extends ModalView {
                 selector: ".ts-btn-action-"+_.toLower(action.choice),
                 handler: this.createEvtHandler(action)
             });
-        });
-        events.push({
-            eventType: "hidden.bs.modal",
-            selector: "this",
-            handler: () => this.destroy()
         });
         this.attachEvents(...events);
     }

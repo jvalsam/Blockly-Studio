@@ -10,6 +10,7 @@ import * as _ from "lodash";
 import { IDEUIComponent } from "./ide-ui-component";
 import { IDEError, assert } from "../../shared/ide-error/ide-error";
 import { ViewRegistry } from "./registry";
+import ModalViewTmpl from "./modal-view.tmpl";
 
 
 export interface IViewEvent {
@@ -238,28 +239,32 @@ export abstract class View {
         return this.$el.find(selector);
     }
 
+    public attachEvent(reg: IViewEventRegistration, glb:boolean=false) {
+        const $target: JQuery = reg.selector === "this" ? this.$el : glb ? $(reg.selector) : this.$el.find(reg.selector);
+        if (!$target.length) {
+            IDEError.raise(
+                "View - Attach Event",
+                "Selector " + reg.selector + " is not found in View: " + this.name + "."
+            );
+        }
+        $target.bind(reg.eventType, reg.handler);
+
+        ++this._nextEventID;
+        this._events[this._nextEventID] = {
+            type: reg.eventType,
+            selector: reg.selector,
+            handler: reg.handler,
+            $target: $target
+        };
+
+        return this._nextEventID;
+    }
+
     public attachEvents(...eventRegs: Array<IViewEventRegistration>) {
         this.ensureElement();
 
         return _.map(eventRegs, (reg: IViewEventRegistration) => {
-            const $target: JQuery = reg.selector === "this" ? this.$el : this.$el.find(reg.selector);
-            if (!$target.length) {
-                IDEError.raise(
-                    "View - Attach Event",
-                    "Selector " + reg.selector + " is not found in View: " + this.name + "."
-                );
-            }
-            $target.bind(reg.eventType, reg.handler);
-
-            ++this._nextEventID;
-            this._events[this._nextEventID] = {
-              type: reg.eventType,
-              selector: reg.selector,
-              handler: reg.handler,
-              $target: $target
-            };
-
-            return this._nextEventID;
+            return this.attachEvent(reg);
           });
     }
 
@@ -282,6 +287,8 @@ export abstract class View {
 
 
 export abstract class ModalView extends View {
+    private readonly modalSelector = ".modal-platform-container";
+    protected _firstRender: boolean;
 
     constructor(
         protected parent: IDEUIComponent,
@@ -289,7 +296,8 @@ export abstract class ModalView extends View {
         protected readonly _templateHTML: string,
         styles: Array<IViewUserStyleData>
     ) {
-        super(parent, name, _templateHTML, styles, ".modal-platform-container");
+        super(parent, name, _templateHTML, styles, ".modal-content");
+        this._firstRender = true;
     }
 
     protected abstract justRender();
@@ -305,6 +313,19 @@ export abstract class ModalView extends View {
         $elem.append(this.$el);
     }
 
+    protected injectModalTmpl () {
+        let index = this._styles.map(x=>x.selector).indexOf(this.selector);
+        let data = index > -1 ? { style: this._styles[index].styles.css } : {};
+        let $modal = _.template(ModalViewTmpl)(data);
+        $(this.modalSelector).append($modal);
+        this.attachEvent({
+            eventType: "hidden.bs.modal",
+            selector: ".modal-container",
+            handler: () => this.destroy()
+        },
+        true);
+    }
+
     public render(callback: Function) {
         this.justRender();
         callback();
@@ -312,13 +333,20 @@ export abstract class ModalView extends View {
 
     public open(): void {
         this.render(
-            () => $("#" + this.id)["modal"]("show")
+            () => $(this.modalSelector).children()["modal"]("show")
         );
     }
 
     protected close(): void {
-        $("#" + this.id)["modal"]('hide');
+        $(this.modalSelector).children()["modal"]('hide');
         $(".modal-backdrop").remove();
+    }
+
+    public destroy() {
+        // change selector to the outer html element of the modal
+        this._selector = this.modalSelector;
+
+        super.destroy();
     }
 }
 

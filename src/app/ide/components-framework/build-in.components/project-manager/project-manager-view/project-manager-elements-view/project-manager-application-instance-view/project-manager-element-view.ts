@@ -58,7 +58,16 @@ export abstract class ProjectManagerElementView extends View {
     }
     public getChildElementRenderData(type: string) {
         assert (this.meta.validChildren && _.findIndex(this.meta.validChildren, (value) => { return value === type; } ) > -1, "Not valid children with name "+type+" in item view " + this.meta.type);
-        return _.reverse(this.getElementHelper(this.meta.items, this.meta.categories, type));
+        return this.getElementHelper(this.meta.items, this.meta.categories, type);
+    }
+
+    public getReversedChildElementRenderData(type: string) {
+        let rdata = [];
+        let data = this.getChildElementRenderData(type);
+        _.forEachRight(data, (element) => {
+            rdata.push($.extend(true, {}, element));
+        });
+        return _.reverse(rdata);
     }
 
     public getValidChildren() {

@@ -221,7 +221,7 @@ export class ProjectManager extends IDEUIComponent {
         // specific element to select
         if ( (event.data && event.data["type"]) || types.length === 1 ) {
             let type = types.length === 1 ? types[0] : event.data["type"];
-            let renderData = concerned.getChildElementRenderData(type);
+            let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
             dialoguesData.push(this.createDialogue(
                 renderData,
                 type,
@@ -237,7 +237,7 @@ export class ProjectManager extends IDEUIComponent {
                 let titles = [];
                 let dialogues = [];
                 _.forEach(types, (type)=> {
-                    let renderData = concerned.getChildElementRenderData(type);
+                    let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
                     let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default.text;
                     titles.push(title);
                     let dialogue = this.createDialogue(
