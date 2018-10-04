@@ -58,6 +58,11 @@ export class ConfigurationView extends ComponentView {
                 eventType: "click",
                 selector: ".ts-btn-config-save",
                 handler: () => this.onSave()
+            },
+            {
+                eventType: "hidden.bs.modal",
+                selector: "this",
+                handler: () => this.destroy()
             }
         );
     }
