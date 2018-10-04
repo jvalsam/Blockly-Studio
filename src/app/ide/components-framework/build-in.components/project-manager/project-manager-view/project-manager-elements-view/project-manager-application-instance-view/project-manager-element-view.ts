@@ -6,6 +6,7 @@ import { ViewRegistry } from "../../../../../component/registry";
 import { PageFoldingView } from "../../../../../common-views/page-folding-view/page-folding-view";
 
 import * as _ from "lodash";
+import { ProjectManagerAppInstanceView } from "./project-manager-app-instance-view";
 
 
 export abstract class ProjectManagerElementView extends View {
@@ -19,7 +20,8 @@ export abstract class ProjectManagerElementView extends View {
         style: Array<IViewUserStyleData>,
         hookSelector: string,
         protected meta: any,
-        protected path: string
+        protected path: string,
+        protected parentTree: ProjectManagerElementView | ProjectManagerAppInstanceView
     ) {
         super(parent, name, templateHTML, style, hookSelector);
     }
@@ -53,6 +55,9 @@ export abstract class ProjectManagerElementView extends View {
         }
         if (categories && categories.length>0) {
             return categories[categories.map(x=>x.type).indexOf(type)].renderParts;
+        }
+        if (this.parentTree) {
+            return (<ProjectManagerElementView>this.parentTree).getChildElementRenderData(type);
         }
         return null;
     }

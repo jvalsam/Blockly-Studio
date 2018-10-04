@@ -5,12 +5,10 @@ import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import CategoryViewTmpl from "./category-view.tmpl";
-import { ActionsView } from "./../../../../../../common-views/actions-view/actions-view";
 import { ProjectManagerMenuView as MenuView } from "../menu-view/menu-view";
 import { ViewRegistry } from "../../../../../../component/registry";
 import { ProjectManagerItemView } from "../item-view/item-view";
 
-import { PageFoldingView } from './../../../../../../common-views/page-folding-view/page-folding-view';
 import { ProjectManagerElementView } from "../project-manager-element-view";
 
 interface IMenuItem {
@@ -131,7 +129,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, style, hookSelector, data.meta, data.path + data.meta.type + "/");
+        super(parent, name, templateHTML, style, hookSelector, data.meta, data.path + data.meta.type + "/", data.parentTree);
         data.meta.isLeaf = ("categories" in data.meta) && data.meta.categories.length > 0;
         data.meta.id = this.id;
         this.menuSel = "#category-menu-"+this.id;
@@ -175,6 +173,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                 this.parent,
                 this.elemsSel,
                 {
+                    "parentTree": this,
                     "meta": category,
                     "project": data.project,
                     "path": this.path
@@ -195,6 +194,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                 this.parent,
                 this.elemsSel,
                 {
+                    "parentTree": this,
                     "meta": meta.items[metaIndex],
                     "projectID": projectID,
                     "item": itemData,

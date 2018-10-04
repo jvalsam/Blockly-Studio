@@ -292,7 +292,7 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public onDeleteAllElements(event: IEventData, concerned: any): void {
-        
+        alert("Delete all element function is not supported yet!");
     }
 
     public onClickMenuItem (event: IEventData, data: any): void {
