@@ -114,12 +114,6 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
     private readonly actionsSel;
     private readonly elemsSel;
     private info: ICategoryMetaData;
-    private menu: MenuView;
-
-    // only for category includes categories
-    private elements?: Array<View>;
-    // only for category not include categories
-    private items: Array<ProjectManagerItemView>;
 
     constructor(
         parent: IDEUIComponent,
@@ -158,18 +152,17 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
             this.initCategories(data);
         }
         // in case try to load project
-        this.items = [];
         if (data.project && data.project.elements) {
             this.initElements(data.project.elements, data.meta, data.project._id);
         }
     }
 
     private initCategories (data: any): void {
-        this.elements = new Array<View>();
+        this._children.categories = new Array<ProjectManagerElementView>();
         _.forEach(data.meta.categories, (category) => {
             category.isSubCategory = true;
             category.nesting = this.info.nesting+1;
-            let categView = ViewRegistry.getEntry("ProjectManagerCategoryView").create(
+            let categView = <ProjectManagerCategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create(
                 this.parent,
                 this.elemsSel,
                 {
@@ -180,10 +173,11 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                 }
             );
             categView.clearSelectorArea = false;
-            this.elements.push(categView);
+            this._children.categories.push(categView);
         });
     }
     private initElements (elements: Array<any>, meta: any, projectID: string): void {
+        this._children.items = new Array<ProjectManagerElementView>();
         // filter elements
         let catElements = elements.filter(obj => { return obj.path === this.path });
         //
@@ -203,7 +197,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                 }
             );
             itemView.clearSelectorArea = false;
-            this.items.push(itemView);
+            this._children.items.push(itemView);
         }
     }
 
@@ -243,14 +237,14 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         this.foldingView.render();
         this.renderElem("actions");
         
-        _.forEach(this.items, (item)=> item.render());
+        _.forEach(this._children.items, (item)=> item.render());
 
         if (this.info.isLeaf) {
-            _.forEach(<Array<View>>this.elements, (value) => {
+            _.forEach(<Array<View>>this._children.categories, (value) => {
                 value.render();
             });
         }
-        else if(this.items.length === 0) {
+        else if(this._children.items.length === 0) {
             $(this.elemsSel).empty();
             $(this.elemsSel).css("background", "rgb(230, 230, 230)");
             $(this.elemsSel).append("<div class='small text-center align-middle' style='padding-top:15px; padding-bottom:15px; width:100%'>No " + this.info.renderParts["title"].value.text + " are defined yet.</div>");

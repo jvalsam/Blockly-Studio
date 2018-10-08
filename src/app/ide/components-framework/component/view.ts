@@ -324,6 +324,12 @@ export abstract class ModalView extends View {
             handler: () => this.destroy()
         },
         true);
+        this.attachEvent({
+            eventType: "shown.bs.modal",
+            selector: ".modal-container",
+            handler: () => this.onShownModal()
+        },
+        true);
     }
 
     public render(callback: Function) {
@@ -336,6 +342,8 @@ export abstract class ModalView extends View {
             () => $(this.modalSelector).children()["modal"]("show")
         );
     }
+
+    public abstract onShownModal();
 
     protected close(): void {
         $(this.modalSelector).children()["modal"]('hide');

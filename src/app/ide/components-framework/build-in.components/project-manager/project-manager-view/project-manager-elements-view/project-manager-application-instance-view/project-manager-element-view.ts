@@ -12,6 +12,7 @@ import { ProjectManagerAppInstanceView } from "./project-manager-app-instance-vi
 export abstract class ProjectManagerElementView extends View {
     protected actions: ActionsView;
     protected foldingView: PageFoldingView;
+    protected _children: { items: Array<ProjectManagerElementView>, categories: Array<ProjectManagerElementView> };
 
     constructor(
         parent: IDEUIComponent,
@@ -24,6 +25,7 @@ export abstract class ProjectManagerElementView extends View {
         protected parentTree: ProjectManagerElementView | ProjectManagerAppInstanceView
     ) {
         super(parent, name, templateHTML, style, hookSelector);
+        this._children = { items: null, categories: null };
     }
 
     protected initActions(selector: string, styles) {
@@ -75,7 +77,52 @@ export abstract class ProjectManagerElementView extends View {
         return _.reverse(rdata);
     }
 
+    public get children() {
+        return this.children;
+    }
+
     public getValidChildren() {
         return this.meta.validChildren;
+    }
+
+    private hasChild(name: string, type: string) {
+        let found = false;
+        if (this._children[type]) {
+            _.forEach(this._children[type], (element)=> {
+                if (element.hasElement(name)) {
+                    found = true;
+                    return false;
+                }
+            });
+        }
+        return found;
+    }
+
+    public hasElement(name: string): boolean {
+        return this.name === name || this.hasChild(name, "categories") || this.hasChild(name, "items");
+    }
+
+    private getChild(data: string, type: string, itype: string): ProjectManagerElementView {
+        let child: ProjectManagerElementView = null;
+        if (this._children[itype]) {
+            _.forEach(this._children[itype], (element)=> {
+                child = element.findElement(data, type);
+                if (child) {
+                    return false;
+                }
+            });
+        }
+        return child;
+    }
+
+    public findElement(data: string, type: string) {
+        if(this[type] === data) {
+            return this;
+        }
+        let element = this.getChild(data, type, "categories");
+        if (element) {
+            return element;
+        }
+        return this.getChild(data, type, "items");
     }
 }

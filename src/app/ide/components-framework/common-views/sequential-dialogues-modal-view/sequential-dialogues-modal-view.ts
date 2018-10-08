@@ -12,7 +12,9 @@ import { assert, IDEError } from "../../../shared/ide-error/ide-error";
     templateHTML: SequentialDialoguesModalViewTmpl
 })
 export class SequentialDialoguesModalView extends ModalView {
+    private _firstProperty: PropertyView;
     private _dialoguesFormData: Array<{ [name: string]: PropertyView }>;
+    private _currentValidationCheck: any;
     private _currentActions;
     private _state: number;
 
@@ -25,16 +27,19 @@ export class SequentialDialoguesModalView extends ModalView {
     ) {
         super(parent, name, _templateHTML, styles);
         this._dialoguesFormData = [];
+        this._firstProperty = null;
         this._state = 0;
     }
 
     private renderSimpleDialogue(data) {
         // before render has to regulate actions of the events will be attached
         this._currentActions = data.actions;
+        data.id = this.id;
 
         this.renderTmplEl(data);
         let formElems = {};
         let firstProperty: PropertyView = null;
+        this._firstProperty = null;
         _.forOwn(data.formElems, (elem, key) => {
             formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(this.parent, ".project-manager-action-form-elements", elem);
             if (elem.propertyID) {
@@ -44,11 +49,11 @@ export class SequentialDialoguesModalView extends ModalView {
             formElems[key].render();
             if (!firstProperty) {
                 firstProperty = formElems[key];
+                this._firstProperty = firstProperty;
             }
         });
         this._dialoguesFormData.push(formElems);
-        // needs time to set autofocus
-        setTimeout(()=>firstProperty.focus(), 500);
+        this._currentValidationCheck = data.validationCheck ? data.validationCheck : (data, callback) => callback(true)
     }
 
     protected justRender() {
@@ -75,6 +80,15 @@ export class SequentialDialoguesModalView extends ModalView {
         }
     }
 
+    private renderWarningMessages(messages) {
+        $("#warning_msgs_"+this.id).empty();
+        let msgNO = 1;
+        _.forEach(messages, (msg) => {
+            let msgHtml = "<div id='warning_msg_"+this.id+"_"+msgNO+"' style='color:red;'>"+msg+"</div>";
+            $("#warning_msgs_"+this.id).append(msgHtml);
+        });
+    }
+
     private createEvtHandler (action) {
         if (action.callback) {
             return () => action.callback(this.getDataFormElements());
@@ -85,17 +99,35 @@ export class SequentialDialoguesModalView extends ModalView {
                 return () => this.onClose();
             case 'Next':
                 return () => {
-                    ++this._state;
-                    this.justRender();
+                    this._currentValidationCheck(this._dialoguesFormData, (response) => {
+                        if (response === true) {
+                            ++this._state;
+                            this.justRender();
+                            this.fixFocus();
+                        }
+                        else {
+                            this.renderWarningMessages(response);
+                        }
+                    });
                 };
             case 'Back':
                 return () => {
                     this.destroyCurrentDialogue();
                     --this._state;
                     this.justRender();
+                    this.fixFocus();
                 };
             default:
-                return () => this.parent["onModalChoiceAction"] (action.choice, this.getDataFormElements(), ()=>this.onClose());
+                return () => {
+                    this._currentValidationCheck(this._dialoguesFormData, (response) => {
+                        if (response === true) {
+                            this.parent["onModalChoiceAction"] (action.choice, this.getDataFormElements(), ()=>this.onClose());
+                        }
+                        else {
+                            this.renderWarningMessages(response);
+                        }
+                    });
+                };
         }
     }
 
@@ -109,6 +141,7 @@ export class SequentialDialoguesModalView extends ModalView {
                 handler: this.createEvtHandler(action)
             });
         });
+
         this.attachEvents(...events);
     }
 
@@ -122,6 +155,14 @@ export class SequentialDialoguesModalView extends ModalView {
             data.push(elems);
         });
         return data;
+    }
+
+    public fixFocus() {
+        this._firstProperty.focus();
+    }
+
+    public onShownModal() {
+        this.fixFocus();
     }
 
     private onClose(): void { this.close(); }

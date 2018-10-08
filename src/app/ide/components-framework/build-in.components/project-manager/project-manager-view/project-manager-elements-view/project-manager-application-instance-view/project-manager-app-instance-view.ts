@@ -1,4 +1,3 @@
-import { assert } from "./../../../../../../shared/ide-error/ide-error";
 import { ViewRegistry } from "./../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { View, ViewMetadata, IViewUserStyleData } from "../../../../../component/view";
@@ -8,11 +7,10 @@ import { IProjectManagerElementData } from "../../../project-manager";
 
 import * as _ from "lodash";
 
-//import * as $ from "../../../../../../../../../node_modules/jstree/dist/jstree";
-
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import ProjectManagerAppInstanceViewTmpl from "./project-manager-app-instance-view.tmpl";
 import { PageFoldingView } from './../../../../../common-views/page-folding-view/page-folding-view';
+import { ProjectManagerElementView } from "./project-manager-element-view";
 
 
 interface IAppInstanceEvent {
@@ -207,5 +205,47 @@ export class ProjectManagerAppInstanceView extends View {
     public addElement(element: IProjectManagerElementData): void {
         let ids = element.path.split("/");
         this.categories.map(cat=>cat.id).indexOf(ids.shift())["addElement"](ids, element);
+    }
+
+    public hasElement(name: string): boolean {
+        let found = false;
+        _.forEach(this.categories, (category) => {
+            if (category.name === name || category.hasElement(name)) {
+                found = true;
+                return false;
+            }
+        });
+        return found;
+    }
+
+    private findElementHelper(data: string, type: string): ProjectManagerElementView {
+        let element: ProjectManagerElementView= null;
+        _.forEach(this.categories, (category)=> {
+            element = category.findElement(name, type);
+            if (element) {
+                return false;
+            }
+        });
+        return element;
+    }
+    public findElementWPath(path: string): ProjectManagerElementView {
+        return this.findElementHelper(path, "path");
+    }
+    public findElementWName(path: string): ProjectManagerElementView {
+        return this.findElementHelper(path, "name");
+    }
+
+    public hasChild(name: string, parentPath: string): boolean {
+        let parent = null;
+        _.forEach(this.categories, (category) => {
+            let parent = this.findElementWPath(parentPath);
+            if (parent) {
+                return false;
+            }
+        });
+        if (parent) {
+            return parent.findElementWName(name);
+        }
+        return false;
     }
 }
