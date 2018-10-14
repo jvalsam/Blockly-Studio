@@ -22,7 +22,8 @@ export abstract class ProjectManagerElementView extends View {
         hookSelector: string,
         protected meta: any,
         protected path: string,
-        protected parentTree: ProjectManagerElementView | ProjectManagerAppInstanceView
+        protected parentTree: ProjectManagerElementView | ProjectManagerAppInstanceView,
+        public readonly projectID: string
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         this._children = { items: null, categories: null };

@@ -14,6 +14,7 @@
                 <%= typeof(max)!=='undefined' ? 'max="'+max+'"' : (type==='percentage' ? 'max="100"' : '') %>
                 value="<%= value %>"
                 aria-describedby="title_<%= id %>"
+                <%= typeof(ftype)!=='undefined' && ftype ==='image' ? 'accept="image/*"' : '' %>
         >
     </div>
 <% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>

@@ -1,5 +1,5 @@
 
 
-export var URL: string = "http://localhost:3000/";
+export const URL: string = "http://147.52.17.129:3031/";
 
-export var MODAL_SELECTOR: string = ".modal-view-area";
+export const MODAL_SELECTOR: string = ".modal-view-area";

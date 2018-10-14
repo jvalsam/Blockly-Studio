@@ -1,3 +1,4 @@
+import { ProjectManagerValidation } from './project-manger-validation';
 import { assert, IDEError } from './../../../shared/ide-error/ide-error';
 import { ComponentsCommunication, ComponentCommAddFunction } from './../../component/components-communication';
 import { IDEUIComponent } from "../../component/ide-ui-component";
@@ -226,8 +227,21 @@ export class ProjectManager extends IDEUIComponent {
                 renderData,
                 type,
                 [
-                    { choice:"Cancel", providedBy:"self" },
-                    { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
+                    {
+                        choice:"Cancel",
+                        providedBy:"self"
+                    },
+                    {
+                        choice: "Create",
+                        providedBy: "creator",
+                        validation: (data, callback) => ProjectManagerValidation.check(
+                            data,
+                            this.loadedProjects[concerned.projectID],
+                            event.validation,
+                            callback
+                        ),
+                        callback: (data) => this.createNewElement(data)
+                    }
                 ]
             ));
         }
@@ -244,8 +258,21 @@ export class ProjectManager extends IDEUIComponent {
                         renderData,
                         type,
                         [
-                            { choice:"Back", providedBy:"self" },
-                            { choice: "Create", providedBy: "creator", callback: (data) => this.createNewElement(data) }
+                            {
+                                choice:"Back",
+                                providedBy:"self"
+                            },
+                            {
+                                choice: "Create",
+                                providedBy: "creator",
+                                validation: (data, callback) => ProjectManagerValidation.check(
+                                    data,
+                                    this.loadedProjects[concerned.projectID],
+                                    event.validation,
+                                    callback
+                                ),
+                                callback: (data) => this.createNewElement(data)
+                            }
                         ]
                     );
                     dialogue["dependsValue"] = title;
@@ -257,7 +284,7 @@ export class ProjectManager extends IDEUIComponent {
                     data: {
                         title: "Select type of item",
                         formElems: [{
-                            propertyID: "select_type_new_item",
+                            descriptionID: "select_type_new_item",
                             name: "Type",
                             style: "",
                             selected: titles[0],
@@ -323,6 +350,6 @@ export class ProjectManager extends IDEUIComponent {
 
     // Modal Actions are statically supported
     private createNewElement(data) {
-
+        alert("create new element not supported yet.");
     }
 }

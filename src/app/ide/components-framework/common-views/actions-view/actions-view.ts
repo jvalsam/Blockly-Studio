@@ -6,12 +6,18 @@ import { View, ViewMetadata, IViewEventRegistration, IViewUserStyleData } from "
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import * as _ from "lodash";
 
+export interface IValidationData {
+    rules: any;
+    type: "system"|"custom";
+}
+
 export interface IEventData {
     type: string;
     action: string | Function;
     providedBy?: string;
     mission: string;
     data: Array<any>;
+    validation?: Array<IValidationData>;
 }
 
 interface IActionData {

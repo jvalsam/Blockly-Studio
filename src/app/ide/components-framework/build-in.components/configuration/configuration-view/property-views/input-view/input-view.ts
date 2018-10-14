@@ -12,6 +12,7 @@ export interface IInputData extends IPropertyData {
     step?: string | number;
     min?: string | number;
     max?: string | number;
+    ftype?: string;
 }
 
 function IInputDataConverter(data: any): IInputData {
@@ -27,7 +28,8 @@ function IInputDataConverter(data: any): IInputData {
         value: data.value,
         min: data.config.min,
         step: data.config.step,
-        max: data.config.max
+        max: data.config.max,
+        ftype: data.config.ftype
     };
     inputData["id"] = data.id;
     return inputData;
@@ -101,11 +103,11 @@ export class InputView extends PropertyView {
         let input = $("#input_"+this.id);
         if (this.data.type === "text") {
             let len = input.val().length;
-            input[0].focus();
+            input[0]["focus"]();
             input[0]["setSelectionRange"](len, len);
         }
         else {
-            input[0].focus();
+            input[0]["focus"]();
         }
     }
 

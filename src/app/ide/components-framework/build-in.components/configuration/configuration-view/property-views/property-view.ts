@@ -114,17 +114,20 @@ export function StyleObjectToString(data: any): string {
     return value;
 }
 
-function convertPart(type, value) {
+function convertPart(id, type, value) {
     switch(type) {
         case "img":
             return {
+                descriptionID: id,
                 name: value.property+":",
                 type: "file",
+                ftype: "image",
                 description: "Select image of the item.",
                 value: value.default.path
             };
         case "title":
             return {
+                descriptionID: id,
                 name: value.property+":",
                 type: "text",
                 description: "Select title of the item.",
@@ -137,7 +140,7 @@ export function RenderPartsToPropertyData (renderParts: Array<any>) {
     if (renderParts && renderParts.length>0) {
         renderParts.forEach((part) => {
             if (part.selectedBy === "user") {
-                properties.push(convertPart(part.type, part.value));
+                properties.push(convertPart(part.id, part.type, part.value));
             }
         });
     }

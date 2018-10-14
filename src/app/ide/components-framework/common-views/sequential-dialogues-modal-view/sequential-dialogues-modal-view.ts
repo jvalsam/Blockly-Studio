@@ -4,7 +4,7 @@ import { IDEUIComponent } from "../../component/ide-ui-component";
 import { PropertyView, TypeToNameOfPropertyView } from "../../build-in.components/configuration/configuration-view/property-views/property-view";
 import { ViewRegistry } from "../../component/registry";
 import SequentialDialoguesModalViewTmpl from "./sequential-dialogues-modal-view.tmpl";
-import { assert, IDEError } from "../../../shared/ide-error/ide-error";
+import { assert } from "../../../shared/ide-error/ide-error";
 
 
 @ViewMetadata({
@@ -14,7 +14,6 @@ import { assert, IDEError } from "../../../shared/ide-error/ide-error";
 export class SequentialDialoguesModalView extends ModalView {
     private _firstProperty: PropertyView;
     private _dialoguesFormData: Array<{ [name: string]: PropertyView }>;
-    private _currentValidationCheck: any;
     private _currentActions;
     private _state: number;
 
@@ -40,11 +39,13 @@ export class SequentialDialoguesModalView extends ModalView {
         let formElems = {};
         let firstProperty: PropertyView = null;
         this._firstProperty = null;
-        _.forOwn(data.formElems, (elem, key) => {
-            formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(this.parent, ".project-manager-action-form-elements", elem);
-            if (elem.propertyID) {
-                formElems[key]["dialoguePropID"] = elem.propertyID;
-            }
+        _.forOwn(data.formElems, (elem) => {
+            let key = elem.descriptionID;
+            formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(
+                this.parent,
+                ".project-manager-action-form-elements",
+                elem
+            );
             formElems[key].clearSelectorArea = false;
             formElems[key].render();
             if (!firstProperty) {
@@ -53,7 +54,6 @@ export class SequentialDialoguesModalView extends ModalView {
             }
         });
         this._dialoguesFormData.push(formElems);
-        this._currentValidationCheck = data.validationCheck ? data.validationCheck : (data, callback) => callback(true)
     }
 
     protected justRender() {
@@ -68,10 +68,10 @@ export class SequentialDialoguesModalView extends ModalView {
                 this.renderSimpleDialogue(current.data);
                 break;
             case "depends_on":
-                let depFormsData = Object["values"](this._dialoguesFormData[current.depedency.dialogueNO]);
-                let index = depFormsData.map(x=>x.dialoguePropID).indexOf(current.depedency.propertyID);
-                assert(index > -1);
-                let value = (<PropertyView>depFormsData[index]).value;
+                let index = current.depedency.dialogueNO;
+                let descrID = current.depedency.propertyID;
+                assert(index < this._dialoguesFormData.length && descrID in this._dialoguesFormData[index]);
+                let value = (<PropertyView>this._dialoguesFormData[index][descrID]).value;
                 index = current.dialogues.map(x=>x.dependsValue).indexOf(value);
                 assert(index > -1);
                 let currentDialogue = current.dialogues[index];
@@ -89,9 +89,24 @@ export class SequentialDialoguesModalView extends ModalView {
         });
     }
 
+    private handleValidation(validationFunc, then) {
+        if (validationFunc) {
+            validationFunc(this._dialoguesFormData[this._state], (response) => {
+                if (response !== true) {
+                    this.renderWarningMessages(response);
+                }
+                else {
+                    then();
+                }
+            });
+        }
+        else {
+            then();
+        }
+    }
     private createEvtHandler (action) {
         if (action.callback) {
-            return () => action.callback(this.getDataFormElements());
+            return () => this.handleValidation(action.validation, () => action.callback(this.getDataFormElements()));
         }
 
         switch (action.choice) {
@@ -99,15 +114,10 @@ export class SequentialDialoguesModalView extends ModalView {
                 return () => this.onClose();
             case 'Next':
                 return () => {
-                    this._currentValidationCheck(this._dialoguesFormData, (response) => {
-                        if (response === true) {
-                            ++this._state;
-                            this.justRender();
-                            this.fixFocus();
-                        }
-                        else {
-                            this.renderWarningMessages(response);
-                        }
+                    this.handleValidation(action.validation, () => {
+                        ++this._state;
+                        this.justRender();
+                        this.fixFocus();
                     });
                 };
             case 'Back':
@@ -119,14 +129,9 @@ export class SequentialDialoguesModalView extends ModalView {
                 };
             default:
                 return () => {
-                    this._currentValidationCheck(this._dialoguesFormData, (response) => {
-                        if (response === true) {
-                            this.parent["onModalChoiceAction"] (action.choice, this.getDataFormElements(), ()=>this.onClose());
-                        }
-                        else {
-                            this.renderWarningMessages(response);
-                        }
-                    });
+                    this.handleValidation(action.validation, () =>
+                        this.parent["onModalChoiceAction"] (action.choice, this.getDataFormElements(), ()=>this.onClose())
+                    );
                 };
         }
     }

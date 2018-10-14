@@ -20,7 +20,6 @@ import { ProjectManagerElementView } from "../project-manager-element-view";
 })
 export class ProjectManagerItemView extends ProjectManagerElementView {
     private systemID: string;
-    private projectID: string;
     private renderInfo;
     private state;
 
@@ -32,9 +31,18 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, style, hookSelector, data.meta, data.path + data.item.systemID + "/", data.parentTree);
+        super (
+            parent,
+            name,
+            templateHTML,
+            style,
+            hookSelector,
+            data.meta,
+            data.path + data.item.systemID + "/",
+            data.parentTree,
+            data.projectID
+        );
         this.systemID = data.item.systemID;
-        this.projectID = data.projectID;
         this.path = data.path + this.systemID + "/";
         this.renderInfo = {};
         this.renderInfo.type = data.item.type;// (({type, renderParts }) => ({ type, renderParts })) (data.meta);
