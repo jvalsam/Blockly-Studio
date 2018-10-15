@@ -2,6 +2,8 @@ import { PropertyType } from "./property-view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { View, IViewUserStyleData } from "../../../../component/view";
 import _ from "lodash";
+import { ProjectManagerItemView } from "../../../project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view";
+
 
 export type PropertyType =
     "number"    | "percentage" | "text" | "color" | "date" | "checkbox" | "file" | "image" | // input
@@ -131,7 +133,8 @@ function convertPart(id, type, value) {
                 name: value.property+":",
                 type: "text",
                 description: "Select title of the item.",
-                value: value.default.text
+                placeholder: "Enter "+value.property,
+                value: value.default.text + " " + ProjectManagerItemView.GetTotalGeneratedElems()
             };
     }
 }

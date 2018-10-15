@@ -54,6 +54,19 @@ export class SequentialDialoguesModalView extends ModalView {
             }
         });
         this._dialoguesFormData.push(formElems);
+
+        // _.forEach(data.actions, (action) => {
+        //     $(".modal-footer").append(
+        //         '<button type="' + action.type + " class='btn btn-secondary ts-btn-action-" + _.toLower(action.choice) + "'" + (action.choice === 'Cancel' ? "data-dismiss='modal'" : "") +'>' +
+        //             action.choice +
+        //         '</button>'
+        //     );
+        //     this.attachEvent({
+        //         eventType: "click",
+        //         selector: ".ts-btn-action-"+_.toLower(action.choice),
+        //         handler: this.createEvtHandler(action)
+        //     }, true);
+        // });
     }
 
     protected justRender() {

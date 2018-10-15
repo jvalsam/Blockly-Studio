@@ -19,6 +19,7 @@ import { ProjectManagerElementView } from "../project-manager-element-view";
     templateHTML: ItemViewTmpl
 })
 export class ProjectManagerItemView extends ProjectManagerElementView {
+    private static _numberOfElements: number = 0;
     private systemID: string;
     private renderInfo;
     private state;
@@ -42,6 +43,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
             data.parentTree,
             data.projectID
         );
+        ++ProjectManagerItemView._numberOfElements;
         this.systemID = data.item.systemID;
         this.path = data.path + this.systemID + "/";
         this.renderInfo = {};
@@ -204,5 +206,9 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         if (this.state !== null) {
             this.state.destroy();
         }
+    }
+
+    public static GetTotalGeneratedElems(): number {
+        return ProjectManagerItemView._numberOfElements;
     }
 }

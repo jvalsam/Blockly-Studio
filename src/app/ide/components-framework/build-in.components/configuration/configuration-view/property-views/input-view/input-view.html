@@ -12,10 +12,11 @@
                 <%= typeof(step)!=='undefined' ? 'step="'+step+'"':'' %>
                 <%= typeof(min)!=='undefined' ? 'min="'+min+'"' : (type==='percentage' ? 'min="0"' : '') %>
                 <%= typeof(max)!=='undefined' ? 'max="'+max+'"' : (type==='percentage' ? 'max="100"' : '') %>
-                value="<%= value %>"
+                <%= typeof(placeholder)!=='undefined' ? 'placeholder="'+placeholder+'"':'' %>
                 aria-describedby="title_<%= id %>"
                 <%= typeof(ftype)!=='undefined' && ftype ==='image' ? 'accept="image/*"' : '' %>
-        >
+                required
+        />
     </div>
 <% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
 </div>

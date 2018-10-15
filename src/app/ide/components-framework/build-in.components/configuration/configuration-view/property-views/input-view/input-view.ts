@@ -13,6 +13,7 @@ export interface IInputData extends IPropertyData {
     min?: string | number;
     max?: string | number;
     ftype?: string;
+    placeholder?: string;
 }
 
 function IInputDataConverter(data: any): IInputData {
@@ -29,7 +30,8 @@ function IInputDataConverter(data: any): IInputData {
         min: data.config.min,
         step: data.config.step,
         max: data.config.max,
-        ftype: data.config.ftype
+        ftype: data.config.ftype,
+        placeholder: data.config.placeholder
     };
     inputData["id"] = data.id;
     return inputData;

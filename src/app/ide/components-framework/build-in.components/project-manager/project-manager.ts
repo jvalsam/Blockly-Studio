@@ -229,10 +229,12 @@ export class ProjectManager extends IDEUIComponent {
                 [
                     {
                         choice:"Cancel",
+                        type: "button",
                         providedBy:"self"
                     },
                     {
                         choice: "Create",
+                        type: "submit",
                         providedBy: "creator",
                         validation: (data, callback) => ProjectManagerValidation.check(
                             data,
@@ -260,10 +262,12 @@ export class ProjectManager extends IDEUIComponent {
                         [
                             {
                                 choice:"Back",
+                                type: "button",
                                 providedBy:"self"
                             },
                             {
                                 choice: "Create",
+                                type: "submit",
                                 providedBy: "creator",
                                 validation: (data, callback) => ProjectManagerValidation.check(
                                     data,
@@ -294,8 +298,8 @@ export class ProjectManager extends IDEUIComponent {
                             indepedent: true
                         }],
                         actions: [
-                            { choice:"Cancel", providedBy:"self" },
-                            { choice: "Next", providedBy: "self" }
+                            { choice:"Cancel", type: "button", providedBy:"self" },
+                            { choice: "Next", type: "submit", providedBy: "self" }
                         ]
                     }
                 });

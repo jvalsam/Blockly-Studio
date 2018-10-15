@@ -135,10 +135,12 @@ export abstract class View {
         $(whereSel).append(hook);
     }
 
-    protected renderTmplElHelper(data?: any): void {
+    protected renderTmplElHelper(data?: any, registerEvtsByHand?: boolean): void {
         this.$el = $(this._template(data));
         this.$el.attr("id", this._id);
-        this.registerEvents();
+        if (!registerEvtsByHand) {
+            this.registerEvents();
+        }
         this.applyUserStyles();
     }
 
@@ -149,8 +151,8 @@ export abstract class View {
         $(this._selector).append(this.$el);
     }
 
-    public renderTmplEl(data?:any): void {
-        this.renderTmplElHelper(data);
+    public renderTmplEl(data?:any, registerEvtsByHand:boolean=false): void {
+        this.renderTmplElHelper(data, registerEvtsByHand);
         this.attachTmplEl();
     }
 
@@ -260,6 +262,22 @@ export abstract class View {
         return this._nextEventID;
     }
 
+    public attachEventsLocal(...eventRegs: Array<IViewEventRegistration>) {
+        this.ensureElement();
+
+        return _.map(eventRegs, (reg: IViewEventRegistration) => {
+            return this.attachEvent(reg, false);
+          });
+    }
+
+    public attachEventsGlobal(...eventRegs: Array<IViewEventRegistration>) {
+        this.ensureElement();
+
+        return _.map(eventRegs, (reg: IViewEventRegistration) => {
+            return this.attachEvent(reg, true);
+          });
+    }
+    
     public attachEvents(...eventRegs: Array<IViewEventRegistration>) {
         this.ensureElement();
 

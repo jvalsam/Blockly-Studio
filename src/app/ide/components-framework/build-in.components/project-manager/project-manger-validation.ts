@@ -52,6 +52,8 @@ export class ProjectManagerValidation {
 
     private static duplicate (items: {[name: string]: PropertyView }, projectInst: ProjectManagerAppInstanceView) {
         alert("check for duplicate not supported yet!");
+        // _.forEach(items, () => {});
+        // projectInst.findElementWName()
         this.postResponse(true);
     }
 
