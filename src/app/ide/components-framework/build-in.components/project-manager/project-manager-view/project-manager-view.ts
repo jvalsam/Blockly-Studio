@@ -1,6 +1,6 @@
 import { ViewRegistry } from "./../../../component/registry";
 import { ComponentView, ComponentViewMetadata } from "../../../../components-framework/component/component-view";
-import { ProjectManagerAppInstanceView as InstanceView } from "./project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view";
+import { ProjectManagerAppInstanceView as InstanceView, ProjectManagerAppInstanceView } from "./project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view";
 import { ActionsView } from "./../../../common-views/actions-view/actions-view";
 import { ProjectManagerMenuView as MenuView } from "./project-manager-elements-view/project-manager-application-instance-view/menu-view/menu-view";
 import { IProjectManagerElementData } from "../project-manager";
@@ -104,11 +104,17 @@ export class ProjectManagerView extends ComponentView {
                 "meta": this.skeletonDataProj
             }
         );
+        projectView["projectID"] = data._id;
         projectView.clearSelectorArea = false;
         
         this.loadedProjects.push(projectView);
 
         projectView.render();
+    }
+
+    public getProject(projectID): ProjectManagerAppInstanceView {
+        let index = this.loadedProjects.map(x=>x["projectID"]).indexOf(projectID);
+        return index > -1 ? this.loadedProjects[index] : null;
     }
 
     public loadProjects (data: any): void {

@@ -68,7 +68,7 @@ export class ProjectManager extends IDEUIComponent {
         });
 
         this._modalActions = {
-            "create": (data) => this.createNewElement(data)
+            "create": (event, data) => this.createNewElement(event, data)
         };
     }
 
@@ -218,11 +218,14 @@ export class ProjectManager extends IDEUIComponent {
     public onAddProjectElement (event: IEventData, concerned: ProjectManagerElementView): void {
         let dialoguesData = [];
         let types = concerned.getValidChildren();
+        let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
+        assert(projInstView !== null);
 
         // specific element to select
         if ( (event.data && event.data["type"]) || types.length === 1 ) {
             let type = types.length === 1 ? types[0] : event.data["type"];
             let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
+            
             dialoguesData.push(this.createDialogue(
                 renderData,
                 type,
@@ -238,11 +241,11 @@ export class ProjectManager extends IDEUIComponent {
                         providedBy: "creator",
                         validation: (data, callback) => ProjectManagerValidation.check(
                             data,
-                            this.loadedProjects[concerned.projectID],
+                            projInstView,
                             event.validation,
                             callback
                         ),
-                        callback: (data) => this.createNewElement(data)
+                        callback: (data) => this.createNewElement(event, data)
                     }
                 ]
             ));
@@ -271,11 +274,11 @@ export class ProjectManager extends IDEUIComponent {
                                 providedBy: "creator",
                                 validation: (data, callback) => ProjectManagerValidation.check(
                                     data,
-                                    this.loadedProjects[concerned.projectID],
+                                    projInstView,
                                     event.validation,
                                     callback
                                 ),
-                                callback: (data) => this.createNewElement(data)
+                                callback: (data) => this.createNewElement(event, data)
                             }
                         ]
                     );
@@ -343,17 +346,29 @@ export class ProjectManager extends IDEUIComponent {
         alert("clicked proj elem: projID( "+data.projectID+" ), systemID( "+data.systemID+" )");
     }
 
-    private onModalChoiceAction(action, data, cancelAction) {
-        if (!this._modalActions[action]) {
-            IDEError.warn("Not supported action is requested", "Action "+action+" is not suppoerted by the Project Manager.", "Project Manager");
-            cancelAction();
-        }
+    private onModalChoiceAction(event: IEventData, data: any, cancelAction: any) {
+        if (typeof event.action === "string") {
+            let action: string = <string>event.action;
+            if (!this._modalActions[action]) {
+                IDEError.warn (
+                    "Not supported action is requested",
+                    "Action " + action + " is not suppoerted by the Project Manager.",
+                    "Project Manager"
+                );
+                cancelAction();
+            }
 
-        this._modalActions[action] (data);
+            this._modalActions[action] (event, data);
+        }
+        else {
+            let action: Function = <Function>event.action;
+            action (event, data);
+        }
     }
 
-    // Modal Actions are statically supported
-    private createNewElement(data) {
+    // modal actions are statically supported
+    private createNewElement(event: IEventData, data: any): void {
         alert("create new element not supported yet.");
+        
     }
 }

@@ -39,10 +39,10 @@ export class ProjectManagerValidation {
         _.forEach(vchecks, (vcheck) => {
             switch(vcheck.type) {
                 case "system":
-                    _.forEach(vcheck.rules, (rule) => this[rule.action](rule.items, projectInst, rule.args));
+                    _.forEach(vcheck.rules, (rule) => this[rule.action](_.pick(items, rule.items), projectInst, rule.args));
                     break;
                 case "custom":
-                    _.forEach(vcheck.rules, (rule) => rule.validation_func (rule.items, projectInst, rule.args, this.postResponse));
+                    _.forEach(vcheck.rules, (rule) => rule.validation_func(_.pick(items, rule.items), projectInst, rule.args, this.postResponse));
                     break;
             }
         });
@@ -51,14 +51,19 @@ export class ProjectManagerValidation {
     // validation check provided by the platform, key of items is the descriptionID of the description domain wsp
 
     private static duplicate (items: {[name: string]: PropertyView }, projectInst: ProjectManagerAppInstanceView) {
-        alert("check for duplicate not supported yet!");
-        // _.forEach(items, () => {});
-        // projectInst.findElementWName()
-        this.postResponse(true);
+        let response: Array<string> = [];
+        _.forEach(items, (property) => {
+            if ( projectInst.findElementWName(property.value) !== null) {
+                response.push(property.value + " already exists! You have to change value in this field.");
+            }
+        });
+        this.postResponse(response.length === 0 ? true : response);
     }
 
     private static valid_name(items: { [name: string]: PropertyView }, projectInst: ProjectManagerAppInstanceView, rules) {
         alert("check for valid name not supported yet!");
-        this.postResponse(true);
+        let response: Array<string> = [];
+        
+        this.postResponse(response.length === 0 ? true : response);
     }
 }

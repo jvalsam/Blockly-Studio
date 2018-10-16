@@ -231,8 +231,8 @@ export class ProjectManagerAppInstanceView extends View {
     public findElementWPath(path: string): ProjectManagerElementView {
         return this.findElementHelper(path, "path");
     }
-    public findElementWName(path: string): ProjectManagerElementView {
-        return this.findElementHelper(path, "name");
+    public findElementWName(name: string): ProjectManagerElementView {
+        return this.findElementHelper(name, "name");
     }
 
     public hasChild(name: string, parentPath: string): boolean {

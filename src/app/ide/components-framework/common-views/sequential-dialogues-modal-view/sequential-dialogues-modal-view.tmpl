@@ -12,12 +12,6 @@
         </div>
     </div>
     <div class="modal-footer">
-        <% _.forEach(actions, (action) => { %>
-            <button type="<%= action.type %>" class="btn btn-secondary ts-btn-action-<%= _.toLower(action.choice) %>"
-                <%= action.choice === 'Cancel'?"data-dismiss='modal'":"" %>
-            >
-                <%= action.choice %>
-            </button>
-        <% }); %>
+        
     </div>
 </form>

@@ -35,7 +35,7 @@ export class SequentialDialoguesModalView extends ModalView {
         this._currentActions = data.actions;
         data.id = this.id;
 
-        this.renderTmplEl(data);
+        this.renderTmplEl(data, true);
         let formElems = {};
         let firstProperty: PropertyView = null;
         this._firstProperty = null;
@@ -55,18 +55,20 @@ export class SequentialDialoguesModalView extends ModalView {
         });
         this._dialoguesFormData.push(formElems);
 
-        // _.forEach(data.actions, (action) => {
-        //     $(".modal-footer").append(
-        //         '<button type="' + action.type + " class='btn btn-secondary ts-btn-action-" + _.toLower(action.choice) + "'" + (action.choice === 'Cancel' ? "data-dismiss='modal'" : "") +'>' +
-        //             action.choice +
-        //         '</button>'
-        //     );
-        //     this.attachEvent({
-        //         eventType: "click",
-        //         selector: ".ts-btn-action-"+_.toLower(action.choice),
-        //         handler: this.createEvtHandler(action)
-        //     }, true);
-        // });
+        _.forEach(data.actions, (action) => {
+            let sel: string = "ts-btn-action-" + _.toLower(action.choice);
+            $(".modal-footer").append(
+                "<input type=\"" + action.type + "\" class=\"btn btn-secondary " + sel + "\" " +
+                    (action.choice === "Cancel" ? "data-dismiss=\"modal\"" : "") +
+                "value=\"" + action.choice + "\"" +
+                " />"
+            );
+            this.attachEvent({
+                eventType: action.type === "submit" ? "submit" : "click",
+                selector: action.type === "submit" ? "this" : ("." + sel),
+                handler: this.createEvtHandler(action)
+            }, true);
+        });
     }
 
     protected justRender() {
@@ -102,6 +104,8 @@ export class SequentialDialoguesModalView extends ModalView {
         });
     }
 
+    //TODO: fix event keeped in projectmanager in order to be used on completion of the modal View, care to close modal before final call of submit data
+
     private handleValidation(validationFunc, then) {
         if (validationFunc) {
             validationFunc(this._dialoguesFormData[this._state], (response) => {
@@ -119,7 +123,11 @@ export class SequentialDialoguesModalView extends ModalView {
     }
     private createEvtHandler (action) {
         if (action.callback) {
-            return () => this.handleValidation(action.validation, () => action.callback(this.getDataFormElements()));
+            let formElemsData = this.getDataFormElements();
+            return () => this.handleValidation(action.validation, () => {
+                this.onClose();
+                action.callback(formElemsData)
+            });
         }
 
         switch (action.choice) {
@@ -142,9 +150,10 @@ export class SequentialDialoguesModalView extends ModalView {
                 };
             default:
                 return () => {
-                    this.handleValidation(action.validation, () =>
-                        this.parent["onModalChoiceAction"] (action.choice, this.getDataFormElements(), ()=>this.onClose())
-                    );
+                    this.handleValidation(action.validation, () => {
+                        let formElemsData = this.getDataFormElements();
+                        this.parent["onModalChoiceAction"](action.choice, formElemsData, ()=>this.onClose());
+                    });
                 };
         }
     }
