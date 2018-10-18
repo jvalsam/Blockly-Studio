@@ -7,7 +7,7 @@ var SmartObject = require('./SmartObject');
 var multer = require('multer');
 
 const storage = multer.diskStorage({
-    destination: 'smart_object_images',
+    destination: 'smart-object-images',
     filename: function (req, file, callback) {
         callback(null, file.originalname);
     }   

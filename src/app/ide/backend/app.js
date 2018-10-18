@@ -20,6 +20,7 @@ var allowCrossDomain = function (req, res, next) {
 };
 app.use(allowCrossDomain);
 
+app.use('/smart-object-images', __dirname + './smart-object-images');
 
 var ApplicationController = require('./applications/ApplicationController');
 app.use('/applications', authentication.check, ApplicationController);
