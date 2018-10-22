@@ -30,6 +30,9 @@ app.ts
 /__pycache__
 /typings
 
-#System Files
+# System Files
 .DS_Store
 Thumbs.db
+
+# Backend Images
+/src/app/ide/backend/smart-object-images
