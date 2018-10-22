@@ -79,9 +79,10 @@ function checkIDEEditorValidity(name: string, create: Function, data: IComponent
     }
     if (data["missions"]) {
         _.forEach(data["missions"], (mission) => {
-                funcNames.push("create"+mission);
+                funcNames.push(mission);
         });
     }
+    funcNames.push("factoryNewElement");
     checkIDEComponentValidityHelper(name, create, data, funcNames);
 }
 
@@ -312,7 +313,7 @@ export function ExportedSignal(signal: string, argsList?: Array<any>, finalFunc?
     };
 }
 
-function FunctionHelper(component: string, funcName: string, argsLen: number, parent, method) {
+function FunctionHelper(component: string, funcName: string, argsLen: number, parent, method, isStatic=false) {
     let funcMap = FunctionsHolder.get(component);
 
     if (funcMap === null) {
@@ -321,11 +322,11 @@ function FunctionHelper(component: string, funcName: string, argsLen: number, pa
         funcMap = FunctionsHolder.get(component);
     }
 
-    funcMap[funcName] = new ComponentFunction(component, funcName, argsLen);
+    funcMap[funcName] = new ComponentFunction(component, funcName, argsLen, isStatic);
     FunctionsHolder.put(component, funcMap);
 }
 
-function RequiredFunctionHelper(componentDest: string, funcName: string, argsLen: number, componentSrc: string, parent: string, method) {
+function RequiredFunctionHelper(componentDest: string, funcName: string, argsLen: number, isStatic: boolean, componentSrc: string, parent: string, method) {
     let funcMap = RequiredFunctionsHolder.get(componentSrc);
 
     if (funcMap === null) {
@@ -338,7 +339,7 @@ function RequiredFunctionHelper(componentDest: string, funcName: string, argsLen
         funcMap[funcName] = new Array<ComponentFunction>();
     }
 
-    funcMap[funcName].push(new ComponentFunction(componentDest, funcName, argsLen));
+    funcMap[funcName].push(new ComponentFunction(componentDest, funcName, argsLen, isStatic));
     RequiredFunctionsHolder.put(componentSrc, funcMap);
 }
 
@@ -381,6 +382,22 @@ export function ExportedFunction(
     );
 }
 
+export function ExportedStaticFunction(
+    target: any,
+    propertyKey: string,
+    descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>
+) {
+    // AddFunctionBodyFunctionality(propertyKey, descriptor);
+
+    FunctionHelper(
+        target.constructor.name,
+        propertyKey,
+        getParamNames(descriptor.value).length,
+        target.__proto__.constructor.name,
+        descriptor.value
+    );
+}
+
 export function ExportedFunctionAR(argsLenRestriction: boolean) {
     return (
         target: any,
@@ -402,7 +419,8 @@ export function ExportedFunctionAR(argsLenRestriction: boolean) {
 export function RequiredFunction(
     component: string,
     funcName: string,
-    argsLen?: number
+    argsLen?: number,
+    isStatic?: boolean
 ) {
     return (
         target: any,
@@ -413,6 +431,7 @@ export function RequiredFunction(
             component,
             funcName,
             argsLen,
+            isStatic,
             target.constructor.name,
             target.__proto__.constructor.name,
             descriptor.value
@@ -465,12 +484,14 @@ export class EstablishComponentsCommunicationJS {
         parent,
         funcName: string,
         func: Function,
-        argsLen: number
+        argsLen: number,
+        isStatic: boolean
     ) {
         RequiredFunctionHelper(
             componentDst,
             funcName,
             argsLen,
+            isStatic,
             componentSrc,
             parent,
             func

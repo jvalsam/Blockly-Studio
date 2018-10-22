@@ -7,8 +7,9 @@ import {
 } from "../../component/component-loader";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import { Editor } from "./editor";
-import { ComponentRegistry } from "../../component/component-entry";
+import { ComponentRegistry, EditorDataHolder } from "../../component/component-entry";
 import { EditorManagerView } from "./editor-manager-view";
+import { IDEError } from "../../../shared/ide-error/ide-error";
 
 @UIComponentMetadata({
     description: "Handles requests to open editor instances for sources",
@@ -22,6 +23,7 @@ import { EditorManagerView } from "./editor-manager-view";
     componentView: "EditorManagerView"
 })
 export class EditorManager extends IDEUIComponent {
+    private loadedEditors: { [systemID: string]: Editor };
     private editorInstancesMap: {[id:string]: Editor};
     private editorOnFocusId: string;
     // use it to implement browse previous editor instances viewed
@@ -94,5 +96,53 @@ export class EditorManager extends IDEUIComponent {
 
     @ExportedFunction
     public onClose(): void {}
+
+    @ExportedFunction
+    public factoryNewElement(mission: string, args, restriction?:Array<string>) {
+        let editors = EditorDataHolder.getEditors(mission);
+        if (editors.length === 1) {
+
+        }
+        else {
+            // TODO:    view restrictions, user choice, domain choice etc, if there are more than one in filter then
+            //          create dialogues to choose which will be the editor
+            IDEError.raise (
+                "Multiple Visual Editors",
+                "There are more than one editors are able to handle mission "+mission+". This is not supported by the platform yet.",
+                "Editor Manager"
+            );
+        }
+    }
+
+    @ExportedFunction
+    public missionDispatcher(data: { action, mission }, args) {
+        alert("Mission Dispatcher of Editor Manager is not supported yet!");
+        let responsibleEditors = EditorDataHolder.getEditors(data.mission);
+        // TODO: add functionality for the filtering of which visual editor will give the respective
+        if (this[data.action]) {
+            this[data.action] (data, args);
+        }
+        else {
+
+        }
+
+        // there is no instance of editor, how can request for functionality
+
+
+        // 1st check if thre is instance in the map of instances
+        // check if it is in open/view mode
+        // if yes then just update view
+
+        // find which editor and decide if there are more
+
+        // check if action is static
+        // if yes call
+        // else
+        // create new instance then call
+
+        // TODO: thing for interactions of rules for a project
+        // interested catch up signals could work only with instances of the elements
+        
+    }
 
 }

@@ -52,21 +52,31 @@ export abstract class ProjectManagerElementView extends View {
         }
     }
 
-    private getElementHelper(items, categories, type) {
+    private getElementDataHelper(items, categories, type) {
         if (items && items.length>0) {
-            return items[items.map(x=>x.type).indexOf(type)].renderParts;
+            return items[items.map(x=>x.type).indexOf(type)];
         }
         if (categories && categories.length>0) {
-            return categories[categories.map(x=>x.type).indexOf(type)].renderParts;
+            return categories[categories.map(x=>x.type).indexOf(type)];
         }
         if (this.parentTree) {
             return (<ProjectManagerElementView>this.parentTree).getChildElementRenderData(type);
         }
         return null;
     }
+
+    public getChildElementData(type: string) {
+        assert (this.meta.validChildren && _.findIndex(this.meta.validChildren, (value) => { return value === type; } ) > -1, "Not valid children with name "+type+" in item view " + this.meta.type);
+        return this.getElementDataHelper(this.meta.items, this.meta.categories, type);
+    }
+
     public getChildElementRenderData(type: string) {
         assert (this.meta.validChildren && _.findIndex(this.meta.validChildren, (value) => { return value === type; } ) > -1, "Not valid children with name "+type+" in item view " + this.meta.type);
-        return this.getElementHelper(this.meta.items, this.meta.categories, type);
+        let elemData = this.getElementDataHelper(this.meta.items, this.meta.categories, type);
+        if (elemData!==null) {
+            return elemData.renderParts;
+        }
+        return elemData;
     }
 
     public getReversedChildElementRenderData(type: string) {

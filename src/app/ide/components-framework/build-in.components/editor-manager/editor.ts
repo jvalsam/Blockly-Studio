@@ -52,4 +52,6 @@ export abstract class Editor extends IDEUIComponent {
     public setAsRendered():void {
         this._isRendered = true;
     }
+
+    // All Editors have to implement static function factoryNewElement
 }

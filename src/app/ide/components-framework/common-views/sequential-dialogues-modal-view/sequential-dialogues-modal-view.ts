@@ -12,6 +12,7 @@ import { assert } from "../../../shared/ide-error/ide-error";
     templateHTML: SequentialDialoguesModalViewTmpl
 })
 export class SequentialDialoguesModalView extends ModalView {
+    private _currentDialogueIndex: number;
     private _firstProperty: PropertyView;
     private _dialoguesFormData: Array<{ [name: string]: PropertyView }>;
     private _currentActions;
@@ -28,6 +29,7 @@ export class SequentialDialoguesModalView extends ModalView {
         this._dialoguesFormData = [];
         this._firstProperty = null;
         this._state = 0;
+        this._currentDialogueIndex = -1;
     }
 
     private renderSimpleDialogue(data) {
@@ -72,6 +74,7 @@ export class SequentialDialoguesModalView extends ModalView {
     }
 
     protected justRender() {
+        this._currentDialogueIndex = -1;
         let current = this.data[this._state];
         if (this._firstRender) {
             this.injectModalTmpl();
@@ -87,9 +90,9 @@ export class SequentialDialoguesModalView extends ModalView {
                 let descrID = current.depedency.propertyID;
                 assert(index < this._dialoguesFormData.length && descrID in this._dialoguesFormData[index]);
                 let value = (<PropertyView>this._dialoguesFormData[index][descrID]).value;
-                index = current.dialogues.map(x=>x.dependsValue).indexOf(value);
+                this._currentDialogueIndex = current.dialogues.map(x=>x.dependsValue).indexOf(value);
                 assert(index > -1);
-                let currentDialogue = current.dialogues[index];
+                let currentDialogue = current.dialogues[this._currentDialogueIndex];
                 this.renderSimpleDialogue(currentDialogue.data);
                 break;
         }
@@ -123,10 +126,11 @@ export class SequentialDialoguesModalView extends ModalView {
     }
     private createEvtHandler (action) {
         if (action.callback) {
-            let formElemsData = this.getDataFormElements();
             return () => this.handleValidation(action.validation, () => {
+                let formElemsData = this.getDataFormElements();
+                // TODO: if type is file and ftype is image, DB save image and value will be the path of the DB
                 this.onClose();
-                action.callback(formElemsData)
+                action.callback(formElemsData, this._currentDialogueIndex);
             });
         }
 

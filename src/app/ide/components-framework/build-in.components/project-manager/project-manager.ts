@@ -43,6 +43,9 @@ export interface IProjectManagerElementData {
     version: "1.0"
 })
 export class ProjectManager extends IDEUIComponent {
+    private projManagerDescr: any;
+    private currEvent: IEventData;
+    private currItemsData: any;
     private _modalActions: { [func: string]: Function };
     private loadedProjects: {[projectID: string]: any};
     private isOpen: Boolean;
@@ -68,15 +71,33 @@ export class ProjectManager extends IDEUIComponent {
         });
 
         this._modalActions = {
-            "create": (event, data) => this.createNewElement(event, data)
+            "create": (data) => this.createNewElement(this.currEvent, data, this.currItemsData)
         };
     }
 
     @ExportedFunction
     initialize(): void {
         let metadata = ProjectManagerMetaDataHolder.getWSPDomainMetaData(this.domainType);
+        this.projManagerDescr = metadata;
         this._view.setRenderData(metadata);
         this._view.initialize();
+    }
+
+    private getItemData (name: string) {
+        let categories = this.projManagerDescr["project"]["categories"];
+        _.forEach(categories, (category)=> {
+            _.forEach(category.items, (item) => {
+                if (item.type === name) {
+                    return item;
+                }
+            });
+        });
+    }
+
+    private getItemDataCreate (name, data) {
+        // TODO: find in descr tree path the item and then mission and action
+
+        // TODO: request from editor manager
     }
 
     @ExportedFunction
@@ -216,6 +237,7 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public onAddProjectElement (event: IEventData, concerned: ProjectManagerElementView): void {
+        this.currEvent = event;
         let dialoguesData = [];
         let types = concerned.getValidChildren();
         let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
@@ -224,6 +246,7 @@ export class ProjectManager extends IDEUIComponent {
         // specific element to select
         if ( (event.data && event.data["type"]) || types.length === 1 ) {
             let type = types.length === 1 ? types[0] : event.data["type"];
+            let itemData = concerned.getChildElementData(type);
             let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
             
             dialoguesData.push(this.createDialogue(
@@ -245,7 +268,7 @@ export class ProjectManager extends IDEUIComponent {
                             event.validation,
                             callback
                         ),
-                        callback: (data) => this.createNewElement(event, data)
+                        callback: (data) => this.createNewElement(event, data, itemData)
                     }
                 ]
             ));
@@ -255,8 +278,10 @@ export class ProjectManager extends IDEUIComponent {
             if (types.length > 1) {
                 let titles = [];
                 let dialogues = [];
+                let itemsData = [];
                 _.forEach(types, (type)=> {
                     let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
+                    itemsData.push(concerned.getChildElementData(type));
                     let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default.text;
                     titles.push(title);
                     let dialogue = this.createDialogue(
@@ -278,7 +303,10 @@ export class ProjectManager extends IDEUIComponent {
                                     event.validation,
                                     callback
                                 ),
-                                callback: (data) => this.createNewElement(event, data)
+                                callback: (data, index) => {
+                                    assert(index !== -1, "Invalid index in sequential dialogues in multi choice of dialogues!");
+                                    this.createNewElement(event, data, itemsData[index]);
+                                }
                             }
                         ]
                     );
@@ -346,9 +374,9 @@ export class ProjectManager extends IDEUIComponent {
         alert("clicked proj elem: projID( "+data.projectID+" ), systemID( "+data.systemID+" )");
     }
 
-    private onModalChoiceAction(event: IEventData, data: any, cancelAction: any) {
-        if (typeof event.action === "string") {
-            let action: string = <string>event.action;
+    private onModalChoiceAction(data: any, cancelAction: any) {
+        if (this.currEvent && typeof this.currEvent.action === "string") {
+            let action: string = <string>this.currEvent.action;
             if (!this._modalActions[action]) {
                 IDEError.warn (
                     "Not supported action is requested",
@@ -361,14 +389,18 @@ export class ProjectManager extends IDEUIComponent {
             this._modalActions[action] (event, data);
         }
         else {
-            let action: Function = <Function>event.action;
+            let action: Function = <Function>this.currEvent.action;
             action (event, data);
         }
     }
 
     // modal actions are statically supported
-    private createNewElement(event: IEventData, data: any): void {
+    private createNewElement(event: IEventData, data: any, itemsData: any): void {
         alert("create new element not supported yet.");
-        
+        let index = itemsData.events.map(x => x.type).indexOf("click");
+        assert(index !== -1, "Not defined event click for this specific element type.");
+        let args = ( ({mission, providedBy, action}) => ({mission, providedBy, action}) ) (itemsData.events [index]);
+        args.action = "factoryNewElement";
+        ComponentsCommunication.functionRequest("ProjectManager", args.providedBy, args.action, [args, data]);
     }
 }

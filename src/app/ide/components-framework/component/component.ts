@@ -117,14 +117,15 @@ export abstract class Component {
     );
   }
   // Import
-  protected addRequestedFunction(parent: string, funcName: string, func: Function, argsLen: number, componentName: string) {
+  protected addRequestedFunction(parent: string, funcName: string, func: Function, argsLen: number, isStatic: boolean, componentName: string) {
     EstablishComponentsCommunicationJS.registerRequiredFunction (
       componentName,
       this.name,
       parent,
       funcName,
       func,
-      argsLen
+      argsLen,
+      isStatic
     );
   }
   protected addSignalListener(parent: string, signal: string, sourceComponent: string, callback: string) {

@@ -19,7 +19,7 @@ import {
 import { DomainLibsHolder } from "../domain-manager/domain-libs-holder";
 import { ComponentsBridge } from "./component/components-bridge";
 
-import { ComponentRegistry } from "./component/component-entry";
+import { ComponentRegistry, EditorDataHolder } from "./component/component-entry";
 import { ComponentsCommunication } from "./component/components-communication";
 import { Shell } from "./common.components/shell/shell";
 import { Configuration } from "./build-in.components/configuration/configuration";
@@ -37,6 +37,7 @@ export class IDECore {
     ComponentLoader.initialize();
     DomainLibsHolder.initialize();
 
+    EditorDataHolder.initialize();
     ComponentRegistry.initialize();
     ComponentsBridge.initialize();
     ComponentsCommunication.initialize();

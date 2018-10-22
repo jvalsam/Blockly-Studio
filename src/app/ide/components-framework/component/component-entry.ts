@@ -8,7 +8,7 @@
 import { Component } from "./component";
 import { ComponentSignal } from "./component-signal";
 import { Entry } from "../../shared/entry/entry";
-import { IDEError } from "../../shared/ide-error/ide-error";
+import { IDEError, assert } from "../../shared/ide-error/ide-error";
 
 import * as _ from "lodash";
 import { IDEUIComponent } from "./ide-ui-component";
@@ -20,10 +20,41 @@ export interface ComponentEntryInfo {
   version: string;
 }
 
+export class EditorDataHolder {
+  private static _editors: { [name: string] : Array<String> };
+
+  public static initialize(): void {
+    this._editors = {};
+  }
+
+  public static addMission(editor: string, mission: string) {
+    assert(editor in this._editors, "Invalid, there is not defined editor with name "+editor+". <EditorDataHolder>");
+    this._editors[editor].push(mission);
+  }
+
+  public static removeMission(editor: string, mission: string) {
+    assert(editor in this._editors, "Invalid, there is not defined editor with name "+editor+". <EditorDataHolder>");
+    _.remove(this._editors[editor], (editorMission) => { return editorMission === mission; });
+  }
+
+  public static setMissions(editor: string, missions: Array<string>) {
+    this._editors[editor] = missions;
+  }
+
+  public static getEditors(mission: string): Array<string> {
+    let editors = [];
+    _.forEach(this._editors, (missions, editor) => {
+        if (_.indexOf(missions, mission) > -1) {
+          editors.push(editor);
+        }
+    });
+    return editors;
+  }
+}
+
 export class ComponentEntry extends Entry<Component> {
   private _signalList: Array<string>;
   private _signalListensList: Array<ComponentSignal>;
-  private _missions: Array<string>;
 
   constructor(
     private readonly _compInfo?: ComponentEntryInfo,
@@ -63,15 +94,15 @@ export class ComponentEntry extends Entry<Component> {
   ///// below methods are for visual editors only //////
   
   public setMissions(missions: Array<string>) {
-    this._missions = missions;
+    EditorDataHolder.setMissions(this.name, missions);
   }
 
   public addMission(mission: string) {
-    this._missions.push(mission);
+    EditorDataHolder.addMission(this.name, mission);
   }
 
   public removeMission(mission: string) {
-    _.remove(this._missions, function(el) { return el === mission; } );
+    EditorDataHolder.removeMission(this.name, mission);
   }
 
   ///// above methods are for visual editors only //////

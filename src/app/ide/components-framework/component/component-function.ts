@@ -20,20 +20,22 @@ export class ComponentFunction extends ComponentCommunicationElement {
         _srcName: string,
         _funcName: string,
         private readonly _argsLen: number,
+        private readonly _isStatic: boolean = false,
         private readonly _responseCallback?: string
     ) {
         super(_srcName, _funcName);
     }
 
     public copy(){
-      return new ComponentFunction(this.srcName, this.name, this.argsLen, this._responseCallback);
+      return new ComponentFunction(this.srcName, this.name, this.argsLen, this._isStatic, this._responseCallback);
     }
 
     get argsLen(): number { return this._argsLen; }
 
+    get isStatic(): boolean { return this._isStatic; }
+
     get hasArgsLenRestriction (): boolean { return this._argsLen !== -1; }
 
-    // get returnType(): string { return this._retType; }
     get responseCallback(): string { return this._responseCallback; }
 
     public GetSignature(): string { return "TODO"; }
