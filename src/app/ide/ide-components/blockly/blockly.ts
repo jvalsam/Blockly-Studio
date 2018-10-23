@@ -7,7 +7,8 @@ import {
   ExportedFunction,
   RequiredFunction,
   ListensSignal,
-  PlatformEditorMetadata
+  PlatformEditorMetadata,
+  ExportedStaticFunction
 } from "../../components-framework/component/component-loader";
 
 var menuJson: any = require("./conf_menu.json");
@@ -188,16 +189,22 @@ export class BlocklyVPL extends Editor {
   
   // Missions of the Editor
 
-  public static createGeneral(): string {
+  private static factoryArgs(args): string {
+    return "";
+  }
+
+  @ExportedStaticFunction
+  public static General(args): string {
     return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
   }
 
-  public static createLogicExprIoT(): string {
+  @ExportedStaticFunction
+  public static LogicExprIoT(args): string {
     return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
   }
 
-  public static createIoTHandling(): string {
+  @ExportedStaticFunction
+  public static IoTHandling(args): string {
     return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
   }
-
 }

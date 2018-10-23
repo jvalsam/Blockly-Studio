@@ -1,0 +1,27 @@
+{
+    "ComponentName": "ViSmaOE",
+    "MenuElements": [
+        {
+            "path": "/Home|Configure|Blockly|",
+            "data": {
+                "title": "ViSmaOE",
+                "type": "sub-menu",
+                "help": "Edit ViSmaOE Editor Properties"
+            }
+        },
+        {
+            "path": "/Configure/Configuration|DividerConfiguration|Menu|Blockly|",
+            "data": {
+                "title": "ViSmaOE",
+                "help": "Configuration of ViSmaOE",
+                "type": "leaf",
+                "events": [
+                    {
+                        "type": "click",
+                        "handler": "onConfig"
+                    }
+                ]
+            }
+        }
+    ]
+}

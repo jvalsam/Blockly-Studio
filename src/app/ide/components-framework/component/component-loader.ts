@@ -39,7 +39,7 @@ export interface IUIComponentData extends IComponentData {
 }
 
 export interface ΙEditorData extends IUIComponentData {
-    missions?: Array<string>;
+    missions?: Array<any>; // fix me type of mission (model each mission static or not method)
 }
 
 function isIUIComponentData(data: IComponentData | IUIComponentData): data is IUIComponentData {
@@ -82,7 +82,6 @@ function checkIDEEditorValidity(name: string, create: Function, data: IComponent
                 funcNames.push(mission);
         });
     }
-    funcNames.push("factoryNewElement");
     checkIDEComponentValidityHelper(name, create, data, funcNames);
 }
 

@@ -6,7 +6,8 @@
  */
 
 import { IDEUIComponent } from "../../component/ide-ui-component";
-import { ExportedFunction } from "../../component/component-loader";
+import { ExportedFunction, ExportedStaticFunction } from "../../component/component-loader";
+import { ResponseValue } from "../../component/response-value";
 
 // const enum EditorRenderState {
 //     constructed = 0,
@@ -53,5 +54,9 @@ export abstract class Editor extends IDEUIComponent {
         this._isRendered = true;
     }
 
-    // All Editors have to implement static function factoryNewElement
+    // All Editors have to implement static functions factory+"each mission name"
+    @ExportedStaticFunction
+    public static factoryNewElement(mission, args): ResponseValue {
+      return new ResponseValue(this.name, "factory", this["factory"+mission](args));
+    }
 }

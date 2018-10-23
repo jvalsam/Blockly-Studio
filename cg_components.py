@@ -11,6 +11,8 @@ import os
 from os import listdir
 from os.path import isfile, join
 
+import urllib2
+
 print('Starts Components Bridge Codegeneration...')
 
 ProjectPath = './src/app/ide/'
@@ -106,3 +108,22 @@ file.write("}\n")
 file.close()
 
 print('Ends Components Bridge Codegeneration')
+
+
+def downloadFile(URL, dstPath):
+    response = urllib2.urlopen(URL)
+    data = response.read()
+    file_ = open(dstPath, 'w')
+    file_.write(data)
+    file_.close()
+
+def downloadSUIM():
+    path = 'https://www.csd.uoc.gr/~ntoulasm/suim/'
+    if not os.path.exists("libs"):
+        os.mkdir("libs")
+    if not os.path.exists("./libs/SUIM"):
+        os.mkdir("./libs/SUIM")
+    downloadFile(path+'suim.js', "./libs/SUIM/suim.js")
+    downloadFile(path+'suim.css', "./libs/SUIM/suim.css")
+
+downloadSUIM()

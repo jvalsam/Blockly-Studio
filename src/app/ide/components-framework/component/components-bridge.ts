@@ -3,7 +3,7 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2018-10-22 12:25:07.710000
+ * 2018-10-23 17:20:45.761000
  */
 
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
@@ -59,6 +59,7 @@ import { IoTWSPEditorView } from "../../../../../src/app/ide/ide-components/iot/
 import { IoTWSPEditor } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-wsp-editor";
 import { IoTAutomationList } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-list";
 import { IoTAutomationViewBox } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-view-box/iot-automation-view-box";
+import { ViSmaOE } from "../../../../../src/app/ide/ide-components/ViSmaOE/VismaOE";
 
 
 export class ComponentsBridge {
@@ -114,6 +115,7 @@ export class ComponentsBridge {
 		IoTWSPEditor.onInit();
 		IoTAutomationList.onInit();
 		IoTAutomationViewBox.onInit();
+		ViSmaOE.onInit();
 	}
 
 }

@@ -12,6 +12,7 @@ import { IDEError, assert } from "../../shared/ide-error/ide-error";
 
 import * as _ from "lodash";
 import { IDEUIComponent } from "./ide-ui-component";
+import { EditorDataHolder } from "../holders";
 
 
 export interface ComponentEntryInfo {
@@ -20,37 +21,6 @@ export interface ComponentEntryInfo {
   version: string;
 }
 
-export class EditorDataHolder {
-  private static _editors: { [name: string] : Array<String> };
-
-  public static initialize(): void {
-    this._editors = {};
-  }
-
-  public static addMission(editor: string, mission: string) {
-    assert(editor in this._editors, "Invalid, there is not defined editor with name "+editor+". <EditorDataHolder>");
-    this._editors[editor].push(mission);
-  }
-
-  public static removeMission(editor: string, mission: string) {
-    assert(editor in this._editors, "Invalid, there is not defined editor with name "+editor+". <EditorDataHolder>");
-    _.remove(this._editors[editor], (editorMission) => { return editorMission === mission; });
-  }
-
-  public static setMissions(editor: string, missions: Array<string>) {
-    this._editors[editor] = missions;
-  }
-
-  public static getEditors(mission: string): Array<string> {
-    let editors = [];
-    _.forEach(this._editors, (missions, editor) => {
-        if (_.indexOf(missions, mission) > -1) {
-          editors.push(editor);
-        }
-    });
-    return editors;
-  }
-}
 
 export class ComponentEntry extends Entry<Component> {
   private _signalList: Array<string>;

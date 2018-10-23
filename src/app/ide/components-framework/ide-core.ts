@@ -13,13 +13,14 @@ import {
   RequiredFunctionsHolder,
   SignalListenersHolder,
   SignalsHolder,
-  DataLoader
+  DataLoader,
+  EditorDataHolder
 } from "./holders";
 
 import { DomainLibsHolder } from "../domain-manager/domain-libs-holder";
-import { ComponentsBridge } from "./component/components-bridge";
+import { ComponentRegistry } from "./component/component-entry";
 
-import { ComponentRegistry, EditorDataHolder } from "./component/component-entry";
+import { ComponentsBridge } from "./component/components-bridge";
 import { ComponentsCommunication } from "./component/components-communication";
 import { Shell } from "./common.components/shell/shell";
 import { Configuration } from "./build-in.components/configuration/configuration";
@@ -29,15 +30,15 @@ import "bootstrap";
 
 export class IDECore {
   public static initialize(): void {
-    IDEError.initialize();
+    EditorDataHolder.initialize();
     SignalsHolder.initialize();
     SignalListenersHolder.initialize();
     FunctionsHolder.initialize();
     RequiredFunctionsHolder.initialize();
     ComponentLoader.initialize();
     DomainLibsHolder.initialize();
+    IDEError.initialize();
 
-    EditorDataHolder.initialize();
     ComponentRegistry.initialize();
     ComponentsBridge.initialize();
     ComponentsCommunication.initialize();

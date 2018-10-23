@@ -7,9 +7,11 @@ import {
 } from "../../component/component-loader";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import { Editor } from "./editor";
-import { ComponentRegistry, EditorDataHolder } from "../../component/component-entry";
+
+import { ComponentRegistry } from "../../component/component-entry";
 import { EditorManagerView } from "./editor-manager-view";
 import { IDEError } from "../../../shared/ide-error/ide-error";
+import { EditorDataHolder } from "../../holders";
 
 @UIComponentMetadata({
     description: "Handles requests to open editor instances for sources",
@@ -101,7 +103,12 @@ export class EditorManager extends IDEUIComponent {
     public factoryNewElement(mission: string, args, restriction?:Array<string>) {
         let editors = EditorDataHolder.getEditors(mission);
         if (editors.length === 1) {
-
+            return ComponentsCommunication.functionRequest(
+                this.name,
+                editors[0],
+                "factoryNewElement",
+                [ mission, args ]
+            );
         }
         else {
             // TODO:    view restrictions, user choice, domain choice etc, if there are more than one in filter then
