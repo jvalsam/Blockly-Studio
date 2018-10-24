@@ -1,5 +1,3 @@
-import { ResponseValue } from "./../../components-framework/component/response-value";
-import { ComponentsCommunication } from "../../components-framework/component/components-communication";
 import { Editor } from "../../components-framework/build-in.components/editor-manager/editor";
 import {
     ExportedSignal,
@@ -78,21 +76,13 @@ export class ViSmaOE extends Editor {
     }
 
     @ExportedStaticFunction
-    public static CreateSmartObject(): ResponseValue {
-        return new ResponseValue(
-            this.name,
-            "Create",
-            "TODO add src of item!!"
-        );
+    public static CreateSmartObject(createArgs): string {
+        return "TODO add src of item!!";
     }
-    
+
     @ExportedStaticFunction
-    public static CreateSmartEnvironment(): ResponseValue {
-        return new ResponseValue(
-            this.name,
-            "Create",
-            "TODO add src of item!!"
-        );
+    public static CreateSmartEnvironment(createArgs): string {
+        return "TODO add src of item!!";
     }
 
     @ExportedFunction
@@ -116,8 +106,12 @@ export class ViSmaOE extends Editor {
     }
 
     @ExportedFunction
-    public EditSmartObjec() {
+    public EditSmartObject() {
 
     }
 
+    @ExportedFunction
+    public onChangeConfig(values: any): void {
+        alert("on change config data not developed yet in ViSmaOE Component");
+    }
 }

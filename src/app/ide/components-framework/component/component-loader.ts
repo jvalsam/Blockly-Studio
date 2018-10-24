@@ -35,7 +35,7 @@ export interface IComponentData {
 }
 
 export interface IUIComponentData extends IComponentData {
-    componentView: string;
+    componentView?: string;
 }
 
 export interface ΙEditorData extends IUIComponentData {
@@ -389,11 +389,12 @@ export function ExportedStaticFunction(
     // AddFunctionBodyFunctionality(propertyKey, descriptor);
 
     FunctionHelper(
-        target.constructor.name,
+        target.name,
         propertyKey,
         getParamNames(descriptor.value).length,
-        target.__proto__.constructor.name,
-        descriptor.value
+        target.__proto__.name,
+        descriptor.value,
+        true
     );
 }
 

@@ -14,7 +14,7 @@ import { ApplicationModel } from "../shared/models/application.model";
 import { MapHolder } from '../shared/map-holder';
 import { ProjectManagerMetaDataHolder } from './build-in.components/project-manager/project-manager-meta-map';
 import { assert } from '../shared/ide-error/ide-error';
-import _ from 'lodash';
+import * as _ from "lodash";
 
 
 export interface FuncsMap {
@@ -53,37 +53,32 @@ export let RequiredFunctionsHolder =
 export let ApplicationsHolder =
 new MapHolder<ApplicationModel>("ApplicationModel");
 
-/**
- * Map: key => 
- */
+class _EditorDataHolder {
+  private _editors: { [name: string] : Array<String> };
 
-// interface EditorsData {}
-
-// export let EditorsDataHolder =
-// new MapHolder<EditorsData>("EditorsData");
-
-export class EditorDataHolder {
-  private static _editors: { [name: string] : Array<String> };
-
-  public static initialize(): void {
+  constructor() {
     this._editors = {};
   }
 
-  public static addMission(editor: string, mission: string) {
+  public initialize(): void {
+
+  }
+
+  public addMission(editor: string, mission: string) {
     assert(editor in this._editors, "Invalid, there is not defined editor with name "+editor+". <EditorDataHolder>");
     this._editors[editor].push(mission);
   }
 
-  public static removeMission(editor: string, mission: string) {
+  public removeMission(editor: string, mission: string) {
     assert(editor in this._editors, "Invalid, there is not defined editor with name "+editor+". <EditorDataHolder>");
     _.remove(this._editors[editor], (editorMission) => { return editorMission === mission; });
   }
 
-  public static setMissions(editor: string, missions: Array<string>) {
+  public setMissions(editor: string, missions: Array<string>) {
     this._editors[editor] = missions;
   }
 
-  public static getEditors(mission: string): Array<string> {
+  public getEditors(mission: string): Array<string> {
     let editors = [];
     _.forEach(this._editors, (missions, editor) => {
         if (_.indexOf(missions, mission) > -1) {
@@ -93,6 +88,8 @@ export class EditorDataHolder {
     return editors;
   }
 }
+
+export let EditorDataHolder = new _EditorDataHolder();
 
 export class DataLoader {
   public static start(callback: Function) {

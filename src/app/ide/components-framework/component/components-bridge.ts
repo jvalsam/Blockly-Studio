@@ -3,10 +3,12 @@
  * Components - Instantiation of the Components of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2018-10-23 17:20:45.761000
+ * 2018-10-24 15:43:43.771000
  */
 
 import { IDEUIComponent } from "../../../../../src/app/ide/components-framework/component/ide-ui-component";
+import { Editor } from "../../../../../src/app/ide/components-framework/build-in.components/editor-manager/editor";
+
 import { IDEErrorView } from "../../../../../src/app/ide/shared/ide-error/ide-error-view";
 import { IDEWarningView } from "../../../../../src/app/ide/shared/ide-error/ide-warning-view";
 
@@ -60,11 +62,13 @@ import { IoTWSPEditor } from "../../../../../src/app/ide/ide-components/iot/wsp-
 import { IoTAutomationList } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-list";
 import { IoTAutomationViewBox } from "../../../../../src/app/ide/ide-components/iot/wsp-editor/iot-automations/iot-automation-view-box/iot-automation-view-box";
 import { ViSmaOE } from "../../../../../src/app/ide/ide-components/ViSmaOE/VismaOE";
+import { ViSmaOEView } from "../../../../../src/app/ide/ide-components/ViSmaOE/ViSmaOEView";
 
 
 export class ComponentsBridge {
 	public static initialize(): void {
 		IDEUIComponent.onInit();
+		Editor.onInit();
 		IDEErrorView.onInit();
 		IDEWarningView.onInit();		ApplicationWSPManager.onInit();
 		ApplicationListSP.onInit();
@@ -116,6 +120,7 @@ export class ComponentsBridge {
 		IoTAutomationList.onInit();
 		IoTAutomationViewBox.onInit();
 		ViSmaOE.onInit();
+		ViSmaOEView.onInit();
 	}
 
 }

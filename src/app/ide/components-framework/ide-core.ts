@@ -30,7 +30,7 @@ import "bootstrap";
 
 export class IDECore {
   public static initialize(): void {
-    EditorDataHolder.initialize();
+    
     SignalsHolder.initialize();
     SignalListenersHolder.initialize();
     FunctionsHolder.initialize();

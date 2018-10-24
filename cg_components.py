@@ -38,7 +38,7 @@ def FindComponentNames(compPath):
             if words[i] == 'extends' and flag == 1:
                 data = [words[i-1], filePath]
                 print (data[0] + " is registered.")
-                if data[0] != "IDEErrorView" and data[0] != "IDEWarningView" and data[0] != "IDEUIComponent":
+                if data[0] != "IDEErrorView" and data[0] != "IDEWarningView" and data[0] != "IDEUIComponent" and data[0] != "Editor":
                     ComponentNameList.append(data[0])
                     file.write("import { " + data[0] + " } from \"../../../../." + root.replace('\\','/') + "/" + data[1][:-3] + "\";\n")
                 break
@@ -86,7 +86,7 @@ file.write(" */\n\n")
 
 ComponentNameList = []
 
-file.write("import { IDEUIComponent } from \"../../../../../src/app/ide/components-framework/component/ide-ui-component\";\nimport { IDEErrorView } from \"../../../../../src/app/ide/shared/ide-error/ide-error-view\";\nimport { IDEWarningView } from \"../../../../../src/app/ide/shared/ide-error/ide-warning-view\";\n\n");
+file.write("import { IDEUIComponent } from \"../../../../../src/app/ide/components-framework/component/ide-ui-component\";\nimport { Editor } from \"../../../../../src/app/ide/components-framework/build-in.components/editor-manager/editor\";\n\nimport { IDEErrorView } from \"../../../../../src/app/ide/shared/ide-error/ide-error-view\";\nimport { IDEWarningView } from \"../../../../../src/app/ide/shared/ide-error/ide-warning-view\";\n\n")
 
 for root, dirs, files in os.walk('./src/'):
     if "media" in root:
@@ -94,9 +94,7 @@ for root, dirs, files in os.walk('./src/'):
     data = FindComponentNames(root)
 
 file.write("\n\nexport class ComponentsBridge {\n")
-file.write("\tpublic static initialize(): void {\n\t\tIDEUIComponent.onInit();\n\t\tIDEErrorView.onInit();\n\t\tIDEWarningView.onInit();")
-
-
+file.write("\tpublic static initialize(): void {\n\t\tIDEUIComponent.onInit();\n\t\tEditor.onInit();\n\t\tIDEErrorView.onInit();\n\t\tIDEWarningView.onInit();")
 
 for componentName in ComponentNameList:
     file.write("\t\t" + componentName + ".onInit();\n")

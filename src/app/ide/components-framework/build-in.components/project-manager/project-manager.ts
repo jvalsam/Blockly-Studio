@@ -157,7 +157,7 @@ export class ProjectManager extends IDEUIComponent {
         }
         else {
             let evtData = {
-                mission: event.mission
+                mission: event.data.mission
             };
             if (event.data) {
                 evtData["data"] = event.data;
@@ -235,17 +235,22 @@ export class ProjectManager extends IDEUIComponent {
         };
     }
 
+    private createNewItem(concerned: ProjectManagerElementView, newItem: any, src: any): any {
+        alert("TODO: implement add new item in the project manager tree!");
+        return "item";
+    }
+
     @ExportedFunction
     public onAddProjectElement (event: IEventData, concerned: ProjectManagerElementView): void {
         this.currEvent = event;
         let dialoguesData = [];
-        let types = concerned.getValidChildren();
+        let validTypes = concerned.getValidChildren();
         let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
         assert(projInstView !== null);
 
         // specific element to select
-        if ( (event.data && event.data["type"]) || types.length === 1 ) {
-            let type = types.length === 1 ? types[0] : event.data["type"];
+        if (event.data.choices.length === 1) {
+            let type = event.data.choices[0].type;
             let itemData = concerned.getChildElementData(type);
             let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
             
@@ -268,85 +273,87 @@ export class ProjectManager extends IDEUIComponent {
                             event.validation,
                             callback
                         ),
-                        callback: (data) => this.createNewElement(event, data, itemData)
+                        callback: (data) => {
+                            let src = this.createNewElement(event, data, itemData);
+                            let newItem = this.createNewItem(concerned, data, src);
+                            this.onClickProjectElement(newItem);
+                        }
                     }
                 ]
             ));
         }
         // first dialogue choose type of element
         else {
-            if (types.length > 1) {
-                let titles = [];
-                let dialogues = [];
-                let itemsData = [];
-                _.forEach(types, (type)=> {
-                    let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
-                    itemsData.push(concerned.getChildElementData(type));
-                    let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default.text;
-                    titles.push(title);
-                    let dialogue = this.createDialogue(
-                        renderData,
-                        type,
-                        [
-                            {
-                                choice:"Back",
-                                type: "button",
-                                providedBy:"self"
-                            },
-                            {
-                                choice: "Create",
-                                type: "submit",
-                                providedBy: "creator",
-                                validation: (data, callback) => ProjectManagerValidation.check(
-                                    data,
-                                    projInstView,
-                                    event.validation,
-                                    callback
-                                ),
-                                callback: (data, index) => {
-                                    assert(index !== -1, "Invalid index in sequential dialogues in multi choice of dialogues!");
-                                    this.createNewElement(event, data, itemsData[index]);
-                                }
+            let types = event.data.choices.map(x=>x.type);
+            assert(_.difference(types, validTypes).length === 0, "Invalid type of choice is defined in the description domain."); 
+            
+            let titles = [];
+            let dialogues = [];
+            let itemsData = [];
+            _.forEach(types, (type)=> {
+                let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
+                itemsData.push(concerned.getChildElementData(type));
+                let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default.text;
+                titles.push(title);
+                let dialogue = this.createDialogue(
+                    renderData,
+                    type,
+                    [
+                        {
+                            choice:"Back",
+                            type: "button",
+                            providedBy:"self"
+                        },
+                        {
+                            choice: "Create",
+                            type: "submit",
+                            providedBy: "creator",
+                            validation: (data, callback) => ProjectManagerValidation.check(
+                                data,
+                                projInstView,
+                                event.validation,
+                                callback
+                            ),
+                            callback: (data, index) => {
+                                assert(index !== -1, "Invalid index in sequential dialogues in multi choice of dialogues!");
+                                let src = this.createNewElement(event, data, itemsData[index]);
+                                let newItem = this.createNewItem(concerned, data, src);
+                                this.onClickProjectElement(newItem);
                             }
-                        ]
-                    );
-                    dialogue["dependsValue"] = title;
-                    dialogues.push(dialogue);
-                });
-                // 1st dialogue choose item to create
-                dialoguesData.push({
-                    type: "simple",
-                    data: {
-                        title: "Select type of item",
-                        formElems: [{
-                            descriptionID: "select_type_new_item",
-                            name: "Type",
-                            style: "",
-                            selected: titles[0],
-                            values: titles,
-                            type: "select",
-                            renderName: true,
-                            indepedent: true
-                        }],
-                        actions: [
-                            { choice:"Cancel", type: "button", providedBy:"self" },
-                            { choice: "Next", type: "submit", providedBy: "self" }
-                        ]
-                    }
-                });
-                // second dialogue which is based on the 1st selection
-                dialoguesData.push({
-                    type: "depends_on",
-                    depedency: { dialogueNO: 0, propertyID: "select_type_new_item" },
-                    dialogues: dialogues
-                });
-            }
-            else {
-                IDEError.raise(
-                    "Error in the Project Manager Description",
-                    "Not defined valid children which means that add new Item could not be exist as a choice in the "+concerned.name + "."
+                        }
+                    ]
                 );
-            }
+                dialogue["dependsValue"] = title;
+                dialogues.push(dialogue);
+            });
+            // 1st dialogue choose item to create
+            dialoguesData.push({
+                type: "simple",
+                data: {
+                    title: "Select type of item",
+                    formElems: [{
+                        descriptionID: "select_type_new_item",
+                        name: "Type",
+                        style: "",
+                        selected: titles[0],
+                        values: titles,
+                        type: "select",
+                        renderName: true,
+                        indepedent: true
+                    }],
+                    actions: [
+                        { choice:"Cancel", type: "button", providedBy:"self" },
+                        { choice: "Next", type: "submit", providedBy: "self" }
+                    ]
+                }
+            });
+            // second dialogue which is based on the 1st selection
+            dialoguesData.push({
+                type: "depends_on",
+                depedency: { dialogueNO: 0, propertyID: "select_type_new_item" },
+                dialogues: dialogues
+            });
+
         }
         let modalActionView = <ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(this, dialoguesData);
         modalActionView.open();
@@ -395,12 +402,16 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     // modal actions are statically supported
-    private createNewElement(event: IEventData, data: any, itemsData: any): void {
-        alert("create new element not supported yet.");
-        let index = itemsData.events.map(x => x.type).indexOf("click");
+    private createNewElement(event: IEventData, data: any, itemData: any): string {
+        let index = event.data.choices.map(x=>x.type).indexOf(itemData.type);
         assert(index !== -1, "Not defined event click for this specific element type.");
-        let args = ( ({mission, providedBy, action}) => ({mission, providedBy, action}) ) (itemsData.events [index]);
-        args.action = "factoryNewElement";
-        ComponentsCommunication.functionRequest("ProjectManager", args.providedBy, args.action, [args, data]);
+        let args = ( ({mission, providedBy}) => ({mission, providedBy}) ) (event.data.choices[index]);
+        let response = ComponentsCommunication.functionRequest(
+            "ProjectManager",
+            args.providedBy ? args.providedBy : "EditorManager",
+            "factoryNewElement",
+            [ args.mission, data, []]
+        );
+        return response.value;
     }
 }

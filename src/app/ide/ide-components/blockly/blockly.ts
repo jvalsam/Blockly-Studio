@@ -188,7 +188,6 @@ export class BlocklyVPL extends Editor {
   }
   
   // Missions of the Editor
-
   private static factoryArgs(args): string {
     return "";
   }

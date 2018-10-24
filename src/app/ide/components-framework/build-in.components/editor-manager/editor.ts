@@ -6,7 +6,7 @@
  */
 
 import { IDEUIComponent } from "../../component/ide-ui-component";
-import { ExportedFunction, ExportedStaticFunction } from "../../component/component-loader";
+import { UIComponentMetadata, ExportedStaticFunction } from "../../component/component-loader";
 import { ResponseValue } from "../../component/response-value";
 
 // const enum EditorRenderState {
@@ -25,6 +25,13 @@ export interface IEditorSrcData {
 
 }
 
+@UIComponentMetadata({
+    description: "All visual editors which are handled by the editor manager in the IDE",
+    authors: [
+        { date: "October 2018", name: "Yannis Valsamakis", email: "jvalsam@ics.forth.gr" }
+    ],
+    version: "1.0"
+})
 export abstract class Editor extends IDEUIComponent {
     private _isRendered: boolean;
 

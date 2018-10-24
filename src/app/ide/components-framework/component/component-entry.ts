@@ -101,6 +101,14 @@ export class ComponentEntry extends Entry<Component> {
     return newComp;
   }
 
+  public callStaticMember(funcName, args) {
+    return this._creationFunc[funcName] (args);
+  }
+
+  public hasStaticMember(funcName) {
+    return funcName in this._creationFunc;
+  }
+
   public destroy(comp: Component) {
     comp.destroy();
     const index = this._instanceList.indexOf(comp);

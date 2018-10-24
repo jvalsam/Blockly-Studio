@@ -10,7 +10,7 @@
             }
         },
         {
-            "path": "/Configure/Configuration|DividerConfiguration|Menu|Blockly|",
+            "path": "/Configure/Configuration|DividerConfiguration|Menu|Blockly|ProjectManager|",
             "data": {
                 "title": "ViSmaOE",
                 "help": "Configuration of ViSmaOE",

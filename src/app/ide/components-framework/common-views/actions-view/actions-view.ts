@@ -15,8 +15,7 @@ export interface IEventData {
     type: string;
     action: string | Function;
     providedBy?: string;
-    mission: string;
-    data: Array<any>;
+    data: any;
     validation?: Array<IValidationData>;
 }
 

@@ -22,7 +22,8 @@ import { EditorDataHolder } from "../../holders";
             date: "November 2017"
         }
     ],
-    componentView: "EditorManagerView"
+    componentView: "EditorManagerView",
+    isUnique: true
 })
 export class EditorManager extends IDEUIComponent {
     private loadedEditors: { [systemID: string]: Editor };
@@ -106,8 +107,8 @@ export class EditorManager extends IDEUIComponent {
             return ComponentsCommunication.functionRequest(
                 this.name,
                 editors[0],
-                "factoryNewElement",
-                [ mission, args ]
+                mission,
+                args
             );
         }
         else {

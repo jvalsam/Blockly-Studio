@@ -133,7 +133,8 @@ class _ComponentsCommunication {
     "Menu",
     "Toolbar",
     "ApplicationWSPManager",
-    "ProjectManager"
+    "ProjectManager",
+    "EditorManager"
   ];
   private readonly specialFunctionRequests: ISpecialFunctionRequestMap = {
     "open" : this.specialFuncRequestOpen,
@@ -257,15 +258,23 @@ class _ComponentsCommunication {
       );
     }
 
-    if (!dstComponentId && !ComponentRegistry.getEntry(dstComponentName).hasInstance()) {
-      ComponentRegistry.getEntry(dstComponentName).create(compInstData);
-    }
+    let componentEntry = ComponentRegistry.getEntry(dstComponentName);
 
-    if (funcName in this.specialFunctionRequests) {
-      return this.specialFunctionRequests[funcName] (srcComponentName, dstComponentName, args, dstComponentId);
+    if (!componentEntry.hasStaticMember(funcName)) {
+
+      if (!dstComponentId && !componentEntry.hasInstance()) {
+        ComponentRegistry.getEntry(dstComponentName).create(compInstData);
+      }
+
+      if (funcName in this.specialFunctionRequests) {
+        return this.specialFunctionRequests[funcName] (srcComponentName, dstComponentName, args, dstComponentId);
+      }
+      else {
+        return BlackboardComponentRegistry.getBlackboard(dstComponentName).callFunction(funcName, args, srcComponentName, dstComponentId);
+      }
     }
     else {
-      return BlackboardComponentRegistry.getBlackboard(dstComponentName).callFunction(funcName, args, srcComponentName, dstComponentId);
+      return componentEntry.callStaticMember(funcName, args);
     }
   }
 
