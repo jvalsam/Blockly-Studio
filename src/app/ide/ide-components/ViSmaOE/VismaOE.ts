@@ -7,6 +7,7 @@ import {
     PlatformEditorMetadata,
     ExportedStaticFunction
 } from "../../components-framework/component/component-loader";
+import suim from "../../../../../libs/SUIM/suim.js";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");

@@ -7,6 +7,8 @@
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/font-view/font-view.css";
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/property-view.css";
 
+@import "./libs/SUIM/suim.css";
+
 .ide-platform-container {
     margin-bottom: 100px;
 }
@@ -27,7 +29,7 @@
 }
 
 .footer {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     background-color: #e0e0e0;
