@@ -33,6 +33,7 @@
     bottom: 0;
     width: 100%;
     background-color: #e0e0e0;
+    height: 40px;
 }
 
 .container .text-muted {
@@ -41,8 +42,11 @@
     text-align: center;
 }
 
-.text-muted {
+.text-muted-footer {
     color: #3f4244;
+    margin-top: 0px 0px;
+    padding: 8px;
+    text-align: center
 }
 
 .modal-content {

@@ -85,7 +85,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
-        data: any
+        protected data: any
     ) {
         super(
             parent,
@@ -140,7 +140,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         //TODO: fix right click menu
 
         if (this.info.isLeaf) {
-            this.initCategories(data);
+            this.initCategories();
         }
         // in case try to load project
         if (data.project && data.project.elements) {
@@ -148,25 +148,52 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         }
     }
 
-    private initCategories (data: any): void {
+    private addCategory (category): void {
+        category.isSubCategory = true;
+        category.nesting = this.info.nesting + 1;
+        let categView = <ProjectManagerCategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create(
+            this.parent,
+            this.elemsSel,
+            {
+                "parentTree": this,
+                "meta": category,
+                "project": this.data.project,
+                "path": this.path
+            }
+        );
+        categView.clearSelectorArea = false;
+        this._children.categories.push(categView);
+    }
+
+    private initCategories (): void {
         this._children.categories = new Array<ProjectManagerElementView>();
-        _.forEach(data.meta.categories, (category) => {
-            category.isSubCategory = true;
-            category.nesting = this.info.nesting+1;
-            let categView = <ProjectManagerCategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create(
-                this.parent,
-                this.elemsSel,
-                {
-                    "parentTree": this,
-                    "meta": category,
-                    "project": data.project,
-                    "path": this.path
-                }
-            );
-            categView.clearSelectorArea = false;
-            this._children.categories.push(categView);
+        _.forEach(this.data.meta.categories, (category) => {
+            this.addCategory(category);
         });
     }
+
+    private addElement(itemData): void {
+        let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
+        let itemView = <ProjectManagerItemView>ViewRegistry.getEntry("ProjectManagerItemView").create(
+            this.parent,
+            this.elemsSel,
+            {
+                "parentTree": this,
+                "meta": this.data.meta.items[metaIndex],
+                "projectID": this.data.project._id,
+                "item": itemData,
+                "path": this.path,
+                "nesting": this.info.nesting + 1
+            }
+        );
+        itemView.clearSelectorArea = false;
+        this._children.items.push(itemView);
+    }
+
+    public removeElement(id: string): void {
+
+    }
+
     private initElements (elements: Array<any>, meta: any, projectID: string): void {
         this._children.items = new Array<ProjectManagerElementView>();
         // filter elements
@@ -174,21 +201,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         //
         for(let i=1; i<=catElements.length; ++i) {
             let itemData = catElements[ catElements.map(x=>x.orderNO).indexOf(i) ];
-            let metaIndex = meta.items.map(x=>x.type).indexOf(itemData.type);
-            let itemView = <ProjectManagerItemView>ViewRegistry.getEntry("ProjectManagerItemView").create(
-                this.parent,
-                this.elemsSel,
-                {
-                    "parentTree": this,
-                    "meta": meta.items[metaIndex],
-                    "projectID": projectID,
-                    "item": itemData,
-                    "path": this.path,
-                    "nesting": this.info.nesting+1
-                }
-            );
-            itemView.clearSelectorArea = false;
-            this._children.items.push(itemView);
+            this.addElement(itemData);
         }
     }
 
@@ -264,12 +277,4 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
     }
 
     public setStyle(): void { ; }
-
-    public addElement (ids, element): void {
-        
-    }
-
-    public removeElement (id: string): void {
-        
-    }
 }

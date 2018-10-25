@@ -1,18 +1,14 @@
 import { IDEUIComponent } from "../../../../../../component/ide-ui-component";
-import { View, ViewMetadata, IViewUserStyleData } from "../../../../../../component/view";
+import { ViewMetadata, IViewUserStyleData } from "../../../../../../component/view";
 
 import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import ItemViewTmpl from "./item-view.tmpl";
-import FoldingStyle from "./item-view-folding-style.json";
-import { ViewRegistry } from "../../../../../../component/registry";
 import { IProjectManagerElementData } from "../../../../project-manager";
-
-import { PageFoldingView } from './../../../../../../common-views/page-folding-view/page-folding-view';
-import { ActionsView } from './../../../../../../common-views/actions-view/actions-view';
-import { DomainLibsHolder } from './../../../../../../../domain-manager/domain-libs-holder';
+import { DomainLibsHolder } from "./../../../../../../../domain-manager/domain-libs-holder";
 import { ProjectManagerElementView } from "../project-manager-element-view";
+
 
 @ViewMetadata({
     name: "ProjectManagerItemView",
@@ -74,6 +70,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
                     }
                 ]
             );
+            
         }
         else {
             this.foldingView = null;
