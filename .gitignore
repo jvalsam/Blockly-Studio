@@ -3,6 +3,8 @@
 # compiled output
 /dist
 /templates
+/src/app/ide/components-framework/component/components-bridge.ts
+/libs/SUIM
 
 # git repos
 /src/app/ide/ide-components/blockly/google_blockly
