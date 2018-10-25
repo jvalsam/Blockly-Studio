@@ -1,4 +1,5 @@
 
 .actions-view-title {
     background-color: Transparent;
+    box-shadow: none !important;
 }

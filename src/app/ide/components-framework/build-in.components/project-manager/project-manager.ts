@@ -60,6 +60,7 @@ export class ProjectManager extends IDEUIComponent {
         super(name, description, componentView, hookSelector);
         this.isOpen = this.domainType ? true : false;
         this.loadedProjects = [];
+
         if (this.isOpen) {
             this.initialize();
         }

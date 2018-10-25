@@ -101,15 +101,17 @@ export class EditorManager extends IDEUIComponent {
     public onClose(): void {}
 
     @ExportedFunction
-    public factoryNewElement(mission: string, args, restriction?:Array<string>) {
+    public factoryNewElement(mission: string, args, projID: string, restriction?:Array<string>) {
         let editors = EditorDataHolder.getEditors(mission);
         if (editors.length === 1) {
-            return ComponentsCommunication.functionRequest(
+            let response = ComponentsCommunication.functionRequest(
                 this.name,
                 editors[0],
                 mission,
                 args
             );
+            let value = response.value;
+            value.systemID = editors[0] + projID;
         }
         else {
             // TODO:    view restrictions, user choice, domain choice etc, if there are more than one in filter then

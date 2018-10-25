@@ -83,7 +83,7 @@ export class ProjectManagerView extends ComponentView {
             this.parent,
             ".project-manager-actions-area",
             [ {selector: ".actions-view-title-fa", styles: { css: { color: "white" } }} ],
-            { "actions": data }
+            { "fa": "fa-bars", "actions": data }
         );
     }
 

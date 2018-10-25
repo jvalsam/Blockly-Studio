@@ -12,9 +12,24 @@ export class ResponseValue {
     private _compName: string,
     private _funcName: string,
     private _value: any
-  ) {}
+  ) {
 
-  get componentName(): string { return this._compName; }
-  get functionName(): string { return this._funcName; }
-  get value(): any { return this._value; }
+  }
+
+  get componentName(): string {
+    return this._compName;
+  }
+
+  get functionName(): string {
+    return this._funcName;
+  }
+
+  get value(): any {
+    return this._value;
+  }
+
+  set value(newvalue: any) {
+    this._value = newvalue;
+  }
+  
 }

@@ -42,10 +42,13 @@ export class ActionsView extends View {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
-        private data: { id:string, actions: Array<IActionData>, style?: {}, concerned: any }
+        private data: { id:string, actions: Array<IActionData>, fa: string, style?: {}, concerned: any }
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         this.data.id = this.id;
+        if (!this.data.fa) {
+            this.data.fa = "fa-ellipsis-v";
+        }
     }
 
     public registerEvents(): void {

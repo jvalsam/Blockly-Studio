@@ -1,8 +1,5 @@
 @import "./node_modules/bootstrap/dist/css/bootstrap.css";
 
-@import "./node_modules/jstree/dist/themes/default.css";
-@import "./node_modules/jstree/dist/themes/default-dark.css";
-
 @import "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css";
 
 @import "./src/app/ide/components-framework/common.components/shell/menu/menu-view/templates/menu.css";

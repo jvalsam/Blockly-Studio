@@ -4,7 +4,7 @@
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             style="padding-top: 0px; padding-bottom:0px;"
         >
-            <i class="fa fa-ellipsis-v actions-view-title-fa" id="target-<%= id %>" aria-hidden="true"></i>
+            <i class="fa <%= fa %> actions-view-title-fa" id="target-<%= id %>" aria-hidden="true"></i>
         </a>
         <div class="dropdown-menu" id="dropdown-menu-<%= id %>" aria-labelledby="dropdownMenu<%= id %>">
             <% _.forEach(actions, (action) => { %>
