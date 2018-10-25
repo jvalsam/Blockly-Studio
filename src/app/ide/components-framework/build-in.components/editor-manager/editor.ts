@@ -9,6 +9,8 @@ import { IDEUIComponent } from "../../component/ide-ui-component";
 import { UIComponentMetadata, ExportedStaticFunction } from "../../component/component-loader";
 import { ResponseValue } from "../../component/response-value";
 
+import * as _ from "lodash";
+
 // const enum EditorRenderState {
 //     constructed = 0,
 //     rendered = 1
@@ -65,5 +67,13 @@ export abstract class Editor extends IDEUIComponent {
     @ExportedStaticFunction
     public static factoryNewElement(mission, args): ResponseValue {
       return new ResponseValue(this.name, "factory", this["factory"+mission](args));
+    }
+
+    public static createJSONArgs (systemID, args): string {
+        let json = " 'systemID': '" + systemID +"'";
+        _.forEach(args, (value, key) => {
+            json += ", '"+key+"': '" + value + "'";
+        });
+        return json;
     }
 }

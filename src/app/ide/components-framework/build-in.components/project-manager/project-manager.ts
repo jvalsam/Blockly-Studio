@@ -72,7 +72,7 @@ export class ProjectManager extends IDEUIComponent {
         });
 
         this._modalActions = {
-            "create": (data) => this.createNewElement(this.currEvent, data, this.currItemsData)
+            "create": (data, projectID) => this.createNewElement(this.currEvent, data, this.newSystemID(projectID), this.currItemsData)
         };
     }
 
@@ -127,6 +127,11 @@ export class ProjectManager extends IDEUIComponent {
     public loadProject(project): void {
         this.loadedProjects[project._id] = project;
         (<ProjectManagerView>this._view).loadProject(project);
+    }
+
+    private newSystemID (projectID): string {
+        let systemIDs = ++this.loadedProjects[projectID].systemIDs;
+        return projectID + "_" + systemIDs;
     }
 
     @ExportedFunction
@@ -275,7 +280,7 @@ export class ProjectManager extends IDEUIComponent {
                             callback
                         ),
                         callback: (data) => {
-                            let src = this.createNewElement(event, data, itemData);
+                            let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID), itemData);
                             let newItem = this.createNewItem(concerned, data, src);
                             this.onClickProjectElement(newItem);
                         }
@@ -317,7 +322,7 @@ export class ProjectManager extends IDEUIComponent {
                             ),
                             callback: (data, index) => {
                                 assert(index !== -1, "Invalid index in sequential dialogues in multi choice of dialogues!");
-                                let src = this.createNewElement(event, data, itemsData[index]);
+                                let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID), itemsData[index]);
                                 let newItem = this.createNewItem(concerned, data, src);
                                 this.onClickProjectElement(newItem);
                             }
@@ -403,7 +408,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     // modal actions are statically supported
-    private createNewElement(event: IEventData, data: any, itemData: any): string {
+    private createNewElement(event: IEventData, data: any, systemID: string, itemData: any): string {
         let index = event.data.choices.map(x=>x.type).indexOf(itemData.type);
         assert(index !== -1, "Not defined event click for this specific element type.");
         let args = ( ({mission, providedBy}) => ({mission, providedBy}) ) (event.data.choices[index]);
@@ -411,7 +416,7 @@ export class ProjectManager extends IDEUIComponent {
             "ProjectManager",
             args.providedBy ? args.providedBy : "EditorManager",
             "factoryNewElement",
-            [ args.mission, data, []]
+            [ args.mission, data[data.length-1], systemID, [] ]
         );
         return response.value;
     }

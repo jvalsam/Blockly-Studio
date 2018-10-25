@@ -76,13 +76,13 @@ export class ViSmaOE extends Editor {
     }
 
     @ExportedStaticFunction
-    public static CreateSmartObject(createArgs): string {
-        return "TODO add src of item!!";
+    public static CreateSmartObject(): string {
+        return "{ 'SmartObjectElems': 'TODO create' }";
     }
 
     @ExportedStaticFunction
-    public static CreateSmartEnvironment(createArgs): string {
-        return "TODO add src of item!!";
+    public static CreateSmartEnvironment(): string {
+        return "{ 'SmartEnvironmentElems': 'TODO create' }";
     }
 
     @ExportedFunction

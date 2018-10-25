@@ -274,7 +274,8 @@ class _ComponentsCommunication {
       }
     }
     else {
-      return componentEntry.callStaticMember(funcName, args);
+      let respValue = componentEntry.callStaticMember(funcName, args);
+      return new ResponseValue(dstComponentName, funcName, respValue);
     }
   }
 
