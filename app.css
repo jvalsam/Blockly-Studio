@@ -32,7 +32,7 @@
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: #e0e0e0;
+    background-color: #343a40 !important;
     height: 40px;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .text-muted-footer {
-    color: #3f4244;
+    color: rgba(255, 255, 255, 0.5);
     margin-top: 0px 0px;
     padding: 8px;
     text-align: center

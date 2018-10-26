@@ -1,10 +1,37 @@
-.dark-s-item a:hover, a:active {
+
+.menu-navbar {
+    height: 40px;
+}
+
+.dropdown-item {
+    height: 30px;
+}
+
+.dropdown-item:active {
+    height: 30px;
+    background-color: rgb(248, 249, 250);
+}
+
+.dropdown-item a {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    height: 24px;
+}
+
+.dropdown-item a:active {
+    background-color: rgb(248, 249, 250);
     color: rgb(0, 0, 0) !important;
-    background-color: rgb(248, 249, 250)
+}
+
+.dark-s-item a:hover {
+    color: rgb(0, 0, 0) !important;
+    /* background-color: rgb(248, 249, 250) */
 }
 
 .dropdown-submenu {
     position: relative;
+
+    height: 30px;
 }
 
 .dropdown-submenu>.dropdown-menu {
@@ -55,5 +82,5 @@
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 1072;
+    z-index: 5;
 }

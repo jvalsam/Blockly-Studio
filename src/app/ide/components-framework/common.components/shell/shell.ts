@@ -19,7 +19,8 @@ require("bootstrap/dist/js/bootstrap");
       date: "August 2017"
     }
   ],
-  componentView: "ShellView"
+  componentView: "ShellView",
+  isUnique: true
 })
 export class Shell extends IDEUIComponent {
   private _menu: Menu;
@@ -44,6 +45,7 @@ export class Shell extends IDEUIComponent {
     this._menu.render();
     this._toolbar = <Toolbar>ComponentRegistry.getEntry("Toolbar").create([".toolbar-view-area"]);
     this._toolbar.render();
+    this._toolbar.hide();
   }
 
   @ExportedFunction
@@ -123,5 +125,15 @@ export class Shell extends IDEUIComponent {
   @ExportedFunction
   public onClose(): void {
     ;
+  }
+
+  @ExportedFunction
+  public hideToolbar() {
+    this._toolbar.hide();
+  }
+
+  @ExportedFunction
+  public showToolbar() {
+    this._toolbar.show();
   }
 }

@@ -74,8 +74,11 @@ export class ProjectManager extends IDEUIComponent {
         this._modalActions = {
             "create": (data, projectID) => this.createNewElement(this.currEvent, data, this.newSystemID(projectID), this.currItemsData)
         };
-    }
 
+        ComponentsCommunication.functionRequest(this.name, "Shell", "showToolbar");
+    }
+    @RequiredFunction("Shell", "showToolbar")
+    
     @ExportedFunction
     initialize(): void {
         let metadata = ProjectManagerMetaDataHolder.getWSPDomainMetaData(this.domainType);

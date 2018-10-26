@@ -52,4 +52,12 @@ export class Toolbar extends IDEUIComponent {
     public destroy(): void {
         // first call destroy of the other components and then close
     }
+
+    public hide(): void {
+        this._view.hide();
+    }
+
+    public show(): void {
+        this._view.show();
+    }
 }

@@ -301,6 +301,14 @@ export abstract class View {
             throw new Error("This view has not context");
         }
     }
+
+    public hide() {
+        $("#"+this._id).hide();
+    }
+
+    public show() {
+        $("#"+this._id).show();
+    }
 }
 
 
