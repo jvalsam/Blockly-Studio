@@ -1,8 +1,9 @@
 import { PropertyType } from "./property-view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { View, IViewUserStyleData } from "../../../../component/view";
-import _ from "lodash";
+import * as _ from "lodash";
 import { ProjectManagerItemView } from "../../../project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view";
+import { IDEError } from './../../../../../shared/ide-error/ide-error';
 
 
 export type PropertyType =
@@ -136,6 +137,12 @@ function convertPart(id, type, value) {
                 placeholder: "Enter "+value.property,
                 value: value.default.text + " " + ProjectManagerItemView.GetTotalGeneratedElems()
             };
+        default:
+            IDEError.raise (
+                "PropertyView",
+                "Not supported type of conversion ("+type+")",
+                "ProjectManager"
+            );
     }
 }
 export function RenderPartsToPropertyData (renderParts: Array<any>) {
@@ -148,4 +155,32 @@ export function RenderPartsToPropertyData (renderParts: Array<any>) {
         });
     }
     return properties;
+}
+
+export function CreateRenderPartsWithData (renderParts: Array<any>, data) {
+    let newItemParts: Array<any> = [];
+    _.forEach(renderParts, (renderPart) => {
+        let newItemPart: any = { type: renderPart.type };
+        let value;
+        switch(renderPart.type) {
+            case "img":
+                value = data.filter(x => x.hasOwnProperty(renderPart.id))[0][renderPart.id];
+                newItemPart.value = _.includes(value, "fa-") ? { fa: value } : { path: value };
+                break;
+            case "title":
+                value = data.filter(x => x.hasOwnProperty(renderPart.id))[0][renderPart.id];
+                newItemPart.value = { text: value };
+                break;
+            case "state":
+                break;
+            default:
+                IDEError.raise (
+                    "PropertyView",
+                    "Not supported type of conversion ("+renderPart.type+")",
+                    "ProjectManager"
+                );
+        }
+        newItemParts.push(newItemPart);
+    });
+    return newItemParts;
 }

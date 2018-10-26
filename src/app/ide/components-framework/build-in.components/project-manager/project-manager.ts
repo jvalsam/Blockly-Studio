@@ -16,12 +16,13 @@ import * as _ from "lodash";
 import { ViewRegistry } from './../../component/registry';
 import { ModalView } from '../../component/view';
 import { ProjectManagerElementView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view';
-import { RenderPartsToPropertyData } from '../configuration/configuration-view/property-views/property-view';
+import { RenderPartsToPropertyData, CreateRenderPartsWithData } from '../configuration/configuration-view/property-views/property-view';
 
 // initialize the metadata of the project manager component for registration in the platform
 ProjectManagerMetaDataHolder.initialize();
 var menuJson = ProjectManagerMetaDataHolder.getDomainsMenuJSON();
 var configJson = ProjectManagerMetaDataHolder.getDomainsConfigJSON();
+
 
 export interface IProjectManagerElementData {
     systemID: string;
@@ -45,7 +46,7 @@ export interface IProjectManagerElementData {
 export class ProjectManager extends IDEUIComponent {
     private projManagerDescr: any;
     private currEvent: IEventData;
-    private currItemsData: any;
+    private currModalData: { itemData: any, projectID };
     private _modalActions: { [func: string]: Function };
     private loadedProjects: {[projectID: string]: any};
     private isOpen: Boolean;
@@ -60,6 +61,7 @@ export class ProjectManager extends IDEUIComponent {
         super(name, description, componentView, hookSelector);
         this.isOpen = this.domainType ? true : false;
         this.loadedProjects = [];
+        this.currModalData = <any>{};
 
         if (this.isOpen) {
             this.initialize();
@@ -72,7 +74,7 @@ export class ProjectManager extends IDEUIComponent {
         });
 
         this._modalActions = {
-            "create": (data, projectID) => this.createNewElement(this.currEvent, data, this.newSystemID(projectID), this.currItemsData)
+            "create": (data, projectID) => this.createNewElement(this.currEvent, data, this.newSystemID(projectID))
         };
 
         ComponentsCommunication.functionRequest(this.name, "Shell", "showToolbar");
@@ -246,6 +248,9 @@ export class ProjectManager extends IDEUIComponent {
 
     private createNewItem(concerned: ProjectManagerElementView, newItem: any, src: any): any {
         alert("TODO: implement add new item in the project manager tree!");
+        let renderParts = CreateRenderPartsWithData(this.currModalData.itemData.renderParts, newItem);
+        // concerned.addElement()
+        
         return "item";
     }
 
@@ -256,11 +261,12 @@ export class ProjectManager extends IDEUIComponent {
         let validTypes = concerned.getValidChildren();
         let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
         assert(projInstView !== null);
+        this.currModalData.projectID = concerned.projectID;
 
         // specific element to select
         if (event.data.choices.length === 1) {
             let type = event.data.choices[0].type;
-            let itemData = concerned.getChildElementData(type);
+            this.currModalData.itemData = concerned.getChildElementData(type);
             let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
             
             dialoguesData.push(this.createDialogue(
@@ -283,7 +289,7 @@ export class ProjectManager extends IDEUIComponent {
                             callback
                         ),
                         callback: (data) => {
-                            let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID), itemData);
+                            let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
                             let newItem = this.createNewItem(concerned, data, src);
                             this.onClickProjectElement(newItem);
                         }
@@ -325,7 +331,8 @@ export class ProjectManager extends IDEUIComponent {
                             ),
                             callback: (data, index) => {
                                 assert(index !== -1, "Invalid index in sequential dialogues in multi choice of dialogues!");
-                                let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID), itemsData[index]);
+                                this.currModalData.itemData = itemsData[index]
+                                let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
                                 let newItem = this.createNewItem(concerned, data, src);
                                 this.onClickProjectElement(newItem);
                             }
@@ -411,8 +418,8 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     // modal actions are statically supported
-    private createNewElement(event: IEventData, data: any, systemID: string, itemData: any): string {
-        let index = event.data.choices.map(x=>x.type).indexOf(itemData.type);
+    private createNewElement(event: IEventData, data: any, systemID: string): string {
+        let index = event.data.choices.map(x=>x.type).indexOf(this.currModalData.itemData.type);
         assert(index !== -1, "Not defined event click for this specific element type.");
         let args = ( ({mission, providedBy}) => ({mission, providedBy}) ) (event.data.choices[index]);
         let response = ComponentsCommunication.functionRequest(

@@ -150,4 +150,6 @@ export abstract class ProjectManagerElementView extends View {
         }
         return this.getChild(data, type, "items");
     }
+
+    public abstract addElement(element): void;
 }

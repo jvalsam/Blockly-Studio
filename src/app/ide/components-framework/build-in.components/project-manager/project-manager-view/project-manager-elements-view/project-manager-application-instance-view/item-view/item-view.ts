@@ -1,3 +1,4 @@
+import {ViewRegistry} from '../../../../../../component/registry';
 import { IDEUIComponent } from "../../../../../../component/ide-ui-component";
 import { ViewMetadata, IViewUserStyleData } from "../../../../../../component/view";
 
@@ -5,7 +6,6 @@ import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import ItemViewTmpl from "./item-view.tmpl";
-import { IProjectManagerElementData } from "../../../../project-manager";
 import { DomainLibsHolder } from "./../../../../../../../domain-manager/domain-libs-holder";
 import { ProjectManagerElementView } from "../project-manager-element-view";
 
@@ -15,6 +15,7 @@ import { ProjectManagerElementView } from "../project-manager-element-view";
     templateHTML: ItemViewTmpl
 })
 export class ProjectManagerItemView extends ProjectManagerElementView {
+    protected readonly elemsSel: string;
     private static _numberOfElements: number = 0;
     private systemID: string;
     private renderInfo;
@@ -26,7 +27,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
-        data: any
+        protected data: any
     ) {
         super (
             parent,
@@ -42,6 +43,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         ++ProjectManagerItemView._numberOfElements;
         this.systemID = data.item.systemID;
         this.path = data.path + this.systemID + "/";
+        this.elemsSel = "item-children-" + this.id;
         this.renderInfo = {};
         this.renderInfo.type = data.item.type;// (({type, renderParts }) => ({ type, renderParts })) (data.meta);
         this.renderInfo.renderParts = {};
@@ -163,36 +165,6 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         return true;
     }
 
-    public addElement(ids: Array<string>, elementData: IProjectManagerElementData): void {
-        // if (this.info.isLeaf) {
-        //     // case to add element in the root of the category => "first"
-        //     // case to add element inside jstree => "inside"
-        //     let position = ids[0] === this.id ? "first" : "inside";
-
-        //     let parent = $("#category-elements-" + this.id).jstree(true).get_node("#"+ids[0]);
-        //     let newNode = {
-        //         state: "open",
-        //         data: {
-        //             id: elementData.id,
-        //             type: elementData.type,
-        //             text: elementData,
-        //             parent: ids[0]
-        //         }
-        //     };
-        //     $("#category-elements-" + this.id).jstree(
-        //         "create_node",
-        //         parent,
-        //         newNode,
-        //         position,
-        //         false,
-        //         false
-        //     );
-        // }
-        // else {
-        //     this.elements.map(scat => scat.id).indexOf(ids.shift())["addElement"](ids, elementData);
-        // }
-    }
-
     public destroy() {
         if (this.foldingView !== null) {
             this.foldingView.destroy();
@@ -207,5 +179,23 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
 
     public static GetTotalGeneratedElems(): number {
         return ProjectManagerItemView._numberOfElements;
+    }
+
+    public addElement(itemData): void {
+        let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
+        let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
+            this.parent,
+            this.elemsSel,
+            {
+                "parentTree": this,
+                "meta": this.data.meta.items[metaIndex],
+                "projectID": this.data.project._id,
+                "item": itemData,
+                "path": this.path,
+                "nesting": this.renderInfo.nesting + 1
+            }
+        );
+        itemView.clearSelectorArea = false;
+        this._children.items.push(itemView);
     }
 }

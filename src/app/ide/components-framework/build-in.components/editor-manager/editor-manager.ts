@@ -111,7 +111,7 @@ export class EditorManager extends IDEUIComponent {
                 args
             );
             response.value = "{" + Editor.createJSONArgs(editors[0]+systemID, args) + "," + response.value.slice(1)
-            return response;
+            return response.value;
         }
         else {
             // TODO:    view restrictions, user choice, domain choice etc, if there are more than one in filter then

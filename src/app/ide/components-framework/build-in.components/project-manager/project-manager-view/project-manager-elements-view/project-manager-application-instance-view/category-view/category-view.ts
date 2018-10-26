@@ -172,9 +172,13 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         });
     }
 
-    private addElement(itemData): void {
+    public createElement(data: any): any {
+        
+    }
+
+    public addElement(itemData): void {
         let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
-        let itemView = <ProjectManagerItemView>ViewRegistry.getEntry("ProjectManagerItemView").create(
+        let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
             this.parent,
             this.elemsSel,
             {
@@ -190,7 +194,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         this._children.items.push(itemView);
     }
 
-    public removeElement(id: string): void {
+    public removeElement(systemID: string): void {
 
     }
 
