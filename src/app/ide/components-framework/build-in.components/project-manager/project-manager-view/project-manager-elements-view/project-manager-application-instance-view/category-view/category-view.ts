@@ -272,7 +272,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                         this.actions.show();
                     }
                     // TODO: check if has to change colour and which colour has to set as new
-                    $("#project-manager-category-header-area-"+this.id).css("background-color", "rgb(117, 115, 115)");
+                    this.setSelectedStyle();
                 }
             },
             {
@@ -283,10 +283,18 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                         this.actions.hide();
                     }
                     // TODO: check if has to change colour and which colour has to set as new
-                    $("#project-manager-category-header-area-"+this.id).css("background-color", "rgb(80, 80, 80)");
+                    this.setNotSelectedStyle()
                 }
             }
         );
+    }
+
+    protected setSelectedStyle(): void {
+        $("#project-manager-category-header-area-" + this.id).css("background-color", "rgb(117, 115, 115)");
+    }
+
+    protected setNotSelectedStyle(): void {
+        $("#project-manager-category-header-area-" + this.id).css("background-color", "rgb(80, 80, 80)");
     }
 
     public setStyle(): void { ; }

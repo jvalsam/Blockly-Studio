@@ -134,7 +134,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
                         this.actions.show();
                     }
                     // TODO: check if has to change colour and which colour has to set as new
-                    $("#project-manager-item-"+this.id).css("background-color", "rgb(197, 197, 197)");
+                    this.setSelectedStyle();
                     $("#project-manager-item-"+this.id).css("cursor", "pointer");
                 }
             },
@@ -146,11 +146,19 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
                         this.actions.hide();
                     }
                     // TODO: check if has to change colour and which colour has to set as new
-                    $("#project-manager-item-"+this.id).css("background-color", "rgb(218, 217, 217)");
+                    this.setNotSelectedStyle();
                     $("#project-manager-item-"+this.id).css("cursor", "default");
                 }
             }
         );
+    }
+
+    protected setSelectedStyle(): void {
+        $("#project-manager-item-" + this.id).css("background-color", "rgb(197, 197, 197)");
+    }
+
+    protected setNotSelectedStyle(): void {
+        $("#project-manager-item-" + this.id).css("background-color", "rgb(218, 217, 217)");
     }
 
     public setStyle(): void { ; }

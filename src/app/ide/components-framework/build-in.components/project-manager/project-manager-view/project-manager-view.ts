@@ -65,11 +65,9 @@ export class ProjectManagerView extends ComponentView {
         //TODO: correct render functionality in order to be clean
         if (this.currClickedElement) {
             this.currClickedElement.select(false);
-            this.currClickedElement.render();
         }
         this.currClickedElement = element;
         this.currClickedElement.select(true);
-        this.currClickedElement.render();
     }
 
     public render(callback?: Function): void {

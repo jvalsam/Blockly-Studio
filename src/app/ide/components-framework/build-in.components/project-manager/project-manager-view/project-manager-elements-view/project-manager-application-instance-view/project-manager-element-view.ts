@@ -57,8 +57,17 @@ export abstract class ProjectManagerElementView extends View {
         return this.renderInfo.isSelected;
     }
 
+    protected abstract setSelectedStyle(): void;
+    protected abstract setNotSelectedStyle(): void;
+
     public select(choice: boolean): void {
         this.renderInfo.isSelected = choice;
+        if (choice) {
+            this.setSelectedStyle();
+        }
+        else {
+            this.setNotSelectedStyle();
+        }
     }
 
     protected initFolding(selector: string, pfSelector: string, foldIcon: any, styles?:any) {
