@@ -4,6 +4,7 @@ import { ProjectManagerAppInstanceView as InstanceView, ProjectManagerAppInstanc
 import { ActionsView } from "./../../../common-views/actions-view/actions-view";
 import { ProjectManagerMenuView as MenuView } from "./project-manager-elements-view/project-manager-application-instance-view/menu-view/menu-view";
 import { IProjectManagerElementData } from "../project-manager";
+import { ProjectManagerElementView } from "./project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view";
 
 /// <reference path="../../../../../../../node.d.ts"/>
 import ProjectManagerTmpl from "./project-manager.tmpl";
@@ -41,6 +42,7 @@ interface IProjectManagerData {
     }
 })
 export class ProjectManagerView extends ComponentView {
+    private currClickedElement: ProjectManagerElementView;
     private readonly appInstancesSelector = ".project-manager-app-instances-view-area";
     private info: IProjectManagerData;
     private skeletonDataProj: any;
@@ -57,6 +59,17 @@ export class ProjectManagerView extends ComponentView {
         this.loadedProjects = new Array<InstanceView>();
         this.loadActions(this.renderData.actions);
         //this.menu = <MenuView>ViewRegistry.getEntry("ProjectManagerMenuView").create(this.parent, this.renderData.menu);
+    }
+
+    public onClickElement(element: ProjectManagerElementView) {
+        //TODO: correct render functionality in order to be clean
+        if (this.currClickedElement) {
+            this.currClickedElement.select(false);
+            this.currClickedElement.render();
+        }
+        this.currClickedElement = element;
+        this.currClickedElement.select(true);
+        this.currClickedElement.render();
     }
 
     public render(callback?: Function): void {

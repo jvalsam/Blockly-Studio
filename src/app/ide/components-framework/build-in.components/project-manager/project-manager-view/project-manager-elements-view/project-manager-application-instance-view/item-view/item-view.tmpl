@@ -1,6 +1,5 @@
 <div class="col-12 item-view-area" style="border-left: solid 2px aliceblue;">
-    <div class="row item-header-area" id="project-manager-item-<%= id %>"
-     style="border: solid 2px aliceblue; border-top: solid 1px aliceblue; background-color: rgb(218, 217, 217); padding-top: 6px; padding-bottom:6px;">
+    <div class="row item-header-area" id="project-manager-item-<%= id %>" style="<%= isSelected ? styleSelected : styleNormal %>">
         <% if(hasChildren) { %>
         <div class="col-1 item-folding-view-area" id="item-folding-<%= id %>" style="margin-left: <%= nesting * 15 %>px;"></div>
         <% } else { %>

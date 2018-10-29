@@ -9,6 +9,7 @@ import { ViewRegistry } from "../../../../../../component/registry";
 import { ProjectManagerItemView } from "../item-view/item-view";
 
 import { ProjectManagerElementView } from "../project-manager-element-view";
+import { ProjectManagerAppInstanceView } from './../project-manager-app-instance-view';
 
 interface IMenuItem {
     title: string;
@@ -77,7 +78,6 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
     private readonly menuSel;
     private readonly actionsSel;
     private readonly elemsSel;
-    private info: ICategoryMetaData;
 
     constructor(
         parent: IDEUIComponent,
@@ -85,7 +85,8 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
-        protected data: any
+        protected data: any,
+        isSelected: boolean = false
     ) {
         super(
             parent,
@@ -96,14 +97,16 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
             data.meta,
             data.path + data.meta.type + "/",
             data.parentTree,
-            data.project._id
+            data.project._id,
+            isSelected
         );
+        this._systemID = name + "_" + this.projectID + "_" + this.id;
         data.meta.isLeaf = ("categories" in data.meta) && data.meta.categories.length > 0;
         data.meta.id = this.id;
         this.menuSel = "#category-menu-"+this.id;
         this.actionsSel = "#category-actions-"+this.id;
         this.elemsSel = "#category-elements-"+this.id;
-        this.info = (
+        this.renderInfo = _.assign({}, this.renderInfo, (
             ({
                 id,
                 type,
@@ -121,13 +124,14 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                     nesting
                 }
             )
-        ) (data.meta);
+        ) (data.meta));
+        this.renderInfo.isSelected = isSelected;
         let renderParts = {};
-        _.forEach(this.info.renderParts, (elem) => renderParts[elem["type"]] = elem );
+        _.forEach(this.renderInfo.renderParts, (elem) => renderParts[elem["type"]] = elem );
 
-        this.info.renderParts = renderParts;
+        this.renderInfo.renderParts = renderParts;
 
-        let faType = this.info.isSubCategory ? "angle" : "caret";
+        let faType = this.renderInfo.isSubCategory ? "angle" : "caret";
         this.initFolding(
             "#category-folding-"+this.id,
             "#category-elements-"+this.id,
@@ -139,7 +143,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         );
         //TODO: fix right click menu
 
-        if (this.info.isLeaf) {
+        if (this.renderInfo.isLeaf) {
             this.initCategories();
         }
         // in case try to load project
@@ -150,7 +154,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
 
     private addCategory (category): void {
         category.isSubCategory = true;
-        category.nesting = this.info.nesting + 1;
+        category.nesting = this.renderInfo.nesting + 1;
         let categView = <ProjectManagerCategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create(
             this.parent,
             this.elemsSel,
@@ -176,7 +180,15 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         
     }
 
-    public addElement(itemData): void {
+    public addNewElement(itemData, callback?: (newItem) => void): void {
+        itemData.orderNO = this._currOrderNO++;
+        itemData.path = this.path;
+        let newElem = this.addElement(itemData);
+        newElem.render();
+        callback(newElem);
+    }
+
+    public addElement(itemData): ProjectManagerElementView {
         let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
         let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
             this.parent,
@@ -187,15 +199,12 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                 "projectID": this.data.project._id,
                 "item": itemData,
                 "path": this.path,
-                "nesting": this.info.nesting + 1
+                "nesting": this.renderInfo.nesting + 1
             }
         );
         itemView.clearSelectorArea = false;
         this._children.items.push(itemView);
-    }
-
-    public removeElement(systemID: string): void {
-
+        return itemView;
     }
 
     private initElements (elements: Array<any>, meta: any, projectID: string): void {
@@ -207,6 +216,8 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
             let itemData = catElements[ catElements.map(x=>x.orderNO).indexOf(i) ];
             this.addElement(itemData);
         }
+
+        this._currOrderNO = catElements.length + 1;
     }
 
     private renderElem(type: string): void {
@@ -217,23 +228,21 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
     }
 
     public render(): void {
-        this.renderTmplEl(this.info);
+        this.renderTmplEl(this.renderInfo);
         this.foldingView.render();
         this.renderElem("actions");
 
         _.forEach(this._children.items, (item)=> item.render());
 
-        if (this.info.isLeaf) {
-            _.forEach(<Array<View>>this._children.categories, (value) => {
-                value.render();
-            });
+        if (this._children.categories) {
+            _.forEach(this._children.categories, (category) => category.render());
         }
         else if(this._children.items.length === 0) {
             $(this.elemsSel).empty();
             $(this.elemsSel).css("background", "rgb(230, 230, 230)");
             $(this.elemsSel).append (
                 `<div class='small text-center align-middle' style='padding-top:15px; padding-bottom:15px; width:100%'>
-                    No ` + this.info.renderParts["title"].value.text + ` are defined yet.
+                    No ` + this.renderInfo.renderParts["title"].value.text + ` are defined yet.
                 </div>`
             );
         }

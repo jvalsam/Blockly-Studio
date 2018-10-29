@@ -10,6 +10,9 @@ import { ProjectManagerAppInstanceView } from "./project-manager-app-instance-vi
 
 
 export abstract class ProjectManagerElementView extends View {
+    protected renderInfo: any;
+    protected _currOrderNO: number;
+    protected _systemID: string
     protected actions: ActionsView;
     protected foldingView: PageFoldingView;
     protected _children: { items: Array<ProjectManagerElementView>, categories: Array<ProjectManagerElementView> };
@@ -23,10 +26,17 @@ export abstract class ProjectManagerElementView extends View {
         protected meta: any,
         protected path: string,
         protected parentTree: ProjectManagerElementView | ProjectManagerAppInstanceView,
-        public readonly projectID: string
+        public readonly projectID: string,
+        isSelected: boolean
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         this._children = { items: null, categories: null };
+        this.renderInfo = {};
+        this.renderInfo.isSelected = typeof isSelected === "undefined" ? false : isSelected;
+    }
+
+    public get systemID (): string {
+        return this._systemID;
     }
 
     protected initActions(selector: string, styles) {
@@ -41,6 +51,14 @@ export abstract class ProjectManagerElementView extends View {
         else {
             this.actions = null;
         }
+    }
+
+    public isSelected(): boolean {
+        return this.renderInfo.isSelected;
+    }
+
+    public select(choice: boolean): void {
+        this.renderInfo.isSelected = choice;
     }
 
     protected initFolding(selector: string, pfSelector: string, foldIcon: any, styles?:any) {
@@ -151,5 +169,54 @@ export abstract class ProjectManagerElementView extends View {
         return this.getChild(data, type, "items");
     }
 
-    public abstract addElement(element): void;
+    public abstract addNewElement(element, callback: (newItem) => void): void;
+
+    private removeHelper(systemID: string, type: string): boolean {
+        if (this._children[type]) {
+            let isRemoved = false;
+            _.forEach(this._children[type], (element: ProjectManagerElementView) => {
+                let resp = element.removeElement(systemID);
+                if (resp) {
+                    isRemoved = true;
+                    return false;
+                }
+            });
+            return isRemoved;
+        }
+        return false;
+    }
+    public removeElement(systemID: string): boolean {
+        if (this._systemID === systemID) {
+            if(this.parentTree["_children"]) {
+                _.remove(
+                    (<ProjectManagerElementView>this.parentTree)["_children"].items,
+                    (item: ProjectManagerElementView) => item.systemID === systemID
+                );
+                _.remove(
+                    (<ProjectManagerElementView>this.parentTree)["_children"].categories,
+                    (item: ProjectManagerElementView) => item.systemID === systemID
+                );
+            }
+            else {
+                _.remove(
+                    (<ProjectManagerAppInstanceView>this.parentTree)["categories"],
+                    (category: ProjectManagerElementView) => category.systemID === systemID
+                );
+            }
+            return true;
+        }
+        
+        if (this._children) {
+            let resp = this.removeHelper(systemID, "categories");
+            if (resp) {
+                return true;
+            }
+            resp = this.removeHelper(systemID, "items");
+            if (resp) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }

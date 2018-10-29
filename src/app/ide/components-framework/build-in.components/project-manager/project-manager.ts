@@ -246,12 +246,22 @@ export class ProjectManager extends IDEUIComponent {
         };
     }
 
-    private createNewItem(concerned: ProjectManagerElementView, newItem: any, src: any): any {
+    private createNewItem(concerned: ProjectManagerElementView, newItem: any, src: any): void {
         alert("TODO: implement add new item in the project manager tree!");
         let renderParts = CreateRenderPartsWithData(this.currModalData.itemData.renderParts, newItem);
-        // concerned.addElement()
-        
-        return "item";
+        concerned.addNewElement(
+            {
+                renderParts: renderParts,
+                editorData: src,
+                systemID: src.systemID,
+                type: this.currModalData.itemData.type
+            },
+            (item) => {
+                this.onClickProjectElement(item);
+                this.loadedProjects[concerned.projectID].elements.push(item);
+                //TODO: functionality in order to save it in the DB
+            }
+        );
     }
 
     @ExportedFunction
@@ -290,8 +300,7 @@ export class ProjectManager extends IDEUIComponent {
                         ),
                         callback: (data) => {
                             let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
-                            let newItem = this.createNewItem(concerned, data, src);
-                            this.onClickProjectElement(newItem);
+                            this.createNewItem(concerned, data, src);
                         }
                     }
                 ]
@@ -333,8 +342,7 @@ export class ProjectManager extends IDEUIComponent {
                                 assert(index !== -1, "Invalid index in sequential dialogues in multi choice of dialogues!");
                                 this.currModalData.itemData = itemsData[index]
                                 let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
-                                let newItem = this.createNewItem(concerned, data, src);
-                                this.onClickProjectElement(newItem);
+                                this.createNewItem(concerned, data, src);
                             }
                         }
                     ]
@@ -393,8 +401,8 @@ export class ProjectManager extends IDEUIComponent {
         return this._view["removeElement"] (concerned.projectId, concerned.elementId);
     }
 
-    public onClickProjectElement(data): void {
-        alert("clicked proj elem: projID( "+data.projectID+" ), systemID( "+data.systemID+" )");
+    public onClickProjectElement(element: ProjectManagerElementView): void {
+        (<ProjectManagerView>this._view).onClickElement(element);
     }
 
     private onModalChoiceAction(data: any, cancelAction: any) {

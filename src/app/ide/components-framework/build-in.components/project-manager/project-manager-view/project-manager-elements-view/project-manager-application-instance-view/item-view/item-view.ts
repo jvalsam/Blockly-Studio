@@ -17,8 +17,6 @@ import { ProjectManagerElementView } from "../project-manager-element-view";
 export class ProjectManagerItemView extends ProjectManagerElementView {
     protected readonly elemsSel: string;
     private static _numberOfElements: number = 0;
-    private systemID: string;
-    private renderInfo;
     private state;
 
     constructor(
@@ -38,14 +36,16 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
             data.meta,
             data.path + data.item.systemID + "/",
             data.parentTree,
-            data.projectID
+            data.projectID,
+            data.isSelected
         );
         ++ProjectManagerItemView._numberOfElements;
-        this.systemID = data.item.systemID;
+        this._systemID = data.item.systemID;
         this.path = data.path + this.systemID + "/";
         this.elemsSel = "item-children-" + this.id;
-        this.renderInfo = {};
         this.renderInfo.type = data.item.type;// (({type, renderParts }) => ({ type, renderParts })) (data.meta);
+        this.renderInfo.styleSelected = "border: solid 2px black; border-top: solid 1px aliceblue; background-color: rgb(218, 217, 217); padding-top: 6px; padding-bottom:6px;";
+        this.renderInfo.styleNormal = "border: solid 2px aliceblue; border-top: solid 1px aliceblue; background-color: rgb(218, 217, 217); padding-top: 6px; padding-bottom:6px;";
         this.renderInfo.renderParts = {};
         this.renderInfo.nesting = data.nesting;
         _.forEach(data.item.renderParts, (elem) => {
@@ -110,6 +110,9 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         if (this.state !== null) {
             this.state.render();
         }
+        if (this._children && this._children.items && this._children.items.length>0) {
+            _.forEach(this._children.items, (item) => item.render());
+        }
     }
 
     public registerEvents(): void {
@@ -152,19 +155,6 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
 
     public setStyle(): void { ; }
 
-    public removeElement(ids: Array<string>): boolean {
-        // if (this.info.isLeaf) {
-        //     let tree = $("#category-elements-" + this.id).jstree(true);
-        //     tree.delete_node([
-        //         tree.get_node("#" + ids[0])
-        //     ]);
-        // }
-        // else {
-        //     return this.elements.map(scat => scat.id).indexOf(ids.shift())["removeElement"](ids);
-        // }
-        return true;
-    }
-
     public destroy() {
         if (this.foldingView !== null) {
             this.foldingView.destroy();
@@ -181,7 +171,11 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         return ProjectManagerItemView._numberOfElements;
     }
 
-    public addElement(itemData): void {
+    public addNewElement(itemData, callback?: (newItem) => void): void {
+        
+    }
+
+    public addElement(itemData, callback: (newItem) => void): void {
         let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
         let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
             this.parent,
