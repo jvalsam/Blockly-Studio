@@ -115,8 +115,9 @@ export class ActionsView extends View {
     }
 
     public isOnTarget(target): boolean {
-        return  target.classList[0] === "page-folding-link-icon" ||
-                target.classList[1] === "actions-view-title";
+        return  target === document.getElementById(this.id) ||
+                target === document.getElementById("target-"+this.id) ||
+                target === document.getElementById("dropdownMenu"+this.id);
     }
 
 }

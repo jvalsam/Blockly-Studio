@@ -25,7 +25,7 @@ var confJson: any = require("./conf_props.json");
         "CreateSmartObject",
         "CreateSmartEnvironment",
         "ViewAllSmartObjects",
-        "ViewEnvironment",
+        "ViewSmartEnvironment",
         "EditEnvironment",
         "ViewSmartObject",
         "EditSmartObject"
@@ -38,11 +38,11 @@ var confJson: any = require("./conf_props.json");
 export class ViSmaOE extends Editor {
     @ExportedFunction
     public onOpen(): void {}
-  
+
     @RequiredFunction("Shell", "addTools")
     @ExportedFunction
     public open(src: string, toolbox?: string, isFirstInst:boolean =false): void {
-
+        this._view.setRenderData({});
     }
 
     @ExportedFunction
@@ -92,7 +92,7 @@ export class ViSmaOE extends Editor {
     }
 
     @ExportedFunction
-    public ViewEnvironment() {
+    public ViewSmartEnvironment() {
 
     }
     

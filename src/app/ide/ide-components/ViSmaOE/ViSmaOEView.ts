@@ -13,12 +13,7 @@ import { ComponentView, ComponentViewMetadata } from "../../components-framework
     // ]
 })
 export class ViSmaOEView extends ComponentView {
-
-    public registerEvents (): void {
-    }
-
     public render (): void {
         this.parent.render();
     }
-
 }

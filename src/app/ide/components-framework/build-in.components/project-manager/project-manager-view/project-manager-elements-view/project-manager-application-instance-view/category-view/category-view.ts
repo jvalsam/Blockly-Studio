@@ -257,7 +257,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
                 eventType: "click",
                 selector: ".project-manager-category-header-area",
                 handler: (evt) => {
-                    if (evt.target.classList[0] !== "page-folding-link-icon") {
+                    if (evt.target.classList[0] !== "page-folding-link-icon" && !this.actions.isOnTarget(evt.target)) {
                         if(this.foldingView) {
                             this.foldingView.onClick();
                         }
