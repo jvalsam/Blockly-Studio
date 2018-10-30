@@ -186,24 +186,19 @@ export class BlocklyVPL extends Editor {
   public onChangeConfig(values: any): void {
     alert("on change config data not developed yet in Blockly Component");
   }
-  
-  // Missions of the Editor
-  private static factoryArgs(args): string {
-    return "";
+
+  @ExportedStaticFunction
+  public static General(args): any {
+    return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
   }
 
   @ExportedStaticFunction
-  public static General(args): string {
-    return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
+  public static LogicExprIoT(args): any {
+    return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
   }
 
   @ExportedStaticFunction
-  public static LogicExprIoT(args): string {
-    return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
-  }
-
-  @ExportedStaticFunction
-  public static IoTHandling(args): string {
-    return "<xml id=\"startBlocks\" style=\"display: none\"></xml>";
+  public static IoTHandling(args): any {
+    return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
   }
 }

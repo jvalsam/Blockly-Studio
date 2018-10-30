@@ -12,6 +12,8 @@ import { ComponentRegistry } from "../../component/component-entry";
 import { EditorManagerView } from "./editor-manager-view";
 import { IDEError } from "../../../shared/ide-error/ide-error";
 import { EditorDataHolder } from "../../holders";
+import { IEventData } from "../../common-views/actions-view/actions-view";
+import * as _ from "lodash";
 
 @UIComponentMetadata({
     description: "Handles requests to open editor instances for sources",
@@ -41,6 +43,7 @@ export class EditorManager extends IDEUIComponent {
         super(name, description, compViewName, selector);
         this.editorInstancesMap = {};
         this.editorOnFocusId = "";
+        this.loadedEditors = {};
     }
 
     @RequiredFunction("Shell", "createComponentEmptyContainer")
@@ -110,7 +113,7 @@ export class EditorManager extends IDEUIComponent {
                 mission,
                 args
             );
-            response.value = "{" + Editor.createJSONArgs(editors[0]+systemID, args) + "," + response.value.slice(1)
+            response.value = _.assign({}, response.value, Editor.createJSONArgs(editors[0], systemID, args));
             return response.value;
         }
         else {
@@ -120,6 +123,28 @@ export class EditorManager extends IDEUIComponent {
                 "Multiple Visual Editors",
                 "There are more than one editors are able to handle mission "+mission+". This is not supported by the platform yet.",
                 "Editor Manager"
+            );
+        }
+    }
+
+    @ExportedFunction
+    public onRequestEditorAction (event: IEventData, concerned: any) {
+        let editors = EditorDataHolder.getEditors(event.data.mission);
+        let editorData = concerned.editorData();
+        let editorName = editorData.systemID.split("_")[0];
+        // check if there is instance with systemID
+        if (this.loadedEditors[editorData.systemID]) {
+            // already open, so fix the focus
+        }
+        else if (editorName) {
+            // already pinned editor, later may convert to be able to pin to other editors
+            this.loadedEditors[editorData.systemID] = <Editor>ComponentRegistry.getEntry(editorName).create([".project-manager-visual-editors-area"]);
+            let resp = this.loadedEditors[editorData.systemID][event.data.mission] (editorData);
+        }
+        else {
+            IDEError.raise(
+                "EditorManager",
+                "not pinned data for which visual editor is able to handle existing source!"
             );
         }
     }

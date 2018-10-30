@@ -8,7 +8,7 @@
         </a>
         <div class="dropdown-menu" id="dropdown-menu-<%= id %>" aria-labelledby="dropdownMenu<%= id %>">
             <% _.forEach(actions, (action) => { %>
-                <a class="dropdown-item"
+                <a class="dropdown-item dropdown-item-<%= id %>"
                     id="<%= action.title.replace(/ /g, '') %>_<%= id %>"
                     href="#"
                     <%= ( typeof(action.help)!=='undefined' ) ?

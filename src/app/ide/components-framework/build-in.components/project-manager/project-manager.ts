@@ -247,7 +247,6 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private createNewItem(concerned: ProjectManagerElementView, newItem: any, src: any): void {
-        alert("TODO: implement add new item in the project manager tree!");
         let renderParts = CreateRenderPartsWithData(this.currModalData.itemData.renderParts, newItem);
         concerned.addNewElement(
             {

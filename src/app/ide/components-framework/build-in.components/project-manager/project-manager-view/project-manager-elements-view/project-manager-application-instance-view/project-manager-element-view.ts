@@ -178,7 +178,15 @@ export abstract class ProjectManagerElementView extends View {
         return this.getChild(data, type, "items");
     }
 
-    public abstract addNewElement(element, callback: (newItem) => void): void;
+    protected abstract addElement(itemData): any;
+
+    public addNewElement(itemData, callback?: (newItem) => void): void {
+        itemData.orderNO = this._currOrderNO++;
+        itemData.path = this.path;
+        let newElem = this.addElement(itemData);
+        newElem.render();
+        callback(newElem);
+    }
 
     private removeHelper(systemID: string, type: string): boolean {
         if (this._children[type]) {
@@ -228,4 +236,6 @@ export abstract class ProjectManagerElementView extends View {
         
         return false;
     }
+
+    public abstract onClick(): void;
 }

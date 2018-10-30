@@ -58,12 +58,14 @@ export class ActionsView extends View {
                 events.push({
                     eventType: event.type,
                     selector: "#" + action.title.replace(/ /g, '') + "_" + this.id,
-                    handler: () => typeof event.action === "string" ?
+                    handler: (evt) => { typeof event.action === "string" ?
                                         (!event.providedBy || event.providedBy === "Platform" ?
                                             this.parent[event.action](event, this.data.concerned) :
                                             this.parent["onOuterFunctionRequest"](event, this.data.concerned)
                                         ) :
-                                        event.action(this.data.concerned)
+                                        event.action(this.data.concerned);
+                                        evt.stopImmediatePropagation();
+                    }
                 });
             });
         });
@@ -117,7 +119,8 @@ export class ActionsView extends View {
     public isOnTarget(target): boolean {
         return  target === document.getElementById(this.id) ||
                 target === document.getElementById("target-"+this.id) ||
-                target === document.getElementById("dropdownMenu"+this.id);
+                target === document.getElementById("dropdownMenu"+this.id) ||
+                target === document.getElementById("dropdown-menu-"+this.id);
     }
 
 }

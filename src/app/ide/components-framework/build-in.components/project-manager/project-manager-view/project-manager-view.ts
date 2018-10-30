@@ -68,6 +68,7 @@ export class ProjectManagerView extends ComponentView {
         }
         this.currClickedElement = element;
         this.currClickedElement.select(true);
+        this.currClickedElement.onClick();
     }
 
     public render(callback?: Function): void {

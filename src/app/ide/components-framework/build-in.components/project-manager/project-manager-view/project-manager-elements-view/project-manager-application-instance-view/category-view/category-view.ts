@@ -176,18 +176,6 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         });
     }
 
-    public createElement(data: any): any {
-        
-    }
-
-    public addNewElement(itemData, callback?: (newItem) => void): void {
-        itemData.orderNO = this._currOrderNO++;
-        itemData.path = this.path;
-        let newElem = this.addElement(itemData);
-        newElem.render();
-        callback(newElem);
-    }
-
     public addElement(itemData): ProjectManagerElementView {
         let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
         let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
@@ -298,4 +286,9 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
     }
 
     public setStyle(): void { ; }
+
+    
+    public onClick(): void {
+        
+    }
 }

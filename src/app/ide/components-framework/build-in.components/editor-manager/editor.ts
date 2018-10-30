@@ -69,10 +69,12 @@ export abstract class Editor extends IDEUIComponent {
       return new ResponseValue(this.name, "factory", this["factory"+mission](args));
     }
 
-    public static createJSONArgs (systemID, args): string {
-        let json = " 'systemID': '" + systemID +"'";
+    public static createJSONArgs (editorName, systemID, args): any {
+        let json = {
+            "systemID": editorName+"_"+systemID
+        };
         _.forEach(args, (value, key) => {
-            json += ", '"+key+"': '" + value + "'";
+            json[key] += value;
         });
         return json;
     }

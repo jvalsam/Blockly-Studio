@@ -87,6 +87,10 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         this.initState(data);
     }
 
+    public editorData () {
+        return this.data.item.editorData;
+    }
+
     private initState(data) {
         let stateIndex = data.meta.renderParts.map(x=>x.type).indexOf("state");
         if(stateIndex>-1) {
@@ -122,7 +126,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
                 selector: ".project-manager-item-header-area",
                 handler: (evt) => {
                     if (evt.target.classList[0] !== "page-folding-link-icon") {
-                        this.parent["onClickProjectElement"] (this.projectID, this.systemID);
+                        this.onClick();
                     }
                 }
             },
@@ -179,11 +183,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         return ProjectManagerItemView._numberOfElements;
     }
 
-    public addNewElement(itemData, callback?: (newItem) => void): void {
-        
-    }
-
-    public addElement(itemData, callback: (newItem) => void): void {
+    protected addElement(itemData): void {
         let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
         let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
             this.parent,
@@ -199,5 +199,10 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         );
         itemView.clearSelectorArea = false;
         this._children.items.push(itemView);
+    }
+
+    public onClick(): void {
+        let event = this.meta.events[this.meta.events.map(x=>x.type).indexOf("click")];
+        this.parent["onOuterFunctionRequest"](event, this);
     }
 }

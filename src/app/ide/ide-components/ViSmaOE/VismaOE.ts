@@ -77,42 +77,42 @@ export class ViSmaOE extends Editor {
     }
 
     @ExportedStaticFunction
-    public static CreateSmartObject(): string {
-        return "{ 'SmartObjectElems': 'TODO create' }";
+    public static CreateSmartObject(): any {
+        return { "SmartObjectElems": "TODO create" };
     }
 
     @ExportedStaticFunction
-    public static CreateSmartEnvironment(): string {
-        return "{ 'SmartEnvironmentElems': 'TODO create' }";
+    public static CreateSmartEnvironment(): any {
+        return { "SmartEnvironmentElems": "TODO create" };
     }
 
     @ExportedFunction
     public ViewAllSmartObjects() {
-
+        alert("ViSmaOE: View All SmartObjects is called but not implemented yet!");
     }
 
     @ExportedFunction
     public ViewSmartEnvironment() {
-
+        alert("ViSmaOE: View Smart Environment is called but not implemented yet!");
     }
     
     @ExportedFunction
     public EditEnvironment() {
-
+        alert("ViSmaOE: Edit Environment is called but not implemented yet!");
     }
 
     @ExportedFunction
     public ViewSmartObject() {
-
+        alert("ViSmaOE: View Smart Object is called but not implemented yet!");
     }
 
     @ExportedFunction
     public EditSmartObject() {
-
+        alert("ViSmaOE: Edit Smart Object is called but not implemented yet!");
     }
 
     @ExportedFunction
     public onChangeConfig(values: any): void {
-        alert("on change config data not developed yet in ViSmaOE Component");
+        alert("ViSmaOE: on change config data not developed yet in ViSmaOE Component");
     }
 }
