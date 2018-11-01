@@ -17,6 +17,7 @@ import { ViewRegistry } from './../../component/registry';
 import { ModalView } from '../../component/view';
 import { ProjectManagerElementView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view';
 import { RenderPartsToPropertyData, CreateRenderPartsWithData } from '../configuration/configuration-view/property-views/property-view';
+import { ProjectManagerItemView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view';
 
 // initialize the metadata of the project manager component for registration in the platform
 ProjectManagerMetaDataHolder.initialize();
@@ -164,7 +165,12 @@ export class ProjectManager extends IDEUIComponent {
     // callback function of project manager view actions are provided by outer Components
     private onOuterFunctionRequest (event: IEventData, concerned: any): void {
         if (event.providedBy === "EditorManager") {
-            ComponentsCommunication.functionRequest(this.name, event.providedBy, "onRequestEditorAction", [event, concerned]);
+            ComponentsCommunication.functionRequest(
+                this.name,
+                event.providedBy,
+                "onRequestEditorAction",
+                [event, concerned.itemData()]
+            );
         }
         else {
             let evtData = {
@@ -231,16 +237,23 @@ export class ProjectManager extends IDEUIComponent {
         alert("onCloseProject not developed yet!");
     }
 
-    private createDialogueTitle(renderData, type) {
-        let index = renderData.map(x=>x.type).indexOf("title");
-        return (index >= 0) ? renderData[index].value.default.text : type;
+    private getTitleOfRenderParts(renderParts): string {
+        let index = renderParts ? renderParts.map(x=>x.type).indexOf("title") : -1;
+        return (index >= 0 ? (renderParts[index].value.default ? renderParts[index].value.default.text : renderParts[index].value.text) : "");
     }
-    private createDialogue (renderData, type, actions) {
+    private createDialogueTitle(action: string, renderParts, type) {
+        let renderPartsTitle = this.getTitleOfRenderParts(renderParts);
+        return  action + ( renderPartsTitle ? renderPartsTitle : type );
+    }
+    private createDialogue(actionTitle: string, body: { formElems?: any, text?: any }, type, actions, dtype: string = "simple") {
+        if (body.formElems) {
+            body.formElems = RenderPartsToPropertyData(body.formElems);
+        }
         return {
-            type: "simple",
+            type: dtype,
             data: {
-                title: "Create New "+this.createDialogueTitle(renderData, type),
-                formElems: RenderPartsToPropertyData(renderData),
+                title: this.createDialogueTitle(actionTitle, body.formElems, type),
+                body: body,
                 actions: actions
             }
         };
@@ -279,7 +292,8 @@ export class ProjectManager extends IDEUIComponent {
             let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
             
             dialoguesData.push(this.createDialogue(
-                renderData,
+                "Create New ",
+                { formElems: renderData },
                 type,
                 [
                     {
@@ -319,7 +333,8 @@ export class ProjectManager extends IDEUIComponent {
                 let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default.text;
                 titles.push(title);
                 let dialogue = this.createDialogue(
-                    renderData,
+                    "Create New ",
+                    { formElems: renderData },
                     type,
                     [
                         {
@@ -354,16 +369,18 @@ export class ProjectManager extends IDEUIComponent {
                 type: "simple",
                 data: {
                     title: "Select type of item",
-                    formElems: [{
-                        descriptionID: "select_type_new_item",
-                        name: "Type",
-                        style: "",
-                        selected: titles[0],
-                        values: titles,
-                        type: "select",
-                        renderName: true,
-                        indepedent: true
-                    }],
+                    body: {
+                        formElems: [{
+                            descriptionID: "select_type_new_item",
+                            name: "Type",
+                            style: "",
+                            selected: titles[0],
+                            values: titles,
+                            type: "select",
+                            renderName: true,
+                            indepedent: true
+                        }]
+                    },
                     actions: [
                         { choice:"Cancel", type: "button", providedBy:"self" },
                         { choice: "Next", type: "submit", providedBy: "self" }
@@ -376,7 +393,6 @@ export class ProjectManager extends IDEUIComponent {
                 depedency: { dialogueNO: 0, propertyID: "select_type_new_item" },
                 dialogues: dialogues
             });
-
         }
         let modalActionView = <ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(this, dialoguesData);
         modalActionView.open();
@@ -396,8 +412,41 @@ export class ProjectManager extends IDEUIComponent {
         }
     }
 
-    public onRemoveElement(event: IEventData, concerned: any): boolean {
-        return this._view["removeElement"] (concerned.projectId, concerned.elementId);
+    @ExportedFunction
+    public onRemoveElement(event: IEventData, concerned: ProjectManagerItemView): boolean {
+        let title = this.getTitleOfRenderParts(concerned.itemData().renderParts);
+        let dialoguesData = [];
+        dialoguesData.push(this.createDialogue(
+            "Remove ",
+            {
+                text: "Deleting this element has not undo action. Are you sure you would like to continue?"
+            },
+            title ? title : "Element",
+            [
+                {
+                    choice:"No",
+                    type: "button",
+                    providedBy:"self"
+                },
+                {
+                    choice: "Yes",
+                    type: "submit",
+                    providedBy: "creator",
+                    callback: () => {
+                        let resp = ComponentsCommunication.functionRequest(
+                            this.name,
+                            "EditorManager",
+                            "onRemoveProjectElement",
+                            [ (<ProjectManagerItemView>concerned).itemData() ]
+                        );
+                        //TODO: check response if element can be deleted
+                        (<ProjectManagerView>this._view).removeElement(concerned.projectID, concerned.systemID);
+                    }
+                }
+            ]
+        ));
+        
+        return true;
     }
 
     public onClickProjectElement(element: ProjectManagerElementView): void {

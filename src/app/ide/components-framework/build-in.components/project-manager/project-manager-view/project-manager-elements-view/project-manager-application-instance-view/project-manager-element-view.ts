@@ -12,7 +12,7 @@ import { ProjectManagerAppInstanceView } from "./project-manager-app-instance-vi
 export abstract class ProjectManagerElementView extends View {
     protected renderInfo: any;
     protected _currOrderNO: number;
-    protected _systemID: string
+    protected _systemID: string;
     protected actions: ActionsView;
     protected foldingView: PageFoldingView;
     protected _children: { items: Array<ProjectManagerElementView>, categories: Array<ProjectManagerElementView> };

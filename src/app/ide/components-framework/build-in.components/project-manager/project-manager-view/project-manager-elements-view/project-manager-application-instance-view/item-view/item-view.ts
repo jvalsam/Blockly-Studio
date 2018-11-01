@@ -87,6 +87,10 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         this.initState(data);
     }
 
+    public itemData() {
+        return this.data.item;
+    }
+
     public editorData () {
         return this.data.item.editorData;
     }

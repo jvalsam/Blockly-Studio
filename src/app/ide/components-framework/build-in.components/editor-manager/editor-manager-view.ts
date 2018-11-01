@@ -50,7 +50,9 @@ export class EditorManagerView extends ComponentView {
 
     public prepareEditorArea(): void {
         if (!this.editorOnFocus) {
-            this.$el.empty();
+            if (this.$el) {
+                this.$el.empty();
+            }
         }
     }
 }

@@ -36,25 +36,29 @@ export class SequentialDialoguesModalView extends ModalView {
         // before render has to regulate actions of the events will be attached
         this._currentActions = data.actions;
         data.id = this.id;
+        //TODO: connected with ducss
+        data.defaultTextStyle = "color: blue; vertical-align: text-bottom;";
 
         this.renderTmplEl(data, true);
         let formElems = {};
         let firstProperty: PropertyView = null;
         this._firstProperty = null;
-        _.forOwn(data.formElems, (elem) => {
-            let key = elem.descriptionID;
-            formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(
-                this.parent,
-                ".project-manager-action-form-elements",
-                elem
-            );
-            formElems[key].clearSelectorArea = false;
-            formElems[key].render();
-            if (!firstProperty) {
-                firstProperty = formElems[key];
-                this._firstProperty = firstProperty;
-            }
-        });
+        if (data.body.formElems) {
+            _.forOwn(data.body.formElems, (elem) => {
+                let key = elem.descriptionID;
+                formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(
+                    this.parent,
+                    ".project-manager-action-form-elements",
+                    elem
+                );
+                formElems[key].clearSelectorArea = false;
+                formElems[key].render();
+                if (!firstProperty) {
+                    firstProperty = formElems[key];
+                    this._firstProperty = firstProperty;
+                }
+            });
+        }
         this._dialoguesFormData.push(formElems);
 
         _.forEach(data.actions, (action) => {
@@ -135,6 +139,7 @@ export class SequentialDialoguesModalView extends ModalView {
         }
 
         switch (action.choice) {
+            case 'No':
             case 'Cancel':
                 return () => this.onClose();
             case 'Next':

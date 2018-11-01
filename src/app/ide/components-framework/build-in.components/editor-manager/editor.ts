@@ -35,6 +35,7 @@ export interface IEditorSrcData {
     version: "1.0"
 })
 export abstract class Editor extends IDEUIComponent {
+    private _systemID: string;
     private _isRendered: boolean;
 
     constructor(
@@ -45,6 +46,10 @@ export abstract class Editor extends IDEUIComponent {
     ) {
         super(name, description, compViewName, hookSelector);
         this._isRendered = false;
+    }
+
+    public get systemId(): string {
+        return this._systemID;
     }
 
     public abstract undo(): void;
