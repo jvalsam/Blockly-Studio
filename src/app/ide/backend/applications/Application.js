@@ -16,17 +16,15 @@ var ElementSchema = new mongoose.Schema({}, {_id: false});
 ElementSchema.add({
     type: { type: String, required: [true, 'project element type not exist'] },
     systemID: { type: String, required: [true, 'project element systemID not exist'] },
-    editorData: {
-        refs: [ String ]
-    },
+    orderNO: { type: Number, required: [true, 'project element type not exist'] },
+    path: { type: String, required: [true, 'project element systemID not exist'] },
+    editorData: { },
     renderParts: [
         {
             type: { type: String, required: [true, 'project renderParts type not exist'] },
             value: {}
         }
-    ],
-    innerdata : [ ],
-    children:  [ this ]
+    ]
 });
 
 var ApplicationSchema = new mongoose.Schema({
@@ -35,17 +33,13 @@ var ApplicationSchema = new mongoose.Schema({
         id: { type: String, required: [true, 'author.id not exist'] },
         username: { type: String, required: [true, 'author.username not exist'] }
     },
+    systemIDs: { type: Number, required: [true, "systemIDs is missing"] },
     img: { data: Buffer, contentType: String, fa: String },
     description: { type: String },
     domainType: { type: String, required: [true, 'domainType not exist'] },
     created: { type: Date, required: [true, 'created not exist'] },
     lastModified: { type: Date, required: [true, 'lastModified not exist'] },
-    categories: [
-        {
-            type: { type: String, required: [true, 'categories.type not exist'] },
-            elements: [ ElementSchema ]
-        }
-    ]
+    elements: [ ElementSchema ]
 });
 
 function checkImgContent (img) {

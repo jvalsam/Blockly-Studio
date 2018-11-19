@@ -101,7 +101,7 @@ export class EditorManager extends IDEUIComponent {
                 _.remove(this.focusPrevStackEditorID, id => id === delSystemID);
             }
         }
-        return "";
+        return this.editorOnFocusId;
     }
 
     public destroy(): void {
@@ -144,6 +144,13 @@ export class EditorManager extends IDEUIComponent {
             this.focusNextStackEditorID.push(this.editorOnFocusId);
             this.onChangeEditorFocus(nextSystemID);
         }
+    }
+
+    @ExportedFunction
+    public onRenameProjectElement(data: any, systemID: string) {
+        alert( "Editor Manager is notified for rename action...\n" + JSON.stringify(data) );
+        // TODO: editor if is open instance has to be notified...
+        // Maybe open tabs if exist has to be renamed...
     }
 
     @ExportedFunction

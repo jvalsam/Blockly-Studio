@@ -41,6 +41,11 @@ export class ApplicationWSPManager extends IDEComponent {
     }
 
     @ExportedFunction
+    public updateApplication(application: any, callback: (resp)=> void): void {
+        ApplicationsAdministration.requestUpdateApplication(application, callback);
+    }
+
+    @ExportedFunction
     public shareApplication (applicationId: string, shareData: any): void {
         ApplicationsAdministration.share(applicationId, shareData);
     }

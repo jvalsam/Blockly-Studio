@@ -11,6 +11,7 @@ import { IDEUIComponent } from "./ide-ui-component";
 import { IDEError, assert } from "../../shared/ide-error/ide-error";
 import { ViewRegistry } from "./registry";
 import ModalViewTmpl from "./modal-view.tmpl";
+import { IViewUserStyleData } from './view';
 
 
 export interface IViewEvent {
@@ -176,8 +177,12 @@ export abstract class View {
         this._styles = styles;
     }
 
+    private findEl(selector: string, glb: boolean = false): JQuery {
+        return selector === "this" || selector === "root" ? this.$el : glb ? $(selector) : this.$el.find(selector);
+    }
+
     private applyStyle (data: IViewUserStyleData): void {
-        const $el: JQuery = this.$el.find(data.selector);
+        const $el: JQuery = this.findEl(data.selector);
         if (!$el.length) {
             IDEError.raise (
                 "View - Apply Style",
@@ -209,6 +214,27 @@ export abstract class View {
         this.attachTmplEl();
     }
 
+    public static MergeStyle(def: Array<IViewUserStyleData>, domainDef: Array<IViewUserStyleData>): Array<IViewUserStyleData> {
+        let styles = [];
+
+        _.forEach(def, (style) => {
+                styles.push($.extend(true, {}, style));
+        });
+        if (domainDef) {
+            _.forEach(domainDef, (style) => {
+                let index = styles.map(x=>x.selector).indexOf(style.selector);
+                if (index > 0) {
+                    styles[index] = style;
+                }
+                else {
+                    styles.push(style);
+                }
+            });
+        }
+
+        return styles;
+    }
+
     public get id(): string {
         return this._id;
     }
@@ -230,7 +256,7 @@ export abstract class View {
 
     public destroy(): void {
         this.reset();
-        $(this._selector).empty();
+        $("#"+this.id).empty();
     }
 
     get templateHTML(): string {
@@ -242,7 +268,7 @@ export abstract class View {
     }
 
     public attachEvent(reg: IViewEventRegistration, glb:boolean=false) {
-        const $target: JQuery = reg.selector === "this" ? this.$el : glb ? $(reg.selector) : this.$el.find(reg.selector);
+        const $target: JQuery = this.findEl(reg.selector, glb);
         if (!$target.length) {
             IDEError.raise(
                 "View - Attach Event",

@@ -1,6 +1,9 @@
 import { ProjectManagerValidation } from './project-manger-validation';
 import { assert, IDEError } from './../../../shared/ide-error/ide-error';
-import { ComponentsCommunication, ComponentCommAddFunction } from './../../component/components-communication';
+import {
+    ComponentsCommunication,
+    ComponentCommAddFunction
+} from './../../component/components-communication';
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import {
     ExportedFunction,
@@ -16,7 +19,10 @@ import * as _ from "lodash";
 import { ViewRegistry } from './../../component/registry';
 import { ModalView } from '../../component/view';
 import { ProjectManagerElementView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view';
-import { RenderPartsToPropertyData, CreateRenderPartsWithData } from '../configuration/configuration-view/property-views/property-view';
+import {
+    RenderPartsToPropertyData,
+    CreateRenderPartsWithData
+} from '../configuration/configuration-view/property-views/property-view';
 import { ProjectManagerItemView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view';
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -85,6 +91,7 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     initialize(): void {
         let metadata = ProjectManagerMetaDataHolder.getWSPDomainMetaData(this.domainType);
+        metadata.style = ProjectManagerMetaDataHolder.getWSPDomainStyle(metadata.style);
         this.projManagerDescr = metadata;
         this._view.setRenderData(metadata);
         this._view.initialize();
@@ -133,6 +140,21 @@ export class ProjectManager extends IDEUIComponent {
     public loadProject(project): void {
         this.loadedProjects[project._id] = project;
         (<ProjectManagerView>this._view).loadProject(project);
+    }
+
+    public saveProjectResponse(resp) {
+        console.log("----------------------\n");
+        console.log(resp);
+        alert("Application saved successfully!\n");
+    }
+
+    public saveProject(projectID: string): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ApplicationWSPManager",
+            "updateApplication",
+            [ this.loadedProjects[projectID], (resp) => this.saveProjectResponse(resp) ]
+        );
     }
 
     private newSystemID (projectID): string {
@@ -215,6 +237,7 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public addProjectElement(event: IEventData, concerned: any): void {
         this._view["addElement"] (concerned.projectID, concerned.element);
+
     }
 
     @ExportedFunction
@@ -237,9 +260,13 @@ export class ProjectManager extends IDEUIComponent {
         alert("onCloseProject not developed yet!");
     }
 
+    private getRenderDataTitle(renderParts): any {
+        let index = renderParts ? renderParts.map(x => x.type).indexOf("title") : -1;
+        return index > -1 ? renderParts[index] : null;
+    }
     private getTitleOfRenderParts(renderParts): string {
-        let index = renderParts ? renderParts.map(x=>x.type).indexOf("title") : -1;
-        return (index >= 0 ? (renderParts[index].value.default ? renderParts[index].value.default.text : renderParts[index].value.text) : "");
+        let data = this.getRenderDataTitle(renderParts);
+        return data ? (data.value.default ? data.value.default.text : data.value.text) : "";
     }
     private createDialogueTitle(action: string, renderParts, type) {
         let renderPartsTitle = this.getTitleOfRenderParts(renderParts);
@@ -268,10 +295,10 @@ export class ProjectManager extends IDEUIComponent {
                 systemID: src.systemID,
                 type: this.currModalData.itemData.type
             },
-            (item) => {
-                this.onClickProjectElement(item);
-                this.loadedProjects[concerned.projectID].elements.push(item);
-                //TODO: functionality in order to save it in the DB
+            (elem) => {
+                this.onClickProjectElement(elem);
+                this.loadedProjects[concerned.projectID].elements.push(elem.itemData());
+                this.saveProject(concerned.projectID);
             }
         );
     }
@@ -290,7 +317,7 @@ export class ProjectManager extends IDEUIComponent {
             let type = event.data.choices[0].type;
             this.currModalData.itemData = concerned.getChildElementData(type);
             let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
-            
+
             dialoguesData.push(this.createDialogue(
                 "Create New ",
                 { formElems: renderData },
@@ -322,8 +349,8 @@ export class ProjectManager extends IDEUIComponent {
         // first dialogue choose type of element
         else {
             let types = event.data.choices.map(x=>x.type);
-            assert(_.difference(types, validTypes).length === 0, "Invalid type of choice is defined in the description domain."); 
-            
+            assert(_.difference(types, validTypes).length === 0, "Invalid type of choice is defined in the description domain.");
+
             let titles = [];
             let dialogues = [];
             let itemsData = [];
@@ -413,43 +440,120 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public onRemoveElement(event: IEventData, concerned: ProjectManagerItemView): boolean {
-        let title = this.getTitleOfRenderParts(concerned.itemData().renderParts);
-        let dialoguesData = [];
-        dialoguesData.push(this.createDialogue(
-            "Remove ",
-            {
-                text: "Deleting this element has not undo action. Are you sure you would like to continue?"
-            },
-            title ? title : "Element",
-            [
+    public onRemoveElement(event: IEventData, concerned: ProjectManagerItemView): void {
+        this.currModalData = {
+            itemData: Object.assign({}, concerned.itemData()),
+            projectID: concerned.projectID
+        };
+        let title: string = this.getTitleOfRenderParts(concerned.itemData().renderParts);
+        (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
+            this,
+            [this.createDialogue (
+                "Remove ",
                 {
-                    choice:"No",
-                    type: "button",
-                    providedBy:"self"
+                    text: "Deleting <b>"+title+"</b> element has not undo action. Are you sure you would like to continue?"
                 },
-                {
-                    choice: "Yes",
-                    type: "submit",
-                    providedBy: "creator",
-                    callback: () => {
-                        let resp = ComponentsCommunication.functionRequest(
-                            this.name,
-                            "EditorManager",
-                            "onRemoveProjectElement",
-                            [ (<ProjectManagerItemView>concerned).itemData() ]
-                        );
-                        //TODO: check response if element can be deleted
-                        (<ProjectManagerView>this._view).removeElement(concerned.projectID, concerned.systemID);
+                title ? title : "Element",
+                [
+                    {
+                        choice:"No",
+                        type: "button",
+                        providedBy:"self"
+                    },
+                    {
+                        choice: "Yes",
+                        type: "submit",
+                        providedBy: "creator",
+                        callback: () => {
+                            let currFocusSystemID = ComponentsCommunication.functionRequest (
+                                this.name,
+                                "EditorManager",
+                                "onRemoveProjectElement",
+                                [ (<ProjectManagerItemView>concerned).itemData().systemID ]
+                            ).value;
+                            // fix selection of current focus
+                            if (currFocusSystemID) {
+                                (<ProjectManagerView>this._view).changeSelectedItem(this.currModalData.projectID, currFocusSystemID);
+                            }
+                            //TODO: check response if element can be deleted
+                            (<ProjectManagerView>this._view).removeElement(concerned.projectID, concerned.systemID);
+                            // remove from project data
+                            let index = this.loadedProjects[concerned.projectID].elements.map(x=>x.systemID).indexOf(concerned.systemID);
+                            assert(index>-1, "not found element in project data to remove");
+                            this.loadedProjects[concerned.projectID].elements.splice(index, 1);
+                            this.saveProject(concerned.projectID);
+                        }
                     }
-                }
-            ]
-        ));
-        
-        return true;
+                ]
+            )]
+        )).open();
     }
 
-    public onClickProjectElement(element: ProjectManagerElementView): void {
+    @ExportedFunction
+    public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
+        let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
+        let renderParts = concerned.renderData();
+        let renderData = [ this.getRenderDataTitle(renderParts) ];
+        assert(projInstView !== null);
+        this.currModalData = {
+            itemData: Object.assign({}, concerned.itemData()),
+            projectID: concerned.projectID
+        };
+        let title: string = this.getTitleOfRenderParts(renderParts);
+        (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
+            this,
+            [this.createDialogue (
+                "Rename ",
+                { formElems: renderData },
+                title ? title : "Element",
+                [
+                    {
+                        choice:"Cancel",
+                        type: "button",
+                        providedBy:"self"
+                    },
+                    {
+                        choice: "Rename",
+                        type: "submit",
+                        providedBy: "creator",
+                        validation: (data, callback) => ProjectManagerValidation.check(
+                            data,
+                            projInstView,
+                            event.validation,
+                            callback
+                        ),
+                        callback: (data) => {
+                            ComponentsCommunication.functionRequest(
+                                "ProjectManager",
+                                "EditorManager",
+                                "onRenameElement",
+                                [
+                                    data,
+                                    concerned.systemID,
+                                    (resp) => {
+                                        let loadedProject = this.loadedProjects[concerned.projectID];
+                                        alert("response of editor manager in project manager. TODO: complete save rename item");
+                                        // edit name in title
+                                        let index = loadedProject.elements.map(x=>x.systemID).indexOf(concerned.systemID);
+                                        assert(index>-1, "Not found element in project to rename!");
+                                        let rindex = loadedProject.elements[index].renderParts.map(x=>x.type).indexOf("title");
+                                        loadedProject.elements[index].renderParts[rindex].value.text = data;
+                                    }
+                                ]
+                            );
+                        }
+                    }
+                ]
+            )]
+        )).open();
+    }
+
+    @ExportedFunction
+    public onEditElement(event: IEventData, concerned: ProjectManagerItemView): void {
+        alert("Not implemented yet edit element!");
+    }
+
+    public onClickProjectElement(element: ProjectManagerItemView): void {
         (<ProjectManagerView>this._view).onClickElement(element);
     }
 

@@ -24,7 +24,6 @@ import { IDEError } from "../../shared/ide-error/ide-error";
 import { FuncsCompsMap } from "./../holders";
 
 
-
 function hasMetadata(compName: string): boolean {
   return compName !== "Component" && compName !== "IDEComponent";
 }

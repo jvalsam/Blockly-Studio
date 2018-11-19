@@ -1,6 +1,6 @@
 import {ViewRegistry} from '../../../../../../component/registry';
 import { IDEUIComponent } from "../../../../../../component/ide-ui-component";
-import { ViewMetadata, IViewUserStyleData } from "../../../../../../component/view";
+import { View, ViewMetadata, IViewUserStyleData } from "../../../../../../component/view";
 
 import * as _ from "lodash";
 
@@ -10,6 +10,8 @@ import { DomainLibsHolder } from "./../../../../../../../domain-manager/domain-l
 import { ProjectManagerElementView } from "../project-manager-element-view";
 
 
+export type ProjectItemViewState = "selected" | "onFocus" | "disable" | "used" | "notUsed";
+
 @ViewMetadata({
     name: "ProjectManagerItemView",
     templateHTML: ItemViewTmpl
@@ -17,7 +19,8 @@ import { ProjectManagerElementView } from "../project-manager-element-view";
 export class ProjectManagerItemView extends ProjectManagerElementView {
     protected readonly elemsSel: string;
     private static _numberOfElements: number = 0;
-    private state;
+    private _state: ProjectItemViewState;
+    private extraView: View;
 
     constructor(
         parent: IDEUIComponent,
@@ -31,7 +34,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
             parent,
             name,
             templateHTML,
-            style,
+            View.MergeStyle(style, ProjectManagerElementView.getElementStyle(data.meta.type, "items")),
             hookSelector,
             data.meta,
             data.path + data.item.systemID + "/",
@@ -43,13 +46,43 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         this._systemID = data.item.systemID;
         this.path = data.path + this.systemID + "/";
         this.elemsSel = "item-children-" + this.id;
+        this._state = "notUsed";
+        // temporarily setted here, TODO: connected with style of the domain...
+        if (!this.data.style) { this.data.style = {}; }
+        this.data.style.state = {
+            sel: "#"+this.id,
+            elements: {
+                "selected": { "background-color": "yellow" },
+                "onFocus": {
+                    "background-color": "rgb(197, 197, 197)",
+                    "text-decoration": "underline"
+                },
+                "used": {
+                    "background-color": "yellow",
+                    "text-decoration": ""
+                },
+                "notUsed": {
+                    "background-color": "yellow"
+                },
+            }
+        };
         this.renderInfo.type = data.item.type;// (({type, renderParts }) => ({ type, renderParts })) (data.meta);
-        this.renderInfo.styleSelected = "border: solid 2px black; border-top: solid 1px aliceblue; background-color: rgb(218, 217, 217); padding-top: 6px; padding-bottom:6px;";
-        this.renderInfo.styleNormal = "border: solid 2px aliceblue; border-top: solid 1px aliceblue; background-color: rgb(218, 217, 217); padding-top: 6px; padding-bottom:6px;";
+        this.renderInfo.styleSelected =
+           `border: solid 2px black;
+            border-top: solid 1px aliceblue;
+            background-color: rgb(218, 217, 217);
+            padding-top: 6px;
+            padding-bottom:6px;`;
+        this.renderInfo.styleNormal =
+            `border: solid 2px aliceblue;
+             border-top: solid 1px aliceblue;
+             background-color: rgb(218, 217, 217);
+             padding-top: 6px;
+             padding-bottom:6px;`;
         this.renderInfo.renderParts = {};
         this.renderInfo.nesting = data.nesting;
         _.forEach(data.item.renderParts, (elem) => {
-            this.renderInfo.renderParts[elem["type"]] = elem; 
+            this.renderInfo.renderParts[elem["type"]] = elem;
         });
         this.renderInfo.id = this.id;
         this.renderInfo.meta = data.meta;
@@ -87,8 +120,25 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         this.initState(data);
     }
 
+    public get state(): ProjectItemViewState {
+        return this._state;
+    }
+
+    public set state(state: ProjectItemViewState) {
+        this._state = state;
+        $(this.data.style.state.sel).css(this.data.style.state.elements[state]);
+    }
+
     public itemData() {
         return this.data.item;
+    }
+
+    public renderData() {
+        let data = [];
+        _.forEach(this.data.item.renderParts, (renderPart) => {
+            data.push(Object.assign({}, renderPart));
+        });
+        return data;
     }
 
     public editorData () {
@@ -99,10 +149,10 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         let stateIndex = data.meta.renderParts.map(x=>x.type).indexOf("state");
         if(stateIndex>-1) {
             let retrieveState = data.meta.renderParts[stateIndex].value.retrieve;
-            this.state = DomainLibsHolder.call(retrieveState.library, retrieveState.function, ["#"]);
+            this.extraView = DomainLibsHolder.call(retrieveState.library, retrieveState.function, ["#"]);
         }
         else {
-            this.state = null;
+            this.extraView = null;
         }
     }
 
@@ -115,8 +165,8 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
             this.actions.render();
             this.actions.hide();
         }
-        if (this.state !== null) {
-            this.state.render();
+        if (this.extraView !== null) {
+            this.extraView.render();
         }
         if (this._children && this._children.items && this._children.items.length>0) {
             _.forEach(this._children.items, (item) => item.render());
@@ -142,7 +192,9 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
                         this.actions.show();
                     }
                     // TODO: check if has to change colour and which colour has to set as new
-                    this.setSelectedStyle();
+                    if (this.state !== "onFocus") {
+                        this.setMouseOverStyle();
+                    }
                     $("#project-manager-item-"+this.id).css("cursor", "pointer");
                 }
             },
@@ -154,33 +206,46 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
                         this.actions.hide();
                     }
                     // TODO: check if has to change colour and which colour has to set as new
-                    this.setNotSelectedStyle();
+                    if (this.state !== "onFocus") {
+                        this.setMouseOutStyle();
+                    }
                     $("#project-manager-item-"+this.id).css("cursor", "default");
                 }
             }
         );
     }
 
-    protected setSelectedStyle(): void {
-        $("#project-manager-item-" + this.id).css("background-color", "rgb(197, 197, 197)");
+    protected setOnFocusStyle(): void {
+        $("#project-manager-item-" + this.id).css({
+            "background-color": "rgb(197, 197, 197)",
+            "text-decoration": "underline"
+        });
     }
 
-    protected setNotSelectedStyle(): void {
-        $("#project-manager-item-" + this.id).css("background-color", "rgb(218, 217, 217)");
+    protected setMouseOverStyle(): void {
+        if (this.state !== "onFocus") {
+            $("#project-manager-item-" + this.id).css({
+                "background-color": "rgb(197, 197, 197)",
+                "text-decoration": ""
+            });
+        }
     }
 
-    public setStyle(): void { ; }
+    protected setMouseOutStyle(): void {
+        $("#project-manager-item-" + this.id).css({
+            "background-color": "rgb(218, 217, 217)",
+            "text-decoration": ""
+        });
+    }
 
-    public destroy() {
-        if (this.foldingView !== null) {
-            this.foldingView.destroy();
+    public setStyle(): void {
+    }
+
+    public destroy(): void {
+        if (this.extraView !== null) {
+            this.extraView.destroy();
         }
-        if (this.actions !== null) {
-            this.actions.destroy();
-        }
-        if (this.state !== null) {
-            this.state.destroy();
-        }
+        super.destroy();
     }
 
     public static GetTotalGeneratedElems(): number {
@@ -205,8 +270,17 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         this._children.items.push(itemView);
     }
 
+    public setState(state: ProjectItemViewState, systemID: string): boolean {
+        if (this.systemID === systemID) {
+            this.state = state;
+            return true;
+        }
+        return super.setState(state, systemID);
+    }
+
     public onClick(): void {
         let event = this.meta.events[this.meta.events.map(x=>x.type).indexOf("click")];
+        this.parent["onClickProjectElement"](this);
         this.parent["onOuterFunctionRequest"](event, this);
     }
 }

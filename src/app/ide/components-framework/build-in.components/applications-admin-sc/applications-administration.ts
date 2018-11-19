@@ -5,12 +5,10 @@
  *
  */
 
-import { IoTApplication, Application } from "../../../ide-components/iot/application/iot-application";
-import { Automation } from "../../../ide-components/iot/application/automation";
-// import { Application } from "../../../shared/application";
 import { ApplicationsHolder } from "../../holders";
 import * as _ from "lodash";
-import { URL } from "../../../shared/data";
+import { RunPlatformData } from "../../../shared/data";
+import {IDEError} from '../../../shared/ide-error/ide-error';
 
 
 export interface AppFilter {
@@ -23,14 +21,14 @@ export class ApplicationsAdministration {
 
     public static requestUserApplications(callback: (elements) => void): void {
         $.get(
-            URL + "applications/user/outline",
+            RunPlatformData.URL + "applications/user/outline",
             (applications) => callback(applications)
         );
     }
 
     public static requestApplications(filters: Array<AppFilter>, callback: (elements) => void): void {
         $.post(
-            URL + "applications/filters",
+            RunPlatformData.URL + "applications/filters",
             { filters: filters },
             (applications) => callback(applications)
         );
@@ -48,13 +46,30 @@ export class ApplicationsAdministration {
 
     public static open(appId: string, callback: Function): void {
         $.get(
-            URL + "applications/"+appId,
+            RunPlatformData.URL + "applications/"+appId,
             (application, textStatus) => {
                 if (application) {
                     callback(application);
                 }
             }
         );
+    }
+
+    public static requestUpdateApplication(application: any, callback: (wsps) => void): void {
+        console.log(application);
+        $.ajax({
+            url: RunPlatformData.URL + "applications/"+application._id,
+            type: "PUT",
+            data: {
+                data: application
+            },
+            success: function (data) {
+                callback(data);
+            },
+            error: function (data) {
+                IDEError.raise(data.statusText, data.responseText);
+            }
+        });
     }
 
     public static delete(appId: string): boolean {

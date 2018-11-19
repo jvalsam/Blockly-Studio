@@ -37,6 +37,9 @@ app.use('/users', authentication.check, UserController);
 var WSPDomainController = require('./wsp-domains/WSPDomainController');
 app.use('/wsp_domains', authentication.check, WSPDomainController);
 
+var WSPDomainStyleController = require('./wsp-domains/WSPDomainStyleController');
+app.use('/wsp_styles', authentication.check, WSPDomainStyleController);
+
 var DebuggerController = require('./debugger/DebuggerController');
 app.use('/debugger', DebuggerController);
 

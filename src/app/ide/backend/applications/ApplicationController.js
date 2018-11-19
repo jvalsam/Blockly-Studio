@@ -84,7 +84,7 @@ router.delete('/:id', function (req, res) {
 
 // UPDATES A SINGLE DOMAIN IN THE DATABASE
 router.put('/:id', function (req, res) {
-    Application.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, app) {
+    Application.findByIdAndUpdate(req.params.id, req.body.data, { new: true, upsert: true }, function (err, app) {
         if (err) return res.status(500).send("There was a problem updating the application.");
         res.status(200).send(app);
     });

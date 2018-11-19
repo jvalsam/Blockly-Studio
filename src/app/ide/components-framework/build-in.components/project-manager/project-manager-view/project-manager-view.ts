@@ -1,8 +1,15 @@
+import { ProjectItemViewState, ProjectManagerItemView } from './project-manager-elements-view/project-manager-application-instance-view/item-view/item-view';
 import { ViewRegistry } from "./../../../component/registry";
+import { View } from "../../../../components-framework/component/view";
 import { ComponentView, ComponentViewMetadata } from "../../../../components-framework/component/component-view";
-import { ProjectManagerAppInstanceView as InstanceView, ProjectManagerAppInstanceView } from "./project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view";
+import {
+    ProjectManagerAppInstanceView as InstanceView,
+    ProjectManagerAppInstanceView
+} from "./project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view";
 import { ActionsView } from "./../../../common-views/actions-view/actions-view";
-import { ProjectManagerMenuView as MenuView } from "./project-manager-elements-view/project-manager-application-instance-view/menu-view/menu-view";
+import {
+    ProjectManagerMenuView as MenuView
+} from "./project-manager-elements-view/project-manager-application-instance-view/menu-view/menu-view";
 import { IProjectManagerElementData } from "../project-manager";
 import { ProjectManagerElementView } from "./project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view";
 
@@ -11,7 +18,7 @@ import ProjectManagerTmpl from "./project-manager.tmpl";
 import ProjectManagerSYCSS from "./project-manager.sycss";
 
 import * as _ from "lodash";
-import { runInDebugContext } from "vm";
+import { assert } from "./../../../../shared/ide-error/ide-error";
 
 
 interface IProjectManagerEvent {
@@ -42,7 +49,7 @@ interface IProjectManagerData {
     }
 })
 export class ProjectManagerView extends ComponentView {
-    private currClickedElement: ProjectManagerElementView;
+    private currClickedElement: ProjectManagerItemView;
     private readonly appInstancesSelector = ".project-manager-app-instances-view-area";
     private info: IProjectManagerData;
     private skeletonDataProj: any;
@@ -55,20 +62,34 @@ export class ProjectManagerView extends ComponentView {
         this.renderData.id = this.id;
         this.info = (({ id, title, img, actions }) => ({ id, title, img, actions }))(this.renderData);
         this.skeletonDataProj = this.renderData.project;
+        this.skeletonDataProj.domain = this.renderData.domain;
+        ProjectManagerElementView.setElementsStyle(this.renderData.style);
+        this._styles = View.MergeStyle(
+            this._styles,
+            ProjectManagerElementView.getElementStyle("title", this.skeletonDataProj.domain)
+        );
         this.skeletonDataProj.defaultDomainImg = this.renderData.img;
         this.loadedProjects = new Array<InstanceView>();
         this.loadActions(this.renderData.actions);
-        //this.menu = <MenuView>ViewRegistry.getEntry("ProjectManagerMenuView").create(this.parent, this.renderData.menu);
     }
 
-    public onClickElement(element: ProjectManagerElementView) {
-        //TODO: correct render functionality in order to be clean
+    public onClickElement(element: ProjectManagerItemView) {
         if (this.currClickedElement) {
-            this.currClickedElement.select(false);
+            this.currClickedElement.state = "used";
         }
         this.currClickedElement = element;
-        this.currClickedElement.select(true);
-        this.currClickedElement.onClick();
+        this.currClickedElement.state = "onFocus";
+    }
+
+    public changeSelectedItem (projectID: string, systemID: string) {
+        let indexProj = this.loadedProjects.map(x=>x["projectID"]).indexOf(projectID);
+        let newClickedElement = <ProjectManagerItemView>this.loadedProjects[indexProj].findElementWSystemID(systemID);
+        assert(newClickedElement !== null, "Not found item with systemID: "+systemID + " to change selected item in the Project Manager.");
+        this.onClickElement(newClickedElement);
+    }
+
+    public onRemoveElement(element: ProjectManagerElementView) {
+        element.destroy();
     }
 
     public render(callback?: Function): void {
@@ -118,7 +139,7 @@ export class ProjectManagerView extends ComponentView {
         );
         projectView["projectID"] = data._id;
         projectView.clearSelectorArea = false;
-        
+
         this.loadedProjects.push(projectView);
 
         projectView.render();
@@ -141,6 +162,12 @@ export class ProjectManagerView extends ComponentView {
         loadedProject.render();
     }
 
+    public setState (state: ProjectItemViewState, projectID: string, systemID: string): boolean {
+        let project = this.getProject(projectID);
+        assert(project !== null, "<ProjectManagerView> On setState item not found project with ID: " + projectID);
+        return project.setState(state, systemID);
+    }
+
     private removeProject(index: number): void {
         this.loadedProjects[index].destroy();
         $("#" + this.loadedProjects[index].id).remove();
@@ -158,8 +185,10 @@ export class ProjectManagerView extends ComponentView {
         }
     }
 
-    public removeElement(projectId: string, elementId: string): boolean {
-        return this.loadedProjects.map(proj=>proj.id).indexOf(projectId)["removeElement"](elementId);
+    public removeElement(projectID: string, elementID: string): boolean {
+        let project = this.getProject(projectID);
+        assert(project !== null, "<ProjectManagerView> On Remove element not found project with ID: " + projectID);
+        return project.removeElement(elementID);
     }
 
     public addElement(projectId: string, element: IProjectManagerElementData): void {

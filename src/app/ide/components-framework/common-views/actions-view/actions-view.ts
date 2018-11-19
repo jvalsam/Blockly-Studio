@@ -46,9 +46,15 @@ export class ActionsView extends View {
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         this.data.id = this.id;
+        
         if (!this.data.fa) {
             this.data.fa = "fa-ellipsis-v";
         }
+
+        // in font awesome icons add prefix fa in case there is no prefix
+        _.forEach(this.data.actions, (action) =>
+            action.img = ( action.img && _.includes(action.img, "fa-") && action.img.split(" ").length < 2 ) ? "fa " + action.img : action.img
+        );
     }
 
     public registerEvents(): void {

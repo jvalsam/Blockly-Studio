@@ -117,6 +117,15 @@ export function StyleObjectToString(data: any): string {
     return value;
 }
 
+
+function getTextValue (value): any {
+    return value.default ? value.default.text + " " + ProjectManagerItemView.GetTotalGeneratedElems() : value.text;
+}
+function getImgValue (value): any {
+    let img = value.default ? value.default : value;
+    return img.path ? img.path : img.fa;
+}
+
 function convertPart(id, type, value) {
     switch(type) {
         case "img":
@@ -126,7 +135,7 @@ function convertPart(id, type, value) {
                 type: "file",
                 ftype: "image",
                 description: "Select image of the item.",
-                value: value.default.path
+                value: getImgValue(value)
             };
         case "title":
             return {
@@ -135,7 +144,7 @@ function convertPart(id, type, value) {
                 type: "text",
                 description: "Select title of the item.",
                 placeholder: "Enter "+value.property,
-                value: value.default.text + " " + ProjectManagerItemView.GetTotalGeneratedElems()
+                value: getTextValue(value)
             };
         default:
             IDEError.raise (

@@ -1,3 +1,4 @@
+import { ProjectItemViewState } from './item-view/item-view';
 import { ViewRegistry } from "./../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { View, ViewMetadata, IViewUserStyleData } from "../../../../../component/view";
@@ -54,7 +55,13 @@ export class ProjectManagerAppInstanceView extends View {
         hookSelector: string,
         data: any
     ) {
-        super(parent, name, templateHTML, style, hookSelector);
+        super(
+            parent,
+            name,
+            templateHTML,
+            View.MergeStyle(style, ProjectManagerElementView.getElementStyle("title", data.meta.domain)),
+            hookSelector
+        );
         data.id = this.id;
         this.categoriesViewSelector = "#categories-" + this.id;
         this.renderData = {
@@ -114,6 +121,17 @@ export class ProjectManagerAppInstanceView extends View {
             return;
         }
         this[type] = null;
+    }
+
+    public setState(state: ProjectItemViewState, systemID: string): boolean {
+        let setted: boolean = false;
+        _.forEach(this.categories, (category) => {
+            setted = category.setState(state, systemID);
+            if (setted) {
+                return false;
+            }
+        });
+        return setted;
     }
 
     private renderElem(type: string): void {
@@ -197,9 +215,15 @@ export class ProjectManagerAppInstanceView extends View {
         });
     }
 
-    public removeElement(elementId: string): boolean {
-        let ids = elementId.split("$");
-        return this.categories.map(cat=>cat.id).indexOf(ids.shift())["removeElement"](ids);
+    public removeElement(elementID: string): boolean {
+        let removed: boolean = false;
+        _.forEach(this.categories, (category) => {
+            removed = category.removeElement(elementID);
+            if (removed) {
+                return false;
+            }
+        });
+        return removed;
     }
 
     public addElement(element: IProjectManagerElementData): void {
@@ -219,7 +243,7 @@ export class ProjectManagerAppInstanceView extends View {
     }
 
     private findElementHelper(data: string, type: string): ProjectManagerElementView {
-        let element: ProjectManagerElementView= null;
+        let element: ProjectManagerElementView = null;
         _.forEach(this.categories, (category)=> {
             element = category.findElement(name, type);
             if (element) {
@@ -227,6 +251,9 @@ export class ProjectManagerAppInstanceView extends View {
             }
         });
         return element;
+    }
+    public findElementWSystemID(systemID: string): ProjectManagerElementView {
+        return this.findElementHelper(systemID, "systemID");
     }
     public findElementWPath(path: string): ProjectManagerElementView {
         return this.findElementHelper(path, "path");

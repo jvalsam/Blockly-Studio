@@ -18,7 +18,7 @@
                 >
                     <% if(typeof(action.img)!== 'undefined') {
                         if (_.includes(action.img, "fa-")) { %>
-                            <i class="fa <%= action.img %>" aria-hidden="true"></i>
+                            <i class="<%= action.img %>" aria-hidden="true"></i>
                     <%  } else { %>
                             <img src="<%= action.img %>">
                         <% } %>

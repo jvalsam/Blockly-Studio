@@ -37,7 +37,7 @@ export class SequentialDialoguesModalView extends ModalView {
         this._currentActions = data.actions;
         data.id = this.id;
         //TODO: connected with ducss
-        data.defaultTextStyle = "color: blue; vertical-align: text-bottom;";
+        data.defaultTextStyle = "color: black; vertical-align: text-bottom;";
 
         this.renderTmplEl(data, true);
         let formElems = {};
@@ -193,8 +193,10 @@ export class SequentialDialoguesModalView extends ModalView {
         return data;
     }
 
-    public fixFocus() {
-        this._firstProperty.focus();
+    public fixFocus(): void {
+        if (this._firstProperty) {
+            this._firstProperty.focus();
+        }
     }
 
     public onShownModal() {

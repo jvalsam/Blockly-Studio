@@ -65,17 +65,24 @@ interface IElementInfo {
 //TODO: move all functionality of meta-data in this holder
 export class ProjectManagerMetaDataHolder {
     private static _domainsMetaDataMap: { [domain:string]: any };
+    private static _domainStylesDataMap: { [style: string]: any };
     private static _configMap;
     private static _menuJSON;
     private static _domainsElementsInfoMap: { [domain: string]: { [element: string]: IElementInfo } };
 
     public static load(callback: Function): void {
         ProjectManagerMetaDataHolder._domainsMetaDataMap = {};
+        ProjectManagerMetaDataHolder._domainStylesDataMap = {};
         DomainsAdministration.requestWSPDomains((wsps) => {
             _.forEach(wsps, (wsp) => {
                 ProjectManagerMetaDataHolder._domainsMetaDataMap[wsp.domain] = wsp;
             });
-            callback();
+            DomainsAdministration.requestWSPDomainStyles((styles) => {
+                _.forEach(styles, (style) => {
+                    ProjectManagerMetaDataHolder._domainStylesDataMap[style.name] = style;
+                });
+                callback();
+            });
         });
     }
 
@@ -110,5 +117,10 @@ export class ProjectManagerMetaDataHolder {
     public static getWSPDomainMetaData (domain: string): any {
         assert(domain in ProjectManagerMetaDataHolder._domainsMetaDataMap, "Error: Not found " + domain + " in existing domains of the Platform.");
         return ProjectManagerMetaDataHolder._domainsMetaDataMap[domain];
+    }
+
+    public static getWSPDomainStyle(style: string): any {
+        assert(style in ProjectManagerMetaDataHolder._domainStylesDataMap, "Error: Not found " + style + " in existing domain styles of the Platform.");
+        return ProjectManagerMetaDataHolder._domainStylesDataMap[style];
     }
 }

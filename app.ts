@@ -1,7 +1,7 @@
 "use strict";
 
+import { RunPlatformData } from './src/app/ide/shared/data';
 import { IDECore } from "./src/app/ide/components-framework/ide-core";
-// import { Application } from "./src/app/ide/shared/application";
 
 // function login(): void {
 //     let email, password;
@@ -20,7 +20,10 @@ import { IDECore } from "./src/app/ide/components-framework/ide-core";
 //     });
 // }
 
+// debug changed command is: node --inspect=0.0.0.0:9229 --inspect-brk server.js
+
 $(document).ready(function() {
+    RunPlatformData.initialize("debug_localhost");
     IDECore.initialize();
     IDECore.start();
 });
