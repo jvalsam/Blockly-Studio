@@ -46,4 +46,7 @@ app.use('/debugger', DebuggerController);
 var SmartObjectController = require('./smart-objects/smartObjectController');
 app.use('/smart-objects', authentication.check, SmartObjectController);
 
+var UploadFilesController = require('./upload_files/UploadFilesController');
+app.use('/files', authentication.check, UploadFilesController);
+
 module.exports = app;

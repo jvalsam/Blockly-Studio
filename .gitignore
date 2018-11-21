@@ -36,5 +36,5 @@ app.ts
 .DS_Store
 Thumbs.db
 
-# Backend Images
-/src/app/ide/backend/smart-object-images
+# BackendFiles
+/src/app/ide/backend/uploaded_files
