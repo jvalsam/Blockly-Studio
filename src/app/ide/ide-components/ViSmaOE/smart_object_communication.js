@@ -24,7 +24,10 @@ function register_smart_object(smart_object, on_success, on_failure) {
         smart_objects_backend_url + "/register",
         {
             method: "POST",
-            body: smart_object
+            body: JSON.stringify(smart_object),
+            headers: {
+                "Content-Type": "application/json"
+            }
         }
     )
     .then(handle_response_errors)

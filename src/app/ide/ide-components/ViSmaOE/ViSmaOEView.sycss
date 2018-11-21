@@ -19,7 +19,7 @@ form {
     padding: 0px;
 }
 
-.image_id_container {
+.files_id_container {
     padding: 0px;
 }
 
