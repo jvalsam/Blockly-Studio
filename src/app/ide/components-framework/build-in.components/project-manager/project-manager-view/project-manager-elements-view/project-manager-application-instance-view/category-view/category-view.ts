@@ -10,7 +10,6 @@ import { ViewRegistry } from "../../../../../../component/registry";
 import { ProjectManagerItemView } from "../item-view/item-view";
 
 import { ProjectManagerElementView } from "../project-manager-element-view";
-import { ProjectManagerAppInstanceView } from './../project-manager-app-instance-view';
 
 interface IMenuItem {
     title: string;
@@ -178,14 +177,14 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
     }
 
     public addElement(itemData): ProjectManagerElementView {
-        let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
+        itemData.metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
         let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
             this.parent,
             this.elemsSel,
             {
                 "parentTree": this,
-                "meta": this.data.meta.items[metaIndex],
-                "projectID": this.data.project._id,
+                "meta": this.data.meta,
+                "project": this.data.project,
                 "item": itemData,
                 "path": this.path,
                 "nesting": this.renderInfo.nesting + 1
@@ -294,5 +293,9 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
 
     public onClick(): void {
         
+    }
+
+    public getMeta(): any {
+        return this.meta;
     }
 }

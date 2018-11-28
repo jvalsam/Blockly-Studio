@@ -117,49 +117,58 @@ export function StyleObjectToString(data: any): string {
     return value;
 }
 
+var convertDataMap = {
+    img: {
+        value: (value) => value.path ? value.path : (value.fa ? value.fa : undefined),
+        type: "image"
+    },
+    title: {
+        value: (value) => value.text ? value.text : undefined,
+        type: "text"
+    },
+    colour: {
+        value: (value) => value.colour ? value.colour : undefined,
+        type: "color"
+    }
+};
 
-function getTextValue (value): any {
-    return value.default ? value.default.text + " " + ProjectManagerItemView.GetTotalGeneratedElems() : value.text;
-}
-function getImgValue (value): any {
-    let img = value.default ? value.default : value;
-    return img.path ? img.path : img.fa;
-}
-
-function convertPart(id, type, value) {
-    switch(type) {
+function convertPart(part, total) {
+    let convertData = convertDataMap[part.type];
+    let respObj: any = {
+        descriptionID: part.id,
+        name: part.value.property+":",
+        type: convertData.type,
+        value: convertData.value(part.value),
+        description: "Select " + part.type + " of the item.",
+        defaultValue: part.value.default + " " + total,
+        required: part.value.required ? part.value.required : false,
+        renderNO: part.formElemItemRenderNO
+    };
+    switch(part.type) {
         case "img":
-            return {
-                descriptionID: id,
-                name: value.property+":",
-                type: "file",
-                ftype: "image",
-                description: "Select image of the item.",
-                value: getImgValue(value)
-            };
+            respObj.type = "file";
+            respObj.ftype = "image";
+            break;
         case "title":
-            return {
-                descriptionID: id,
-                name: value.property+":",
-                type: "text",
-                description: "Select title of the item.",
-                placeholder: "Enter "+value.property,
-                value: getTextValue(value)
-            };
+            respObj.placeholder = "Enter "+part.value.property;
+            break;
+        case "colour":
+            break;
         default:
             IDEError.raise (
                 "PropertyView",
-                "Not supported type of conversion ("+type+")",
+                "Not supported type of conversion ("+part.type+")",
                 "ProjectManager"
             );
     }
+    return respObj;
 }
-export function RenderPartsToPropertyData (renderParts: Array<any>) {
+export function RenderPartsToPropertyData (renderParts: Array<any>, total: number) {
     let properties = [];
     if (renderParts && renderParts.length>0) {
         renderParts.forEach((part) => {
             if (part.selectedBy === "user") {
-                properties.push(convertPart(part.id, part.type, part.value));
+                properties.push(convertPart(part, total));
             }
         });
     }
@@ -169,7 +178,7 @@ export function RenderPartsToPropertyData (renderParts: Array<any>) {
 export function CreateRenderPartsWithData (renderParts: Array<any>, data) {
     let newItemParts: Array<any> = [];
     _.forEach(renderParts, (renderPart) => {
-        let newItemPart: any = { type: renderPart.type };
+        let newItemPart: any = { type: renderPart.id };
         let value;
         switch(renderPart.type) {
             case "img":
@@ -179,6 +188,10 @@ export function CreateRenderPartsWithData (renderParts: Array<any>, data) {
             case "title":
                 value = data.filter(x => x.hasOwnProperty(renderPart.id))[0][renderPart.id];
                 newItemPart.value = { text: value };
+                break;
+            case "colour":
+                value = data.filter(x => x.hasOwnProperty(renderPart.id))[0][renderPart.id];
+                newItemPart.value = { colour: value }
                 break;
             case "state":
                 break;

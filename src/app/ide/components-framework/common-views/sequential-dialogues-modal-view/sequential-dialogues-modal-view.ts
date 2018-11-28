@@ -44,7 +44,9 @@ export class SequentialDialoguesModalView extends ModalView {
         let firstProperty: PropertyView = null;
         this._firstProperty = null;
         if (data.body.formElems) {
-            _.forOwn(data.body.formElems, (elem) => {
+            let orderNOs = data.body.formElems.map(x=>x.renderNO);
+            for (let i=1; i<=data.body.formElems.length; i++) {
+                let elem = data.body.formElems[orderNOs.indexOf(i)];
                 let key = elem.descriptionID;
                 formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(
                     this.parent,
@@ -57,7 +59,7 @@ export class SequentialDialoguesModalView extends ModalView {
                     firstProperty = formElems[key];
                     this._firstProperty = firstProperty;
                 }
-            });
+            }
         }
         this._dialoguesFormData.push(formElems);
 

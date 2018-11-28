@@ -1,3 +1,4 @@
+import {ComponentsCommunication} from '../../component/components-communication';
 /**
  * Editor - Super class of editors, common functionality has to be supported by editors
  *
@@ -6,7 +7,7 @@
  */
 
 import { IDEUIComponent } from "../../component/ide-ui-component";
-import { UIComponentMetadata, ExportedStaticFunction } from "../../component/component-loader";
+import {ExportedFunction, RequiredFunction,  UIComponentMetadata,   ExportedStaticFunction} from '../../component/component-loader';
 import { ResponseValue } from "../../component/response-value";
 
 import * as _ from "lodash";
@@ -35,6 +36,7 @@ export interface IEditorSrcData {
     version: "1.0"
 })
 export abstract class Editor extends IDEUIComponent {
+    private _projectID: string;
     private _systemID: string;
     private _isRendered: boolean;
 
@@ -58,6 +60,16 @@ export abstract class Editor extends IDEUIComponent {
     public abstract copy(): void;
     public abstract paste(): void;
 
+    @RequiredFunction("ProjectManager", "saveEditorData")
+    public save (src:any): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "saveEditorData",
+            [ src ]
+        );
+    }
+
     // public create_src(data: INewItemData): string;
 
     public get isRendered(): boolean {
@@ -74,9 +86,10 @@ export abstract class Editor extends IDEUIComponent {
       return new ResponseValue(this.name, "factory", this["factory"+mission](args));
     }
 
-    public static createJSONArgs (editorName, systemID, args): any {
+    public static createJSONArgs (editorName, systemID, projectID, args): any {
         let json = {
-            "systemID": editorName+"_"+systemID
+            "systemID": editorName+"_"+systemID,
+            "projectID": projectID
         };
         _.forEach(args, (value, key) => {
             json[key] += value;

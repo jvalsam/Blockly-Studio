@@ -15,7 +15,8 @@
                 <%= typeof(placeholder)!=='undefined' ? 'placeholder="'+placeholder+'"':'' %>
                 aria-describedby="title_<%= id %>"
                 <%= typeof(ftype)!=='undefined' && ftype ==='image' ? 'accept="image/*"' : '' %>
-                required
+                <%= typeof(required)!=='undefined' && required===true ? 'required':'' %>
+                <%= (type !== 'file' ? ( typeof(value) !== 'undefined' ? 'value="' + value + '"' : ( typeof(defaultValue) !== 'undefined' ? 'value="' + defaultValue + '"' : '' ) ) : '') %>
         />
     </div>
 <% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>

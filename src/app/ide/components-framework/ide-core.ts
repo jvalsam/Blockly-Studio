@@ -13,7 +13,8 @@ import {
   RequiredFunctionsHolder,
   SignalListenersHolder,
   SignalsHolder,
-  DataLoader
+  DataLoader,
+  EditorDataHolder
 } from "./holders";
 
 import { DomainLibsHolder } from "../domain-manager/domain-libs-holder";
@@ -29,7 +30,7 @@ import "bootstrap";
 
 export class IDECore {
   public static initialize(): void {
-
+    
     SignalsHolder.initialize();
     SignalListenersHolder.initialize();
     FunctionsHolder.initialize();

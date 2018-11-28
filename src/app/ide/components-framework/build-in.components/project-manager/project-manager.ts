@@ -148,12 +148,27 @@ export class ProjectManager extends IDEUIComponent {
         alert("Application saved successfully!\n");
     }
 
+    private getProjectDataToSave(project) {
+        let projectForSave = JSON.parse(JSON.stringify(project));
+        _.forEach(projectForSave.elements, (element)=> {
+            _.forEach(element.renderParts, (renderPart) => {
+                renderPart.type = renderPart.id;
+                delete renderPart.id;
+                delete renderPart.value.property;
+                delete renderPart.value.default;
+                delete renderPart.selectedBy;
+                delete renderPart.formElemItemRenderNO;
+            });
+        });
+        return projectForSave;
+    }
+
     public saveProject(projectID: string): void {
         ComponentsCommunication.functionRequest(
             this.name,
             "ApplicationWSPManager",
             "updateApplication",
-            [ this.loadedProjects[projectID], (resp) => this.saveProjectResponse(resp) ]
+            [ this.getProjectDataToSave(this.loadedProjects[projectID]) , (resp) => this.saveProjectResponse(resp) ]
         );
     }
 
@@ -264,17 +279,25 @@ export class ProjectManager extends IDEUIComponent {
         let index = renderParts ? renderParts.map(x => x.type).indexOf("title") : -1;
         return index > -1 ? renderParts[index] : null;
     }
+    public getTitleValueofRenderParts(renderParts): string {
+        let data = this.getRenderDataTitle(renderParts);
+        return data && data.value.text ? data.value.text : "";
+    }
+    public getDefaultTitleofRenderParts(renderParts): string {
+        let data = this.getRenderDataTitle(renderParts);
+        return data && data.value.default ? data.value.default : "";
+    }
     private getTitleOfRenderParts(renderParts): string {
         let data = this.getRenderDataTitle(renderParts);
-        return data ? (data.value.default ? data.value.default.text : data.value.text) : "";
+        return data ? (data.value.default ? data.value.default : data.value.text) : "";
     }
     private createDialogueTitle(action: string, renderParts, type) {
         let renderPartsTitle = this.getTitleOfRenderParts(renderParts);
         return  action + ( renderPartsTitle ? renderPartsTitle : type );
     }
-    private createDialogue(actionTitle: string, body: { formElems?: any, text?: any }, type, actions, dtype: string = "simple") {
+    private createDialogue(actionTitle: string, body: { formElems?: any, text?: any, systemIDs?: number }, type, actions, dtype: string = "simple") {
         if (body.formElems) {
-            body.formElems = RenderPartsToPropertyData(body.formElems);
+            body.formElems = RenderPartsToPropertyData(body.formElems, body.systemIDs);
         }
         return {
             type: dtype,
@@ -299,8 +322,16 @@ export class ProjectManager extends IDEUIComponent {
                 this.onClickProjectElement(elem);
                 this.loadedProjects[concerned.projectID].elements.push(elem.itemData());
                 this.saveProject(concerned.projectID);
+                elem.onClick();
             }
         );
+    }
+
+    @ExportedFunction
+    public saveEditorData(src: any) {
+        let index = this.loadedProjects[src.projectID].elements.map(x=>x.systemID).indexOf(src.systemID);
+        this.loadedProjects[src.projectID].elements[index].editorData = src;
+        this.saveProject(src.projectID);
     }
 
     @ExportedFunction
@@ -311,6 +342,7 @@ export class ProjectManager extends IDEUIComponent {
         let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
         assert(projInstView !== null);
         this.currModalData.projectID = concerned.projectID;
+        let systemIDs = this.loadedProjects[this.currModalData.projectID].systemIDs;
 
         // specific element to select
         if (event.data.choices.length === 1) {
@@ -320,7 +352,7 @@ export class ProjectManager extends IDEUIComponent {
 
             dialoguesData.push(this.createDialogue(
                 "Create New ",
-                { formElems: renderData },
+                { formElems: renderData, systemIDs: systemIDs },
                 type,
                 [
                     {
@@ -361,7 +393,10 @@ export class ProjectManager extends IDEUIComponent {
                 titles.push(title);
                 let dialogue = this.createDialogue(
                     "Create New ",
-                    { formElems: renderData },
+                    {
+                        formElems: renderData,
+                        systemIDs: systemIDs
+                    },
                     type,
                     [
                         {
@@ -445,7 +480,7 @@ export class ProjectManager extends IDEUIComponent {
             itemData: Object.assign({}, concerned.itemData()),
             projectID: concerned.projectID
         };
-        let title: string = this.getTitleOfRenderParts(concerned.itemData().renderParts);
+        let title: string = this.getTitleValueofRenderParts(concerned.itemData().renderParts);
         (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
             this,
             [this.createDialogue (
@@ -480,6 +515,16 @@ export class ProjectManager extends IDEUIComponent {
                             // remove from project data
                             let index = this.loadedProjects[concerned.projectID].elements.map(x=>x.systemID).indexOf(concerned.systemID);
                             assert(index>-1, "not found element in project data to remove");
+                            // fixing rendering order
+                            let element = this.loadedProjects[concerned.projectID].elements[index];
+                            this.loadedProjects[concerned.projectID].elements.filter(
+                                x => {
+                                    return x.path === element.path && x.orderNO > element.orderNO;
+                                }
+                            ).forEach (
+                                (elementInPath) => --elementInPath.orderNO
+                            );
+                            // remove from project data
                             this.loadedProjects[concerned.projectID].elements.splice(index, 1);
                             this.saveProject(concerned.projectID);
                         }
@@ -492,18 +537,18 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
         let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
-        let renderParts = concerned.renderData();
-        let renderData = [ this.getRenderDataTitle(renderParts) ];
+        let renderData = concerned.renderData();
+
         assert(projInstView !== null);
         this.currModalData = {
             itemData: Object.assign({}, concerned.itemData()),
             projectID: concerned.projectID
         };
-        let title: string = this.getTitleOfRenderParts(renderParts);
+        let title: string = this.getTitleOfRenderParts(renderData);
         (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
             this,
             [this.createDialogue (
-                "Rename ",
+                "Rename " + concerned.defaultTitle() + ": ",
                 { formElems: renderData },
                 title ? title : "Element",
                 [
@@ -523,6 +568,7 @@ export class ProjectManager extends IDEUIComponent {
                             callback
                         ),
                         callback: (data) => {
+                            alert("rename function fired!");
                             ComponentsCommunication.functionRequest(
                                 "ProjectManager",
                                 "EditorManager",
@@ -546,11 +592,6 @@ export class ProjectManager extends IDEUIComponent {
                 ]
             )]
         )).open();
-    }
-
-    @ExportedFunction
-    public onEditElement(event: IEventData, concerned: ProjectManagerItemView): void {
-        alert("Not implemented yet edit element!");
     }
 
     public onClickProjectElement(element: ProjectManagerItemView): void {
@@ -586,7 +627,7 @@ export class ProjectManager extends IDEUIComponent {
             "ProjectManager",
             args.providedBy ? args.providedBy : "EditorManager",
             "factoryNewElement",
-            [ args.mission, data[data.length-1], systemID, [] ]
+            [ args.mission, data[data.length-1], systemID, this.currModalData.projectID, [] ]
         );
         return response.value;
     }

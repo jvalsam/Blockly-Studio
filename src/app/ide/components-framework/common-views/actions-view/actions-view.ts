@@ -64,7 +64,9 @@ export class ActionsView extends View {
                 events.push({
                     eventType: event.type,
                     selector: "#" + action.title.replace(/ /g, '') + "_" + this.id,
-                    handler: (evt) => { typeof event.action === "string" ?
+                    handler: (evt) => {
+                                        // this.hideMenu();
+                                        typeof event.action === "string" ?
                                         (!event.providedBy || event.providedBy === "Platform" ?
                                             this.parent[event.action](event, this.data.concerned) :
                                             this.parent["onOuterFunctionRequest"](event, this.data.concerned)
@@ -97,6 +99,14 @@ export class ActionsView extends View {
 
     public render(): void {
         this.renderTmplEl(this.data);
+    }
+
+    public hideMenu() {
+        $("#dropdown-menu-"+this.id).hide();
+    }
+
+    public showMenu() {
+        $("#dropdown-menu-"+this.id).show();
     }
 
     public hide() {

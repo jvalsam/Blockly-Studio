@@ -154,7 +154,7 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public factoryNewElement(mission: string, args, systemID: string, restriction?:Array<string>) {
+    public factoryNewElement(mission: string, args, systemID: string, projectID: string, restriction?:Array<string>) {
         let editors = EditorDataHolder.getEditors(mission);
         if (editors.length === 1) {
             let response = ComponentsCommunication.functionRequest(
@@ -163,7 +163,7 @@ export class EditorManager extends IDEUIComponent {
                 mission,
                 args
             );
-            response.value = _.assign({}, response.value, Editor.createJSONArgs(editors[0], systemID, args));
+            response.value = _.assign({}, response.value, Editor.createJSONArgs(editors[0], systemID, projectID, args));
             return response.value;
         }
         else {

@@ -11,6 +11,7 @@ import { ProjectManagerAppInstanceView } from "./project-manager-app-instance-vi
 
 
 export abstract class ProjectManagerElementView extends View {
+    protected static meta: any;
     private static _PMStyle: any;
     protected renderInfo: any;
     protected _currOrderNO: number;
@@ -48,12 +49,12 @@ export abstract class ProjectManagerElementView extends View {
     }
 
     protected initActions(selector: string, styles) {
-        if (this.meta.actions.length > 0) {
+        if (this.getMeta().actions.length > 0) {
             this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(
                 this.parent,
                 selector,
                 styles,
-                { "actions": this.meta.actions, "concerned": this }
+                { "actions": this.getMeta().actions, "concerned": this }
             );
         }
         else {
@@ -300,4 +301,10 @@ export abstract class ProjectManagerElementView extends View {
             return data = this._PMStyle[name][type] ? this._PMStyle[name][type] : this._PMStyle[name].default;
         }
     }
+
+    public renderParts() {
+        return this.meta.renderParts;
+    }
+
+    protected abstract getMeta(): any;
 }

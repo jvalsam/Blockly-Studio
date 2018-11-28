@@ -1,0 +1,11 @@
+{
+	"default": [{
+		"selector": ".item-view-area",
+		"styles": {
+			"css": {
+				"color": "#f0f8ff"
+			},
+			"class": ["fa-lg"]
+		}
+	}]
+}

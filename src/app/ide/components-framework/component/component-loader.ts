@@ -194,8 +194,14 @@ function addFunctionHelper(parent: string, child: string, Holder: any) {
 
     if (funcMap) {
         for (const key of Object.keys(funcMap)) {
-            const compFunc = funcMap[key].copy();
-            childFuncMap[key] = compFunc;
+            if (Array.isArray(funcMap[key])) {
+                const compFunc = funcMap[key][0].copy();
+                childFuncMap[key] = compFunc;
+            }
+            else {
+                const compFunc = funcMap[key].copy();
+                childFuncMap[key] = compFunc;
+            }
         }
         Holder.put(child, childFuncMap);
     }

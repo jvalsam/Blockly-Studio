@@ -405,8 +405,8 @@ export abstract class ModalView extends View {
     public destroy() {
         // change selector to the outer html element of the modal
         this._selector = this.modalSelector;
-
         super.destroy();
+        $(this.modalSelector).empty();
     }
 }
 

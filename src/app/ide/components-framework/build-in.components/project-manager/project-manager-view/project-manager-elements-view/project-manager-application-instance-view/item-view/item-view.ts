@@ -1,3 +1,4 @@
+import {assert} from '../../../../../../../shared/ide-error/ide-error';
 import {ViewRegistry} from '../../../../../../component/registry';
 import { IDEUIComponent } from "../../../../../../component/ide-ui-component";
 import { View, ViewMetadata, IViewUserStyleData } from "../../../../../../component/view";
@@ -8,6 +9,7 @@ import * as _ from "lodash";
 import ItemViewTmpl from "./item-view.tmpl";
 import { DomainLibsHolder } from "./../../../../../../../domain-manager/domain-libs-holder";
 import { ProjectManagerElementView } from "../project-manager-element-view";
+import { ContrastColor, HexToRGB, BrighterVersion } from './../../../../../../../shared/convertors';
 
 
 export type ProjectItemViewState = "selected" | "onFocus" | "disable" | "used" | "notUsed";
@@ -17,6 +19,7 @@ export type ProjectItemViewState = "selected" | "onFocus" | "disable" | "used" |
     templateHTML: ItemViewTmpl
 })
 export class ProjectManagerItemView extends ProjectManagerElementView {
+    protected _currRenderValues: { title: string, image: any, colour: string };
     protected readonly elemsSel: string;
     private static _numberOfElements: number = 0;
     private _state: ProjectItemViewState;
@@ -34,39 +37,22 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
             parent,
             name,
             templateHTML,
-            View.MergeStyle(style, ProjectManagerElementView.getElementStyle(data.meta.type, "items")),
+            View.MergeStyle(style, ProjectManagerElementView.getElementStyle(data.item.type, "items")),
             hookSelector,
             data.meta,
             data.path + data.item.systemID + "/",
             data.parentTree,
-            data.projectID,
+            data.project._id,
             data.isSelected
         );
         ++ProjectManagerItemView._numberOfElements;
         this._systemID = data.item.systemID;
+        this.pinMetadataInItem();
         this.path = data.path + this.systemID + "/";
-        this.elemsSel = "item-children-" + this.id;
+        this.elemsSel = "#item-children-" + this.id;
         this._state = "notUsed";
-        // temporarily setted here, TODO: connected with style of the domain...
-        if (!this.data.style) { this.data.style = {}; }
-        this.data.style.state = {
-            sel: "#"+this.id,
-            elements: {
-                "selected": { "background-color": "yellow" },
-                "onFocus": {
-                    "background-color": "rgb(197, 197, 197)",
-                    "text-decoration": "underline"
-                },
-                "used": {
-                    "background-color": "yellow",
-                    "text-decoration": ""
-                },
-                "notUsed": {
-                    "background-color": "yellow"
-                },
-            }
-        };
-        this.renderInfo.type = data.item.type;// (({type, renderParts }) => ({ type, renderParts })) (data.meta);
+
+        this.renderInfo.type = data.item.type;
         this.renderInfo.styleSelected =
            `border: solid 2px black;
             border-top: solid 1px aliceblue;
@@ -85,9 +71,37 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
             this.renderInfo.renderParts[elem["type"]] = elem;
         });
         this.renderInfo.id = this.id;
-        this.renderInfo.meta = data.meta;
+        this.renderInfo.meta = this.getMeta();
+        this.renderInfo.metaBGColour = this.renderInfo.meta.renderParts[this.renderInfo.meta.renderParts.map(x=>x.type).indexOf("colour")].value.default;
+        
+        if (this.renderInfo.renderParts.colour.value.colour !== this.renderInfo.metaBGColour) {
+            this.renderInfo.colour = ContrastColor(HexToRGB(this.renderInfo.renderParts.colour.value.colour));
+        }
+        else {
+            this.renderInfo.colour = "rgb(0, 0, 0)"//this.renderInfo.style.colour;
+        }
 
-        if (data.meta.validChildren && data.meta.validChildren.length>0) {
+        // temporarily setted here, TODO: connected with style of the domain...
+        if (!this.data.style) { this.data.style = {}; }
+        this.data.style.state = {
+            sel: "#" + this.id,
+            elements: {
+                "selected": { "background-color": "yellow" },
+                "onFocus": {
+                    "background-color": this.renderInfo.renderParts.colour.value.colour,
+                    "text-decoration": "underline"
+                },
+                "used": {
+                    "background-color": "yellow",
+                    "text-decoration": ""
+                },
+                "notUsed": {
+                    "background-color": "yellow"
+                },
+            }
+        };
+
+        if (this.getMeta().validChildren && this.getMeta().validChildren.length>0) {
             this.renderInfo.hasChildren = true;
             this.initFolding(
                 "#item-folding-"+this.id,
@@ -98,26 +112,55 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
                         "selector": ".page-folding-link-icon",
                         "styles": {
                             "css": {
-                                "color": "black"
+                                "color": "rgb(0,0,0)"
                             },
                             "class": ["fa-lg"]
                         }
                     }
                 ]
             );
-            
+            this.initChildren();
         }
         else {
             this.foldingView = null;
             this.renderInfo.hasChildren = false;
         }
-        
+
         this.initActions(
             "#item-actions-view-"+this.id,
             [ {selector: ".actions-view-title-fa", styles: { css: { color: "black" } }} ]
         );
 
         this.initState(data);
+    }
+
+    private pinMetadataInItem() {
+        _.forEach(this.getMeta().renderParts, (renderPart) => {
+            let index = this.data.item.renderParts.map(x=>x.type).indexOf(renderPart.id);
+            let itemRP = this.data.item.renderParts[index];
+            itemRP.id = itemRP.type;
+            itemRP.type = renderPart.type;
+            itemRP.selectedBy = renderPart.selectedBy;
+            itemRP.formElemItemRenderNO = renderPart.formElemItemRenderNO;
+            if (!itemRP.value) {
+                itemRP.value = {};
+            }
+            itemRP.value.property = renderPart.value.property;
+            itemRP.value.default = renderPart.value.default;
+        });
+    }
+
+    private initChildren (): void {
+        this._children.items = new Array<ProjectManagerElementView>();
+        // filter elements
+        let itemElements = this.data.project.elements.filter(obj => { return obj.path === this.path });
+        //
+        for(let i=1; i<=itemElements.length; ++i) {
+            let itemData = itemElements[ itemElements.map(x=>x.orderNO).indexOf(i) ];
+            this.addElement(itemData);
+        }
+
+        this._currOrderNO = itemElements.length + 1;
     }
 
     public get state(): ProjectItemViewState {
@@ -145,10 +188,20 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         return this.data.item.editorData;
     }
 
+    private metadataElem(type): any {
+        let index = this.getMeta().renderParts.map(x=>x.type).indexOf("title");
+        return index > 0 ? this.getMeta().renderParts[index] : null;
+    }
+
+    public defaultTitle(): string {
+        let metaTitle = this.metadataElem("title");
+        return metaTitle ? metaTitle.value.default : "Project Element";
+    }
+
     private initState(data) {
-        let stateIndex = data.meta.renderParts.map(x=>x.type).indexOf("state");
+        let stateIndex = this.getMeta().renderParts.map(x=>x.type).indexOf("state");
         if(stateIndex>-1) {
-            let retrieveState = data.meta.renderParts[stateIndex].value.retrieve;
+            let retrieveState = this.getMeta().renderParts[stateIndex].value.retrieve;
             this.extraView = DomainLibsHolder.call(retrieveState.library, retrieveState.function, ["#"]);
         }
         else {
@@ -157,6 +210,11 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     }
 
     public render(): void {
+        this._currRenderValues = {
+            title: this.renderInfo.renderParts.title.value.text,
+            image: typeof (this.renderInfo.renderParts.img) !== undefined ? Object.assign({}, this.renderInfo.renderParts.img) : undefined,
+            colour: this.renderInfo.renderParts.colour
+        };
         this.renderTmplEl(this.renderInfo);
         if (this.foldingView !== null) {
             this.foldingView.render();
@@ -215,9 +273,13 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         );
     }
 
+    protected getMeta(): any {
+        return this.meta.items[this.data.item.metaIndex];
+    }
+
     protected setOnFocusStyle(): void {
         $("#project-manager-item-" + this.id).css({
-            "background-color": "rgb(197, 197, 197)",
+            "background-color": BrighterVersion(this.renderInfo.renderParts.colour.value.colour),
             "text-decoration": "underline"
         });
     }
@@ -225,7 +287,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     protected setMouseOverStyle(): void {
         if (this.state !== "onFocus") {
             $("#project-manager-item-" + this.id).css({
-                "background-color": "rgb(197, 197, 197)",
+                "background-color": "white",//"rgb(197, 197, 197)",
                 "text-decoration": ""
             });
         }
@@ -233,12 +295,42 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
 
     protected setMouseOutStyle(): void {
         $("#project-manager-item-" + this.id).css({
-            "background-color": "rgb(218, 217, 217)",
+            "background-color": this.renderInfo.renderParts.colour.value.colour,
             "text-decoration": ""
         });
     }
 
-    public setStyle(): void {
+    protected rename(data: any): void {
+        if (this._currRenderValues.title !== data.title) {
+            $("#item-title-"+this.id).empty();
+            $("#item-title-"+this.id).append(data.title);
+            this._currRenderValues.title = data.title;
+        }
+
+        if (this._currRenderValues.colour !== data.colour) {
+            let fontColour = ContrastColor(HexToRGB(data.colour));
+            $("#item-title-"+this.id).css("color", fontColour);
+            $("#"+this.id).css("background-color", data.colour);
+            this._currRenderValues.colour = data.colour;
+        }
+
+        if (typeof(data.image) !== 'undefined') {
+            if (this._currRenderValues.image.value.path !== data.value.image.path || this._currRenderValues.image.value.fa !== data.image.value.fa) {
+                $("#item-img-"+this.id).empty();
+                let imgHtml = "";
+                if (typeof(data.img.value.fa) !== 'undefined') {
+                    imgHtml = "<i class='"+ data.image.value.fa +" project-category-header-img-" + this.renderInfo.type + "'></i>";
+                }
+                else {
+                    imgHtml = "<img class='project-category-header-img-"+this.renderInfo.type+"' src='"+ data.image.value.path + "' />";
+                }
+                $("#item-img-"+this.id).append(imgHtml);
+            }
+        }
+        else {
+            $("#item-img-"+this.id).empty();
+        }
+
     }
 
     public destroy(): void {
@@ -253,14 +345,14 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     }
 
     protected addElement(itemData): void {
-        let metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
+        itemData.metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
         let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
             this.parent,
             this.elemsSel,
             {
                 "parentTree": this,
-                "meta": this.data.meta.items[metaIndex],
-                "projectID": this.data.project._id,
+                "meta": this.data.meta,
+                "project": this.data.project,
                 "item": itemData,
                 "path": this.path,
                 "nesting": this.renderInfo.nesting + 1
@@ -279,7 +371,8 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     }
 
     public onClick(): void {
-        let event = this.meta.events[this.meta.events.map(x=>x.type).indexOf("click")];
+        let meta = this.getMeta();
+        let event = meta.events[meta.events.map(x=>x.type).indexOf("click")];
         this.parent["onClickProjectElement"](this);
         this.parent["onOuterFunctionRequest"](event, this);
     }
