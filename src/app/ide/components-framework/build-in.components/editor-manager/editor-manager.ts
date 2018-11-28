@@ -147,10 +147,12 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public onRenameProjectElement(data: any, systemID: string) {
+    public onRenameProjectElement(data: any, systemID: string, callback: Function) {
         alert( "Editor Manager is notified for rename action...\n" + JSON.stringify(data) );
         // TODO: editor if is open instance has to be notified...
         // Maybe open tabs if exist has to be renamed...
+
+        callback (true);
     }
 
     @ExportedFunction

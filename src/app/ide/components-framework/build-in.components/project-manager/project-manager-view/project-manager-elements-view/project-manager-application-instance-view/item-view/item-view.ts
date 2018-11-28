@@ -213,7 +213,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         this._currRenderValues = {
             title: this.renderInfo.renderParts.title.value.text,
             image: typeof (this.renderInfo.renderParts.img) !== undefined ? Object.assign({}, this.renderInfo.renderParts.img) : undefined,
-            colour: this.renderInfo.renderParts.colour
+            colour: this.renderInfo.renderParts.colour.value.colour
         };
         this.renderTmplEl(this.renderInfo);
         if (this.foldingView !== null) {
@@ -300,7 +300,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         });
     }
 
-    protected rename(data: any): void {
+    public rename(data: any): void {
         if (this._currRenderValues.title !== data.title) {
             $("#item-title-"+this.id).empty();
             $("#item-title-"+this.id).append(data.title);
@@ -310,7 +310,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         if (this._currRenderValues.colour !== data.colour) {
             let fontColour = ContrastColor(HexToRGB(data.colour));
             $("#item-title-"+this.id).css("color", fontColour);
-            $("#"+this.id).css("background-color", data.colour);
+            $("#project-manager-item-"+this.id).css("background-color", data.colour);
             this._currRenderValues.colour = data.colour;
         }
 

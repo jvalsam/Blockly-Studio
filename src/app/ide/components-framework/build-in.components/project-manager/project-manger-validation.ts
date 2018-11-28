@@ -34,18 +34,20 @@ export class ProjectManagerValidation {
         vchecks: Array<{type:string, rules: any}>,
         callback: (response) => {}
     ): void {
-        this.initCheck(vchecks, callback);
+        if (vchecks) {
+            this.initCheck(vchecks, callback);
 
-        _.forEach(vchecks, (vcheck) => {
-            switch(vcheck.type) {
-                case "system":
-                    _.forEach(vcheck.rules, (rule) => this[rule.action](_.pick(items, rule.items), projectInst, rule.args));
-                    break;
-                case "custom":
-                    _.forEach(vcheck.rules, (rule) => rule.validation_func(_.pick(items, rule.items), projectInst, rule.args, this.postResponse));
-                    break;
-            }
-        });
+            _.forEach(vchecks, (vcheck) => {
+                switch(vcheck.type) {
+                    case "system":
+                        _.forEach(vcheck.rules, (rule) => this[rule.action](_.pick(items, rule.items), projectInst, rule.args));
+                        break;
+                    case "custom":
+                        _.forEach(vcheck.rules, (rule) => rule.validation_func(_.pick(items, rule.items), projectInst, rule.args, this.postResponse));
+                        break;
+                }
+            });
+        }
     }
 
     // validation check provided by the platform, key of items is the descriptionID of the description domain wsp

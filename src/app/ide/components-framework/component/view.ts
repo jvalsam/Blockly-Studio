@@ -275,7 +275,9 @@ export abstract class View {
                 "Selector " + reg.selector + " is not found in View: " + this.name + "."
             );
         }
-        $target.bind(reg.eventType, reg.handler);
+        // $target.bind(reg.eventType, reg.handler);
+
+        $target.get(0).addEventListener(reg.eventType, reg.handler);
 
         ++this._nextEventID;
         this._events[this._nextEventID] = {

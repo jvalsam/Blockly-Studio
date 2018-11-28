@@ -154,8 +154,10 @@ export class ProjectManager extends IDEUIComponent {
             _.forEach(element.renderParts, (renderPart) => {
                 renderPart.type = renderPart.id;
                 delete renderPart.id;
-                delete renderPart.value.property;
-                delete renderPart.value.default;
+                if (renderPart.value) {
+                    delete renderPart.value.property;
+                    delete renderPart.value.default;
+                }
                 delete renderPart.selectedBy;
                 delete renderPart.formElemItemRenderNO;
             });
@@ -534,6 +536,35 @@ export class ProjectManager extends IDEUIComponent {
         )).open();
     }
 
+    private setRenderPartValue (renderPart, value: string) {
+        if (value) {
+            if (!renderPart.value) {
+                renderPart.value = {};
+            }
+            switch(renderPart.type) {
+                case 'img':
+                    if (value.includes(" fa-")) {
+                        renderPart.value.fa = value;
+                    }
+                    else {
+                        renderPart.value.path = value;
+                    }
+                    break;
+                case 'title':
+                    renderPart.value.text = value;
+                    break;
+                case 'colour':
+                    renderPart.value.colour = value;
+                    break;
+                default:
+                    IDEError.raise("Set new value in render part", "RenderPart Value for type "+renderPart.type + " is not supported!");
+            }
+        }
+        else {
+            delete renderPart.value;
+        }
+    }
+
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
         let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
@@ -572,7 +603,7 @@ export class ProjectManager extends IDEUIComponent {
                             ComponentsCommunication.functionRequest(
                                 "ProjectManager",
                                 "EditorManager",
-                                "onRenameElement",
+                                "onRenameProjectElement",
                                 [
                                     data,
                                     concerned.systemID,
@@ -582,8 +613,16 @@ export class ProjectManager extends IDEUIComponent {
                                         // edit name in title
                                         let index = loadedProject.elements.map(x=>x.systemID).indexOf(concerned.systemID);
                                         assert(index>-1, "Not found element in project to rename!");
-                                        let rindex = loadedProject.elements[index].renderParts.map(x=>x.type).indexOf("title");
-                                        loadedProject.elements[index].renderParts[rindex].value.text = data;
+                                        let element = loadedProject.elements[index];
+                                        let viewData = {};
+                                        Object.keys(data[0]).forEach((type) => {
+                                            let value = data[0][type];
+                                            let renderPart = element.renderParts[ element.renderParts.map(x=>x.id).indexOf(type) ];
+                                            this.setRenderPartValue(renderPart, value);
+                                            viewData[renderPart.type] = value; 
+                                        });
+                                        concerned.rename(viewData);
+                                        this.saveProject(concerned.projectID);
                                     }
                                 ]
                             );
