@@ -391,7 +391,7 @@ export class ProjectManager extends IDEUIComponent {
             _.forEach(types, (type)=> {
                 let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
                 itemsData.push(concerned.getChildElementData(type));
-                let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default.text;
+                let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default;
                 titles.push(title);
                 let dialogue = this.createDialogue(
                     "Create New ",
@@ -442,7 +442,8 @@ export class ProjectManager extends IDEUIComponent {
                             values: titles,
                             type: "select",
                             renderName: true,
-                            indepedent: true
+                            indepedent: true,
+                            renderNO: 1
                         }]
                     },
                     actions: [
