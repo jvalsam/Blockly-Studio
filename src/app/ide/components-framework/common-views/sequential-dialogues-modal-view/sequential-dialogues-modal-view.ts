@@ -77,6 +77,11 @@ export class SequentialDialoguesModalView extends ModalView {
                 handler: this.createEvtHandler(action)
             }, true);
         });
+        this.attachEvent({
+            eventType: "click",
+            selector: ".ts-btn-close-modal-platform-container",
+            handler: () => this.onClose();
+        });
     }
 
     protected justRender() {
@@ -205,7 +210,10 @@ export class SequentialDialoguesModalView extends ModalView {
         this.fixFocus();
     }
 
-    private onClose(): void { this.close(); }
+    private onClose(): void {
+        this.close();
+        this.destroy();
+    }
 
     private destroyCurrentDialogue() {
         let dialogue = this._dialoguesFormData.pop();
