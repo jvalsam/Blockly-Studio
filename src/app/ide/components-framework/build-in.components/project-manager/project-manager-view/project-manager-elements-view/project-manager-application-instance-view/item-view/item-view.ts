@@ -314,15 +314,15 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
             this._currRenderValues.colour = data.colour;
         }
 
-        if (typeof(data.image) !== 'undefined') {
-            if (this._currRenderValues.image.value.path !== data.value.image.path || this._currRenderValues.image.value.fa !== data.image.value.fa) {
+        if (typeof(data.img) !== 'undefined') {
+            if (this._currRenderValues.image.value.path !== data.img.path || this._currRenderValues.image.value.fa !== data.img.fa) {
                 $("#item-img-"+this.id).empty();
                 let imgHtml = "";
-                if (typeof(data.img.value.fa) !== 'undefined') {
-                    imgHtml = "<i class='"+ data.image.value.fa +" project-category-header-img-" + this.renderInfo.type + "'></i>";
+                if (typeof(data.img.fa) !== 'undefined') {
+                    imgHtml = "<i class='"+ data.img.fa +" project-category-header-img-" + this.renderInfo.type + "'></i>";
                 }
                 else {
-                    imgHtml = "<img class='project-category-header-img-"+this.renderInfo.type+"' src='"+ data.image.value.path + "' />";
+                    imgHtml = "<img class='project-category-header-img-"+this.renderInfo.type+"' src='"+ data.img.path + "' />";
                 }
                 $("#item-img-"+this.id).append(imgHtml);
             }
@@ -330,7 +330,6 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         else {
             $("#item-img-"+this.id).empty();
         }
-
     }
 
     public destroy(): void {
@@ -344,7 +343,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         return ProjectManagerItemView._numberOfElements;
     }
 
-    protected addElement(itemData): void {
+    protected addElement(itemData): ProjectManagerElementView {
         itemData.metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
         let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
             this.parent,
@@ -360,6 +359,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         );
         itemView.clearSelectorArea = false;
         this._children.items.push(itemView);
+        return itemView;
     }
 
     public setState(state: ProjectItemViewState, systemID: string): boolean {

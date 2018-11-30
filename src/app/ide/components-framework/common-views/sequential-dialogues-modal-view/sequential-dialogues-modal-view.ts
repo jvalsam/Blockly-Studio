@@ -80,7 +80,7 @@ export class SequentialDialoguesModalView extends ModalView {
         this.attachEvent({
             eventType: "click",
             selector: ".ts-btn-close-modal-platform-container",
-            handler: () => this.onClose();
+            handler: () => this.onClose()
         });
     }
 

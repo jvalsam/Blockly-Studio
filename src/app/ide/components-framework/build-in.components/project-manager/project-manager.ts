@@ -350,7 +350,7 @@ export class ProjectManager extends IDEUIComponent {
         if (event.data.choices.length === 1) {
             let type = event.data.choices[0].type;
             this.currModalData.itemData = concerned.getChildElementData(type);
-            let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
+            let renderData = concerned.getReversedChildElementRenderData(type);
 
             dialoguesData.push(this.createDialogue(
                 "Create New ",
@@ -537,33 +537,32 @@ export class ProjectManager extends IDEUIComponent {
         )).open();
     }
 
-    private setRenderPartValue (renderPart, value: string) {
-        if (value) {
-            if (!renderPart.value) {
-                renderPart.value = {};
-            }
-            switch(renderPart.type) {
-                case 'img':
-                    if (value.includes(" fa-")) {
-                        renderPart.value.fa = value;
-                    }
-                    else {
-                        renderPart.value.path = value;
-                    }
-                    break;
-                case 'title':
-                    renderPart.value.text = value;
-                    break;
-                case 'colour':
-                    renderPart.value.colour = value;
-                    break;
-                default:
-                    IDEError.raise("Set new value in render part", "RenderPart Value for type "+renderPart.type + " is not supported!");
-            }
+    private assignRenderPartValue (renderPart, value: string) {
+        switch(renderPart.type) {
+            case 'img':
+                if (!value) {
+                    value = renderPart.value.default;
+                }
+
+                if (value.includes(" fa-")) {
+                    renderPart.value = { fa: value };
+                }
+                else {
+                    renderPart.value = { path: value };
+                }
+                
+                value = renderPart.value;
+                break;
+            case 'title':
+                renderPart.value = { text: value };
+                break;
+            case 'colour':
+                renderPart.value = { colour: value };
+                break;
+            default:
+                IDEError.raise("Set new value in render part", "RenderPart Value for type "+renderPart.type + " is not supported!");
         }
-        else {
-            delete renderPart.value;
-        }
+        return value;
     }
 
     @ExportedFunction
@@ -600,7 +599,6 @@ export class ProjectManager extends IDEUIComponent {
                             callback
                         ),
                         callback: (data) => {
-                            alert("rename function fired!");
                             ComponentsCommunication.functionRequest(
                                 "ProjectManager",
                                 "EditorManager",
@@ -610,7 +608,6 @@ export class ProjectManager extends IDEUIComponent {
                                     concerned.systemID,
                                     (resp) => {
                                         let loadedProject = this.loadedProjects[concerned.projectID];
-                                        alert("response of editor manager in project manager. TODO: complete save rename item");
                                         // edit name in title
                                         let index = loadedProject.elements.map(x=>x.systemID).indexOf(concerned.systemID);
                                         assert(index>-1, "Not found element in project to rename!");
@@ -619,8 +616,7 @@ export class ProjectManager extends IDEUIComponent {
                                         Object.keys(data[0]).forEach((type) => {
                                             let value = data[0][type];
                                             let renderPart = element.renderParts[ element.renderParts.map(x=>x.id).indexOf(type) ];
-                                            this.setRenderPartValue(renderPart, value);
-                                            viewData[renderPart.type] = value; 
+                                            viewData[renderPart.type] = this.assignRenderPartValue(renderPart, value);
                                         });
                                         concerned.rename(viewData);
                                         this.saveProject(concerned.projectID);

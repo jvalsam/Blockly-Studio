@@ -140,7 +140,6 @@ function convertPart(part, total) {
         type: convertData.type,
         value: convertData.value(part.value),
         description: "Select " + part.type + " of the item.",
-        defaultValue: part.value.default + " " + total,
         required: part.value.required ? part.value.required : false,
         renderNO: part.formElemItemRenderNO
     };
@@ -148,11 +147,14 @@ function convertPart(part, total) {
         case "img":
             respObj.type = "file";
             respObj.ftype = "image";
+            respObj.defaultValue = part.value.default;
             break;
         case "title":
             respObj.placeholder = "Enter "+part.value.property;
+            respObj.defaultValue = part.value.default + " " + total;
             break;
         case "colour":
+            respObj.defaultValue = part.value.default;
             break;
         default:
             IDEError.raise (

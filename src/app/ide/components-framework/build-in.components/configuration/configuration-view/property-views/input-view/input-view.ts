@@ -54,6 +54,9 @@ export class InputView extends PropertyView {
     ) {
         super(parent,name,templateHTML, style, hookSelector, data);
         this.data = IInputDataConverter(data);
+        if (!this.data.value && this.data.defaultValue) {
+            this.data.value = this.data.defaultValue;
+        }
     }
 
     public render(): void { this.renderTmplEl(this.data); }
