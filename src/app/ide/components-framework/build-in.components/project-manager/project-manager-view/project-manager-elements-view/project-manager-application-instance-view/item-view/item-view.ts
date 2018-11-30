@@ -9,7 +9,7 @@ import * as _ from "lodash";
 import ItemViewTmpl from "./item-view.tmpl";
 import { DomainLibsHolder } from "./../../../../../../../domain-manager/domain-libs-holder";
 import { ProjectManagerElementView } from "../project-manager-element-view";
-import { ContrastColor, HexToRGB, BrighterVersion, Color } from './../../../../../../../shared/convertors';
+import { ContrastColor, HexToRGB, BrighterVersion, Color, DarkerVersion } from './../../../../../../../shared/convertors';
 
 
 export type ProjectItemViewState = "selected" | "onFocus" | "disable" | "used" | "notUsed";
@@ -81,7 +81,12 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
             this.renderInfo.colour = "rgb(0, 0, 0)"//this.renderInfo.style.colour;
         }
 
-        this.renderInfo.bgColourMO = BrighterVersion(this.renderInfo.renderParts.colour.value.colour);
+        if (this.renderInfo.renderParts.colour.value.colour.toUpperCase()!=="#FFFFFF") {
+            this.renderInfo.bgColourMO = BrighterVersion(this.renderInfo.renderParts.colour.value.colour);
+        }
+        else {
+            this.renderInfo.bgColourMO = DarkerVersion(this.renderInfo.renderParts.colour.value.colour);
+        }
         this.renderInfo.colourMO = ContrastColor(HexToRGB(this.renderInfo.renderParts.colour.value.colour));
 
         // temporarily setted here, TODO: connected with style of the domain...
