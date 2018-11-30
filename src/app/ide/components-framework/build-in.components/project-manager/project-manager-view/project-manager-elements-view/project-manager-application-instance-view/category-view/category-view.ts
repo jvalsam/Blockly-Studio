@@ -236,7 +236,7 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
         }
 
         // bootstrap adds hidden in overflow which destroys z-index in dropdown menu
-        $("#category-elements-"+this.id).css("overflow", "");
+        $("#category-elements-"+this.id).css("overflow", "visible");
     }
 
     public registerEvents(): void {

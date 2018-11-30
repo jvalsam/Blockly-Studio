@@ -229,6 +229,9 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         if (this._children && this._children.items && this._children.items.length>0) {
             _.forEach(this._children.items, (item) => item.render());
         }
+
+        // bootstrap adds hidden in overflow which destroys z-index in dropdown menu
+        $("#item-children-"+this.id).css("overflow", "visible");
     }
 
     public registerEvents(): void {
