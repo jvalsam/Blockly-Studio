@@ -1,22 +1,29 @@
 var mongoose = require('mongoose');
-var User = require('../user/User');
 
 var SmartObjectSchema = new mongoose.Schema({
+    uri: {
+        type: String,
+        required: true
+    },
     name: {
-        type: String
+        type: String,
+        required: true
     },
     environment: {
-        type: String
+        type: String,
+        required: true
     },
-    object: {
+    selected_functionality: {
         type: Object,
         required: true
     },
     user: {
-        type: String
+        type: String,
+        required: true
     },    
     image: {
-        type: String
+        type: String,
+        required: true
     }
 });
 
