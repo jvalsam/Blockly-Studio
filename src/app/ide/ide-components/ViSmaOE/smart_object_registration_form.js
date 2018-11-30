@@ -20,14 +20,14 @@ export default function create_smart_object_registration_form(functionalities) {
                 }
             },
             {
-                name: "image",
+                name: "files",
                 label: "Image",
                 input: {
                     component: "file_input"
                 }
             },
             {
-                name: "select_functionality",
+                name: "selected_functionality",
                 label: "Select functionality",
                 input: {
                     component: "toggle_button_group",

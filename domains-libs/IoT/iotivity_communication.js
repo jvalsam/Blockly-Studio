@@ -1,4 +1,4 @@
-import {iotivity_url} from "../../shared/data.ts";
+import {iotivity_url} from "../../src/app/ide/shared/data.ts";
 
 function handle_response_errors(response) {
     let json = response.json();
