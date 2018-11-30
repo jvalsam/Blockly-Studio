@@ -9,7 +9,7 @@ import * as _ from "lodash";
 import ItemViewTmpl from "./item-view.tmpl";
 import { DomainLibsHolder } from "./../../../../../../../domain-manager/domain-libs-holder";
 import { ProjectManagerElementView } from "../project-manager-element-view";
-import { ContrastColor, HexToRGB, BrighterVersion } from './../../../../../../../shared/convertors';
+import { ContrastColor, HexToRGB, BrighterVersion, Color } from './../../../../../../../shared/convertors';
 
 
 export type ProjectItemViewState = "selected" | "onFocus" | "disable" | "used" | "notUsed";
@@ -80,6 +80,9 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
         else {
             this.renderInfo.colour = "rgb(0, 0, 0)"//this.renderInfo.style.colour;
         }
+
+        this.renderInfo.bgColourMO = BrighterVersion(this.renderInfo.renderParts.colour.value.colour);
+        this.renderInfo.colourMO = ContrastColor(HexToRGB(this.renderInfo.renderParts.colour.value.colour));
 
         // temporarily setted here, TODO: connected with style of the domain...
         if (!this.data.style) { this.data.style = {}; }
@@ -283,6 +286,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     protected setOnFocusStyle(): void {
         $("#project-manager-item-" + this.id).css({
             "background-color": BrighterVersion(this.renderInfo.renderParts.colour.value.colour),
+            "color": this.renderInfo.colour,
             "text-decoration": "underline"
         });
     }
@@ -290,7 +294,8 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     protected setMouseOverStyle(): void {
         if (this.state !== "onFocus") {
             $("#project-manager-item-" + this.id).css({
-                "background-color": "white",//"rgb(197, 197, 197)",
+                "background-color": this.renderInfo.bgColourMO,
+                "color": this.renderInfo.colourMO,
                 "text-decoration": ""
             });
         }
@@ -299,6 +304,7 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     protected setMouseOutStyle(): void {
         $("#project-manager-item-" + this.id).css({
             "background-color": this.renderInfo.renderParts.colour.value.colour,
+            "color": this.renderInfo.colour,
             "text-decoration": ""
         });
     }
