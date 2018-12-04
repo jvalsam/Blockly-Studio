@@ -24,6 +24,8 @@ import {
     CreateRenderPartsWithData
 } from '../configuration/configuration-view/property-views/property-view';
 import { ProjectManagerItemView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view';
+import { upload_files } from '../../../shared/upload-files';
+
 
 // initialize the metadata of the project manager component for registration in the platform
 ProjectManagerMetaDataHolder.initialize();
@@ -373,8 +375,30 @@ export class ProjectManager extends IDEUIComponent {
                             callback
                         ),
                         callback: (data) => {
-                            let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
-                            this.createNewItem(concerned, data, src);
+                            upload_files(
+                                data.form,
+                                (paths: Array<String>) => {
+                                    // update img path
+                                    for (var i=0;i<paths.length; i++) {
+                                        for (const [key, value] of Object["entries"](data.imgData)) {
+                                            if (value === i) {
+                                                data.json[key] = paths[i];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    assert(paths.length === 1, "Invalid number of paths in save img of Project Manager New Item");
+                                    data
+                                    let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
+                                    this.createNewItem(concerned, data, src);
+                                },
+                                (resp) => {
+                                    IDEError.raise("Error Project Manager Save Img",resp);
+                                }
+                            );
+
+                            // let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
+                            // this.createNewItem(concerned, data, src);
                         }
                     }
                 ]
@@ -418,9 +442,28 @@ export class ProjectManager extends IDEUIComponent {
                             ),
                             callback: (data, index) => {
                                 assert(index !== -1, "Invalid index in sequential dialogues in multi choice of dialogues!");
-                                this.currModalData.itemData = itemsData[index]
-                                let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
-                                this.createNewItem(concerned, data, src);
+                                this.currModalData.itemData = itemsData[index];
+                                upload_files(
+                                    data.form,
+                                    (paths: Array<String>) => {
+                                        // update img path
+                                        for (var i=0;i<paths.length; i++) {
+                                            for (const [key, value] of Object["entries"](data.imgData)) {
+                                                if (value === i) {
+                                                    data.json[key] = paths[i];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        assert(paths.length === 1, "Invalid number of paths in save img of Project Manager New Item");
+                                        data
+                                        let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
+                                        this.createNewItem(concerned, data, src);
+                                    },
+                                    (resp) => {
+                                        IDEError.raise("Error Project Manager Save Img",resp);
+                                    }
+                                );
                             }
                         }
                     ]
@@ -663,7 +706,7 @@ export class ProjectManager extends IDEUIComponent {
             "ProjectManager",
             args.providedBy ? args.providedBy : "EditorManager",
             "factoryNewElement",
-            [ args.mission, data[data.length-1], systemID, this.currModalData.projectID, [] ]
+            [ args.mission, data[data.length-1].json, systemID, this.currModalData.projectID, [] ]
         );
         return response.value;
     }

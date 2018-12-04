@@ -5,6 +5,7 @@ import { PropertyView, TypeToNameOfPropertyView } from "../../build-in.component
 import { ViewRegistry } from "../../component/registry";
 import SequentialDialoguesModalViewTmpl from "./sequential-dialogues-modal-view.tmpl";
 import { assert } from "../../../shared/ide-error/ide-error";
+import { upload_files } from "../../../shared/upload-files";
 
 
 @ViewMetadata({
@@ -138,10 +139,16 @@ export class SequentialDialoguesModalView extends ModalView {
     private createEvtHandler (action) {
         if (action.callback) {
             return () => this.handleValidation(action.validation, () => {
-                let formElemsData = this.getDataFormElements();
-                // TODO: if type is file and ftype is image, DB save image and value will be the path of the DB
+                let formElemsData = this.getFormData();
+                let jsonForm = this.getDataFormElements();
                 this.onClose();
-                action.callback(formElemsData, this._currentDialogueIndex);
+                action.callback(
+                    {
+                        form: formElemsData,
+                        json: jsonForm.data,
+                        imgData: jsonForm.imgData 
+                    },
+                    this._currentDialogueIndex);
             });
         }
 
@@ -188,16 +195,38 @@ export class SequentialDialoguesModalView extends ModalView {
         this.attachEvents(...events);
     }
 
+    private getFormData() {
+        let formData = new FormData();
+        _.forEach(this._dialoguesFormData, (dialogue) => {
+            let elems = {};
+            _.forOwn(dialogue, (view, name) => {
+                let value = dialogue[name].value;
+                if (Array.isArray(value)) {
+                    value.forEach((element) => formData.append(name, element));
+                }
+                else {
+                    formData.append(name, value);
+                }
+            });
+        });
+        return formData;
+    }
+
     private getDataFormElements() {
         let data = [];
+        let imgData: any = {};
+        let index = 0;
         _.forEach(this._dialoguesFormData, (dialogue) => {
             let elems = {};
             _.forOwn(dialogue, (view, name) => {
                 elems[name] = dialogue[name].value;
+                if (dialogue[name].type === "file" || dialogue[name].type === "image") {
+                    imgData[name] = index++;
+                }
             });
             data.push(elems);
         });
-        return data;
+        return { data: data, imgData: imgData };
     }
 
     public fixFocus(): void {

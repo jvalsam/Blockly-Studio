@@ -119,6 +119,16 @@ export class InputView extends PropertyView {
     }
 
     public get value(): any {
-        return this.data.value;
+        if (this.type === "file") {
+            let files = document.getElementById("input_"+this._id)["files"];
+            let resp = [];
+            for (var i=0; i< files.length; i++) {
+                resp.push(files[i]);
+            }
+            return resp;
+        }
+        else {
+            return this.data.value;
+        }
     }
 }
