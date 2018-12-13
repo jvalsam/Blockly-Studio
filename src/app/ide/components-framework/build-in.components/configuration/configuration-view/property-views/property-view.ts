@@ -178,6 +178,8 @@ export function RenderPartsToPropertyData (renderParts: Array<any>, total: numbe
 }
 
 export function CreateRenderPartsWithData (renderParts: Array<any>, data) {
+
+    
     let newItemParts: Array<any> = [];
     _.forEach(renderParts, (renderPart) => {
         let newItemPart: any = { type: renderPart.id };

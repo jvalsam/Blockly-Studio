@@ -9,6 +9,7 @@
     <div class="col">
         <input id="input_<%= id %>" type="<%= type==='percentage' ? 'number' : type %>" style="margin-left:<%= typeof(isExtra)!=='undefined' && isExtra?'5':' 10' %>px; <%= type==='color'?'margin-top:6px;':'' %>"
                 class="<%= type!=='color'?'form-control':'' %> ts-change-input"
+                <%= (type === 'file' || type === 'image') ? 'name="files"' : '' %> 
                 <%= typeof(step)!=='undefined' ? 'step="'+step+'"':'' %>
                 <%= typeof(min)!=='undefined' ? 'min="'+min+'"' : (type==='percentage' ? 'min="0"' : '') %>
                 <%= typeof(max)!=='undefined' ? 'max="'+max+'"' : (type==='percentage' ? 'max="100"' : '') %>

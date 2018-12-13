@@ -131,4 +131,8 @@ export class InputView extends PropertyView {
             return this.data.value;
         }
     }
+    
+    public attribute(name: string): any {
+        return document.getElementById("input_"+this.id).getAttribute(name);
+    }
 }

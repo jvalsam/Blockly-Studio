@@ -6,6 +6,7 @@ import { ViewRegistry } from "../../component/registry";
 import SequentialDialoguesModalViewTmpl from "./sequential-dialogues-modal-view.tmpl";
 import { assert } from "../../../shared/ide-error/ide-error";
 import { upload_files } from "../../../shared/upload-files";
+import { InputView } from "../../build-in.components/configuration/configuration-view/property-views/input-view/input-view";
 
 
 @ViewMetadata({
@@ -202,6 +203,7 @@ export class SequentialDialoguesModalView extends ModalView {
             _.forOwn(dialogue, (view, name) => {
                 let value = dialogue[name].value;
                 if (Array.isArray(value)) {
+                    name = (<InputView>dialogue[name]).attribute("name");
                     value.forEach((element) => formData.append(name, element));
                 }
                 else {

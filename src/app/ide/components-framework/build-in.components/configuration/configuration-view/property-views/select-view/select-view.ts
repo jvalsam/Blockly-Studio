@@ -81,4 +81,8 @@ export class SelectView extends PropertyView {
     public get value(): any {
         return this.data.selected;
     }
+
+    public attribute(name: string): any {
+        return document.getElementById("input_"+this.id).getAttribute(name);
+    }
 }

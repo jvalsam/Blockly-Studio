@@ -49,4 +49,14 @@ app.use('/smart-objects', authentication.check, SmartObjectController);
 var UploadFilesController = require('./upload_files/UploadFilesController');
 app.use('/files', authentication.check, UploadFilesController);
 
+var VisualEditorsController = require('./visual-editors/VisualEditorController');
+app.use('/visual-editors', authentication.check, VisualEditorsController);
+
+var VEUPDomainElementContoller = require('./veup-domain-description/VEUPDomainElementController');
+app.use('/veup-domain-elements', authentication.check, VEUPDomainElementContoller);
+
+var VEUPDomainSourceContoller = require('./veup-domain-description/VEUPDomainSourcesController');
+app.use('/veup-domain-sources', authentication.check, VEUPDomainSourceContoller);
+
+
 module.exports = app;
