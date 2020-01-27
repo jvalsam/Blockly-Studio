@@ -1,11 +1,16 @@
 {
-	"default": [{
-		"selector": ".item-view-area",
-		"styles": {
-			"css": {
-				"color": "#f0f8ff"
-			},
-			"class": ["fa-lg"]
-		}
-	}]
+    "default": [ {
+
+        "selector": ".page-folding-link-icon",
+        "styles": {
+            "css": {
+                "color": "#f0f8ff"
+            }
+
+            ,
+            "class": ["fa-lg"]
+        }
+    }
+
+    ]
 }

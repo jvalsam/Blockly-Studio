@@ -56,14 +56,20 @@ export class EditorManager extends IDEUIComponent {
         if (!this.editorInstancesMap[sourceId]) {
             this.editorInstancesMap[sourceId] = <Editor>ComponentRegistry.getEntry(editorName).create();
             (<EditorManagerView>this.view).prepareEditorArea();
-            this.editorInstancesMap[sourceId].view.selector = <string>ComponentsCommunication.functionRequest(
-                this.name,
-                "Shell",
-                "createComponentEmptyContainer",
-                [this.editorInstancesMap[sourceId], ".editors-area-container", false]
-            ).value;
+            this.editorInstancesMap[sourceId].view.selector =
+                <string>ComponentsCommunication.functionRequest(
+                    this.name,
+                    "Shell",
+                    "createComponentEmptyContainer",
+                    [
+                        this.editorInstancesMap[sourceId],
+                        ".editors-area-container",
+                        false
+                    ]
+                )
+                .value;
             (<BlocklyVPL>this.editorInstancesMap[sourceId]).open(
-                src,
+                <any>src,
                 toolbox,
                 this.totalEditorsOpen() === 1
             );

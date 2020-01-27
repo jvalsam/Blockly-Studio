@@ -1,7 +1,14 @@
 import { IDEError } from "../../../../../../shared/ide-error/ide-error";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
-import { ViewMetadata, IViewUserStyleData } from "../../../../../component/view";
-import { PropertyView, IPropertyData, TypeToNameOfPropertyView } from "../property-view";
+import {
+    ViewMetadata,
+    IViewUserStyleData
+} from "../../../../../component/view";
+import {
+    PropertyView,
+    IPropertyData,
+    TypeToNameOfPropertyView
+} from "../property-view";
 import { ViewRegistry } from "../../../../../component/registry";
 import * as _ from "lodash";
 
@@ -57,7 +64,9 @@ export class AggregateView extends PropertyView {
     public render(): void {
         this.renderTmplEl(this.data);
         _.forOwn(this.data.props, (view, key) => {
-            this.data.propsView[key] = <PropertyView>ViewRegistry.getEntry(view.name).create(this.parent, "#elems_"+this.id, view.data);
+            this.data.propsView[key] = <PropertyView>ViewRegistry
+                .getEntry(view.name)
+                .create(this.parent, "#elems_"+this.id, view.data);
             this.data.propsView[key].clearSelectorArea = false;
             this.data.propsView[key].render();
         });
@@ -65,10 +74,17 @@ export class AggregateView extends PropertyView {
 
     public addProperty (name: string, viewRegName: string, property: any): void {
         if (!this.data.props[name]) {
-            this.data.props[name] = { name: TypeToNameOfPropertyView(viewRegName), data: property };
+            this.data.props[name] = {
+                name: TypeToNameOfPropertyView(viewRegName),
+                data: property
+            };
         }
         else {
-            IDEError.warn("Aggregate Add Property", "Property with name " + name + " already exists.");
+            IDEError.warn(
+                  "Aggregate Add Property", "Property with name "
+                + name
+                + " already exists."
+            );
         }
     }
 

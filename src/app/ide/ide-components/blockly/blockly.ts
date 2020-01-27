@@ -11,11 +11,13 @@ import {
   ExportedStaticFunction
 } from "../../components-framework/component/component-loader";
 
+import Blockly from 'blockly';
+
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
 // TODO:refactor use of Blockly via github as third-party-lib and not as node-blockly
 // var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
-var Blockly;
+//var Blockly;
 
 @PlatformEditorMetadata({
   description: "VPL uses jigsaws",
@@ -41,7 +43,7 @@ export class BlocklyVPL extends Editor {
   private editorArea: string;
   private changed: boolean;
   private toolbox: any;
-  private src: string;
+  private src: Element;
 
   constructor(
     name: string,
@@ -57,7 +59,7 @@ export class BlocklyVPL extends Editor {
 
   @RequiredFunction("Shell", "addTools")
   @ExportedFunction
-  public open(src: string, toolbox?: string, isFirstInst:boolean =false): void {
+  public open(src: Element, toolbox?: string, isFirstInst:boolean =false): void {
     this.changed = false;
     this.toolbox = (toolbox === undefined) ? /*require("./toolbox.xml")*/document.getElementById("toolbox") : toolbox;
     this.src = src;

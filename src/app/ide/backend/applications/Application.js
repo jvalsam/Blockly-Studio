@@ -18,7 +18,9 @@ ElementSchema.add({
     systemID: { type: String, required: [true, 'project element systemID not exist'] },
     orderNO: { type: Number, required: [true, 'project element type not exist'] },
     path: { type: String, required: [true, 'project element systemID not exist'] },
-    editorData: { },
+    editorData: {
+        veupInstSource: {}
+    },
     renderParts: [
         {
             type: { type: String, required: [true, 'project renderParts type not exist'] },

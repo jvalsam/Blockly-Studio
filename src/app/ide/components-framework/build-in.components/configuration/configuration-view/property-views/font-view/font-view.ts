@@ -1,14 +1,23 @@
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import FontViewTmpl from "./font-view.html";
-import { IFontData } from "./font-view";
 import { IInputData } from "../input-view/input-view";
 import { IDynamicExtraData } from "../dynamic-extra-view/dynamic-extra-view";
 import { ISelectData } from "../select-view/select-view";
 import { ViewRegistry } from "../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
-import { IAggregateData, AggregateView } from "./../aggregate-view/aggregate-view";
-import { ViewMetadata, IViewUserStyleData } from "./../../../../../component/view";
-import { PropertyView, PropertyType, IPropertyData, StyleObjectToString } from "../property-view";
+import {
+    IAggregateData,
+    AggregateView
+} from "./../aggregate-view/aggregate-view";
+import {
+    ViewMetadata,
+    IViewUserStyleData
+} from "./../../../../../component/view";
+import {
+    PropertyType,
+    IPropertyData,
+    StyleObjectToString
+} from "../property-view";
 
 const font_family_values: Array<string> = [
     "Georgia", "Palatino Linotype", "Book Antiqua", "Times New Roman", "Arial",
@@ -72,7 +81,9 @@ export class FontView extends AggregateView {
             type: "font",
             style: data.style,
             renderName: data.renderName,
-            indepedent: typeof (data.indepedent) !== "undefined" ? data.indepedent : false,
+            indepedent: typeof (data.indepedent) !== "undefined"
+                ? data.indepedent
+                : false,
             props: {}
         };
         if (data.updateParent) {
@@ -129,7 +140,9 @@ export class FontView extends AggregateView {
                     parent: this,
                     style: style,
                     name: "Size",
-                    value: typeof(value)==="object" && value.main==="number" ? value.extra : 16,
+                    value: typeof(value)==="object" && value.main==="number"
+                        ? value.extra
+                        : 16,
                     renderName: false
                 }
             },
@@ -139,7 +152,9 @@ export class FontView extends AggregateView {
                     parent: this,
                     style: style,
                     name: "Size",
-                    value: typeof (value) === "object" && value.main === "rem" ? value.extra : 1,
+                    value: typeof (value) === "object" && value.main === "rem"
+                        ? value.extra
+                        : 1,
                     step: 0.0001,
                     min: 0,
                     type: "number",
@@ -152,7 +167,10 @@ export class FontView extends AggregateView {
                     parent: this,
                     style: style,
                     name: "Size",
-                    value: typeof (value) === "object" && value.main === "percentage" ? value.extra : 20,
+                    value:  typeof (value) === "object" &&
+                            value.main === "percentage"
+                        ? value.extra
+                        : 20,
                     type: "percentage",
                     renderName: false
                 }

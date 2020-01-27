@@ -28,6 +28,20 @@ export class DomainsAdministration {
         });
     }
 
+    public static requestVisualSources(/*srcNames: Array<String>, no exist in older versions*/ callback: (sources) => void): void {
+        $.ajax({
+            url: RunPlatformData.URL + "veup-domain-sources/all",
+            type: "GET",
+            success: function (data) {
+                let domains = 
+                callback(data);
+            },
+            error: function (data) {
+                IDEError.raise(data.statusText, data.responseText);
+            }
+        });
+    }
+
     public static requestWSPDomainStyles(callback: (styles) => void): void {
         $.ajax({
             url: RunPlatformData.URL + "wsp_styles/all",

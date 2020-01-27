@@ -6,7 +6,7 @@ var VEUPDomainElementDescriptionSchema = new mongoose.Schema({
     img: { path: String, fa: String },
     data: [
         {
-            editor: { type: Object.Schema.ObjectId, ref: "" },
+            editor: { type: mongoose.Schema.Types.ObjectId, ref: "VisualEditor" },
             visual: {},
             codeGen: String,
             construction: {

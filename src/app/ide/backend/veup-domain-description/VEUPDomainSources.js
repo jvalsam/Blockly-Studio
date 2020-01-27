@@ -5,7 +5,7 @@ var VEUPDomainSourceDescriptionSchema = new mongoose.Schema({
     description: { type: String, required: [ true, "domain title not exists" ] },
     img: { path: String, fa: String },
     vpeditors: [ String ],
-    vpelements: [ { type: Schema.Types.ObjectId, ref: "VEUPDomainElementDescription" } ],
+    vpelements: [ { type: mongoose.Schema.Types.ObjectId, ref: "VEUPDomainElementDescription" } ],
     data: {}
 });
 

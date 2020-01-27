@@ -38,3 +38,5 @@ Thumbs.db
 
 # BackendFiles
 /src/app/ide/backend/uploaded_files
+
+/src/app/ide/domains/node_modules

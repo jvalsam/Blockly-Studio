@@ -130,6 +130,7 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public openProject(project): void {
         if (!this.isOpen) {
+            
             this.domainType = project.domainType;
             this.initialize();
         }
@@ -339,12 +340,18 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public onAddProjectElement (event: IEventData, concerned: ProjectManagerElementView): void {
+    public onAddProjectElement (
+        event: IEventData,
+        concerned: ProjectManagerElementView
+    ): void {
         this.currEvent = event;
         let dialoguesData = [];
         let validTypes = concerned.getValidChildren();
-        let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
+        let projInstView = (<ProjectManagerView>this._view)
+            .getProject(concerned.projectID);
+        
         assert(projInstView !== null);
+        
         this.currModalData.projectID = concerned.projectID;
         let systemIDs = this.loadedProjects[this.currModalData.projectID].systemIDs;
 
@@ -356,7 +363,10 @@ export class ProjectManager extends IDEUIComponent {
 
             dialoguesData.push(this.createDialogue(
                 "Create New ",
-                { formElems: renderData, systemIDs: systemIDs },
+                {
+                    formElems: renderData,
+                    systemIDs: systemIDs
+                },
                 type,
                 [
                     {
@@ -368,11 +378,12 @@ export class ProjectManager extends IDEUIComponent {
                         choice: "Create",
                         type: "submit",
                         providedBy: "creator",
-                        validation: (data, callback) => ProjectManagerValidation.check(
-                            data,
-                            projInstView,
-                            event.validation,
-                            callback
+                        validation: (data, callback) =>
+                            ProjectManagerValidation.check(
+                                data,
+                                projInstView,
+                                event.validation,
+                                callback
                         ),
                         callback: (data) => {
                             upload_files(
@@ -380,20 +391,38 @@ export class ProjectManager extends IDEUIComponent {
                                 (paths: Array<String>) => {
                                     // update img path
                                     for (var i=0;i<paths.length; i++) {
-                                        for (const [key, value] of Object["entries"](data.imgData)) {
+                                        for (const [key, value] of
+                                             Object["entries"](data.imgData)
+                                        ) {
                                             if (value === i) {
                                                 data.json[key] = paths[i];
                                                 break;
                                             }
                                         }
                                     }
-                                    assert(paths.length === 1, "Invalid number of paths in save img of Project Manager New Item");
-                                    data
-                                    let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
-                                    this.createNewItem(concerned, data, src);
+
+                                    assert(
+                                        paths.length === 1,
+                                        `Invalid number of paths in save img of
+                                         Project Manager New Item`
+                                    );
+
+                                    let src = this.createNewElement(
+                                        event,
+                                        data,
+                                        this.newSystemID(concerned.projectID)
+                                    );
+                                    this.createNewItem(
+                                        concerned,
+                                        data,
+                                        src
+                                    );
                                 },
                                 (resp) => {
-                                    IDEError.raise("Error Project Manager Save Img",resp);
+                                    IDEError.raise(
+                                        "Error Project Manager Save Img",
+                                        resp
+                                    );
                                 }
                             );
 

@@ -1,18 +1,25 @@
-import { PropertyType } from "./property-view";
 import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { View, IViewUserStyleData } from "../../../../component/view";
 import * as _ from "lodash";
-import { ProjectManagerItemView } from "../../../project-manager/project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view";
 import { IDEError } from './../../../../../shared/ide-error/ide-error';
 
 
 export type PropertyType =
-    "number"    | "percentage" | "text" | "color" | "date" | "checkbox" | "file" | "image" | // input
-    "select"    |
-    "aggregate" |
-    "font"      |
-    "dynamic"   |
-    "select-extra"
+    // simple 'input'
+      "number"
+    | "percentage"
+    | "text"
+    | "color"
+    | "date"
+    | "checkbox"
+    | "file"
+    | "image"
+    // other
+    | "select"
+    | "aggregate"
+    | "font"
+    | "dynamic"
+    | "select-extra"
 ;
 
 export interface IPropertyData {
@@ -23,6 +30,8 @@ export interface IPropertyData {
     indepedent?: boolean;
     isExtra?: boolean;
     updateParent?: (data:any) => void;
+    parent?: any;
+    value?: any;
 }
 
 export abstract class PropertyView extends View {
@@ -72,11 +81,15 @@ export abstract class PropertyView extends View {
     }
 
     public get independent(): boolean {
-        return typeof(this["data"].indepedent)!=="undefined"?this["data"].indepedent:false;
+        return typeof(this["data"].indepedent) !== "undefined"
+            ? this["data"].indepedent
+            : false;
     }
 
     public get isNameHiden(): boolean {
-        return typeof(this["data"].renderName)!=="undefined"?this["data"].renderName:false;
+        return typeof(this["data"].renderName) !== "undefined"
+            ? this["data"].renderName
+            : false;
     }
 
     public static generateView(): JQuery {
@@ -103,7 +116,9 @@ export function StyleObjectToString(data: any): string {
     if (typeof(data)!=="object") {
         return data;
     }
+
     let value: string = data.extra;
+
     switch (data.main) {
         case "number":
             value += "px";
@@ -114,12 +129,17 @@ export function StyleObjectToString(data: any): string {
         default:
             value += data.main;
     }
+
     return value;
 }
 
 var convertDataMap = {
     img: {
-        value: (value) => value.path ? value.path : (value.fa ? value.fa : undefined),
+        value: (value) => value.path
+            ? value.path
+            : (value.fa
+                ? value.fa
+                : undefined),
         type: "image"
     },
     title: {
@@ -167,6 +187,7 @@ function convertPart(part, total) {
 }
 export function RenderPartsToPropertyData (renderParts: Array<any>, total: number) {
     let properties = [];
+
     if (renderParts && renderParts.length>0) {
         renderParts.forEach((part) => {
             if (part.selectedBy === "user") {
@@ -174,6 +195,7 @@ export function RenderPartsToPropertyData (renderParts: Array<any>, total: numbe
             }
         });
     }
+
     return properties;
 }
 
@@ -181,20 +203,26 @@ export function CreateRenderPartsWithData (renderParts: Array<any>, data) {
 
     
     let newItemParts: Array<any> = [];
+
     _.forEach(renderParts, (renderPart) => {
         let newItemPart: any = { type: renderPart.id };
         let value;
         switch(renderPart.type) {
             case "img":
-                value = data.filter(x => x.hasOwnProperty(renderPart.id))[0][renderPart.id];
-                newItemPart.value = _.includes(value, "fa-") ? { fa: value } : { path: value };
+                value = data.filter(x => x.hasOwnProperty(renderPart.id))
+                    [0][renderPart.id];
+                newItemPart.value = _.includes(value, "fa-")
+                    ? { fa: value }
+                    : { path: value };
                 break;
             case "title":
-                value = data.filter(x => x.hasOwnProperty(renderPart.id))[0][renderPart.id];
+                value = data.filter(x => x.hasOwnProperty(renderPart.id))
+                    [0][renderPart.id];
                 newItemPart.value = { text: value };
                 break;
             case "colour":
-                value = data.filter(x => x.hasOwnProperty(renderPart.id))[0][renderPart.id];
+                value = data.filter(x => x.hasOwnProperty(renderPart.id))
+                    [0][renderPart.id];
                 newItemPart.value = { colour: value }
                 break;
             case "state":
@@ -208,5 +236,6 @@ export function CreateRenderPartsWithData (renderParts: Array<any>, data) {
         }
         newItemParts.push(newItemPart);
     });
+
     return newItemParts;
 }

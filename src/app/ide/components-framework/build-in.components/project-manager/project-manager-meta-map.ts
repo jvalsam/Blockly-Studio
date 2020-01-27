@@ -11,9 +11,9 @@ import { DomainsAdministration } from "../applications-admin-sc/domains-admin";
 
 var menuSkeletonJson: any = require("./conf_menu.json");
 
-var IoTMenuJSON = require("./../../../ide-components/iot/defs/conf_menu.json");
+var IoTMenuJSON = require("../../../ide-components/iot/defs/project-manager/conf_menu.json");
 
-var IoTConfJSON = require("./../../../ide-components/iot/defs/conf_props.json");
+var IoTConfJSON = require("../../../ide-components/iot/defs/project-manager/conf_props.json");
 
 // var ProjectManagerMetadataMap: {[key:string]: any} = {};
 
@@ -77,11 +77,14 @@ export class ProjectManagerMetaDataHolder {
             _.forEach(wsps, (wsp) => {
                 ProjectManagerMetaDataHolder._domainsMetaDataMap[wsp.domain] = wsp;
             });
-            DomainsAdministration.requestWSPDomainStyles((styles) => {
-                _.forEach(styles, (style) => {
-                    ProjectManagerMetaDataHolder._domainStylesDataMap[style.name] = style;
+            DomainsAdministration.requestVisualSources((sources)=> {
+
+                DomainsAdministration.requestWSPDomainStyles((styles) => {
+                    _.forEach(styles, (style) => {
+                        ProjectManagerMetaDataHolder._domainStylesDataMap[style.name] = style;
+                    });
+                    callback();
                 });
-                callback();
             });
         });
     }
