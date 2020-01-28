@@ -181,7 +181,7 @@ export abstract class View {
         return selector === "this" || selector === "root" ? this.$el : glb ? $(selector) : this.$el.find(selector);
     }
 
-    private applyStyle (data: IViewUserStyleData): void {
+    protected applyStyle (data: IViewUserStyleData): void {
         const $el: JQuery = this.findEl(data.selector);
         if (!$el.length) {
             IDEError.raise (

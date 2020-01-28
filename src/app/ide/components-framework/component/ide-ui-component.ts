@@ -21,6 +21,7 @@ export interface IViewDataComponent {
     version: "1.0"
 })
 export abstract class IDEUIComponent extends IDEComponent {
+    protected _viewElems;
     protected _view: ComponentView;
 
     constructor(
@@ -30,6 +31,7 @@ export abstract class IDEUIComponent extends IDEComponent {
         hookSelector: string
     ) {
         super(name, description);
+        this._viewElems = {};
         this._view = ComponentViewRegistry.getEntry(compViewName).create(this, hookSelector);
     }
 

@@ -13,10 +13,16 @@ import { assert } from "./../../../../shared/ide-error/ide-error";
 @ComponentViewMetadata({
     name: "RuntimeManagerView",
     templateHTML: RuntimeManagerTmpl,
+    toolsElems: [
+        {
+            name: "RuntimeManagerToolbarView",
+            selector: ".tools-view-container"
+        }
+    ],
     style: {
         system: RuntimeManagerSYCSS
     }
 })
-export class ProjectManagerView extends ComponentView {
-    
+export class RuntimeManagerView extends ComponentView {
+
 }

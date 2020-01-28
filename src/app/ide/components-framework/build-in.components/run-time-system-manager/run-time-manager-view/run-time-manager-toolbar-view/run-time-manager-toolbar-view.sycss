@@ -1,0 +1,11 @@
+.ts-runtime-toolbar-run-btn {
+    color: green;
+}
+
+.ts-runtime-toolbar-debug-btn {
+    color: lightblue;
+}
+
+.ts-runtime-toolbar-stop-btn {
+    color: lightgrey;
+}

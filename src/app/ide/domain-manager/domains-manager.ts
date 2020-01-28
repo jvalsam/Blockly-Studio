@@ -1,7 +1,7 @@
 import { IDEComponent } from "../../ide/components-framework/component/ide-component";
 import { ComponentMetadata, ExportedFunction, RequiredFunction } from "../../ide/components-framework/component/component-loader";
 import { ComponentsCommunication } from "../../ide/components-framework/component/components-communication";
-import { Domain } from "domain";
+import { Domain } from "./domain";
 
 @ComponentMetadata({
     description: "Domains Manager",
@@ -23,10 +23,14 @@ export class DomainsManager extends IDEComponent {
     }
 
     @ExportedFunction
-    public loadDomain (domain: String): void {
-        
+    public getCurrentDomainName(): String {
+        return this.currentDomain.name;
     }
-    
+
+    @ExportedFunction
+    public loadDomain (domain: String): void {
+    }
+
     @RequiredFunction("ProjectManager", "openProject")
     @ExportedFunction
     public getProjectManagerDescription (domain: string): JSON {

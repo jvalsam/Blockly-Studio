@@ -1,4 +1,7 @@
-import { ProjectItemViewState, ProjectManagerItemView } from './project-manager-elements-view/project-manager-application-instance-view/item-view/item-view';
+import {
+    ProjectItemViewState,
+    ProjectManagerItemView
+} from './project-manager-elements-view/project-manager-application-instance-view/item-view/item-view';
 import { ViewRegistry } from "./../../../component/registry";
 import { View } from "../../../../components-framework/component/view";
 import { ComponentView, ComponentViewMetadata } from "../../../../components-framework/component/component-view";

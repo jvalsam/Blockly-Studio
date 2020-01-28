@@ -20,10 +20,21 @@ export abstract class ComponentViewElement extends View {
         style: Array<IViewUserStyleData>,
         selector: string,
         protected renderData: any = {},
-        protected eventRegData: Array<IViewEventRegistration> = new Array<IViewEventRegistration>(),
-        protected styleData: Array<Array<IViewUserStyleData>> = new Array<Array<IViewUserStyleData>>()
+        protected eventRegData: Array<IViewEventRegistration> =
+            new Array<IViewEventRegistration>(),
+        protected styleData: Array<Array<IViewUserStyleData>> =
+            new Array<Array<IViewUserStyleData>>()
     ) {
         super(parent, name, templateHTML, style, selector);
+
+        if (!(this.name in this.parent["_viewElems"])) {
+            this.parent["_viewElems"][this.name] = [];
+        }
+
+        this.parent["_viewElems"][this.name].push({
+            id: this._id,
+            elem: this
+        });
     }
 
     set selector (newSel: string) { this._selector = newSel; }
@@ -55,6 +66,11 @@ export abstract class ComponentViewElement extends View {
         _.forEach(this.styleData, (style: Array<IViewUserStyleData>) => {
             
         });
+    }
+
+    public destroy(): void {
+        delete this.parent["_viewElems"][this.name];
+        super.destroy();
     }
 }
 

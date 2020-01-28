@@ -59,7 +59,11 @@ export class ProjectManagerAppInstanceView extends View {
             parent,
             name,
             templateHTML,
-            View.MergeStyle(style, ProjectManagerElementView.getElementStyle("title", data.meta.domain)),
+            View.MergeStyle(
+                style,
+                ProjectManagerElementView
+                    .getElementStyle("title", data.meta.domain)
+            ),
             hookSelector
         );
         data.id = this.id;
@@ -74,26 +78,32 @@ export class ProjectManagerAppInstanceView extends View {
             defaultDomainImg: data.meta.defaultDomainImg
         };
 
-        this.foldingView = <PageFoldingView>ViewRegistry.getEntry("PageFoldingView").create(this.parent, "#project-folding-"+this.id);
-        this.foldingView.setPFSelector("#folding-app-instance-categories-"+this.id);
+        this.foldingView = <PageFoldingView>ViewRegistry
+            .getEntry("PageFoldingView")
+            .create(this.parent, "#project-folding-"+this.id);
+        this.foldingView
+            .setPFSelector("#folding-app-instance-categories-"+this.id);
 
         this.initActions(data.meta.actions);
-        
+
         this.initElem("menu", data.meta.actions);
         this.categories = new Array<CategoryView>();
+
         _.forEach(data.meta.categories, (category) => {
             category.isSubCategory = false;
             category.nesting = 1;
-            
-            let categView = <CategoryView>ViewRegistry.getEntry("ProjectManagerCategoryView").create (
-                this.parent,
-                this.categoriesViewSelector,
-                {
-                    "meta": category,
-                    "project": data.project,
-                    "path": "/"
-                }
-            );
+
+            let categView = <CategoryView>ViewRegistry
+                .getEntry("ProjectManagerCategoryView")
+                .create (
+                    this.parent,
+                    this.categoriesViewSelector,
+                    {
+                        "meta": category,
+                        "project": data.project,
+                        "path": "/"
+                    }
+                );
             categView.clearSelectorArea = false;
             this.categories.push(categView);
         });
@@ -101,23 +111,38 @@ export class ProjectManagerAppInstanceView extends View {
 
     private initActions(data) {
         if (data.length > 0) {
-            this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(
-                this.parent,
-                "#app-instance-actions-"+this.id,
-                [ {selector: ".actions-view-title-fa", styles: { css: { color: "white" } }} ],
-                { "actions": data }
-            );
+            this.actions = <ActionsView>ViewRegistry
+                .getEntry("ActionsView")
+                .create(
+                    this.parent,
+                    "#app-instance-actions-"+this.id,
+                    [
+                        {
+                            selector: ".actions-view-title-fa",
+                            styles: {
+                                css: {
+                                    color: "white"
+                                }
+                            }
+                        }
+                    ],
+                    {
+                        "actions": data
+                    }
+                );
         }
     }
 
     private initElem (type: string, data: any): void {
         if (data[type]) {
             let typeFU: string = type[0].toUpperCase() + type.substr(1);
-            this[type] = ViewRegistry.getEntry("ProjectManager"+typeFU+"View").create(
-                this.parent,
-                this.categoriesViewSelector,
-                data[type]
-            );
+            this[type] = ViewRegistry
+                    .getEntry("ProjectManager"+typeFU+"View")
+                    .create(
+                        this.parent,
+                        this.categoriesViewSelector,
+                        data[type]
+                    );
             return;
         }
         this[type] = null;
@@ -152,7 +177,7 @@ export class ProjectManagerAppInstanceView extends View {
             category.render();
         });
 
-        //bootstrap adds hidden in overflow which destroys z-index in dropdown menu
+        // bootstrap adds hidden in overflow which destroys z-index in dropdown menu
         $("#folding-app-instance-categories-"+this.id).css("overflow", "");
     }
 
@@ -181,24 +206,25 @@ export class ProjectManagerAppInstanceView extends View {
                 eventType: "mouseover",
                 selector: ".project-manager-app-instance-info-actions-area",
                 handler: (evt) => {
-                    //TODO: check if functionality of actions hidden is enable
-                    if (this.actions) {
-                        this.actions.show();
-                    }
-                    //TODO: check if mouseover changes colour in current domain meta and set respective style
-                    $("#project-manager-app-instance-info-"+this.id).css("background-color", "rgb(117, 115, 115)");
+                    // TODO: check if functionality of actions hidden is enable
+                    if (this.actions) this.actions.show();
+
+                    // TODO: check if mouseover changes colour in current domain meta and set respective style
+                    $("#project-manager-app-instance-info-"+this.id)
+                        .css("background-color", "rgb(117, 115, 115)");
                 }
             },
             {
                 eventType: "mouseout",
                 selector: ".project-manager-app-instance-info-actions-area",
                 handler: (evt) => {
-                    //check if functionality of actions hidden is enable
+                    // check if functionality of actions hidden is enable
                     if (this.actions) {
                         this.actions.hide();
                     }
-                    //check if mouseover changes colour in current domain meta and set respective style
-                    $("#project-manager-app-instance-info-"+this.id).css("background-color", "rgb(80, 80, 80)");
+                    // check if mouseover changes colour in current domain meta and set respective style
+                    $("#project-manager-app-instance-info-"+this.id)
+                        .css("background-color", "rgb(80, 80, 80)");
                 }
             }
         );
@@ -228,7 +254,8 @@ export class ProjectManagerAppInstanceView extends View {
 
     public addElement(element: IProjectManagerElementData): void {
         let ids = element.path.split("/");
-        this.categories.map(cat=>cat.id).indexOf(ids.shift())["addElement"](ids, element);
+        this.categories.map(cat=>cat.id)
+            .indexOf(ids.shift())["addElement"](ids, element);
     }
 
     public hasElement(name: string): boolean {

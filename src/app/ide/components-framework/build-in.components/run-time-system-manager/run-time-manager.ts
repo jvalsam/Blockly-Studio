@@ -55,31 +55,45 @@ export class RuntimeManager extends IDEUIComponent {
         alert("on change config data not developed yet in Menu Component");
     }
 
-    private onStopApplication() {
-        
-    }
-
-    private onStartApplication (appID: string): void {
+    private onStartRunApplicationBtn(): void {
         try {
-
             throw new StopProjectAppError('user');
         }
         catch (error) {
             if (error instanceof StopProjectAppError) {
-                this.onStopApplication();
+                this.StopApplication();
             }
             else {
                 throw error;
             }
         }
-        // 1st step: disable 
+        // 1st step: disable
         // 1st step request project-manager data
         // request from all responsible editors to code generate each item
         // based on the domainType -> 
     }
 
     @ExportedFunction
-    public onStartApplicationBtn(): void {
+    public StartRunApplication(appID: String): void {
+        this.onStartRunApplicationBtn();
+    }
 
+    private onStartDebugApplicationBtn(): void {
+
+    }
+
+    @ExportedFunction
+    public StartDebugApplication(appID: String): void {
+        this.onStartDebugApplicationBtn();
+    }
+
+    private onStopApplicationBtn(): void {
+        this._viewElems.RuntimeToolbarView[0].onClickStopApplicationBtn();
+        throw new StopProjectAppError('user');
+    }
+
+    @ExportedFunction
+    public StopApplication(): void {
+        this.onStopApplicationBtn();
     }
 }

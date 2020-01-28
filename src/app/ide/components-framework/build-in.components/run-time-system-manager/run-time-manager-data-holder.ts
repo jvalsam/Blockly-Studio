@@ -25,13 +25,16 @@ export class RuntimeManagerDataHolder {
     }
 
     public static getDomainsMenuJSON(): Array<String> {
-        let path = "/Configure/ProjectManager/";
-        _.forOwn(RuntimeManagerDataHolder._menuJSON, (value) => {
-            value["path"] = path;
+        let path = "/Configure/RuntimeManager/";
+
+        for (let value of RuntimeManagerDataHolder._menuJSON) {
+            value.path = path;
             menuSkeletonJson.MenuElements.push(value);
+
             // fix next path
-            path += value["data"].title + "|";
-        });
+            path += value.data.title + "|";
+        }
+
         return menuSkeletonJson;
     }
 

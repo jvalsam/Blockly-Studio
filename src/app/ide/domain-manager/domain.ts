@@ -5,12 +5,14 @@ export class Domain {
     private projectManager: any;
 
     constructor(
-        private name: String,
-        private description: String,
-        private imagePath: String
+        private _name: String,
+        private _description: String,
+        private _imagePath: String
     ) {
         this.VPLEditors = [];
     }
 
-    
+    get name(): String {
+        return this.name;
+    }
 }

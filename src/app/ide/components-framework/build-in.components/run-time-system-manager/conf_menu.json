@@ -2,17 +2,11 @@
     "ComponentName": "RuntimeManager",
     "MenuElements": [
         {
-            "path": "/Configure/Configuration|DividerConfiguration|Menu|Blockly|ProjectManager|ViSmaOE",
+            "path": "/Configure/Configuration|DividerConfiguration|Menu|Blockly|ProjectManager|ViSmaOE|",
             "data": {
                 "title": "RuntimeManager",
                 "help": "Configuration of the run-time console of the Platform",
-                "type": "leaf",
-                "events": [
-                    {
-                        "type": "click",
-                        "handler": "onConfig"
-                    }
-                ]
+                "type": "sub-menu"
             }
         }
     ]

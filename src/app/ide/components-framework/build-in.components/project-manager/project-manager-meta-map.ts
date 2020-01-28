@@ -103,7 +103,7 @@ export class ProjectManagerMetaDataHolder {
     }
 
     public static getDomainsMenuJSON(): Array<String> {
-            let path = "/Configure/ProjectManager/";
+        let path = "/Configure/ProjectManager/";
         _.forOwn(ProjectManagerMetaDataHolder._menuJSON, (value) => {
             value["path"] = path;
             menuSkeletonJson.MenuElements.push(value);
