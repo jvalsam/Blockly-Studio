@@ -1,4 +1,9 @@
-import { assert, IDEError } from '../../../shared/ide-error/ide-error';
+import { RuntimeManagerDataHolder } from './run-time-manager-data-holder';
+import {
+    assert,
+    IDEError,
+    StopProjectAppError
+} from '../../../shared/ide-error/ide-error';
 import {
     ExportedFunction,
     UIComponentMetadata,
@@ -7,34 +12,74 @@ import {
 import { IDEUIComponent } from '../../component/ide-ui-component';
 
 // initialize the metadata of the project manager component for registration in the platform
-ProjectManagerMetaDataHolder.initialize();
-var menuJson = ProjectManagerMetaDataHolder.getDomainsMenuJSON();
-var configJson = ProjectManagerMetaDataHolder.getDomainsConfigJSON();
-
+RuntimeManagerDataHolder.initialize();
+var menuJson = RuntimeManagerDataHolder.getDomainsMenuJSON();
+var configJson = RuntimeManagerDataHolder.getDomainsConfigJSON();
 
 @UIComponentMetadata({
-    description: "Project Manager of the IDE",
+    description: "Run-time Manager of the IDE",
     authors: [
-        { date: "March 2018", name: "Yannis Valsamakis", email: "jvalsam@ics.forth.gr" }
+        { date: "January 2020", name: "Yannis Valsamakis", email: "jvalsam@ics.forth.gr" }
     ],
-    componentView: "ProjectManagerView",
+    componentView: "RuntimeManagerView",
     menuDef: menuJson,
     configDef: configJson,
     version: "1.0"
 })
 export class RuntimeManager extends IDEUIComponent {
-    public registerEvents(): void {
-        throw new Error("Method not implemented.");
-    }    public update(): void {
-        throw new Error("Method not implemented.");
+    private isOpen: Boolean;
+
+    constructor(
+        name: string,
+        description: string,
+        componentView: string,
+        hookSelector: string,
+        private domainType: string
+    ) {
+        super(name, description, componentView, hookSelector);
+        this.isOpen = false;
     }
-    public onOpen(): void {
-        throw new Error("Method not implemented.");
+
+    public registerEvents(): void { ; }
+
+    public update(): void { ; }
+
+    public onOpen(): void { ; }
+
+    public onClose(): void { ; }
+
+    public destroy(): void { ; }
+
+    @ExportedFunction
+    public onChangeConfig(values: Object): void {
+        alert("on change config data not developed yet in Menu Component");
     }
-    public onClose(): void {
-        throw new Error("Method not implemented.");
+
+    private onStopApplication() {
+        
     }
-    public destroy(): void {
-        throw new Error("Method not implemented.");
+
+    private onStartApplication (appID: string): void {
+        try {
+
+            throw new StopProjectAppError('user');
+        }
+        catch (error) {
+            if (error instanceof StopProjectAppError) {
+                this.onStopApplication();
+            }
+            else {
+                throw error;
+            }
+        }
+        // 1st step: disable 
+        // 1st step request project-manager data
+        // request from all responsible editors to code generate each item
+        // based on the domainType -> 
+    }
+
+    @ExportedFunction
+    public onStartApplicationBtn(): void {
+
     }
 }

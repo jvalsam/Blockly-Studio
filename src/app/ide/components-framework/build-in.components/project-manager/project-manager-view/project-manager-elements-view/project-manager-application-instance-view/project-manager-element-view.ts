@@ -18,7 +18,10 @@ export abstract class ProjectManagerElementView extends View {
     protected _systemID: string;
     protected actions: ActionsView;
     protected foldingView: PageFoldingView;
-    protected _children: { items: Array<ProjectManagerElementView>, categories: Array<ProjectManagerElementView> };
+    protected _children: {
+        items: Array<ProjectManagerElementView>,
+        categories: Array<ProjectManagerElementView>
+    };
 
     constructor(
         parent: IDEUIComponent,

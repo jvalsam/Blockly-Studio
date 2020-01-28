@@ -118,12 +118,24 @@ export class ProjectManagerMetaDataHolder {
     }
 
     public static getWSPDomainMetaData (domain: string): any {
-        assert(domain in ProjectManagerMetaDataHolder._domainsMetaDataMap, "Error: Not found " + domain + " in existing domains of the Platform.");
+        assert(
+            domain in ProjectManagerMetaDataHolder._domainsMetaDataMap,
+            "Error: Not found "
+            + domain
+            + " in existing domains of the Platform."
+        );
+
         return ProjectManagerMetaDataHolder._domainsMetaDataMap[domain];
     }
 
     public static getWSPDomainStyle(style: string): any {
-        assert(style in ProjectManagerMetaDataHolder._domainStylesDataMap, "Error: Not found " + style + " in existing domain styles of the Platform.");
+        assert(
+            style in ProjectManagerMetaDataHolder._domainStylesDataMap,
+            "Error: Not found "
+            + style
+            + " in existing domain styles of the Platform."
+        );
+
         return ProjectManagerMetaDataHolder._domainStylesDataMap[style];
     }
 }

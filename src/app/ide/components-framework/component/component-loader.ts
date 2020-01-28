@@ -124,7 +124,11 @@ function declareComponentConfigProperties(create: Function, configData: any): vo
     };
 }
 
-function registerIDEComponent (name: string, data: IComponentData | IUIComponentData, create: Function) {
+function registerIDEComponent (
+    name: string,
+    data: IComponentData | IUIComponentData,
+    create: Function
+) {
     declareComponentConfigProperties(create, data.configDef);
     BlackboardComponentRegistry.createBlackboard(create.name);
     var initData = (data.initData) ? data.initData : [];

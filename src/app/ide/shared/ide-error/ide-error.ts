@@ -91,3 +91,14 @@ export function assert(expr: boolean, message?: string): void {
         IDEError.raise("Assertion failed", message);
     }
 }
+
+////////////////////
+
+
+export class StopProjectAppError extends Error {
+    constructor(public message: string) {
+        super(message);
+
+        Object.setPrototypeOf(this, StopProjectAppError.prototype);
+    }
+}

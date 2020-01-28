@@ -18,7 +18,9 @@ import { IEventData } from "../../common-views/actions-view/actions-view";
 import * as _ from "lodash";
 import { ViewRegistry } from './../../component/registry';
 import { ModalView } from '../../component/view';
-import { ProjectManagerElementView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view';
+import {
+    ProjectManagerElementView
+} from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view';
 import {
     RenderPartsToPropertyData,
     CreateRenderPartsWithData

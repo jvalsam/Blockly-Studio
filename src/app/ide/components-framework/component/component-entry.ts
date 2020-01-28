@@ -90,7 +90,13 @@ export class ComponentEntry extends Entry<Component> {
       args = args.concat(data);
     }
 
-    const newComp: Component = new (this._creationFunc)(this._compInfo.name, this._compInfo.description, this._html, ...args);
+    const newComp: Component = new (this._creationFunc)(
+      this._compInfo.name,
+      this._compInfo.description,
+      this._html,
+      ...args
+    );
+
     if (this._creationFunc._configProperties) {
       newComp["_configProperties"] = this._creationFunc._configProperties;
       newComp["getConfigProperties"] = this._creationFunc.getConfigProperties;
@@ -112,12 +118,15 @@ export class ComponentEntry extends Entry<Component> {
   public destroy(comp: Component) {
     comp.destroy();
     const index = this._instanceList.indexOf(comp);
+    
     if (index === -1) {
       IDEError.raise(
         ComponentEntry.name,
-        'Try to remove component instance of ' + comp.name + ' ' + comp.id + '.'
+        'Try to remove component instance of '
+        + comp.name + ' ' + comp.id + '.'
       );
     }
+
     this._instanceList.splice(this._instanceList.indexOf(comp), 1);
   }
 }
@@ -154,13 +163,18 @@ export class _ComponentRegistry {
      isUnique?: boolean
     ): ComponentEntry {
       this.entries[compName] = new ComponentEntry (
-        { name: compName, description: description, version: version },
+        {
+          name: compName,
+          description: description,
+          version: version
+        },
         create,
         initData,
         menuData,
         configData,
         isUnique
      );
+
      return this.entries[compName];
    }
 
