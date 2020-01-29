@@ -81,7 +81,8 @@ export class ProjectManagerMetaDataHolder {
 
                 DomainsAdministration.requestWSPDomainStyles((styles) => {
                     _.forEach(styles, (style) => {
-                        ProjectManagerMetaDataHolder._domainStylesDataMap[style.name] = style;
+                        ProjectManagerMetaDataHolder
+                            ._domainStylesDataMap[style.name] = style;
                     });
                     callback();
                 });

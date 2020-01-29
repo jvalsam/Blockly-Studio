@@ -11,7 +11,6 @@ import { IDEUIComponent } from "./ide-ui-component";
 import { IDEError, assert } from "../../shared/ide-error/ide-error";
 import { ViewRegistry } from "./registry";
 import ModalViewTmpl from "./modal-view.tmpl";
-import { IViewUserStyleData } from './view';
 
 
 export interface IViewEvent {
@@ -28,8 +27,10 @@ export interface IViewEventRegistration {
 export interface IViewUserStyleData {
     selector: string;
     styles: {
-        css: {}, // e.g. color: "#ddd"
-        class: Array<string> // bootstrap, or css styles class are already loaded
+         // e.g. color: "#ddd"
+        css: {},
+        // bootstrap, or css styles class are already loaded
+        class: Array<string>
     }
 }
 
@@ -58,7 +59,9 @@ export abstract class View {
     private _nextEventID: number;
     private _events: { [key: number]: IViewEventData };
 
-    private _shared: any; // Entry object of the View creator, access in shared data like style css, default data etc
+    // Entry object of the View creator, access in shared data 
+    // like style css, default data etc.
+    private _shared: any;
 
     constructor(
         protected parent: IDEUIComponent,
@@ -128,11 +131,19 @@ export abstract class View {
         newIDSel: string,
         data ?: { class?: string, style?: string, innerHTML?: string }
     ): void {
-        let hook = "<div id='" + newIDSel + "'" + (data && data.class ? " class='"+data.class+"'" : "") +
-                                                  (data && data.style ? " style='"+data.style+"'" : "") +
-                    ">" +
-                        (data && data.innerHTML ? data.innerHTML : "")
-                    "</div>";
+        let hook =
+            "<div id='" + newIDSel + "'"
+            + (data && data.class
+                ? " class='" + data.class + "'"
+                : "")
+            + (data && data.style
+                ? " style='" + data.style + "'"
+                : "")
+            + ">"
+            + (data && data.innerHTML
+                ? data.innerHTML
+                : "")
+            + "</div>";
         $(whereSel).append(hook);
     }
 
@@ -177,8 +188,12 @@ export abstract class View {
         this._styles = styles;
     }
 
-    private findEl(selector: string, glb: boolean = false): JQuery {
-        return selector === "this" || selector === "root" ? this.$el : glb ? $(selector) : this.$el.find(selector);
+    public findEl(selector: string, glb: boolean = false): JQuery {
+        return (selector === "this" || selector === "root")
+            ? this.$el
+            : glb
+                ? $(selector)
+                : this.$el.find(selector);
     }
 
     protected applyStyle (data: IViewUserStyleData): void {
@@ -186,7 +201,11 @@ export abstract class View {
         if (!$el.length) {
             IDEError.raise (
                 "View - Apply Style",
-                "Selector " + data.selector + " is not found in View: " + this.name + "."
+                "Selector "
+                + data.selector
+                + " is not found in View: "
+                + this.name
+                + "."
             );
         }
         if (data.styles.css) {
@@ -214,12 +233,16 @@ export abstract class View {
         this.attachTmplEl();
     }
 
-    public static MergeStyle(def: Array<IViewUserStyleData>, domainDef: Array<IViewUserStyleData>): Array<IViewUserStyleData> {
+    public static MergeStyle(
+        def: Array<IViewUserStyleData>,
+        domainDef: Array<IViewUserStyleData>
+    ): Array<IViewUserStyleData> {
         let styles = [];
 
         _.forEach(def, (style) => {
                 styles.push($.extend(true, {}, style));
         });
+
         if (domainDef) {
             _.forEach(domainDef, (style) => {
                 let index = styles.map(x=>x.selector).indexOf(style.selector);
@@ -272,7 +295,11 @@ export abstract class View {
         if (!$target.length) {
             IDEError.raise(
                 "View - Attach Event",
-                "Selector " + reg.selector + " is not found in View: " + this.name + "."
+                "Selector "
+                + reg.selector
+                + " is not found in View: "
+                + this.name
+                + "."
             );
         }
         // $target.bind(reg.eventType, reg.handler);
@@ -369,21 +396,28 @@ export abstract class ModalView extends View {
 
     protected injectModalTmpl () {
         let index = this._styles.map(x=>x.selector).indexOf(this.selector);
-        let data = index > -1 ? { style: this._styles[index].styles.css } : {};
+        let data = index > -1
+            ? { style: this._styles[index].styles.css }
+            : {};
+        
         let $modal = _.template(ModalViewTmpl)(data);
         $(this.modalSelector).append($modal);
-        this.attachEvent({
-            eventType: "hidden.bs.modal",
-            selector: ".modal-container",
-            handler: () => this.destroy()
-        },
-        true);
-        this.attachEvent({
-            eventType: "shown.bs.modal",
-            selector: ".modal-container",
-            handler: () => this.onShownModal()
-        },
-        true);
+        this.attachEvent(
+            {
+                eventType: "hidden.bs.modal",
+                selector: ".modal-container",
+                handler: () => this.destroy()
+            },
+            true
+        );
+        this.attachEvent(
+            {
+                eventType: "shown.bs.modal",
+                selector: ".modal-container",
+                handler: () => this.onShownModal()
+            },
+            true
+        );
     }
 
     public render(callback: Function) {

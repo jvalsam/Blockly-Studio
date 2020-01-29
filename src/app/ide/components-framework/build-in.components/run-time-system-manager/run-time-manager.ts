@@ -17,9 +17,13 @@ var menuJson = RuntimeManagerDataHolder.getDomainsMenuJSON();
 var configJson = RuntimeManagerDataHolder.getDomainsConfigJSON();
 
 @UIComponentMetadata({
-    description: "Run-time Manager of the IDE",
+    description: "Runtime Manager of the IDE",
     authors: [
-        { date: "January 2020", name: "Yannis Valsamakis", email: "jvalsam@ics.forth.gr" }
+        {
+            date: "January 2020",
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr"
+        }
     ],
     componentView: "RuntimeManagerView",
     menuDef: menuJson,
@@ -95,5 +99,19 @@ export class RuntimeManager extends IDEUIComponent {
     @ExportedFunction
     public StopApplication(): void {
         this.onStopApplicationBtn();
+    }
+
+    // console input
+    private onSendInput(callback) {
+        let inputView = this._viewElems.RuntimeManagerInputView[0];
+        inputView.onClickSendInput();
+        let inputValue = inputView.getInputValue();
+        
+        callback(inputValue);
+    }
+
+    public onInputValueRequest(callback) {
+        let inputView = this._viewElems.RuntimeManagerInputView[0];
+        inputView.onEnableInput(callback);
     }
 }

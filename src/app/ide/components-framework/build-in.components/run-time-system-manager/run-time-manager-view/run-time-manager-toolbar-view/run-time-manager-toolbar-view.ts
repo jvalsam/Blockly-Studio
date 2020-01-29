@@ -8,7 +8,7 @@ import RuntimeManagerToolbarTmpl from "./run-time-manager-toolbar-view.tmpl";
 import RuntimeManagerToolbarSYCSS from "./run-time-manager-toolbar-view.sycss";
 
 @ComponentViewElementMetadata({
-    name: "RuntimeToolbarView",
+    name: "RuntimeManagerToolbarView",
     templateHTML: RuntimeManagerToolbarTmpl,
     style: {
         system: RuntimeManagerToolbarSYCSS
