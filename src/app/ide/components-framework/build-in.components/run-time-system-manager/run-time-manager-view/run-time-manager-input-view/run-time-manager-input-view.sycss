@@ -1,6 +1,3 @@
-.runtime-manager-console-input-container {
-
-}
 
 .runtime-manager-console-input-container-form {
     display: flex;

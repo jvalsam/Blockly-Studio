@@ -54,6 +54,10 @@ export abstract class ComponentViewElement extends View {
         }
     }
 
+    public render() {
+        this.renderTmplEl(this.renderData);
+    }
+
     public setEventRegData (...eventRegs: Array<IViewEventRegistration>) {
         this.eventRegData = eventRegs;
     }

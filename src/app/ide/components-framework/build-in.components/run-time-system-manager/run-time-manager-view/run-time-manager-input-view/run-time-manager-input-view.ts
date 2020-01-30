@@ -89,5 +89,4 @@ export class RuntimeManagerInputView extends ComponentViewElement {
     private onClickSendInput() {
         this.onDisableInput();
     }
-
 }

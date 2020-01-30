@@ -23,20 +23,32 @@ export class ApplicationViewBox extends View {
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         this.application.id = this.id;
-        this.application.lastModified = new Date(this.application.lastModified).toUTCString();
-        var data = { actions: [], concerned: this };
+        this.application.lastModified =
+            new Date(this.application.lastModified).toUTCString();
+        
+        var data = {
+            actions: [],
+            concerned: this
+        };
+
         _.forEach(this.application.actions, (action) => {
             data.actions.push({
                 title: action,
                 events: [
                     {
                         type: "click",
-                        callback: () => this.parent["action_"+action](action==="details" ? this.application : this.application._id)
+                        callback: () => this.parent["action_"+action](
+                            action==="details"
+                                ? this.application
+                                : this.application._id
+                        )
                     }
                 ]
             });
         });
-        this.actions = <ActionsView>ViewRegistry.getEntry("ActionsView").create(this.parent, "#application-box-actions-"+this.id, data);
+        this.actions = <ActionsView>ViewRegistry
+            .getEntry("ActionsView")
+            .create(this.parent, "#application-box-actions-"+this.id, data);
     }
 
     public registerEvents(): void {

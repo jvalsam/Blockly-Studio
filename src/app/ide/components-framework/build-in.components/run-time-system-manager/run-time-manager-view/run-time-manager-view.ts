@@ -19,10 +19,19 @@ import { assert } from "./../../../../shared/ide-error/ide-error";
             selector: ".tools-view-container"
         }
     ],
+    mainElems: [
+        {
+            name: "RuntimeManagerInputView",
+            selector: ".input-view-area"
+        },
+        {
+            name: "RuntimeManagerOutputView",
+            selector: ".output-view-area"
+        }
+    ],
     style: {
         system: RuntimeManagerSYCSS
     }
 })
 export class RuntimeManagerView extends ComponentView {
-
 }
