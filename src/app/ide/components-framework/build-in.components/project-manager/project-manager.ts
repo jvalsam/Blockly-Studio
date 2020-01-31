@@ -27,6 +27,8 @@ import {
 } from '../configuration/configuration-view/property-views/property-view';
 import { ProjectManagerItemView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view';
 import { upload_files } from '../../../shared/upload-files';
+import { RuntimeManager } from '../run-time-system-manager/run-time-manager';
+import { ComponentRegistry } from '../../component/component-entry';
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -47,7 +49,11 @@ export interface IProjectManagerElementData {
 @UIComponentMetadata({
     description: "Project Manager of the IDE",
     authors: [
-        { date: "March 2018", name: "Yannis Valsamakis", email: "jvalsam@ics.forth.gr" }
+        {
+            date: "March 2018",
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr"
+        }
     ],
     componentView: "ProjectManagerView",
     menuDef: menuJson,
@@ -78,24 +84,34 @@ export class ProjectManager extends IDEUIComponent {
             this.initialize();
         }
 
-        _.forEach(ProjectManagerMetaDataHolder.getDomainNames(), (domain: string) => {
-            let funcName = "onConfig"+domain;
-            this[funcName] = () => this.onConfig(domain);
-            ComponentCommAddFunction(this.name, funcName, 0);
-        });
+        _.forEach(
+            ProjectManagerMetaDataHolder.getDomainNames(),
+            (domain: string) => {
+                let funcName = "onConfig"+domain;
+                this[funcName] = () => this.onConfig(domain);
+                ComponentCommAddFunction(this.name, funcName, 0);
+            });
 
         this._modalActions = {
-            "create": (data, projectID) => this.createNewElement(this.currEvent, data, this.newSystemID(projectID))
+            "create": (data, projectID) => this.createNewElement(
+                this.currEvent,
+                data,
+                this.newSystemID(projectID))
         };
 
-        ComponentsCommunication.functionRequest(this.name, "Shell", "showToolbar");
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "Shell",
+            "showToolbar");
     }
     @RequiredFunction("Shell", "showToolbar")
     
     @ExportedFunction
     initialize(): void {
-        let metadata = ProjectManagerMetaDataHolder.getWSPDomainMetaData(this.domainType);
-        metadata.style = ProjectManagerMetaDataHolder.getWSPDomainStyle(metadata.style);
+        let metadata = ProjectManagerMetaDataHolder
+            .getWSPDomainMetaData(this.domainType);
+        metadata.style = ProjectManagerMetaDataHolder
+            .getWSPDomainStyle(metadata.style);
         this.projManagerDescr = metadata;
         this._view.setRenderData(metadata);
         this._view.initialize();
@@ -132,12 +148,28 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public openProject(project): void {
         if (!this.isOpen) {
-            
             this.domainType = project.domainType;
             this.initialize();
+
+            assert(this.domainType === project.domainType);
+
+            ComponentsCommunication.functionRequest(
+                this.name,
+                "Shell",
+                "openComponent",
+                [this]);
+            
+            var console: RuntimeManager = <RuntimeManager>ComponentRegistry
+                .getEntry("RuntimeManager")
+                .create([".project-manager-runtime-console-area"]);
+            
+            ComponentsCommunication.functionRequest(
+                this.name,
+                "Shell",
+                "openComponent",
+                [console]);
         }
-        assert(this.domainType === project.domainType);
-        ComponentsCommunication.functionRequest(this.name, "Shell", "openComponent", [this]);
+        
         this.loadProject(project);
     }
 
@@ -175,7 +207,10 @@ export class ProjectManager extends IDEUIComponent {
             this.name,
             "ApplicationWSPManager",
             "updateApplication",
-            [ this.getProjectDataToSave(this.loadedProjects[projectID]) , (resp) => this.saveProjectResponse(resp) ]
+            [
+                this.getProjectDataToSave(this.loadedProjects[projectID]),
+                (resp) => this.saveProjectResponse(resp)
+            ]
         );
     }
 
@@ -223,7 +258,14 @@ export class ProjectManager extends IDEUIComponent {
             if (event.data) {
                 evtData["data"] = event.data;
             }
-            ComponentsCommunication.functionRequest(this.name, event.providedBy, <string>event.action, [evtData, concerned]);
+            ComponentsCommunication.functionRequest(
+                this.name,
+                event.providedBy,
+                <string>event.action,
+                [
+                    evtData,
+                    concerned
+                ]);
         }
     }
 
@@ -283,41 +325,73 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private getRenderDataTitle(renderParts): any {
-        let index = renderParts ? renderParts.map(x => x.type).indexOf("title") : -1;
-        return index > -1 ? renderParts[index] : null;
+        let index = renderParts
+            ? renderParts.map(x => x.type).indexOf("title")
+            : -1;
+        
+        return index > -1
+            ? renderParts[index]
+            : null;
     }
+
     public getTitleValueofRenderParts(renderParts): string {
         let data = this.getRenderDataTitle(renderParts);
-        return data && data.value.text ? data.value.text : "";
+        return (data && data.value.text) || "";
     }
+
     public getDefaultTitleofRenderParts(renderParts): string {
         let data = this.getRenderDataTitle(renderParts);
-        return data && data.value.default ? data.value.default : "";
+        return (data && data.value.default) || "";
     }
+
     private getTitleOfRenderParts(renderParts): string {
         let data = this.getRenderDataTitle(renderParts);
-        return data ? (data.value.default ? data.value.default : data.value.text) : "";
+        return (data && (data.value.default || data.value.text)) || "";
     }
+
     private createDialogueTitle(action: string, renderParts, type) {
         let renderPartsTitle = this.getTitleOfRenderParts(renderParts);
-        return  action + ( renderPartsTitle ? renderPartsTitle : type );
+        return  action + (renderPartsTitle || type);
     }
-    private createDialogue(actionTitle: string, body: { formElems?: any, text?: any, systemIDs?: number }, type, actions, dtype: string = "simple") {
+
+    private createDialogue(
+        actionTitle: string,
+        body: {
+            formElems?: any,
+            text?: any,
+            systemIDs?: number
+        },
+        type,
+        actions,
+        dtype: string = "simple"
+    ) {
         if (body.formElems) {
-            body.formElems = RenderPartsToPropertyData(body.formElems, body.systemIDs);
+            body.formElems = RenderPartsToPropertyData(
+                body.formElems,
+                body.systemIDs);
         }
         return {
             type: dtype,
             data: {
-                title: this.createDialogueTitle(actionTitle, body.formElems, type),
+                title: this.createDialogueTitle(
+                    actionTitle,
+                    body.formElems,
+                    type),
                 body: body,
                 actions: actions
             }
         };
     }
 
-    private createNewItem(concerned: ProjectManagerElementView, newItem: any, src: any): void {
-        let renderParts = CreateRenderPartsWithData(this.currModalData.itemData.renderParts, newItem);
+    private createNewItem(
+        concerned: ProjectManagerElementView,
+        newItem: any,
+        src: any
+    ): void {
+        let renderParts = CreateRenderPartsWithData(
+            this.currModalData.itemData.renderParts,
+            newItem);
+        
         concerned.addNewElement(
             {
                 renderParts: renderParts,
@@ -327,7 +401,8 @@ export class ProjectManager extends IDEUIComponent {
             },
             (elem) => {
                 this.onClickProjectElement(elem);
-                this.loadedProjects[concerned.projectID].elements.push(elem.itemData());
+                this.loadedProjects[concerned.projectID].elements
+                    .push(elem.itemData());
                 this.saveProject(concerned.projectID);
                 elem.onClick();
             }
@@ -336,7 +411,9 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public saveEditorData(src: any) {
-        let index = this.loadedProjects[src.projectID].elements.map(x=>x.systemID).indexOf(src.systemID);
+        let index = this.loadedProjects[src.projectID].elements
+            .map(x=>x.systemID)
+            .indexOf(src.systemID);
         this.loadedProjects[src.projectID].elements[index].editorData = src;
         this.saveProject(src.projectID);
     }
@@ -363,90 +440,100 @@ export class ProjectManager extends IDEUIComponent {
             this.currModalData.itemData = concerned.getChildElementData(type);
             let renderData = concerned.getReversedChildElementRenderData(type);
 
-            dialoguesData.push(this.createDialogue(
-                "Create New ",
-                {
-                    formElems: renderData,
-                    systemIDs: systemIDs
-                },
-                type,
-                [
+            dialoguesData.push(
+                this.createDialogue(
+                    "Create New ",
                     {
-                        choice:"Cancel",
-                        type: "button",
-                        providedBy:"self"
+                        formElems: renderData,
+                        systemIDs: systemIDs
                     },
-                    {
-                        choice: "Create",
-                        type: "submit",
-                        providedBy: "creator",
-                        validation: (data, callback) =>
-                            ProjectManagerValidation.check(
-                                data,
-                                projInstView,
-                                event.validation,
-                                callback
-                        ),
-                        callback: (data) => {
-                            upload_files(
-                                data.form,
-                                (paths: Array<String>) => {
-                                    // update img path
-                                    for (var i=0;i<paths.length; i++) {
-                                        for (const [key, value] of
-                                             Object["entries"](data.imgData)
-                                        ) {
-                                            if (value === i) {
-                                                data.json[key] = paths[i];
-                                                break;
+                    type,
+                    [
+                        {
+                            choice:"Cancel",
+                            type: "button",
+                            providedBy:"self"
+                        },
+                        {
+                            choice: "Create",
+                            type: "submit",
+                            providedBy: "creator",
+                            validation: (data, callback) =>
+                                ProjectManagerValidation.check(
+                                    data,
+                                    projInstView,
+                                    event.validation,
+                                    callback
+                            ),
+                            callback: (data) => {
+                                upload_files(
+                                    data.form,
+                                    (paths: Array<String>) => {
+                                        // update img path
+                                        for (var i=0;i<paths.length; i++) {
+                                            for (const [key, value] of
+                                                Object["entries"](data.imgData)
+                                            ) {
+                                                if (value === i) {
+                                                    data.json[key] = paths[i];
+                                                    break;
+                                                }
                                             }
                                         }
+
+                                        assert(
+                                            paths.length === 1,
+                                            `Invalid number of paths in save img of
+                                            Project Manager New Item`
+                                        );
+
+                                        let src = this.createNewElement(
+                                            event,
+                                            data,
+                                            this.newSystemID(concerned.projectID)
+                                        );
+                                        this.createNewItem(
+                                            concerned,
+                                            data,
+                                            src
+                                        );
+                                    },
+                                    (resp) => {
+                                        IDEError.raise(
+                                            "Error Project Manager Save Img",
+                                            resp
+                                        );
                                     }
+                                );
 
-                                    assert(
-                                        paths.length === 1,
-                                        `Invalid number of paths in save img of
-                                         Project Manager New Item`
-                                    );
-
-                                    let src = this.createNewElement(
-                                        event,
-                                        data,
-                                        this.newSystemID(concerned.projectID)
-                                    );
-                                    this.createNewItem(
-                                        concerned,
-                                        data,
-                                        src
-                                    );
-                                },
-                                (resp) => {
-                                    IDEError.raise(
-                                        "Error Project Manager Save Img",
-                                        resp
-                                    );
-                                }
-                            );
-
-                            // let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
-                            // this.createNewItem(concerned, data, src);
+                                // let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
+                                // this.createNewItem(concerned, data, src);
+                            }
                         }
-                    }
-                ]
-            ));
+                    ]
+                ));
         }
         // first dialogue choose type of element
         else {
-            let types = event.data.choices.map(x=>x.type);
-            assert(_.difference(types, validTypes).length === 0, "Invalid type of choice is defined in the description domain.");
+            let types = event.data.choices.map(x => x.type);
+
+            assert(
+                _.difference(types, validTypes).length === 0,
+                "Invalid type of choice is defined in the description domain.");
 
             let titles = [];
             let dialogues = [];
             let itemsData = [];
             _.forEach(types, (type)=> {
-                let renderData = _.reverse(concerned.getReversedChildElementRenderData(type));
+                let renderData = _.reverse(concerned
+                    .getReversedChildElementRenderData(type));
+                
                 itemsData.push(concerned.getChildElementData(type));
-                let title = renderData[renderData.map(x=>x.type).indexOf("title")].value.default;
+                let title = renderData[renderData
+                    .map(x=>x.type)
+                    .indexOf("title")]
+                    .value
+                    .default;
                 titles.push(title);
                 let dialogue = this.createDialogue(
                     "Create New ",

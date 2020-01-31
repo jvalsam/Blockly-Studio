@@ -11,6 +11,19 @@ import {
     RuntimeManagerOutputMsgView
 } from "./run-time-manager-output-msg-view/run-time-manager-output-msg-view";
 
+export interface IConsoleOutputMsg {
+    typeMsg?: String;
+    imgIcon?: String;
+
+    msg: String;
+    sender: String;
+    time: String;
+
+    // interactive output console with vpl editors and blocks...
+    onClickMsg(): void
+    onClockIcon(): void
+};
+
 @ComponentViewElementMetadata({
     name: "RuntimeManagerOutputView",
     templateHTML: RuntimeManagerOutputTmpl,
@@ -40,7 +53,7 @@ export class RuntimeManagerOutputView extends ComponentViewElement {
         msgView.render();
     }
 
-    private onAddApplicationMsg (data) {
+    public onAddApplicationMsg (data: IConsoleOutputMsg) {
         data.typeMsg = 'app';
         data.imgIcon = data.imgIcon
             || 'url(https://image.flaticon.com/icons/svg/1849/1849653.svg)';
@@ -48,7 +61,7 @@ export class RuntimeManagerOutputView extends ComponentViewElement {
         this.addMsg(data);
     }
 
-    private onAddUserMsg(data) {
+    public onAddUserMsg(data: IConsoleOutputMsg) {
         data.typeMsg = 'user';
         data.imgIcon = data.imgIcon
             || 'url(https://image.flaticon.com/icons/svg/145/145867.svg)';

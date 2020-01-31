@@ -7,9 +7,6 @@ import {
 import RuntimeManagerTmpl from "./run-time-manager.tmpl";
 import RuntimeManagerSYCSS from "./run-time-manager.sycss";
 
-import * as _ from "lodash";
-import { assert } from "./../../../../shared/ide-error/ide-error";
-
 @ComponentViewMetadata({
     name: "RuntimeManagerView",
     templateHTML: RuntimeManagerTmpl,

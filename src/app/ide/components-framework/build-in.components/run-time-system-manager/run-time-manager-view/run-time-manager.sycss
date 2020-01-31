@@ -6,21 +6,21 @@
     --right-msg-bg: #579ffb;
 }
 
-*,
-*:before,
-*:after {
-    margin: 0;
-    padding: 0;
-    box-sizing: inherit;
-}
+.run-time-manager-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35vh;
+    background-image: var(--body-bg);
+    font-family: Helvetica, sans-serif;
+  }
 
 .output-console {
     display: flex;
     flex-flow: column wrap;
     justify-content: space-between;
-    width: 100%;
-    max-width: 867px;
-    margin: 25px 10px;
+    width: calc(100% - 30px);
+    /* margin: 25px 10px; */
     height: calc(100% - 50px);
     border: var(--border);
     border-radius: 5px;

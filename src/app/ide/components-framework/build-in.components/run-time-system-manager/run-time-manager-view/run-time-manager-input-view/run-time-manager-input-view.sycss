@@ -1,7 +1,7 @@
 
 .runtime-manager-console-input-container-form {
     display: flex;
-    padding: 10px;
+    padding: 5px;
     border-top: var(--border);
     background: #eee;
   }

@@ -78,6 +78,11 @@ export class RuntimeManager extends IDEUIComponent {
     }
 
     @ExportedFunction
+    public InitConsoleMsg(): void {
+        // action to initialize first message
+    }
+
+    @ExportedFunction
     public StartRunApplication(appID: String): void {
         this.onStartRunApplicationBtn();
     }

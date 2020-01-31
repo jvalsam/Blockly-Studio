@@ -51,7 +51,9 @@ export class IDECore {
         var configuration: Configuration = <Configuration>ComponentRegistry.getEntry("Configuration").create([".modal-platform-container"]);
         configuration.initialize();
         ComponentRegistry.getEntry("ApplicationWSPManager").create();
-        var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry.getEntry("StartPageComponent").create([".main-area-platform-container"]);
+        var startpage: StartPageComponent = <StartPageComponent>ComponentRegistry
+          .getEntry("StartPageComponent")
+          .create([".main-area-platform-container"]);
         shell.openComponent(startpage);
       }
     );

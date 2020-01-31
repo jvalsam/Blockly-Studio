@@ -63,7 +63,8 @@ export class ProjectManagerView extends ComponentView {
 
     public initialize(): void {
         this.renderData.id = this.id;
-        this.info = (({ id, title, img, actions }) => ({ id, title, img, actions }))(this.renderData);
+        this.info = (({ id, title, img, actions }) =>
+                ({ id, title, img, actions }))(this.renderData);
         this.skeletonDataProj = this.renderData.project;
         this.skeletonDataProj.domain = this.renderData.domain;
         ProjectManagerElementView.setElementsStyle(this.renderData.style);
