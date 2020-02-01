@@ -1,5 +1,15 @@
+.runtime-manager-toolbar-container {
+    background-color: aliceblue;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+
 .ts-runtime-toolbar-run-btn {
     color: green;
+    margin-left: 15px;
 }
 
 .ts-runtime-toolbar-debug-btn {

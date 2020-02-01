@@ -37,6 +37,10 @@
     color: #666;
 }
 
+.output-console-header-title {
+    cursor: default;
+}
+
 .output-console-chat {
     flex: 1;
     overflow-y: auto;

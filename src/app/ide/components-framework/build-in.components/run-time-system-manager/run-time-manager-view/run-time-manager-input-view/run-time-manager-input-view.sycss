@@ -7,7 +7,7 @@
   }
 
 .runtime-manager-console-input-container-form * {
-    padding: 10px;
+    padding: 5px;
     border: none;
     border-radius: 3px;
     font-size: 1em;
