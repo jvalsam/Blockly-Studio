@@ -105,7 +105,7 @@ export class ProjectManager extends IDEUIComponent {
             "showToolbar");
     }
     @RequiredFunction("Shell", "showToolbar")
-    
+
     @ExportedFunction
     initialize(): void {
         let metadata = ProjectManagerMetaDataHolder
@@ -158,19 +158,26 @@ export class ProjectManager extends IDEUIComponent {
                 "Shell",
                 "openComponent",
                 [this]);
-            
+
             var console: RuntimeManager = <RuntimeManager>ComponentRegistry
                 .getEntry("RuntimeManager")
                 .create([".project-manager-runtime-console-area"]);
-            
+
             ComponentsCommunication.functionRequest(
                 this.name,
                 "Shell",
                 "openComponent",
                 [console]);
+
+            console.InitConsoleMsg();
         }
-        
+
         this.loadProject(project);
+    }
+
+    @ExportedFunction
+    public getMainApplicationData() {
+        return { main: "srcMain", domain: "IoT" };
     }
 
     @ExportedFunction

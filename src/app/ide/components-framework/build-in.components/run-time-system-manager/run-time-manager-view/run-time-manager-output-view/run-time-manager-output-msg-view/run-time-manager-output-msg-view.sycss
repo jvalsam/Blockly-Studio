@@ -19,12 +19,21 @@
     border-radius: 50%;
 }
 
+.msg-img:hover {
+    cursor: pointer;
+}
+
 .msg-bubble {
     max-width: 450px;
     padding: 15px;
     border-radius: 15px;
-    background: #ececec;
-  }
+    background: #d4fdd3;
+}
+
+.msg-bubble:hover {
+    cursor: pointer;
+    background: #f1f1f1;
+}
 
 .msg-info {
     display: flex;

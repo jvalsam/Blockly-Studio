@@ -35,6 +35,10 @@ class _IDEError {
             this.warningView = <IDEWarningView>ViewRegistry.getEntry("IDEWarningView").create(null, MODAL_SELECTOR);
         }
         window.onerror = function (message, source, lineno, colno, error) {
+            if (message === "StopApplicationRuntime") {
+                alert("Stop application button clicked");
+                return true;
+            }
             LoadStyle("jquery_ui", "third_party", jquery_ui_css);
             let msg = "Error:\nMessage: " + message + "\source: " + source +
                  "\nlineno: " + lineno + "\ncolno: " + colno + "\nerror: " + error;

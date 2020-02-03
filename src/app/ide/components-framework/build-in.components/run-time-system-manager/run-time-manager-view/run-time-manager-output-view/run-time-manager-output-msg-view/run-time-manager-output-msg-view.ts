@@ -15,5 +15,33 @@ import RuntimeManagerOutputMsgSYCSS from "./run-time-manager-output-msg-view.syc
     }
 })
 export class RuntimeManagerOutputMsgView extends ComponentViewElement {
-    
+    public registerEvents(): void {
+        this.attachEvents(
+            {
+                eventType: "click",
+                selector: ".msg-bubble",
+                handler: () => this.renderData.onClickMsg()
+            },
+            {
+                eventType: "click",
+                selector: ".msg-img",
+                handler: () => this.renderData.onClickIcon()
+            }
+        );
+    }
+
+    public editMsg(msg: any): void {
+        let $textEl = $("#" + this._id).find(".msg-text");
+        $textEl.empty();
+        $textEl.append(msg.text);
+
+        let $timeEl = $("#" + this._id).find(".msg-info-time");
+        $timeEl.empty();
+        $timeEl.append(msg.time);
+
+        $("#" + this._id).find(".msg-bubble").css({ "background": msg.color });
+        $("#" + this._id).find(".msg-bubble").hover(
+            function (): void { $(this).css({ "background": msg.hoverColor }); }
+        );
+    }
 }

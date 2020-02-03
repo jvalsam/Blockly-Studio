@@ -10,6 +10,8 @@ import {
     RequiredFunction
 } from "../../component/component-loader";
 import { IDEUIComponent } from '../../component/ide-ui-component';
+import { IConsoleOutputMsg } from './run-time-manager-view/run-time-manager-output-view/run-time-manager-output-view';
+import { ComponentsCommunication } from '../../component/components-communication';
 
 // initialize the metadata of the project manager component for registration in the platform
 RuntimeManagerDataHolder.initialize();
@@ -59,27 +61,204 @@ export class RuntimeManager extends IDEUIComponent {
         alert("on change config data not developed yet in Menu Component");
     }
 
-    private onStartRunApplicationBtn(): void {
-        try {
-            throw new StopProjectAppError('user');
-        }
-        catch (error) {
-            if (error instanceof StopProjectAppError) {
-                this.StopApplication();
+    private _defaultMsgHookId;
+    private msgTime(): string {
+        let date = new Date();
+        let hours = date.getHours();
+        let mins = date.getMinutes();
+        return ((hours < 10) ? "0" + hours : "" + hours) + ":" +
+            ((mins < 10) ? "0" + mins : "" + mins);
+    }
+
+    private defaultStartMsg (): IConsoleOutputMsg {
+        let msgNo = 0;
+        let msgs = [
+            {
+                text: "Your application runs... Stops in the end or in case you click stop button.",
+                color: "#d4fdd3",
+                hoverColor: "#d4fdd3"
+            },
+            {
+                text: "You clicked me :) Message bubbles are interactive with " +
+                    " the Platform. You can browse in the Visual Programming Editors" +
+                    " and the Visual Programming Elements write message to me ;)",
+                color: "#f7eac1",
+                hoverColor: "#f7eac1"
             }
-            else {
-                throw error;
+        ];
+        return {
+            typeMsg: "app",
+            time: this.msgTime(),
+            msg: msgs[msgNo],
+            sender: "Console",
+
+            onClickMsg: () => {
+                msgNo = msgNo === 1 ? 0 : 1;
+                msgs[msgNo]["time"] = this.msgTime();
+
+                this.EditMessage(
+                    this._startMsgHookId,
+                    msgs[msgNo]
+                );
+            },
+            onClickIcon: () => {
+                alert("Message Icons are interactive with the respective " +
+                    "objects. When, the users click message, opens the " +
+                    "respective info.");
             }
-        }
-        // 1st step: disable
-        // 1st step request project-manager data
-        // request from all responsible editors to code generate each item
-        // based on the domainType -> 
+        };
+    }
+
+    private defaultPrepareMsg(): IConsoleOutputMsg {
+        let msgNo = 0;
+        let msgs = [
+            {
+                text: "Your application is preparing to run...",
+                color: "#d4fdd3",
+                hoverColor: "#d4fdd3"
+            },
+            {
+                text: "You clicked me :) Message bubbles are interactive with " +
+                    " the Platform. You can browse in the Visual Programming Editors" +
+                    " and the Visual Programming Elements write message to me ;)",
+                color: "#f7eac1",
+                hoverColor: "#f7eac1"
+            }
+        ];
+        return {
+            typeMsg: "app",
+            time: this.msgTime(),
+            msg: msgs[msgNo],
+            sender: "Console",
+
+            onClickMsg: () => {
+                msgNo = msgNo === 1 ? 0 : 1;
+                msgs[msgNo]["time"] = this.msgTime();
+
+                this.EditMessage(
+                    this._startMsgHookId,
+                    msgs[msgNo]
+                );
+            },
+            onClickIcon: () => {
+                alert("Message Icons are interactive with the respective " +
+                    "objects. When, the users click message, opens the " +
+                    "respective info.");
+            }
+        };
+    }
+
+    private defaultInitMsg (): IConsoleOutputMsg {
+        let msgNo = 0;
+        let msgs = [
+            {
+                text: "Your application starts when you click run or debug " +
+                      "button in the toolbar.",
+                color: "#d4fdd3",
+                hoverColor: "#d4fdd3"
+            },
+            {
+                text: "You clicked me :) Message bubbles are interactive with " +
+                " the Platform. You can browse in the Visual Programming Editors" +
+                " and the Visual Programming Elements write message to me ;)",
+                color: "#f7eac1",
+                hoverColor: "#f7eac1"
+            }
+        ];
+        return {
+            typeMsg: "app",
+            time: this.msgTime(),
+            msg: msgs[msgNo],
+            sender: "Console",
+
+            onClickMsg: () => {
+                msgNo = msgNo === 1 ? 0 : 1;
+                msgs[msgNo]["time"] = this.msgTime();
+
+                this.EditMessage(
+                    this._defaultMsgHookId,
+                    msgs[msgNo]
+                );
+            },
+            onClickIcon: () => {
+                alert("Message Icons are interactive with the respective " +
+                    "objects. When, the users click message, opens the " +
+                    "respective info.");
+            }
+        };
     }
 
     @ExportedFunction
-    public InitConsoleMsg(): void {
-        // action to initialize first message
+    public AddMessage(msg: IConsoleOutputMsg): String {
+        return this._viewElems.RuntimeManagerOutputView[0]
+            .elem
+            .addMsg(msg);
+    }
+
+    @ExportedFunction
+    public EditMessage(hookId: String, msg: any): void {
+        this._viewElems.RuntimeManagerOutputView[0]
+            .elem
+            .editMsg(hookId, msg);
+    }
+
+    @ExportedFunction
+    public RemoveMessage(hookId: String): void {
+        this._viewElems.RuntimeManagerOutputView[0]
+            .elem
+            .removeMsg(hookId);
+    }
+
+    @ExportedFunction
+    public ClearMessages(): void {
+        this._viewElems.RuntimeManagerOutputView[0]
+            .elem
+            .clearMsgs();
+    }
+
+    @ExportedFunction
+    public InitConsoleMsg(msgData: IConsoleOutputMsg = this.defaultInitMsg()): void {
+        this._defaultMsgHookId = this.AddMessage(msgData);
+    }
+
+    private runDataGen(appData): any {
+        // request from all responsible editors to code generate each item
+        return appData;
+    }
+
+    private getDomainRunScript(domain: String): any {
+        return { Run: () => alert('App runs') };
+    }
+
+    private _startMsgHookId: String;
+
+    @RequiredFunction("ProjectManager", "getMainApplicationData")
+    private onStartRunApplicationBtn(): void {
+        this._viewElems.RuntimeManagerToolbarView[0]
+            .elem
+            .disableButtons();
+
+        this.ClearMessages();
+        this._startMsgHookId = this.AddMessage(this.defaultPrepareMsg());
+
+        let appData = ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getMainApplicationData"
+        ).value;
+
+        let runData = this.runDataGen(appData);
+
+        let domainScript = this.getDomainRunScript(appData.domain);
+        try {
+            /*async*/ domainScript.Run(runData);
+
+            this.ClearMessages();
+            this._startMsgHookId = this.AddMessage(this.defaultStartMsg());
+        }
+        catch (error) {
+
+        }
     }
 
     @ExportedFunction
@@ -87,8 +266,30 @@ export class RuntimeManager extends IDEUIComponent {
         this.onStartRunApplicationBtn();
     }
 
-    private onStartDebugApplicationBtn(): void {
+    private prepareStartApplication() {
+        this._viewElems.RuntimeManagerToolbarView[0].elem
+            .onClickDebugApplicationBtn();
+        this.RemoveMessage(this._defaultMsgHookId);
+        this._startMsgHookId = this.AddMessage(this.defaultStartMsg());
+    }
 
+    private async StartApplication() {
+        this.RemoveMessage(this._startMsgHookId);
+        this.AddMessage(this.defaultStartMsg());
+    }
+
+    private onStartDebugApplicationBtn(): void {
+        try {
+            this.prepareStartApplication();
+            this.StartApplication();
+        } catch (error) {
+            if (error instanceof StopProjectAppError) {
+                this.StopDebugApplication();
+            }
+            else {
+                throw error;
+            }
+        }
     }
 
     @ExportedFunction
@@ -97,7 +298,8 @@ export class RuntimeManager extends IDEUIComponent {
     }
 
     private onStopApplicationBtn(): void {
-        this._viewElems.RuntimeToolbarView[0].onClickStopApplicationBtn();
+        this._viewElems.RuntimeManagerToolbarView[0].elem
+            .onClickStopApplicationBtn();
         throw new StopProjectAppError('user');
     }
 
@@ -106,12 +308,17 @@ export class RuntimeManager extends IDEUIComponent {
         this.onStopApplicationBtn();
     }
 
+    @ExportedFunction
+    public StopDebugApplication(): void {
+        this.onStopApplicationBtn();
+    }
+
     // console input
     private onSendInput(callback) {
         let inputView = this._viewElems.RuntimeManagerInputView[0];
         inputView.onClickSendInput();
         let inputValue = inputView.getInputValue();
-        
+
         callback(inputValue);
     }
 

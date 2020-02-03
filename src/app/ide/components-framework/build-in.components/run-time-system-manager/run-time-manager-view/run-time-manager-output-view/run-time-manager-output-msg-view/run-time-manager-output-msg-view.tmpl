@@ -4,14 +4,14 @@
     <% if (typeof(bubbleColor) === 'undefined') { %>
     <div class="msg-bubble">
     <% } else { %>
-    <div class="msg-bubble" style="background: <%= bubbleColor %>;">
+    <div class="msg-bubble" style="background: <%= msg.color %>;">
     <% } %>
         <div class="msg-info">
             <div class="msg-info-name"><%= sender %></div>
             <div class="msg-info-time"><%= time %></div>
         </div>
         <div class="msg-text">
-            <%= msg %>
+            <%= msg.text %>
         </div>
     </div>
 </div>
