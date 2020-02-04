@@ -39,9 +39,28 @@ export class RuntimeManagerOutputMsgView extends ComponentViewElement {
         $timeEl.empty();
         $timeEl.append(msg.time);
 
-        $("#" + this._id).find(".msg-bubble").css({ "background": msg.color });
-        $("#" + this._id).find(".msg-bubble").hover(
-            function (): void { $(this).css({ "background": msg.hoverColor }); }
+        this.setBubbleStyle(msg);
+    }
+
+    public setBubbleStyle(msg): void {
+        let $bubbleEl = $("#" + this._id).find(".msg-bubble");
+        $bubbleEl.css({
+            "background-color": msg.color,
+            "cursor": "pointer"
+        });
+        $bubbleEl.hover(
+            function (): void {
+                $(this).css({
+                    "background-color": msg.hoverColor,
+                    "cursor": "pointer"
+                });
+            },
+            function (): void {
+                $(this).css({
+                    "background-color": msg.color,
+                    "cursor": "pointer"
+                });
+            }
         );
     }
 }

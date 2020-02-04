@@ -61,7 +61,6 @@ export class RuntimeManager extends IDEUIComponent {
         alert("on change config data not developed yet in Menu Component");
     }
 
-    private _defaultMsgHookId;
     private msgTime(): string {
         let date = new Date();
         let hours = date.getHours();
@@ -79,13 +78,13 @@ export class RuntimeManager extends IDEUIComponent {
                     text: "Your application starts when you click run or debug " +
                             "button in the toolbar.",
                     color: "#d4fdd3",
-                    hoverColor: "#d4fdd3"
+                    hoverColor: "#FCFCD2"
                 },
                 {
                     text: "You clicked me :) Message bubbles are interactive with " +
                     " the Platform. You can browse in the Visual Programming Editors" +
                     " and the Visual Programming Elements write message to me ;)",
-                    color: "#f7eac1",
+                    color: "#F7CFC1",
                     hoverColor: "#f7eac1"
                 }
             ]
@@ -96,8 +95,8 @@ export class RuntimeManager extends IDEUIComponent {
             msgs: [
                 {
                     text: "Your application is preparing to run...",
-                    color: "#d4fdd3",
-                    hoverColor: "#d4fdd3"
+                    color: "#ffe6ff",
+                    hoverColor: "#ffe6ff"
                 },
                 {
                     text: "You clicked me :) Message bubbles are interactive with " +
@@ -114,8 +113,8 @@ export class RuntimeManager extends IDEUIComponent {
             msgs: [
                 {
                     text: "Your application runs... Stops in the end or in case you click stop button.",
-                    color: "#d4fdd3",
-                    hoverColor: "#d4fdd3"
+                    color: "#ccffff",
+                    hoverColor: "#e6ffff"
                 },
                 {
                     text: "You clicked me :) Message bubbles are interactive with " +
@@ -131,7 +130,7 @@ export class RuntimeManager extends IDEUIComponent {
         }
     };
 
-    private defaultMsg(msgKey) {
+    private defaultMsg(msgKey): IConsoleOutputMsg {
         let data = this.msgsData[msgKey];
         return {
             typeMsg: "app",
@@ -141,7 +140,7 @@ export class RuntimeManager extends IDEUIComponent {
 
             onClickMsg: () => {
                 data.num = data.num === 1 ? 0 : 1;
-                data.msgs[data.num]["time"] = this.msgTime();
+                data.msgs[data.num].time = this.msgTime();
 
                 this.EditMessage(
                     data.id,
@@ -191,7 +190,7 @@ export class RuntimeManager extends IDEUIComponent {
 
     @ExportedFunction
     public InitConsoleMsg(msgData: IConsoleOutputMsg = this.defaultMsg("init")): void {
-        this.msgsData["init"].id = this.AddMessage(msgData);
+        this.AddDefaultMessage("init");
     }
 
     private runDataGen(appData): any {
@@ -223,15 +222,19 @@ export class RuntimeManager extends IDEUIComponent {
         let runData = this.runDataGen(appData);
 
         let domainScript = this.getDomainRunScript(appData.domain);
-        try {
-            /*async*/ domainScript.Run(runData);
 
-            this.ClearMessages();
-            this.AddDefaultMessage("start");
-        }
-        catch (error) {
+        let runPromise = domainScript.Run(runData);
+        runPromise.then((completeMessage) => {
+            //stop button
+        });
+        runPromise.catch(function (error) {
+            if (error === "StopApplication") {
+                
+            }
+        });
 
-        }
+        this.ClearMessages();
+        this.AddDefaultMessage("start");
     }
 
     @ExportedFunction
@@ -242,12 +245,12 @@ export class RuntimeManager extends IDEUIComponent {
     private prepareStartApplication() {
         this._viewElems.RuntimeManagerToolbarView[0].elem
             .onClickDebugApplicationBtn();
-        this.RemoveMessage(this._defaultMsgHookId);
-        this.AddDefaultMessage("start");
+        this.RemoveMessage(this.msgsData.init.id);
+        this.AddDefaultMessage("prepare");
     }
 
     private async StartApplication() {
-        this.RemoveMessage(this._startMsgHookId);
+        this.RemoveMessage(this.msgsData.prepare.id);
         this.AddDefaultMessage("start");
     }
 

@@ -2,6 +2,7 @@
 .runtime-manager-output {
     flex: 1;
     overflow-y: auto;
+    max-height: 235px;
     padding: 10px;
 }
 

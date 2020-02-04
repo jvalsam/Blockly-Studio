@@ -12,15 +12,16 @@ import {
 } from "./run-time-manager-output-msg-view/run-time-manager-output-msg-view";
 
 export interface IConsoleOutputMsg {
-    typeMsg: String;
-    imgIcon?: String;
+    typeMsg: string;
+    imgIcon?: string;
 
     msg: {
-        text: String,
-        color: String
+        text: string,
+        color: string,
+        hoverColor: string
     };
-    sender: String;
-    time: String;
+    sender: string;
+    time: string;
 
     // interactive output console with vpl editors and blocks...
     onClickMsg(): void
@@ -63,6 +64,7 @@ export class RuntimeManagerOutputView extends ComponentViewElement {
                 data);
         msgView.setRenderData(data);
         msgView.render();
+        msgView.setBubbleStyle(data.msg);
 
         if (!this._msgs) {
             this._msgs = {};

@@ -28,6 +28,7 @@
     padding: 15px;
     border-radius: 15px;
     background: #d4fdd3;
+    margin-bottom: 5px;
 }
 
 .msg-bubble:hover {
