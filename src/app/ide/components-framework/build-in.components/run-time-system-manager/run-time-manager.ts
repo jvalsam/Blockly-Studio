@@ -70,114 +70,82 @@ export class RuntimeManager extends IDEUIComponent {
             ((mins < 10) ? "0" + mins : "" + mins);
     }
 
-    private defaultStartMsg (): IConsoleOutputMsg {
-        let msgNo = 0;
-        let msgs = [
-            {
-                text: "Your application runs... Stops in the end or in case you click stop button.",
-                color: "#d4fdd3",
-                hoverColor: "#d4fdd3"
-            },
-            {
-                text: "You clicked me :) Message bubbles are interactive with " +
+    private msgsData = {
+        init: {
+            id: "",
+            num: 0,
+            msgs: [
+                {
+                    text: "Your application starts when you click run or debug " +
+                            "button in the toolbar.",
+                    color: "#d4fdd3",
+                    hoverColor: "#d4fdd3"
+                },
+                {
+                    text: "You clicked me :) Message bubbles are interactive with " +
                     " the Platform. You can browse in the Visual Programming Editors" +
                     " and the Visual Programming Elements write message to me ;)",
-                color: "#f7eac1",
-                hoverColor: "#f7eac1"
-            }
-        ];
+                    color: "#f7eac1",
+                    hoverColor: "#f7eac1"
+                }
+            ]
+        },
+        prepare: {
+            id: "",
+            num: 0,
+            msgs: [
+                {
+                    text: "Your application is preparing to run...",
+                    color: "#d4fdd3",
+                    hoverColor: "#d4fdd3"
+                },
+                {
+                    text: "You clicked me :) Message bubbles are interactive with " +
+                        " the Platform. You can browse in the Visual Programming Editors" +
+                        " and the Visual Programming Elements write message to me ;)",
+                    color: "#f7eac1",
+                    hoverColor: "#f7eac1"
+                }
+            ]
+        },
+        start: {
+            id: "",
+            num: 0,
+            msgs: [
+                {
+                    text: "Your application runs... Stops in the end or in case you click stop button.",
+                    color: "#d4fdd3",
+                    hoverColor: "#d4fdd3"
+                },
+                {
+                    text: "You clicked me :) Message bubbles are interactive with " +
+                        " the Platform. You can browse in the Visual Programming Editors" +
+                        " and the Visual Programming Elements write message to me ;)",
+                    color: "#f7eac1",
+                    hoverColor: "#f7eac1"
+                }
+            ]
+        },
+        stop: {
+
+        }
+    };
+
+    private defaultMsg(msgKey) {
+        let data = this.msgsData[msgKey];
         return {
             typeMsg: "app",
             time: this.msgTime(),
-            msg: msgs[msgNo],
+            msg: data.msgs[data.num],
             sender: "Console",
 
             onClickMsg: () => {
-                msgNo = msgNo === 1 ? 0 : 1;
-                msgs[msgNo]["time"] = this.msgTime();
+                data.num = data.num === 1 ? 0 : 1;
+                data.msgs[data.num]["time"] = this.msgTime();
 
                 this.EditMessage(
-                    this._startMsgHookId,
-                    msgs[msgNo]
-                );
-            },
-            onClickIcon: () => {
-                alert("Message Icons are interactive with the respective " +
-                    "objects. When, the users click message, opens the " +
-                    "respective info.");
-            }
-        };
-    }
-
-    private defaultPrepareMsg(): IConsoleOutputMsg {
-        let msgNo = 0;
-        let msgs = [
-            {
-                text: "Your application is preparing to run...",
-                color: "#d4fdd3",
-                hoverColor: "#d4fdd3"
-            },
-            {
-                text: "You clicked me :) Message bubbles are interactive with " +
-                    " the Platform. You can browse in the Visual Programming Editors" +
-                    " and the Visual Programming Elements write message to me ;)",
-                color: "#f7eac1",
-                hoverColor: "#f7eac1"
-            }
-        ];
-        return {
-            typeMsg: "app",
-            time: this.msgTime(),
-            msg: msgs[msgNo],
-            sender: "Console",
-
-            onClickMsg: () => {
-                msgNo = msgNo === 1 ? 0 : 1;
-                msgs[msgNo]["time"] = this.msgTime();
-
-                this.EditMessage(
-                    this._startMsgHookId,
-                    msgs[msgNo]
-                );
-            },
-            onClickIcon: () => {
-                alert("Message Icons are interactive with the respective " +
-                    "objects. When, the users click message, opens the " +
-                    "respective info.");
-            }
-        };
-    }
-
-    private defaultInitMsg (): IConsoleOutputMsg {
-        let msgNo = 0;
-        let msgs = [
-            {
-                text: "Your application starts when you click run or debug " +
-                      "button in the toolbar.",
-                color: "#d4fdd3",
-                hoverColor: "#d4fdd3"
-            },
-            {
-                text: "You clicked me :) Message bubbles are interactive with " +
-                " the Platform. You can browse in the Visual Programming Editors" +
-                " and the Visual Programming Elements write message to me ;)",
-                color: "#f7eac1",
-                hoverColor: "#f7eac1"
-            }
-        ];
-        return {
-            typeMsg: "app",
-            time: this.msgTime(),
-            msg: msgs[msgNo],
-            sender: "Console",
-
-            onClickMsg: () => {
-                msgNo = msgNo === 1 ? 0 : 1;
-                msgs[msgNo]["time"] = this.msgTime();
-
-                this.EditMessage(
-                    this._defaultMsgHookId,
-                    msgs[msgNo]
+                    data.id,
+                    data.msgs[data.num]
                 );
             },
             onClickIcon: () => {
@@ -189,10 +157,15 @@ export class RuntimeManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public AddMessage(msg: IConsoleOutputMsg): String {
+    public AddMessage(msg: IConsoleOutputMsg): string {
         return this._viewElems.RuntimeManagerOutputView[0]
             .elem
             .addMsg(msg);
+    }
+
+    @ExportedFunction
+    public AddDefaultMessage(key: string): void {
+        this.msgsData[key].id = this.AddMessage(this.defaultMsg(key));
     }
 
     @ExportedFunction
@@ -217,8 +190,8 @@ export class RuntimeManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public InitConsoleMsg(msgData: IConsoleOutputMsg = this.defaultInitMsg()): void {
-        this._defaultMsgHookId = this.AddMessage(msgData);
+    public InitConsoleMsg(msgData: IConsoleOutputMsg = this.defaultMsg("init")): void {
+        this.msgsData["init"].id = this.AddMessage(msgData);
     }
 
     private runDataGen(appData): any {
@@ -239,7 +212,7 @@ export class RuntimeManager extends IDEUIComponent {
             .disableButtons();
 
         this.ClearMessages();
-        this._startMsgHookId = this.AddMessage(this.defaultPrepareMsg());
+        this.AddDefaultMessage("prepare");
 
         let appData = ComponentsCommunication.functionRequest(
             this.name,
@@ -254,7 +227,7 @@ export class RuntimeManager extends IDEUIComponent {
             /*async*/ domainScript.Run(runData);
 
             this.ClearMessages();
-            this._startMsgHookId = this.AddMessage(this.defaultStartMsg());
+            this.AddDefaultMessage("start");
         }
         catch (error) {
 
@@ -270,12 +243,12 @@ export class RuntimeManager extends IDEUIComponent {
         this._viewElems.RuntimeManagerToolbarView[0].elem
             .onClickDebugApplicationBtn();
         this.RemoveMessage(this._defaultMsgHookId);
-        this._startMsgHookId = this.AddMessage(this.defaultStartMsg());
+        this.AddDefaultMessage("start");
     }
 
     private async StartApplication() {
         this.RemoveMessage(this._startMsgHookId);
-        this.AddMessage(this.defaultStartMsg());
+        this.AddDefaultMessage("start");
     }
 
     private onStartDebugApplicationBtn(): void {
