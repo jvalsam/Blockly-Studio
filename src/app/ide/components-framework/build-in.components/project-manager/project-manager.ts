@@ -66,6 +66,7 @@ export class ProjectManager extends IDEUIComponent {
     private currModalData: { itemData: any, projectID };
     private _modalActions: { [func: string]: Function };
     private loadedProjects: {[projectID: string]: any};
+    private mainProject: string;
     private isOpen: Boolean;
 
     constructor(
@@ -79,6 +80,8 @@ export class ProjectManager extends IDEUIComponent {
         this.isOpen = this.domainType ? true : false;
         this.loadedProjects = [];
         this.currModalData = <any>{};
+
+        this.mainProject = null;
 
         if (this.isOpen) {
             this.initialize();
@@ -177,12 +180,14 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public getMainApplicationData() {
+        let mainProject = this.loadedProjects[this.mainProject];
         return { main: "srcMain", domain: "IoT" };
     }
 
     @ExportedFunction
     public loadProject(project): void {
         this.loadedProjects[project._id] = project;
+        this.mainProject = project._id;
         (<ProjectManagerView>this._view).loadProject(project);
     }
 

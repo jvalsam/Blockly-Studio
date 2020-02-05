@@ -198,8 +198,17 @@ export class RuntimeManager extends IDEUIComponent {
         return appData;
     }
 
-    private getDomainRunScript(domain: String): any {
-        return { Run: () => alert('App runs') };
+    private getDomainRunScript(domain: String, callback): void {
+        let domainPath = "../../../domains/" + domain + "/execution/run-script.js";
+        return require(domainPath);
+        // import("./test.js")
+        //     .then(module => callback(module))
+        //     .catch(err => {
+        //         IDEError.raise(
+        //             "NotFoundDomainRunScript",
+        //             err.message
+        //         );
+        //     });
     }
 
     private _startMsgHookId: String;
@@ -210,7 +219,7 @@ export class RuntimeManager extends IDEUIComponent {
             .elem
             .disableButtons();
 
-        this.ClearMessages();
+        // this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
         let appData = ComponentsCommunication.functionRequest(
@@ -221,20 +230,28 @@ export class RuntimeManager extends IDEUIComponent {
 
         let runData = this.runDataGen(appData);
 
-        let domainScript = this.getDomainRunScript(appData.domain);
-
-        let runPromise = domainScript.Run(runData);
-        runPromise.then((completeMessage) => {
-            //stop button
-        });
-        runPromise.catch(function (error) {
-            if (error === "StopApplication") {
-                
+        this.getDomainRunScript(
+            appData.domain,
+            (domainScript) => {
+                let runPromise = domainScript.Run(runData);
+                runPromise.then((completeMessage) => {
+                    //stop button
+                });
+                runPromise.catch(function (error) {
+                    if (error === "StopApplication") {
+                        
+                    }
+                });
+        
+                // this.ClearMessages();
+                this.AddDefaultMessage("start");
             }
-        });
+        );
+    }
 
-        this.ClearMessages();
-        this.AddDefaultMessage("start");
+    @ExportedFunction
+    public checkRuntimeState() {
+
     }
 
     @ExportedFunction

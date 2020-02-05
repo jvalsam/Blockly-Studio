@@ -73,7 +73,7 @@
     "popper.js": "^1.12.9",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
-    "request": "^2.85.0",
+    "request": "^2.79.0",
     "source-map": "^0.7.3",
     "tether": "^1.4.3",
     "ts-loader": "^3.5.0",
