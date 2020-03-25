@@ -5,7 +5,9 @@
 			"css": {
 				"color": "#f0f8ff"
 			},
-			"class": ["fa-lg"]
+			"class": [
+				
+			]
 		}
 	}]
 }

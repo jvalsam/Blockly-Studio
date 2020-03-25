@@ -1,0 +1,43 @@
+<div class="row project-manager-container">
+    <div class="col-lg-3 project-manager-treeview-area">
+        <div class="row project-manager-info-actions-area" style="border: 2px solid white; background-color: rgb(80, 80, 80); padding-top:5px; padding-bottom:5px;">
+            <div class="col-10">
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-1 project-manager-img" style="margin-top: 5px;">
+                        <% if(_.includes(img, "fa-")) { %>
+                            <i class="fa <%= img %>" aria-hidden="true"></i>
+                        <% } else { %>
+                            <img src="<%= img %>">
+                        <% } %>
+                    </div>
+                    <div class="col-10 project-manager-title" style="margin-top: 5px;">
+                        <%= title %>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 project-manager-actions-area">
+                
+            </div>
+        </div>
+        <div class="row project-manager-instances-area">
+            <div class="col project-manager-app-instances-view-area">
+                    No project are loaded yet.
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-9" style="position: relative;
+    height:91vh;
+    padding-left: 0px; padding-right:0px;">
+        <div class="project-manager-visual-editors-area">
+            <div style="text-align: center;">
+                <span style="line-height:30em;"> Visual Editors Area is not open yet. </span>
+            </div>
+        </div>
+        <div class="project-manager-runtime-console-area">
+            <div style="text-align: center;">
+                <span> Runtime Console Area is not open yet. </span>
+            </div>
+        </div>
+    </div>
+</div>

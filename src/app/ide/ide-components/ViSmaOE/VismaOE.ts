@@ -247,7 +247,7 @@ export class ViSmaOE extends Editor {
                                             on_click: function() {
                                                 register_modal.set_title("Register " + smart_object_uri);
                                                 register_modal.set_content(register_form);
-                                                register_form.input_container.name.set_value(source.smartobject_title);
+                                                register_form.input_container.name.set_value(source.title);
                                                 register_form.set_on_submit(function(data) {
                                                     register_form.set_submit("Trying to register...");
 

@@ -196,6 +196,7 @@ export class ProjectManagerView extends ComponentView {
     }
 
     public addElement(projectId: string, element: IProjectManagerElementData): void {
-        this.loadedProjects.map(proj=>proj.id).indexOf(projectId)["addElement"](element);
+        let index = this.loadedProjects.map(proj=>proj.id).indexOf(projectId);
+        this.loadedProjects[index].addElement(element);
     }
 }

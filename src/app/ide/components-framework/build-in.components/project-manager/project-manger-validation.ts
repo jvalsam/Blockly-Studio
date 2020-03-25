@@ -1,6 +1,7 @@
 import * as _ from "lodash";
-import { ProjectManagerAppInstanceView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-app-instance-view';
-import { ProjectManagerElementView } from "./project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view";
+import {
+    ProjectInstanceView
+} from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-instance-view";
 import { PropertyView } from "../configuration/configuration-view/property-views/property-view";
 
 
@@ -30,7 +31,7 @@ export class ProjectManagerValidation {
     // returns true if it is valid or validation errors [ {} ]
     public static check(
         items: {[name: string]: PropertyView },
-        projectInst: ProjectManagerAppInstanceView,
+        projectInst: ProjectInstanceView,
         vchecks: Array<{type:string, rules: any}>,
         callback: (response) => {}
     ): void {
@@ -43,7 +44,15 @@ export class ProjectManagerValidation {
                         _.forEach(vcheck.rules, (rule) => this[rule.action](_.pick(items, rule.items), projectInst, rule.args));
                         break;
                     case "custom":
-                        _.forEach(vcheck.rules, (rule) => rule.validation_func(_.pick(items, rule.items), projectInst, rule.args, this.postResponse));
+                        _.forEach(
+                            vcheck.rules,
+                            (rule) => rule.validation_func(
+                                _.pick(items, rule.items),
+                                projectInst,
+                                rule.args,
+                                this.postResponse
+                            )
+                        );
                         break;
                 }
             });
@@ -52,20 +61,20 @@ export class ProjectManagerValidation {
 
     // validation check provided by the platform, key of items is the descriptionID of the description domain wsp
 
-    private static duplicate (items: {[name: string]: PropertyView }, projectInst: ProjectManagerAppInstanceView) {
+    private static duplicate (items: {[name: string]: PropertyView }, projectInst: ProjectInstanceView) {
         let response: Array<string> = [];
         _.forEach(items, (property) => {
-            if ( projectInst.findElementWName(property.value) !== null) {
+            if ( projectInst.hasElement(property.value)) {
                 response.push(property.value + " already exists! You have to change value in this field.");
             }
         });
         this.postResponse(response.length === 0 ? true : response);
     }
 
-    private static valid_name(items: { [name: string]: PropertyView }, projectInst: ProjectManagerAppInstanceView, rules) {
+    private static valid_name(items: { [name: string]: PropertyView }, projectInst: ProjectInstanceView, rules) {
         alert("check for valid name not supported yet!");
         let response: Array<string> = [];
-        
+
         this.postResponse(response.length === 0 ? true : response);
     }
 }

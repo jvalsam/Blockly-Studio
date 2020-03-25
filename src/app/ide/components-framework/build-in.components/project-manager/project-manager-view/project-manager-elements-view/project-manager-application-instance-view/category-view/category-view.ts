@@ -1,4 +1,3 @@
-import { ProjectItemViewState } from './../item-view/item-view';
 import { IDEUIComponent } from "../../../../../../component/ide-ui-component";
 import { View, ViewMetadata, IViewUserStyleData } from "../../../../../../component/view";
 
@@ -7,7 +6,6 @@ import * as _ from "lodash";
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import CategoryViewTmpl from "./category-view.tmpl";
 import { ViewRegistry } from "../../../../../../component/registry";
-import { ProjectManagerItemView } from "../item-view/item-view";
 
 import { ProjectManagerElementView } from "../project-manager-element-view";
 

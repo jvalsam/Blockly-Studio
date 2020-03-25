@@ -161,10 +161,11 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     private initChildren (): void {
         this._children.items = new Array<ProjectManagerElementView>();
         // filter elements
-        let itemElements = this.data.project.elements.filter(obj => { return obj.path === this.path });
+        let itemElements = this.data.project.elements
+            .filter(obj => obj.path === this.path);
         //
         for(let i=1; i<=itemElements.length; ++i) {
-            let itemData = itemElements[ itemElements.map(x=>x.orderNO).indexOf(i) ];
+            let itemData = itemElements.find(x=>x.orderNO === i);
             this.addElement(itemData);
         }
 
@@ -197,8 +198,8 @@ export class ProjectManagerItemView extends ProjectManagerElementView {
     }
 
     private metadataElem(type): any {
-        let index = this.getMeta().renderParts.map(x=>x.type).indexOf("title");
-        return index > 0 ? this.getMeta().renderParts[index] : null;
+        let element = this.getMeta().renderParts.find(x => x.type === "title");
+        return element ? element : null;
     }
 
     public defaultTitle(): string {

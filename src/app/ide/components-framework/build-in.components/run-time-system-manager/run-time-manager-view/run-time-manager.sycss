@@ -10,7 +10,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 40vh;
+    /* height: 40vh; */
     background-image: var(--body-bg);
     font-family: Helvetica, sans-serif;
   }
@@ -19,9 +19,12 @@
     display: flex;
     flex-flow: column wrap;
     justify-content: space-between;
-    width: calc(100% - 30px);
+    /* width: calc(100% - 30px); */
+    width: 100%;
+    padding-right:2px;
     /* margin: 25px 10px; */
-    height: calc(100% - 50px);
+    /* height: calc(100% - 50px); */
+    height: 35vh;
     border: var(--border);
     border-radius: 5px;
     background: var(--output-console-bg);

@@ -200,7 +200,8 @@ export class RuntimeManager extends IDEUIComponent {
 
     private getDomainRunScript(domain: String, callback): void {
         let domainPath = "../../../domains/" + domain + "/execution/run-script.js";
-        return require(domainPath);
+        var domScript;
+        eval('require('+domainPath+');');
         // import("./test.js")
         //     .then(module => callback(module))
         //     .catch(err => {
@@ -209,6 +210,7 @@ export class RuntimeManager extends IDEUIComponent {
         //             err.message
         //         );
         //     });
+        return domScript;
     }
 
     private _startMsgHookId: String;
@@ -239,10 +241,10 @@ export class RuntimeManager extends IDEUIComponent {
                 });
                 runPromise.catch(function (error) {
                     if (error === "StopApplication") {
-                        
+
                     }
                 });
-        
+
                 // this.ClearMessages();
                 this.AddDefaultMessage("start");
             }

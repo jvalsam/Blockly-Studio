@@ -192,11 +192,17 @@ export class EditorManager extends IDEUIComponent {
         // check if there is instance with systemID
         if (!this.editorInstancesMap[itemData.systemID]) {
             // already pinned editor, later may convert to be able to pin to other editors
-            this.editorInstancesMap[itemData.systemID] = <Editor>ComponentRegistry.getEntry(editorName).create([".project-manager-visual-editors-area"]);
+            this.editorInstancesMap[itemData.systemID] = <Editor>
+                ComponentRegistry
+                    .getEntry(editorName)
+                    .create([".project-manager-visual-editors-area"]);
             //editable and setted only by the editor manager
-            this.editorInstancesMap[itemData.systemID]["_systemID"] = itemData.systemID;
+            this.editorInstancesMap[itemData.systemID]
+                ["_systemID"] = itemData.systemID;
             (<EditorManagerView>this.view).prepareEditorArea();
-            let resp = this.editorInstancesMap[itemData.systemID][event.data.mission] (itemData.editorData);
+            let resp = this.editorInstancesMap
+                [itemData.systemID]
+                [event.data.mission] (itemData.editorData);
             return resp;
         }
 

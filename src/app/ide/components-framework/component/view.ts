@@ -473,7 +473,7 @@ function DeclareViewElement (data: IViewElementData) {
         }
 
         var initData = (data.initData) ? data.initData : [];
-        
+
         ViewRegistry.createEntry(
             data.name,
             create,

@@ -1,9 +1,9 @@
-import { ProjectManagerValidation } from './project-manger-validation';
-import { assert, IDEError } from './../../../shared/ide-error/ide-error';
+import { ProjectManagerValidation } from "./project-manger-validation";
+import { assert, IDEError } from "./../../../shared/ide-error/ide-error";
 import {
     ComponentsCommunication,
     ComponentCommAddFunction
-} from './../../component/components-communication';
+} from "./../../component/components-communication";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import {
     ExportedFunction,
@@ -11,24 +11,28 @@ import {
     RequiredFunction
 } from "../../component/component-loader";
 import { ProjectManagerMetaDataHolder } from "./project-manager-meta-map";
-import { ProjectManagerView } from './project-manager-view/project-manager-view';
+import {
+    ProjectManagerJSTreeView
+} from "./project-manager-jstree-view/project-manager-jstree-view";
 
 import { IEventData } from "../../common-views/actions-view/actions-view";
 
 import * as _ from "lodash";
-import { ViewRegistry } from './../../component/registry';
-import { ModalView } from '../../component/view';
+import { ViewRegistry } from "./../../component/registry";
+import { ModalView } from "../../component/view";
 import {
     ProjectManagerElementView
-} from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view';
+} from "./project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view";
 import {
     RenderPartsToPropertyData,
     CreateRenderPartsWithData
-} from '../configuration/configuration-view/property-views/property-view';
-import { ProjectManagerItemView } from './project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view';
-import { upload_files } from '../../../shared/upload-files';
-import { RuntimeManager } from '../run-time-system-manager/run-time-manager';
-import { ComponentRegistry } from '../../component/component-entry';
+} from "../configuration/configuration-view/property-views/property-view";
+import {
+    ProjectManagerItemView
+} from "./project-manager-view/project-manager-elements-view/project-manager-application-instance-view/item-view/item-view";
+import { upload_files } from "../../../shared/upload-files";
+import { RuntimeManager } from "../run-time-system-manager/run-time-manager";
+import { ComponentRegistry } from "../../component/component-entry";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -55,7 +59,7 @@ export interface IProjectManagerElementData {
             email: "jvalsam@ics.forth.gr"
         }
     ],
-    componentView: "ProjectManagerView",
+    componentView: "ProjectManagerJSTreeView",
     menuDef: menuJson,
     configDef: configJson,
     version: "1.0"
@@ -188,7 +192,7 @@ export class ProjectManager extends IDEUIComponent {
     public loadProject(project): void {
         this.loadedProjects[project._id] = project;
         this.mainProject = project._id;
-        (<ProjectManagerView>this._view).loadProject(project);
+        (<ProjectManagerJSTreeView>this._view).loadProject(project);
     }
 
     public saveProjectResponse(resp) {
@@ -403,7 +407,7 @@ export class ProjectManager extends IDEUIComponent {
         let renderParts = CreateRenderPartsWithData(
             this.currModalData.itemData.renderParts,
             newItem);
-        
+
         concerned.addNewElement(
             {
                 renderParts: renderParts,
@@ -430,6 +434,45 @@ export class ProjectManager extends IDEUIComponent {
         this.saveProject(src.projectID);
     }
 
+    private onCreateProjectItem(data, index, itemsData, event, concerned) {
+        assert(
+            index !== -1,
+            "Invalid index in sequential dialogues in multi choice of dialogues!"
+        );
+        this.currModalData.itemData = itemsData[index];
+        upload_files(
+            data.form,
+            (paths: Array<String>) => {
+                // update img path
+                for (var i = 0; i < paths.length; i++) {
+                    for (const [key, value] of Object["entries"](data.imgData)) {
+                        if (value === i) {
+                            data.json[key] = paths[i];
+                            break;
+                        }
+                    }
+                }
+                assert(
+                    paths.length === 1,
+                    "Invalid number of paths in save img of Project Manager New Item"
+                );
+                let src = this.createNewElement(
+                    event,
+                    data,
+                    this.newSystemID(concerned.projectID)
+                );
+                this.createNewItem(
+                    concerned,
+                    data,
+                    src
+                );
+            },
+            (resp) => {
+                IDEError.raise("Error Project Manager Save Img", resp);
+            }
+        );
+    }
+
     @ExportedFunction
     public onAddProjectElement (
         event: IEventData,
@@ -438,11 +481,11 @@ export class ProjectManager extends IDEUIComponent {
         this.currEvent = event;
         let dialoguesData = [];
         let validTypes = concerned.getValidChildren();
-        let projInstView = (<ProjectManagerView>this._view)
+        let projInstView = (<ProjectManagerJSTreeView>this._view)
             .getProject(concerned.projectID);
-        
+
         assert(projInstView !== null);
-        
+
         this.currModalData.projectID = concerned.projectID;
         let systemIDs = this.loadedProjects[this.currModalData.projectID].systemIDs;
 
@@ -539,7 +582,7 @@ export class ProjectManager extends IDEUIComponent {
             _.forEach(types, (type)=> {
                 let renderData = _.reverse(concerned
                     .getReversedChildElementRenderData(type));
-                
+
                 itemsData.push(concerned.getChildElementData(type));
                 let title = renderData[renderData
                     .map(x=>x.type)
@@ -564,37 +607,21 @@ export class ProjectManager extends IDEUIComponent {
                             choice: "Create",
                             type: "submit",
                             providedBy: "creator",
-                            validation: (data, callback) => ProjectManagerValidation.check(
-                                data,
-                                projInstView,
-                                event.validation,
-                                callback
-                            ),
-                            callback: (data, index) => {
-                                assert(index !== -1, "Invalid index in sequential dialogues in multi choice of dialogues!");
-                                this.currModalData.itemData = itemsData[index];
-                                upload_files(
-                                    data.form,
-                                    (paths: Array<String>) => {
-                                        // update img path
-                                        for (var i=0;i<paths.length; i++) {
-                                            for (const [key, value] of Object["entries"](data.imgData)) {
-                                                if (value === i) {
-                                                    data.json[key] = paths[i];
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        assert(paths.length === 1, "Invalid number of paths in save img of Project Manager New Item");
-                                        data
-                                        let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
-                                        this.createNewItem(concerned, data, src);
-                                    },
-                                    (resp) => {
-                                        IDEError.raise("Error Project Manager Save Img",resp);
-                                    }
-                                );
-                            }
+                            validation: (data, callback) =>
+                                ProjectManagerValidation.check(
+                                    data,
+                                    projInstView,
+                                    event.validation,
+                                    callback
+                                ),
+                            callback: (data, index) =>
+                                this.onCreateProjectItem(
+                                    data,
+                                    index,
+                                    itemsData,
+                                    event,
+                                    concerned
+                                )
                         }
                     ]
                 );
@@ -632,7 +659,9 @@ export class ProjectManager extends IDEUIComponent {
                 dialogues: dialogues
             });
         }
-        let modalActionView = <ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(this, dialoguesData);
+        let modalActionView = <ModalView>ViewRegistry
+            .getEntry("SequentialDialoguesModalView")
+            .create(this, dialoguesData);
         modalActionView.open();
     }
 
@@ -646,8 +675,48 @@ export class ProjectManager extends IDEUIComponent {
             this[<string>event.action] (data.itemId, data.projectId);
         }
         else {
-            this.onOuterFunctionRequest(event, [{"itemId": data.itemId, "projectId": data.projectId}]);
+            this.onOuterFunctionRequest(
+                event,
+                [
+                    {
+                        "itemId": data.itemId,
+                        "projectId": data.projectId
+                    }
+                ]
+            );
         }
+    }
+
+    private onDeleteElement(concerned) {
+        let currFocusSystemID = ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "onRemoveProjectElement",
+            [(<ProjectManagerItemView>concerned).itemData().systemID]
+        ).value;
+        (<ProjectManagerJSTreeView>this._view)
+            .removeElement(concerned.projectID, concerned.systemID);
+
+        let index = this.loadedProjects[concerned.projectID]
+            .elements
+            .map(x => x.systemID)
+            .indexOf(concerned.systemID);
+
+        assert(index > -1, "not found element in project data to remove");
+        // fixing rendering order
+        let element = this.loadedProjects[concerned.projectID].elements[index];
+        this.loadedProjects[concerned.projectID]
+            .elements
+            .filter(
+                x => {
+                    return x.path === element.path && x.orderNO > element.orderNO;
+                })
+            .forEach(
+                (elementInPath) => --elementInPath.orderNO
+            );
+        // remove from project data
+        this.loadedProjects[concerned.projectID].elements.splice(index, 1);
+        this.saveProject(concerned.projectID);
     }
 
     @ExportedFunction
@@ -662,7 +731,9 @@ export class ProjectManager extends IDEUIComponent {
             [this.createDialogue (
                 "Remove ",
                 {
-                    text: "Deleting <b>"+title+"</b> element has not undo action. Are you sure you would like to continue?"
+                    text: "Deleting <b>"
+                          + title
+                          + "</b> element has not undo action. Are you sure you would like to continue?"
                 },
                 title ? title : "Element",
                 [
@@ -675,35 +746,7 @@ export class ProjectManager extends IDEUIComponent {
                         choice: "Yes",
                         type: "submit",
                         providedBy: "creator",
-                        callback: () => {
-                            let currFocusSystemID = ComponentsCommunication.functionRequest (
-                                this.name,
-                                "EditorManager",
-                                "onRemoveProjectElement",
-                                [ (<ProjectManagerItemView>concerned).itemData().systemID ]
-                            ).value;
-                            // fix selection of current focus
-                            if (currFocusSystemID) {
-                                (<ProjectManagerView>this._view).changeSelectedItem(this.currModalData.projectID, currFocusSystemID);
-                            }
-                            //TODO: check response if element can be deleted
-                            (<ProjectManagerView>this._view).removeElement(concerned.projectID, concerned.systemID);
-                            // remove from project data
-                            let index = this.loadedProjects[concerned.projectID].elements.map(x=>x.systemID).indexOf(concerned.systemID);
-                            assert(index>-1, "not found element in project data to remove");
-                            // fixing rendering order
-                            let element = this.loadedProjects[concerned.projectID].elements[index];
-                            this.loadedProjects[concerned.projectID].elements.filter(
-                                x => {
-                                    return x.path === element.path && x.orderNO > element.orderNO;
-                                }
-                            ).forEach (
-                                (elementInPath) => --elementInPath.orderNO
-                            );
-                            // remove from project data
-                            this.loadedProjects[concerned.projectID].elements.splice(index, 1);
-                            this.saveProject(concerned.projectID);
-                        }
+                        callback: () => this.onDeleteElement(concerned)
                     }
                 ]
             )]
@@ -723,24 +766,29 @@ export class ProjectManager extends IDEUIComponent {
                 else {
                     renderPart.value = { path: value };
                 }
-                
+
                 value = renderPart.value;
                 break;
-            case 'title':
+            case "title":
                 renderPart.value = { text: value };
                 break;
-            case 'colour':
+            case "colour":
                 renderPart.value = { colour: value };
                 break;
             default:
-                IDEError.raise("Set new value in render part", "RenderPart Value for type "+renderPart.type + " is not supported!");
+                IDEError.raise(
+                    "Set new value in render part",
+                    "RenderPart Value for type "
+                    + renderPart.type
+                    + " is not supported!"
+                );
         }
         return value;
     }
 
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
-        let projInstView = (<ProjectManagerView>this._view).getProject(concerned.projectID);
+        let projInstView = (<ProjectManagerJSTreeView>this._view).getProject(concerned.projectID);
         let renderData = concerned.renderData();
 
         assert(projInstView !== null);
@@ -803,8 +851,8 @@ export class ProjectManager extends IDEUIComponent {
         )).open();
     }
 
-    public onClickProjectElement(element: ProjectManagerItemView): void {
-        (<ProjectManagerView>this._view).onClickElement(element);
+    public onClickProjectElement(element: any): void {
+        (<ProjectManagerJSTreeView>this._view).onClickElement(element);
     }
 
     private onModalChoiceAction(data: any, cancelAction: any) {
