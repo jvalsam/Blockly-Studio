@@ -33,6 +33,8 @@ var configJson = RuntimeManagerDataHolder.getDomainsConfigJSON();
     version: "1.0"
 })
 export class RuntimeManager extends IDEUIComponent {
+    private readonly modes: Array<string> = ["RELEASE", "DEBUG"];
+    private currentMode: number;
     private isOpen: Boolean;
 
     constructor(
@@ -44,6 +46,7 @@ export class RuntimeManager extends IDEUIComponent {
     ) {
         super(name, description, componentView, hookSelector);
         this.isOpen = false;
+        this.currentMode = 0;
     }
 
     public registerEvents(): void { ; }
@@ -199,9 +202,18 @@ export class RuntimeManager extends IDEUIComponent {
     }
 
     private getDomainRunScript(domain: String, callback): void {
-        let domainPath = "../../../domains/" + domain + "/execution/run-script.js";
+        let domainPath = "../../../domains/" + domain + "/execution/run-app.js";
         var domScript;
-        eval('require('+domainPath+');');
+        // $.when(
+        //     $.getScript(domainPath),
+        //     $.Deferred(function (deferred) {
+        //         $(deferred.resolve);
+        //     })
+        // ).done(function () {
+        //     //place your code here, the scripts are all loaded
+        //     alert("loaded...");
+        // });
+        // eval('require('+domainPath+');');
         // import("./test.js")
         //     .then(module => callback(module))
         //     .catch(err => {
@@ -320,5 +332,15 @@ export class RuntimeManager extends IDEUIComponent {
     public onInputValueRequest(callback) {
         let inputView = this._viewElems.RuntimeManagerInputView[0];
         inputView.onEnableInput(callback);
+    }
+
+    @ExportedFunction
+    public getModes(): Array<string> {
+        return this.modes;
+    }
+
+    @ExportedFunction
+    public getMode(): string {
+        return this.modes[this.currentMode];
     }
 }

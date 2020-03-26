@@ -11,7 +11,7 @@ import { IDEUIComponent } from "./ide-ui-component";
 import { ComponentSignalKey, ListenSignalsMap } from "./component-loader";
 import { Shell } from "../common.components/shell/shell";
 import { ComponentEntry } from "./component-entry";
-import { SignalListenerData } from "./component-signal";
+import { SignalListenerData, ComponentSignal } from "./component-signal";
 import { ResponseValue } from "./response-value";
 import {
     SignalsHolder,
@@ -19,7 +19,9 @@ import {
     SignalListenersHolder,
     RequiredFunctionsHolder
 } from "../holders";
-import { BlackboardComponentRegistry } from "../../shared/blackboard/blackboard-component-registry";
+import {
+  BlackboardComponentRegistry
+} from "../../shared/blackboard/blackboard-component-registry";
 import { IDEError } from "../../shared/ide-error/ide-error";
 import { FuncsCompsMap } from "./../holders";
 
@@ -35,10 +37,7 @@ function establishSignals() {
       continue;
     }
     for (const signal of SignalsHolder.get(compName)) {
-      const key = ComponentSignalKey(compName, signal.name);
-      SignalListenersHolder.put(key, { signal: signal, components: new Array<SignalListenerData>() });
-
-      BlackboardComponentRegistry.getBlackboard(compName).addEvent(signal.name);
+      PostsSignal(compName, signal);
     }
   }
   // load signals listeners
@@ -49,33 +48,76 @@ function establishSignals() {
         const source = data[0];
         const signal = data[1];
         const callback = data[2];
-        const argsList = data[3];
-        const key = ComponentSignalKey(source, signal);
-        const compSignalData = SignalListenersHolder.get(key);
-        if (compSignalData) {
-          compSignalData.components.push({'component': component, 'callback': callback});
-
-          BlackboardComponentRegistry.getBlackboard(source).addEventHandler(
-            signal,
-            {
-              compSource: component,
-              funcName:   callback
-            }
-          );
-        }
-        else {
-          IDEError.warn(
-            'Component listens signal does not exist.',
-            component + ' listens ' + signal + ' which is not exported by ' + source,
-            'components-communication.EstablishSignals'
-          );
-        }
+        ListensSignal(source, signal, callback, component);
       }
     }
   }
 }
 
-export function ComponentCommAddFunction(compName: string, funcName: string, argsLen?: number) {
+export function ListensSignal (
+  source,
+  signal,
+  callback,
+  component
+) {
+  const key = ComponentSignalKey(source, signal);
+  const compSignalData = SignalListenersHolder.get(key);
+  if (compSignalData) {
+    compSignalData.components.push({
+      "component": component,
+      "callback": callback
+    });
+
+    BlackboardComponentRegistry.getBlackboard(source).addEventHandler(
+      signal,
+      {
+        compSource: component,
+        funcName: callback
+      }
+    );
+  }
+  else {
+    IDEError.warn(
+      "Component listens signal does not exist.",
+      component
+      + " listens "
+      + signal
+      + " which is not exported by "
+      + source,
+      "components-communication.EstablishSignals"
+    );
+  }
+}
+
+export function ListensSignals(compName: string, signals: Array<any>) {
+  signals.forEach(data => {
+    ListensSignal(data.source, data.signal, data.callback, compName);
+  });
+}
+
+export function PostsSignal(compName: string, signal) {
+  const key = ComponentSignalKey(compName, signal.name);
+  SignalListenersHolder.put(
+    key,
+    {
+      signal: signal,
+      components: new Array<SignalListenerData>()
+    }
+  );
+  BlackboardComponentRegistry.getBlackboard(compName).addEvent(signal.name);
+}
+
+export function PostsSignals(compName: string, signals: Array<string>) {
+  signals.forEach(signal =>
+    PostsSignal(compName, new ComponentSignal(compName, signal))
+  );
+}
+
+export function ComponentCommAddFunction(
+  compName: string,
+  funcName: string,
+  argsLen?: number
+  ) {
   BlackboardComponentRegistry.getBlackboard(compName).addFunction(funcName, argsLen);
 }
 

@@ -59,7 +59,10 @@ class EventContainer {
 
   get eventHandlerList(): Array<EventHandlerContainer> { return this._eventHandlerList; }
 
-  public addEventHandler(eventHandler: EventHandler, oneTime: boolean): EventHandlerUniqueId {
+  public addEventHandler(
+    eventHandler: EventHandler,
+    oneTime: boolean
+  ): EventHandlerUniqueId {
     const ehc: EventHandlerContainer = new EventHandlerContainer(eventHandler, oneTime);
     this._eventHandlerList.push(ehc);
     return ehc.eventHandlerId;
@@ -127,7 +130,11 @@ export class BlackboardComponent {
     this._events[eventId] = new EventContainer();
   }
 
-  public addEventHandler(eventId: Event, evtHandler: EventHandler, callOnce = false): EventHandlerUniqueId {
+  public addEventHandler(
+    eventId: Event,
+    evtHandler: EventHandler,
+    callOnce = false
+  ): EventHandlerUniqueId {
     this.assertExists(true, eventId, "_events", "event handler in");
 
     return this._events[eventId].addEventHandler(evtHandler, callOnce);

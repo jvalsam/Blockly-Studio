@@ -98,7 +98,7 @@ function declareComponentConfigProperties(create: Function, configData: any): vo
     if (typeof(configData) === "undefined") {
         return;
     }
-    
+
     let configProperties;
     if (configData.properties) {
         configProperties = configPropertiesInst (configData);
@@ -111,7 +111,12 @@ function declareComponentConfigProperties(create: Function, configData: any): vo
     }
 
     create["_configProperties"] = configProperties;
-    create["getConfigProperties"] = function(instType?: string) { return instType ? this._configProperties[instType] : this._configProperties; };
+    create["getConfigProperties"] =
+        function(instType?: string) {
+            return instType
+                ? this._configProperties[instType]
+                : this._configProperties;
+        };
     create["setConfigProperties"] = function (values: Object) {
         // if (typeof (this._configProperties) === "undefined") { this._configProperties = {}; }
         _.forOwn(values, (value, key) => {
@@ -256,55 +261,88 @@ var LoadHelper = {
 type LoadHelperType = "ListensSignal" | "ExportedSignal" | "ExportedFunction" | "RequiredFunction";
 
 
-function loadParentElements(loadKey: LoadHelperType, className: string, parent: string, data?: any): void {
+function loadParentElements(
+    loadKey: LoadHelperType,
+    className: string,
+    parent: string,
+    data?: any
+): void {
     // add functions that are exported by inherited classes
-    if (parent !== 'Object' && !(className in LoadHelper[loadKey]['components'])) {
+    if (parent && parent !== 'Object' && !(className in LoadHelper[loadKey]['components'])) {
         LoadHelper[loadKey].components.push(className);
         // get all exported Functions from proto and put them in this function
         LoadHelper[loadKey].add(parent, className, data);
     }
 }
 
-function listensSignalHelper(compName: string, parent: string, callback: string, signal: string, src: string, argsList?: Array<any>) {
+export function listensSignals(
+    compName: string,
+    parent: string,
+    callback: string,
+    signals: Array<string>,
+    src: string,
+    argsList?: Array<any>
+) {
     if (!(compName in ListenSignalsMap)) {
         ListenSignalsMap[compName] = [];
     }
-    loadParentElements('ListensSignal', compName, parent);
-    ListenSignalsMap[compName].push([src, signal, callback, argsList]);
+    loadParentElements("ListensSignal", compName, parent);
+
+    signals.forEach(signal =>
+        ListenSignalsMap[compName].push([src, signal, callback, argsList])
+    );
 }
 
 // Used as decorator
 // publishes signal will be listened by the component
-export function ListensSignal(componentSignal: string, signal: string, argsList?: Array<string>) {
+export function ListensSignal(
+    componentSignal: string,
+    signal: string,
+    argsList?: Array<string>
+) {
     return function (
         target: any, propertyKey: string,
         descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>) {
-        listensSignalHelper(
+        listensSignals(
             target.constructor.name,
             target.__proto__.constructor.name,
             propertyKey,
-            signal,
+            [signal],
             componentSignal,
             argsList
         );
     };
 }
 
-function exportedSignalHelper(compName: string, parent: string, signal: string, argsList?: Array<any>, finalFunc?: string) {
-    const compSignal = new ComponentSignal(compName, signal, argsList);
-    if (finalFunc !== '') {
-        compSignal.finalCallback = finalFunc;
-    }
+export function PostsSignals(
+    compName: string,
+    parent: string,
+    signals: Array<string>,
+    argsList?: Array<any>,
+    finalFunc?: string
+) {
+    signals.forEach(signal => {
+        const compSignal = new ComponentSignal(compName, signal, argsList);
+        if (finalFunc !== "") {
+            compSignal.finalCallback = finalFunc;
+        }
 
-    const compSignals = (!SignalsHolder.containsKey(compName)) ? new Array<ComponentSignal>() : SignalsHolder.get(compName);
-    compSignals.push(compSignal);
-    SignalsHolder.put(compName, compSignals);
-    loadParentElements(
-        'ExportedSignal',
-        compName,
-        parent,
-        { 'signal': signal }
-    );
+        const compSignals = (!SignalsHolder.containsKey(compName))
+            ? new Array<ComponentSignal>()
+            : SignalsHolder.get(compName);
+
+        compSignals.push(compSignal);
+        SignalsHolder.put(compName, compSignals);
+
+        loadParentElements(
+            "ExportedSignal",
+            compName,
+            parent,
+            {
+                "signal": signal
+            }
+        );
+    });
 }
 
 // Used as decorator
@@ -312,10 +350,10 @@ function exportedSignalHelper(compName: string, parent: string, signal: string, 
 export function ExportedSignal(signal: string, argsList?: Array<any>, finalFunc?: boolean) {
     return (target: any, propertyKey: string,
         descriptor?: TypedPropertyDescriptor<(...args: any[]) => any>) => {
-        exportedSignalHelper(
+        PostsSignals(
             target.constructor.name,
             target.__proto__.constructor.name,
-            signal,
+            [signal],
             argsList,
             finalFunc ? propertyKey : ''
         );
@@ -452,21 +490,33 @@ export function RequiredFunction(
 // Used by components which will be developed in JS (TODO: will need more work)
 // OR in case Decorators of Typescript will not be used
 export class EstablishComponentsCommunicationJS {
-    public static registerListensSignal(component: string, parent: string, funcName: string, signal: string, sourceComponent: string) {
-        listensSignalHelper(
+    public static registerListensSignal(
+        component: string,
+        parent: string,
+        funcName: string,
+        signal: string,
+        sourceComponent: string
+    ) {
+        listensSignals(
             component,
             parent,
             funcName,
-            signal,
+            [signal],
             sourceComponent
         );
     }
 
-    public static registerSignal(component: string, parent: string, signal: string, argsList?: Array<any>, finalFunc?: string) {
-        exportedSignalHelper(
+    public static registerSignal(
+        component: string,
+        parent: string,
+        signal: string,
+        argsList?: Array<any>,
+        finalFunc?: string
+    ) {
+        PostsSignals(
             component,
             parent,
-            signal,
+            [signal],
             argsList,
             finalFunc
         );
