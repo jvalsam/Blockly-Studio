@@ -1,7 +1,7 @@
 import * as Blockly from 'blockly';
 
-export const SmartObjectsTask = {
-    name: 'smart-objects-task',
+export const BlocklyTask = {
+    name: 'de-blockly-task',
     blocklyElems: [
         {
             name: 'run_task',
@@ -42,20 +42,20 @@ export const SmartObjectsTask = {
     signals: [
         {
             action: 'onCreate',
-            name: 'create-project-element',
-            mission: 'smart-objects-task',
+            name: 'create-blockly-task',
+            mission: 'ec-blockly-task',
             provider: 'BlocklyVPL'
         },
         {
             action: 'onDelete',
-            name: 'delete-project-element',
-            mission: 'smart-objects-task',
+            name: 'delete-blockly-task',
+            mission: 'ec-blockly-task',
             provider: 'BlocklyVPL'
         },
         {
             action: 'onEdit',
-            name: 'rename-project-element',
-            mission: 'smart-objects-task',
+            name: 'rename-blockly-task',
+            mission: 'ec-blockly-task',
             provider: 'BlocklyVPL'
         }
     ]

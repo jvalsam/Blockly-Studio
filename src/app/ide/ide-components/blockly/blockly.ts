@@ -1,23 +1,27 @@
-﻿import { ResponseValue } from "./../../components-framework/component/response-value";
-import { ComponentsCommunication } from "../../components-framework/component/components-communication";
-import { Editor } from "../../components-framework/build-in.components/editor-manager/editor";
+﻿import {
+  ResponseValue
+} from "./../../components-framework/component/response-value";
 import {
-  UIComponentMetadata,
+  ComponentsCommunication
+} from "../../components-framework/component/components-communication";
+import {
+  Editor,
+  IDomainElementData
+} from "../../components-framework/build-in.components/editor-manager/editor";
+import {
   ExportedSignal,
   ExportedFunction,
   RequiredFunction,
   ListensSignal,
-  PlatformEditorMetadata,
-  ExportedStaticFunction
+  PlatformEditorMetadata
 } from "../../components-framework/component/component-loader";
 
-import Blockly from 'blockly';
+import * as Blockly from "blockly";
+import { DomainElementsHolder } from "../../domain-manager/domains-holder";
+import { assert } from "../../shared/ide-error/ide-error";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
-// TODO:refactor use of Blockly via github as third-party-lib and not as node-blockly
-// var Blockly: any = require("../../../../../node_modules/node-blockly/browser");
-//var Blockly;
 
 @PlatformEditorMetadata({
   description: "VPL uses jigsaws",
@@ -25,13 +29,8 @@ var confJson: any = require("./conf_props.json");
     {
       name: "Yannis Valsamakis",
       email: "jvalsam@ics.forth.gr",
-      date: "October 2017"
+      date: "April 2020"
     }
-  ],
-  missions: [
-    "IoTHandling",
-    "LogicExprIoT",
-    "General"
   ],
   componentView: "BlocklyView",
   menuDef: menuJson,
@@ -66,6 +65,11 @@ export class BlocklyVPL extends Editor {
     if (isFirstInst) {
       ComponentsCommunication.functionRequest(this.name, "Shell", "addTools", [this.view.toolElems]);
     }
+  }
+
+  @ExportedFunction
+  public createSource(mission: string, selector: string) {
+
   }
 
   @ExportedFunction
@@ -189,18 +193,42 @@ export class BlocklyVPL extends Editor {
     alert("on change config data not developed yet in Blockly Component");
   }
 
-  @ExportedStaticFunction
-  public static General(args): any {
+  /**
+   * Functionality of the Domain Elements Signals Data
+   */
+
+  private domainElementData_Task(elem: any): IDomainElementData {
+    return {
+      signal: "create-task-element",
+      data: {
+        id: elem.id,
+        taskName: elem.data.name,
+        elem: {
+          labelStyle: "task-label",
+          color: elem.data.color,
+          tooltip: elem.data.tooltip
+        },
+        mission: ""
+      }
+    };
+  }
+
+  @ExportedFunction
+  public getDomainElementData(projectId: string, domainElemId: string): any {
+    let elem = DomainElementsHolder["getElement"](projectId, domainElemId);
+    let getDomainElementDataFunc = this["domainElementData_" + elem.name];
+    assert(
+      typeof getDomainElementDataFunc === "function",
+      "Function domainElementData_"
+      + elem.name
+      + " not exists on Blockly editor."
+    );
+    return getDomainElementDataFunc(elem);
+  }
+
+  @ExportedFunction
+  public factoryNewItem(pitemName: string, econfigName: string, pitemInfo: any, editorConfig: any): any {
     return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
   }
 
-  @ExportedStaticFunction
-  public static LogicExprIoT(args): any {
-    return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
-  }
-
-  @ExportedStaticFunction
-  public static IoTHandling(args): any {
-    return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
-  }
 }

@@ -161,28 +161,53 @@ export class EditorManager extends IDEUIComponent {
         callback (true);
     }
 
+    @RequiredFunction("DomainsManager", "getProjectItem")
     @ExportedFunction
-    public factoryNewElement(mission: string, args, systemID: string, projectID: string, restriction?:Array<string>) {
-        let editors = EditorDataHolder.getEditors(mission);
-        if (editors.length === 1) {
+    public factoryNewProjectItem(
+        name: string,
+        args,
+        systemID: string,
+        projectID: string,
+        restriction?:Array<string>
+    ) {
+        let editorConfigs = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [name]).value.editorConfigs;
+
+        let projectItem = {
+            systemID: systemID,
+            projectID: projectID,
+            items: {}
+        };
+
+        for (const ec_name of Object.keys(editorConfigs)) {
+            // assume only one editor is defined per mission
+            let editorConfig = editorConfigs[ec_name][0];
             let response = ComponentsCommunication.functionRequest(
                 this.name,
-                editors[0],
-                mission,
-                args
+                editorConfig.name,
+                "factoryNewItem",
+                [
+                    name,
+                    ec_name,
+                    args,
+                    editorConfig
+                ]
             );
-            response.value = _.assign({}, response.value, Editor.createJSONArgs(editors[0], systemID, projectID, args));
-            return response.value;
+            projectItem.items[ec_name] = _.assign(
+                {},
+                response.value,
+                Editor.createJSONArgs(
+                    editorConfig.name,
+                    systemID,
+                    projectID,
+                    args
+                ));
         }
-        else {
-            // TODO:    view restrictions, user choice, domain choice etc, if there are more than one in filter then
-            //          create dialogues to choose which will be the editor
-            IDEError.raise (
-                "Multiple Visual Editors",
-                "There are more than one editors are able to handle mission "+mission+". This is not supported by the platform yet.",
-                "Editor Manager"
-            );
-        }
+
+        return projectItem;
     }
 
     @ExportedFunction

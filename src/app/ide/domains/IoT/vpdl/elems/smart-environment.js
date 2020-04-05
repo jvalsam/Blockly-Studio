@@ -6,15 +6,18 @@ export const SmartEnvironment = {
     signals: [
         {
             action: 'onCreate',
-            name: 'create-smart-environment'
+            name: 'create-smart-environment',
+            provider: 'ViSmaOE'
         },
         {
             action: 'onDelete',
-            name: 'delete-smart-environment'
+            name: 'delete-smart-environment',
+            provider: 'ViSmaOE'
         },
         {
             action: 'onEdit',
-            name: 'rename-smart-environment'
+            name: 'rename-smart-environment',
+            provider: 'ViSmaOE'
         }
     ]
 };

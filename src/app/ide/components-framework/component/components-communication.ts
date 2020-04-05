@@ -55,11 +55,11 @@ function establishSignals() {
 }
 
 export function ListensSignal (
-  source,
-  signal,
-  callback,
-  component
-) {
+  source: string,
+  signal: string,
+  callback: any,
+  component: string
+): void {
   const key = ComponentSignalKey(source, signal);
   const compSignalData = SignalListenersHolder.get(key);
   if (compSignalData) {
@@ -77,7 +77,7 @@ export function ListensSignal (
     );
   }
   else {
-    IDEError.warn(
+    console.warn(
       "Component listens signal does not exist.",
       component
       + " listens "
@@ -89,7 +89,13 @@ export function ListensSignal (
   }
 }
 
-export function ListensSignals(compName: string, signals: Array<any>) {
+export interface ISignal {
+  source: string;
+  signal: string;
+  callback: any;
+};
+
+export function ListensSignals(compName: string, signals: Array<ISignal>) {
   signals.forEach(data => {
     ListensSignal(data.source, data.signal, data.callback, compName);
   });

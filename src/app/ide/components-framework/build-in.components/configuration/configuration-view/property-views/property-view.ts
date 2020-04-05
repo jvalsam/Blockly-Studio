@@ -200,30 +200,31 @@ export function RenderPartsToPropertyData (renderParts: Array<any>, total: numbe
 }
 
 export function CreateRenderPartsWithData (renderParts: Array<any>, data) {
-
-    
+    let rdata = data.json[0];
     let newItemParts: Array<any> = [];
 
     _.forEach(renderParts, (renderPart) => {
         let newItemPart: any = { type: renderPart.id };
-        let value;
+        let value = rdata[renderPart.id];
         switch(renderPart.type) {
-            case "img":
-                value = data.filter(x => x.hasOwnProperty(renderPart.id))
-                    [0][renderPart.id];
-                newItemPart.value = _.includes(value, "fa-")
-                    ? { fa: value }
-                    : { path: value };
+            case "img": {
+                if (Array.isArray(value) && value.length === 1) {
+                    newItemPart.value = {
+                        path: data.json[renderPart.id]
+                    };
+                }
+                else if (!Array.isArray(value)) {
+                    newItemPart.value = value.startsWith("fa")
+                        ? { fa: value }
+                        : { path: value };
+                }
                 break;
+            }
             case "title":
-                value = data.filter(x => x.hasOwnProperty(renderPart.id))
-                    [0][renderPart.id];
                 newItemPart.value = { text: value };
                 break;
             case "colour":
-                value = data.filter(x => x.hasOwnProperty(renderPart.id))
-                    [0][renderPart.id];
-                newItemPart.value = { colour: value }
+                newItemPart.value = { colour: value };
                 break;
             case "state":
                 break;

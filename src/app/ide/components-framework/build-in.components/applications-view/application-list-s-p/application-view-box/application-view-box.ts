@@ -25,7 +25,13 @@ export class ApplicationViewBox extends View {
         this.application.id = this.id;
         this.application.lastModified =
             new Date(this.application.lastModified).toUTCString();
-        
+
+        if (!this.application.img) {
+            this.application.img = document["localPath"]
+                ? (document["localPath"] + "/images/default-app.jpg")
+                : "../../../../../../../../images/default-app.jpg";
+        }
+
         var data = {
             actions: [],
             concerned: this

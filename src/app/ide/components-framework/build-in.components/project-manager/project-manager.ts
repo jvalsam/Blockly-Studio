@@ -21,9 +21,6 @@ import * as _ from "lodash";
 import { ViewRegistry } from "./../../component/registry";
 import { ModalView } from "../../component/view";
 import {
-    ProjectManagerElementView
-} from "./project-manager-view/project-manager-elements-view/project-manager-application-instance-view/project-manager-element-view";
-import {
     RenderPartsToPropertyData,
     CreateRenderPartsWithData
 } from "../configuration/configuration-view/property-views/property-view";
@@ -33,6 +30,12 @@ import {
 import { upload_files } from "../../../shared/upload-files";
 import { RuntimeManager } from "../run-time-system-manager/run-time-manager";
 import { ComponentRegistry } from "../../component/component-entry";
+import {
+    ProjectElement
+} from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-element";
+import {
+    ProjectCategory
+} from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-category";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -113,8 +116,9 @@ export class ProjectManager extends IDEUIComponent {
     }
     @RequiredFunction("Shell", "showToolbar")
 
+    @RequiredFunction("DomainsManager", "loadDomain")
     @ExportedFunction
-    initialize(): void {
+    public initialize(): void {
         let metadata = ProjectManagerMetaDataHolder
             .getWSPDomainMetaData(this.domainType);
         metadata.style = ProjectManagerMetaDataHolder
@@ -166,6 +170,14 @@ export class ProjectManager extends IDEUIComponent {
                 "openComponent",
                 [this]);
 
+            // start domain manager (if it is not) and load the domain
+            ComponentsCommunication.functionRequest(
+                this.name,
+                "DomainsManager",
+                "loadDomain",
+                [this.domainType]
+            );
+
             var console: RuntimeManager = <RuntimeManager>ComponentRegistry
                 .getEntry("RuntimeManager")
                 .create([".project-manager-runtime-console-area"]);
@@ -193,6 +205,13 @@ export class ProjectManager extends IDEUIComponent {
         this.loadedProjects[project._id] = project;
         this.mainProject = project._id;
         (<ProjectManagerJSTreeView>this._view).loadProject(project);
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "loadProject",
+            [project._id, project.domainElements]
+        );
     }
 
     public saveProjectResponse(resp) {
@@ -203,7 +222,7 @@ export class ProjectManager extends IDEUIComponent {
 
     private getProjectDataToSave(project) {
         let projectForSave = JSON.parse(JSON.stringify(project));
-        _.forEach(projectForSave.elements, (element)=> {
+        _.forEach(projectForSave.projectItems, (element)=> {
             _.forEach(element.renderParts, (renderPart) => {
                 renderPart.type = renderPart.id;
                 delete renderPart.id;
@@ -400,7 +419,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private createNewItem(
-        concerned: ProjectManagerElementView,
+        concerned: ProjectElement,
         newItem: any,
         src: any
     ): void {
@@ -408,18 +427,19 @@ export class ProjectManager extends IDEUIComponent {
             this.currModalData.itemData.renderParts,
             newItem);
 
-        concerned.addNewElement(
+        concerned.project.addNewElement(
             {
                 renderParts: renderParts,
                 editorData: src,
                 systemID: src.systemID,
                 type: this.currModalData.itemData.type
             },
+            concerned,
             (elem) => {
                 this.onClickProjectElement(elem);
-                this.loadedProjects[concerned.projectID].elements
+                this.loadedProjects[concerned.project.id].projectItems
                     .push(elem.itemData());
-                this.saveProject(concerned.projectID);
+                this.saveProject(concerned.project.id);
                 elem.onClick();
             }
         );
@@ -427,10 +447,10 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public saveEditorData(src: any) {
-        let index = this.loadedProjects[src.projectID].elements
+        let index = this.loadedProjects[src.projectID].projectItems
             .map(x=>x.systemID)
             .indexOf(src.systemID);
-        this.loadedProjects[src.projectID].elements[index].editorData = src;
+        this.loadedProjects[src.projectID].projectItems[index].editorData = src;
         this.saveProject(src.projectID);
     }
 
@@ -459,7 +479,7 @@ export class ProjectManager extends IDEUIComponent {
                 let src = this.createNewElement(
                     event,
                     data,
-                    this.newSystemID(concerned.projectID)
+                    this.newSystemID(concerned.project["projectID"])
                 );
                 this.createNewItem(
                     concerned,
@@ -476,24 +496,25 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public onAddProjectElement (
         event: IEventData,
-        concerned: ProjectManagerElementView
+        concerned: ProjectElement
     ): void {
         this.currEvent = event;
         let dialoguesData = [];
         let validTypes = concerned.getValidChildren();
+        let projectID = concerned.project["projectID"];
         let projInstView = (<ProjectManagerJSTreeView>this._view)
-            .getProject(concerned.projectID);
+            .getProject(projectID);
 
         assert(projInstView !== null);
 
-        this.currModalData.projectID = concerned.projectID;
+        this.currModalData.projectID = projectID;
         let systemIDs = this.loadedProjects[this.currModalData.projectID].systemIDs;
 
         // specific element to select
         if (event.data.choices.length === 1) {
             let type = event.data.choices[0].type;
-            this.currModalData.itemData = concerned.getChildElementData(type);
-            let renderData = concerned.getReversedChildElementRenderData(type);
+            this.currModalData.itemData = (<ProjectCategory>concerned).getChildElementData(type);
+            let renderData = (<ProjectCategory>concerned).getReversedChildElementRenderData(type);
 
             dialoguesData.push(
                 this.createDialogue(
@@ -537,7 +558,7 @@ export class ProjectManager extends IDEUIComponent {
                                         }
 
                                         assert(
-                                            paths.length === 1,
+                                            paths.length === 1 || paths.length === 0,
                                             `Invalid number of paths in save img of
                                             Project Manager New Item`
                                         );
@@ -545,7 +566,7 @@ export class ProjectManager extends IDEUIComponent {
                                         let src = this.createNewElement(
                                             event,
                                             data,
-                                            this.newSystemID(concerned.projectID)
+                                            this.newSystemID(projectID)
                                         );
                                         this.createNewItem(
                                             concerned,
@@ -561,7 +582,7 @@ export class ProjectManager extends IDEUIComponent {
                                     }
                                 );
 
-                                // let src = this.createNewElement(event, data, this.newSystemID(concerned.projectID));
+                                // let src = this.createNewElement(event, data, this.newSystemID(projectID));
                                 // this.createNewItem(concerned, data, src);
                             }
                         }
@@ -580,10 +601,10 @@ export class ProjectManager extends IDEUIComponent {
             let dialogues = [];
             let itemsData = [];
             _.forEach(types, (type)=> {
-                let renderData = _.reverse(concerned
+                let renderData = _.reverse((<ProjectCategory>concerned)
                     .getReversedChildElementRenderData(type));
 
-                itemsData.push(concerned.getChildElementData(type));
+                itemsData.push((<ProjectCategory>concerned).getChildElementData(type));
                 let title = renderData[renderData
                     .map(x=>x.type)
                     .indexOf("title")]
@@ -670,20 +691,12 @@ export class ProjectManager extends IDEUIComponent {
         alert("Delete all element function is not supported yet!");
     }
 
-    public onClickMenuItem (event: IEventData, data: any): void {
+    public onClickMenuItem (event: IEventData, concerned: ProjectElement): void {
         if (event.providedBy === "Platform") {
-            this[<string>event.action] (data.itemId, data.projectId);
+            this[<string>event.action](event, concerned);
         }
         else {
-            this.onOuterFunctionRequest(
-                event,
-                [
-                    {
-                        "itemId": data.itemId,
-                        "projectId": data.projectId
-                    }
-                ]
-            );
+            this.onOuterFunctionRequest(event, concerned);
         }
     }
 
@@ -698,15 +711,15 @@ export class ProjectManager extends IDEUIComponent {
             .removeElement(concerned.projectID, concerned.systemID);
 
         let index = this.loadedProjects[concerned.projectID]
-            .elements
+            .projectItems
             .map(x => x.systemID)
             .indexOf(concerned.systemID);
 
         assert(index > -1, "not found element in project data to remove");
         // fixing rendering order
-        let element = this.loadedProjects[concerned.projectID].elements[index];
+        let element = this.loadedProjects[concerned.projectID].projectItems[index];
         this.loadedProjects[concerned.projectID]
-            .elements
+            .projectItems
             .filter(
                 x => {
                     return x.path === element.path && x.orderNO > element.orderNO;
@@ -715,7 +728,7 @@ export class ProjectManager extends IDEUIComponent {
                 (elementInPath) => --elementInPath.orderNO
             );
         // remove from project data
-        this.loadedProjects[concerned.projectID].elements.splice(index, 1);
+        this.loadedProjects[concerned.projectID].projectItems.splice(index, 1);
         this.saveProject(concerned.projectID);
     }
 
@@ -830,9 +843,9 @@ export class ProjectManager extends IDEUIComponent {
                                     (resp) => {
                                         let loadedProject = this.loadedProjects[concerned.projectID];
                                         // edit name in title
-                                        let index = loadedProject.elements.map(x=>x.systemID).indexOf(concerned.systemID);
+                                        let index = loadedProject.projectItems.map(x=>x.systemID).indexOf(concerned.systemID);
                                         assert(index>-1, "Not found element in project to rename!");
-                                        let element = loadedProject.elements[index];
+                                        let element = loadedProject.projectItems[index];
                                         let viewData = {};
                                         Object.keys(data[0]).forEach((type) => {
                                             let value = data[0][type];
@@ -879,12 +892,26 @@ export class ProjectManager extends IDEUIComponent {
     private createNewElement(event: IEventData, data: any, systemID: string): string {
         let index = event.data.choices.map(x=>x.type).indexOf(this.currModalData.itemData.type);
         assert(index !== -1, "Not defined event click for this specific element type.");
-        let args = ( ({mission, providedBy}) => ({mission, providedBy}) ) (event.data.choices[index]);
+        let renderParts = {};
+        let formData = typeof data === "object"
+            ? data.json[0]
+            : data[data.length - 1].json[0];
+        for (const id of Object.keys(formData)) {
+            let rp = this.currModalData.itemData.renderParts.find(x=> x.id === id);
+            renderParts[rp.type] = formData[id];
+        }
+
         let response = ComponentsCommunication.functionRequest(
             "ProjectManager",
-            args.providedBy ? args.providedBy : "EditorManager",
-            "factoryNewElement",
-            [ args.mission, data[data.length-1].json, systemID, this.currModalData.projectID, [] ]
+            "EditorManager",
+            "factoryNewProjectItem",
+            [
+                this.currModalData.itemData.type, // project-item-type
+                renderParts,
+                systemID,
+                this.currModalData.projectID,
+                []
+            ]
         );
         return response.value;
     }

@@ -1,4 +1,5 @@
-import { Editor } from "../../components-framework/build-in.components/editor-manager/editor";
+import { DomainElementsHolder } from './../../domain-manager/domains-holder';
+import { Editor, IDomainElementData } from "../../components-framework/build-in.components/editor-manager/editor";
 import {
     ExportedSignal,
     ExportedFunction,
@@ -45,6 +46,13 @@ export class ViSmaOE extends Editor {
         alert("on open");
     }
 
+    @ExportedSignal('create-smart-object')
+    @ExportedSignal('delete-smart-object')
+    @ExportedSignal('rename-smart-object')
+    @ExportedSignal('create-smart-environment')
+    @ExportedSignal('delete-smart-environment')
+    @ExportedSignal('rename-smart-environment')
+
     @RequiredFunction("Shell", "addTools")
     @ExportedFunction
     public open(src: string, toolbox?: string, isFirstInst:boolean =false): void {
@@ -82,6 +90,7 @@ export class ViSmaOE extends Editor {
 
     }
 
+    // @ExportedSignal('create-smart-object')
     @ExportedStaticFunction
     public static CreateSmartObject(): any {
         return { 
@@ -90,10 +99,33 @@ export class ViSmaOE extends Editor {
         };
     }
 
+    // @ExportedSignal('delete-smart-object')
+    // @ExportedStaticFunction
+    // public static DeleteSmartObject(): void {
+
+    // }
+
+    // @ExportedSignal('rename-smart-object')
+    // @ExportedStaticFunction
+    // public static RenameSmartObject(): void {
+
+    // }
+
+    // @ExportedSignal('create-smart-environment')
     @ExportedStaticFunction
     public static CreateSmartEnvironment(): any {
         return { "SmartEnvironmentElems": "TODO create" };
     }
+
+    // @ExportedSignal('delete-smart-environment')
+    // @ExportedStaticFunction
+    // public static DeleteSmartEnvironment(): void {
+    // }
+
+    // @ExportedSignal('rename-smart-environment')
+    // @ExportedStaticFunction
+    // public static RenameSmartEnvironment(): void {
+    // }
 
     @ExportedFunction
     public ViewAllSmartObjects() {
@@ -196,7 +228,7 @@ export class ViSmaOE extends Editor {
                     progress_bar.set_progress(scan_progress);
                 }
             }
-            
+
             iotivity_communication.get_online_smart_objects(
                 function(smart_objects) {
                     smart_object_communication.get_registered_smart_objects(
@@ -314,5 +346,23 @@ export class ViSmaOE extends Editor {
     @ExportedFunction
     public onChangeConfig(values: any): void {
         alert("ViSmaOE: on change config data not developed yet in ViSmaOE Component");
+    }
+
+    public getDomainElementData(projectId: string, domainElemId: string): IDomainElementData {
+        let elem = DomainElementsHolder["getElement"](projectId, domainElemId);
+        elem.data.id = elem.id;
+
+        let signal =
+            "create-smart-"
+            + (elem.name === "SmartObject" ? "object" : "environment");
+
+        return {
+            signal: signal,
+            data: elem.data
+        };
+    }
+
+    public factoryNewItem(pitemName: string, econfigName: string, pitemInfo: any, editorConfig: any): any {
+        return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
     }
 }

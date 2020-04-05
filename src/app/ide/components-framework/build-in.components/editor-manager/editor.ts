@@ -28,6 +28,11 @@ export interface IEditorSrcData {
 
 }
 
+export interface IDomainElementData {
+    signal: string;
+    data: any;
+}
+
 @UIComponentMetadata({
     description: "All visual editors which are handled by the editor manager in the IDE",
     authors: [
@@ -36,7 +41,6 @@ export interface IEditorSrcData {
     version: "1.0"
 })
 export abstract class Editor extends IDEUIComponent {
-    private _projectID: string;
     private _systemID: string;
     private _isRendered: boolean;
 
@@ -80,7 +84,7 @@ export abstract class Editor extends IDEUIComponent {
         this._isRendered = true;
     }
 
-    // All Editors have to implement static functions factory+"each mission name"
+    // all Editors have to implement static functions factory+"each mission name"
     @ExportedStaticFunction
     public static factoryNewElement(mission, args): ResponseValue {
       return new ResponseValue(this.name, "factory", this["factory"+mission](args));
@@ -92,8 +96,17 @@ export abstract class Editor extends IDEUIComponent {
             "projectID": projectID
         };
         _.forEach(args, (value, key) => {
-            json[key] += value;
+            json[key] /*+*/= value;
         });
         return json;
     }
+
+    public abstract getDomainElementData(projectId: string, domainElemId: string): IDomainElementData;
+
+    public abstract factoryNewItem(
+        pitemName: string,
+        econfigName: string,
+        pitemInfo: any,
+        editorConfig: any
+    ): any;
 }

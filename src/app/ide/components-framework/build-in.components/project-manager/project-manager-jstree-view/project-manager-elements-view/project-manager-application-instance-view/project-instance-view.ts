@@ -1,18 +1,19 @@
-import { ProjectItemViewState } from './item-view/item-view';
 import { ViewRegistry } from "../../../../../component/registry";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { View, ViewMetadata, IViewUserStyleData } from "../../../../../component/view";
-import { ProjectCategoryView as CategoryView } from "./category-view/category-view";
 import { ActionsView } from "../../../../../common-views/actions-view/actions-view";
-import { IProjectManagerElementData } from "../../../project-manager";
 
 import * as _ from "lodash";
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
 import ProjectManagerAppInstanceViewTmpl from "./project-manager-app-instance-view.tmpl";
-import { PageFoldingView } from '../../../../../common-views/page-folding-view/page-folding-view';
+import { PageFoldingView } from "../../../../../common-views/page-folding-view/page-folding-view";
 import { ProjectManagerElementView } from "./project-manager-element-view";
 import { assert } from "../../../../../../../ide/shared/ide-error/ide-error";
+import { ProjectElement } from "./project-element";
+import { ProjectCategory } from "./project-category";
+import { ProjectItem } from "./project-item";
+
 
 interface IAppInstanceEvent {
     type: string;
@@ -60,7 +61,7 @@ interface IJSTreeNodeChildren extends _IJSTreeNode {
 interface IJSTreeNodeParent extends _IJSTreeNode {
     parent: string;
 };
-type IJSTreeNode = IJSTreeNodeChildren | IJSTreeNodeParent;
+export type IJSTreeNode = IJSTreeNodeChildren | IJSTreeNodeParent;
 
 @ViewMetadata({
     name: "ProjectInstanceView",
@@ -72,7 +73,7 @@ export class ProjectInstanceView extends View {
 
     private renderData: any;
     private actions: ActionsView;
-    private categsData: Array<IJSTreeNode>;
+    private projectElems: Array<ProjectElement>;
     private types;
     private contextmenu;
     private clickaction;
@@ -119,14 +120,14 @@ export class ProjectInstanceView extends View {
         this.initActions(data.meta.actions);
 
         this.initElem("menu", data.meta.actions);
-        this.categsData = new Array<IJSTreeNode>();
+        this.projectElems = new Array<ProjectElement>();
         this.types = {};
         this.contextmenu = {};
         this.clickaction = {};
         this.bgRenderItems = [];
 
         _.forEach(data.meta.categories, (category) => {
-            this.createCategoryItems(category, data.project.elements);
+            this.createCategoryItems(category, data.project.projectItems);
         });
 
         this.treeview = null;
@@ -173,45 +174,10 @@ export class ProjectInstanceView extends View {
         return this["__getValue_"+obj.type](value);
     }
 
-    private setContentMenuObj(actions): any {
-        let menuObj = {};
+    public addNewElement(itemData, projectCategory, callback): void {
+        let newElem = {};
 
-        actions.forEach((action, index) => {
-            menuObj[index] = {};
-            menuObj[index].label = action.title;
-            menuObj[index].icon = action.img;
-            if (action.events) {
-                let event = action.events.find(x => x.type === "click");
-                menuObj[index].action = (node) => {
-                    this.onActionItem(node, event);
-                };
-            }
-
-            if (action._disabled) {
-                menuObj[index]._disabled = true;
-            }
-            if (action._class) {
-                menuObj[index]._class = action._class;
-            }
-            if (action.separator_before) {
-                menuObj[index].separator_before = true;
-            }
-            if (action.separator_before) {
-                menuObj[index].separator_before = true;
-            }
-
-            if (action.submenu) {
-                menuObj[index].submenu = this.setContentMenuObj(action.submenu);
-            }
-        });
-
-        return menuObj;
-    }
-
-    public setContextMenu(category) {
-        this.types[category.type] = {};
-        category.validChildren.forEach(type => this.types[type] = {});
-        this.contextmenu[category.type] = this.setContentMenuObj(category.actions);
+        callback(newElem);
     }
 
     public setClickAction(category) {
@@ -227,17 +193,14 @@ export class ProjectInstanceView extends View {
         }
     }
 
-    private createCategoryItems(category, elements): void {
+    private createCategoryItems(category, projectItems): void {
         category.id = "jstree_" + category.type;
         let infoC: Array<any> = category.renderParts;
         let text = infoC.find(x => x.type === "title");
         let icon = infoC.find(x => x.type === "img");
         let color = infoC.find(x => x.type === "colour");
 
-        this.setContextMenu(category);
-        this.setClickAction(category);
-
-        let categData: IJSTreeNode = {
+        let jstreeNode: IJSTreeNode = {
             id: category.id,
             type: category.type,
             parent: category.parent || "#",
@@ -250,7 +213,7 @@ export class ProjectInstanceView extends View {
             options: category.actions && category.actions.length > 0
         };
 
-        categData.highlighted = category.highlighted ||
+        jstreeNode.highlighted = category.highlighted ||
             {
                 bgColor: "rgb(208, 208, 208)",
                 bgColorHover: "rgb(198, 198, 198)",
@@ -260,10 +223,20 @@ export class ProjectInstanceView extends View {
                 }
             };
 
-        this.categsData.push(categData);
+        let projectCategory = new ProjectCategory(
+            jstreeNode,
+            this,
+            category
+        );
+
+        this.types[category.type] = {};
+        category.validChildren.forEach(type => this.types[type] = {});
+        this.setClickAction(category);
+
+        this.projectElems.push(projectCategory);
         this.bgRenderItems.push(category.id);
 
-        this.addProjectItems(category.id, elements);
+        this.addProjectItems(category.id, projectItems);
 
         if (category.categories) {
             category.categories.forEach (scategory => {
@@ -277,7 +250,7 @@ export class ProjectInstanceView extends View {
                             hover: "white"
                         }
                     };
-                this.createCategoryItems(scategory, elements);
+                this.createCategoryItems(scategory, projectItems);
             });
         }
     }
@@ -294,7 +267,7 @@ export class ProjectInstanceView extends View {
             ? item.systemID
             : "jstree_" + parentId + "_" + text;
 
-        let itemData: IJSTreeNode = {
+        let jstreeNode: IJSTreeNode = {
             id: item.id,
             parent: parentId,
             type: item.type,
@@ -307,7 +280,46 @@ export class ProjectInstanceView extends View {
                 opened: true
             }
         };
-        this.categsData.push(itemData);
+
+        let meta = this.getMeta(item.type);
+
+        let projectItem = new ProjectItem(
+            jstreeNode,
+            <ProjectCategory>this.getProjectElement(parentId),
+            meta
+        );
+
+        this.projectElems.push(projectItem);
+    }
+
+    public getProjectElement(id): ProjectElement {
+        return this.projectElems.find(elem => elem.jstreeNode.id === id);
+    }
+
+    private getMetaHelper(type, categories): any {
+        let res = categories.find(c => c.type === type);
+        if (res) {
+            return res;
+        }
+        for(const element of categories) {
+            if (element.items && element.items.length>0) {
+                res = element.items.find(el => el.type === type);
+                if (res) {
+                    return res;
+                }
+            }
+            if (element.categories && element.categories.length>0) {
+                res = this.getMetaHelper(type, element.categories);
+                if (res) {
+                    return res;
+                }
+            }
+        };
+        return null;
+    }
+
+    public getMeta(type): any {
+        return this.getMetaHelper(type, this.data.meta.categories);
     }
 
     private addProjectItems(parentId: string, items: Array<any>): void {
@@ -369,7 +381,8 @@ export class ProjectInstanceView extends View {
     }
 
     private itemsMenu(node) {
-        return this.contextmenu[node.type];
+        let projectElement = this.projectElems.find(x => x.jstreeNode.id === node.id);
+        return projectElement.menuObj;
     }
 
     public render(): void {
@@ -382,6 +395,9 @@ export class ProjectInstanceView extends View {
             this.treeview.destroy();
         }
         $(this.categoriesViewSelector).empty();
+
+        let jstreeNodes: Array<IJSTreeNode> = [];
+        this.projectElems.forEach(elem => jstreeNodes.push(elem.jstreeNode));
 
         $(this.categoriesViewSelector).jstree({
             "plugins": [
@@ -396,7 +412,7 @@ export class ProjectInstanceView extends View {
             "types": this.types,
             "core": {
                 "check_callback": true,
-                "data": this.categsData
+                "data": jstreeNodes
             }
         });
         this.treeview = $.jstree.reference(this.categoriesViewSelector);
@@ -407,16 +423,15 @@ export class ProjectInstanceView extends View {
 
     public onClickItem(node): void {
         let action = this.clickaction[node.type].action;
+        node = this.projectElems.find(x => x.jstreeNode.id === node.id);
 
         if (action) {
             this.onActionItem(node, action);
         }
     }
 
-    public onActionItem(node, action): void {
-        let itemData = this.data.project.elements
-            .find(x => x.systemID === node.id);
-        this.parent["onOuterFunctionRequest"](action, itemData);
+    public onActionItem(element: ProjectElement, action): void {
+        this.parent["onClickMenuItem"](action, element);
     }
 
     public registerEvents(): void {
@@ -510,5 +525,10 @@ export class ProjectInstanceView extends View {
     public hasElement(name: string): boolean {
         let elem = this.treeview.settings.core.data.find(x => x.text === name);
         return elem !== undefined;
+    }
+
+    public getValidChildren(categoryId: string): any {
+        let category = this.data.meta.categories.find(x => x.id === categoryId);
+        return category.validChildren;
     }
 }

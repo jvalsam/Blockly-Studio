@@ -70,7 +70,7 @@ export const SmartObjectsTask =
     // this action does not include undo (converter is required)
     editors: [
         {
-            name: 'BlocklyDExEditor',
+            name: 'BlocklyVPL',
             src: ``
         }
     ]

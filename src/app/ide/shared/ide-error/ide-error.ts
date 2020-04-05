@@ -34,7 +34,7 @@ class _IDEError {
             this.errorView = <IDEErrorView>ViewRegistry.getEntry("IDEErrorView").create(null, MODAL_SELECTOR);
             this.warningView = <IDEWarningView>ViewRegistry.getEntry("IDEWarningView").create(null, MODAL_SELECTOR);
         }
-        window.onerror = function (message, source, lineno, colno, error) {
+        /*window.onerror = function (message, source, lineno, colno, error) {
             if (message === "StopApplicationRuntime") {
                 alert("Stop application button clicked");
                 return true;
@@ -45,7 +45,7 @@ class _IDEError {
             $("#error_dialog").empty();
             $("#error_dialog").append("<p>"+msg+"</p>");
             document["onErrorDialog"]();
-        };
+        };*/
     }
 
     private msgCreator(

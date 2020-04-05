@@ -161,15 +161,18 @@ export const SmartObject = {
     signals: [
         {
             action: 'onCreate',
-            name: 'create-smart-object'
+            name: 'create-smart-object',
+            provider: 'ViSmaOE'
         },
         {
             action: 'onDelete',
-            name: 'delete-smart-object'
+            name: 'delete-smart-object',
+            provider: 'ViSmaOE'
         },
         {
             action: 'onEdit',
-            name: 'rename-smart-object'
+            name: 'rename-smart-object',
+            provider: 'ViSmaOE'
         }
     ]
 };

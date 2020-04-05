@@ -3,11 +3,13 @@ import {
     VPLBlocklyElementHandler
 } from './vpl-blockly-element';
 import { VPLMission } from './vpl-mission';
+import { VPLProjectItem } from './vpl-project-item';
 import { VPLDomainElementsManager } from './vpl-domain-elements-manager';
 
 export class VPLDomainElements {
     constructor(domain) {
         this.domain = domain;
+        this.vplProjectItems = {};
         this.vplMissions = {};
         this.vplElems = {};
     }
@@ -50,8 +52,8 @@ export class VPLDomainElements {
         return listenSignals;
     }
 
-    addMissions(...vplMissions) {
-        vplMissions.forEach(
+    addEditorConfigs(...vplEditorConfigs) {
+        vplEditorConfigs.forEach(
             (vplMission) => this.vplMissions[vplMission.name] =
                 new VPLMission(
                     vplMission.name,
@@ -59,6 +61,17 @@ export class VPLDomainElements {
                     vplMission.editors,
                     this
                 )
+        );
+    }
+
+    addProjectItems(...vplProjectItems) {
+        vplProjectItems.forEach(
+            (vplPI) => this.vplProjectItems[vplPI.name] =
+            new VPLProjectItem(
+                vplPI.name,
+                vplPI.editorsConfig,
+                vplPI.view
+            )
         );
     }
 
@@ -106,6 +119,23 @@ export class VPLDomainElements {
         return this.vplMissions[mission].toolbox;
     }
 
+    getProjectItemInfo(name) {
+        if (name in this.vplProjectItems) {
+            let info = {
+                editorConfigs: {},
+                view: this.vplProjectItems[name].view
+            };
+
+            this.vplProjectItems[name].editorsConfig.forEach(
+                ec => info.editorConfigs[ec] = this.vplMissions[ec].editors
+            );
+
+            return info;
+        }
+
+        return null;
+    }
+
     // TODO: call all elements and missions to unload
     unload() {
 
@@ -132,8 +162,9 @@ export function LoadVPLDomainElements(domain, elemsLoader) {
     let vplDomainElemsData = elemsLoader();
 
     let vplDomainElems = new VPLDomainElements(domain);
-    vplDomainElems.addElements(...vplDomainElemsData.elements);
-    vplDomainElems.addMissions(...vplDomainElemsData.missions);
+    vplDomainElems.addElements(...vplDomainElemsData.domainElements);
+    vplDomainElems.addEditorConfigs(...vplDomainElemsData.editorConfigs);
+    vplDomainElems.addProjectItems(...vplDomainElemsData.projectItems);
 
     return vplDomainElems;
 }

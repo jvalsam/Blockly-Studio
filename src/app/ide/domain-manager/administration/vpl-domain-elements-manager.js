@@ -1,5 +1,7 @@
 import { LoadVPLDomainElements } from './vpl-domain-elements';
-import { IDECore } from '../../components-framework/ide-core';
+import {
+    ListensSignals
+} from '../../components-framework/component/components-communication';
 
 class _VPLDomainElementsManager {
     constructor() {
@@ -34,15 +36,7 @@ class _VPLDomainElementsManager {
             );
         }
 
-        signals[signal].forEach(action => action(data));
-    }
-
-    // if there are signals already, updates the signals
-    listenSignals() {
-        IDECore.listensSignals(
-            Object.keys(this.signals),
-            this.name
-        );
+        signals[signal].forEach(elem => elem.action(data));
     }
 
     /**
@@ -67,14 +61,14 @@ class _VPLDomainElementsManager {
         this._domains[domain] = elems;
     }
 
-    load(domain) {
+    load(domain, listensSignals) {
         if (this._currVPLDomainElements) this._currVPLDomainElements.unload();
 
         this._currVPLDomainElements = LoadVPLDomainElements(
             domain, this._domains[domain]
         );
 
-        this.listenSignals();
+        listensSignals(this.signals);
     }
 
     getToolbox(mission) {
@@ -106,6 +100,10 @@ class _VPLDomainElementsManager {
                 },
                 this.name
             ));
+    }
+
+    getProjectItemInfo(name) {
+        return this._currVPLDomainElements.getProjectItemInfo(name);
     }
 }
 

@@ -18,7 +18,7 @@ type EventHandlerUniqueId = number;
 
 interface EventHandler {
   compSource: string;
-  funcName: string;
+  funcName: string | Function;
 }
 
 interface QueuedEvent {
@@ -169,12 +169,19 @@ export class BlackboardComponent {
         IDEError.raise(
           BlackboardComponent.name,
           "Not found component with name " + data.compSource,
-          "Signal " + eventId + " posted and the aforementioned component is esteblish that listens it."
+          "Signal "
+          + eventId
+          + " posted and the aforementioned component is esteblish that listens it."
         );
       }
       const components = compEntry.getInstances();
       for (const component of components) {
-        component.receiveFunctionRequest(data.funcName, eventContent["data"]);
+        if (typeof data.funcName === "string") {
+          component.receiveFunctionRequest(data.funcName, eventContent["data"]);
+        }
+        else {
+          data.funcName(eventContent["data"]);
+        }
       }
     }
   }

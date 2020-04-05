@@ -248,9 +248,10 @@ export class VPLDomainElementHandler {
 
         this._signals = {};
 
-        signals.forEach((signal) => this._signals[signal.name] =
-                this.getAction(signal.action)
-        );
+        signals.forEach((signal) => this._signals[signal.name] = {
+                action: this.getAction(signal.action),
+                provider: signal.provider
+        });
 
         this.onActionNotiFyMissionsRef = (action) => {
             this.missionsRef.forEach((mission) => mission[action](this.name))

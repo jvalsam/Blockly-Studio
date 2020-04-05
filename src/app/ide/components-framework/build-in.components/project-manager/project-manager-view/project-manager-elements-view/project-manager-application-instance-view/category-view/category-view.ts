@@ -176,18 +176,20 @@ export class ProjectManagerCategoryView extends ProjectManagerElementView {
 
     public addElement(itemData): ProjectManagerElementView {
         itemData.metaIndex = this.data.meta.items.map(x => x.type).indexOf(itemData.type);
-        let itemView = <ProjectManagerElementView>ViewRegistry.getEntry("ProjectManagerItemView").create(
-            this.parent,
-            this.elemsSel,
-            {
-                "parentTree": this,
-                "meta": this.data.meta,
-                "project": this.data.project,
-                "item": itemData,
-                "path": this.path,
-                "nesting": this.renderInfo.nesting + 1
-            }
-        );
+        let itemView = <ProjectManagerElementView>ViewRegistry
+            .getEntry("ProjectManagerItemView")
+            .create(
+                this.parent,
+                this.elemsSel,
+                {
+                    "parentTree": this,
+                    "meta": this.data.meta,
+                    "project": this.data.project,
+                    "item": itemData,
+                    "path": this.path,
+                    "nesting": this.renderInfo.nesting + 1
+                }
+            );
         itemView.clearSelectorArea = false;
         this._children.items.push(itemView);
         return itemView;

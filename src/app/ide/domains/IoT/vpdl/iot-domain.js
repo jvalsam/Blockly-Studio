@@ -20,7 +20,7 @@ defineGeneralCategories(predefinedCategories);
 
 export function InitializeVPDL() {
     DefineVPLDomainElements(
-        'IoTAutomations',
+        'IoT',
         () => ({
             elements: [
                 SmartObject,
