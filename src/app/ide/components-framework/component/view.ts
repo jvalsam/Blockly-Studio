@@ -66,7 +66,7 @@ export abstract class View {
     constructor(
         protected parent: IDEUIComponent,
         public readonly name: string,
-        protected readonly _templateHTML: string,
+        protected _templateHTML: string,
         protected _styles: Array<IViewUserStyleData>,
         protected _selector: string,
         protected _clearSelectorArea: boolean = true
@@ -99,6 +99,11 @@ export abstract class View {
 
     get clearSelectorArea (): boolean { return this._clearSelectorArea; }
     set clearSelectorArea (csa: boolean) { this._clearSelectorArea = csa; }
+
+    set template(tmpl: string) {
+        this._templateHTML = tmpl;
+        this._template = _.template(this._templateHTML);
+    }
 
     public updateView(): void {
         let selector: string = "#" + this._id;

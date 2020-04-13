@@ -143,7 +143,7 @@ export class ProjectManagerJSTreeView extends ComponentView {
             );
     }
 
-    public loadProject(data: any): void {
+    public loadProject(data: any): ProjectInstanceView {
         let projectView = <InstanceView>ViewRegistry
             .getEntry("ProjectInstanceView")
             .create(
@@ -160,6 +160,8 @@ export class ProjectManagerJSTreeView extends ComponentView {
         this.loadedProjects.push(projectView);
 
         projectView.render();
+
+        return projectView;
     }
 
     public getProject(projectID): ProjectInstanceView {

@@ -28,8 +28,8 @@ export class MenuView extends ComponentView {
     public render (): void {
         this.renderTmplEl({
             home_img: document["localPath"]
-                ? document["localPath"] + "/images/puppy.png"
-                : "../../../../../../../../../images/puppy.png"
+                ? document["localPath"] + "/images/blocks.png"
+                : "../../../../../../../../../images/blocks.png"
         });
         for (let index of Object.keys(this.renderData)) {
             let view = renderMenuElem(this.parent, this.itemsContainer, <MenuElem>this.renderData[index]);

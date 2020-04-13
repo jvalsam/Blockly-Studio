@@ -6,9 +6,10 @@ router.use(bodyParser.json());
 var multer = require('multer');
 
 const storage = multer.diskStorage({
-    destination: 'uploaded_files',
+    destination: 'uploaded_files/',
     filename: function (req, file, callback) {
-        callback(null, file.originalname);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        callback(null, file.fieldname + '-' + uniqueSuffix);
     }
 });
 

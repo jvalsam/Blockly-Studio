@@ -375,12 +375,12 @@
   box-sizing: border-box;
 }
 .jstree-default .jstree-wholerow-hovered {
-  background: #e7f4f9;
+  background: rgb(245, 245, 245);
 }
 .jstree-default .jstree-wholerow-clicked {
-  background: #beebff;
-  background: -webkit-linear-gradient(top, #beebff 0%, #a8e4ff 100%);
-  background: linear-gradient(to bottom, #beebff 0%, #a8e4ff 100%);
+  background: /*#beebff*/rgb(240, 240, 240);
+  background: -webkit-linear-gradient(top, rgb(235, 235, 235) 0%, rgb(225, 225, 225) 100%);
+  background: linear-gradient(to bottom, rgb(235, 235, 235) 0%, rgb(225, 225, 225) 100%);
 }
 .jstree-default .jstree-node {
   min-height: 24px;

@@ -18,5 +18,5 @@ export function upload_files(files, on_success, on_failure) {
     )
     .then(handle_response_errors)
     .then(on_success)
-    .then((response) => on_failure(response));
+    .catch((response) => on_failure(response));
 }

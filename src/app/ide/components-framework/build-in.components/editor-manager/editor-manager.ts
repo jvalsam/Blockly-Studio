@@ -1,20 +1,30 @@
-import { ComponentsCommunication } from "./../../component/components-communication";
+import { ViewRegistry } from "./../../component/registry";
+import { DomainsManager } from "./../../../domain-manager/domains-manager";
+import { ComponentsCommunication, PostsSignal } from "./../../component/components-communication";
 import { BlocklyVPL } from "./../../../ide-components/blockly/blockly";
 import {
     ExportedFunction,
     UIComponentMetadata,
-    RequiredFunction
+    RequiredFunction,
+    ExportedSignal
 } from "../../component/component-loader";
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import { Editor } from "./editor";
 
 import { ComponentRegistry } from "../../component/component-entry";
 import { EditorManagerView } from "./editor-manager-view";
-import { IDEError } from "../../../shared/ide-error/ide-error";
-import { EditorDataHolder } from "../../holders";
 import { IEventData } from "../../common-views/actions-view/actions-view";
 import * as _ from "lodash";
-import { assert } from './../../../shared/ide-error/ide-error';
+import { View } from "../../component/view";
+import { PItemView } from "./project-item/pitem-view";
+import { ProjectItem } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+import { assert } from "../../../shared/ide-error/ide-error";
+
+enum EditorsViewState {
+    NO_SPLIT = 0,
+    VERTICAL_SPLIT = 1,
+    HORIZONTAL_SPLIT = 2
+};
 
 @UIComponentMetadata({
     description: "Handles requests to open editor instances for sources",
@@ -29,9 +39,11 @@ import { assert } from './../../../shared/ide-error/ide-error';
     isUnique: true
 })
 export class EditorManager extends IDEUIComponent {
-    private editorInstancesMap: {[systemId:string]: Editor};
-    private editorOnFocusId: string;
-    
+    private readonly pitemEditorsSel = ".pitem-editors-area-";
+    private projectItemsMap: {[systemId:string]: PItemView};
+
+    private pitemOnFocusId: string;
+
     // use it to implement browse previous editor instances viewed
     private focusNextStackEditorID: Array<string>;
     private focusPrevStackEditorID: Array<string>;
@@ -40,65 +52,80 @@ export class EditorManager extends IDEUIComponent {
         name: string,
         description: string,
         compViewName: string,
-        selector: string
+        selector: string,
+        private currentViewState: EditorsViewState = EditorsViewState.NO_SPLIT,
+        initialPItemsFocused?: Array<string> // 1 or 2 pitemIds
     ) {
         super(name, description, compViewName, selector);
-        this.editorInstancesMap = {};
-        this.editorOnFocusId = "";
+        this.projectItemsMap = {};
+        this.view.render();
+        this.initializeEditorsView(
+            this.currentViewState,
+            initialPItemsFocused
+        );
     }
 
-    @RequiredFunction("Shell", "createComponentEmptyContainer")
-    @ExportedFunction
-    public open(sourceId: string, editorName: string, src: string, toolbox: string/* subject to change toolbox */): void {
-        if (Object.keys(this.editorInstancesMap).length === 0) {
+    private editorsViewState2str(value: EditorsViewState): string {
+        switch (value) {
+            case EditorsViewState.NO_SPLIT:
+                return "no";
+            case EditorsViewState.VERTICAL_SPLIT:
+                return "horizontal";
+            case EditorsViewState.HORIZONTAL_SPLIT:
+                return "vertical";
         }
+    }
 
-        if (!this.editorInstancesMap[sourceId]) {
-            this.editorInstancesMap[sourceId] = <Editor>ComponentRegistry.getEntry(editorName).create();
-            (<EditorManagerView>this.view).prepareEditorArea();
-            this.editorInstancesMap[sourceId].view.selector =
-                <string>ComponentsCommunication.functionRequest(
-                    this.name,
-                    "Shell",
-                    "createComponentEmptyContainer",
-                    [
-                        this.editorInstancesMap[sourceId],
-                        ".editors-area-container",
-                        false
-                    ]
-                )
-                .value;
-            (<BlocklyVPL>this.editorInstancesMap[sourceId]).open(
-                <any>src,
-                toolbox,
-                this.totalEditorsOpen() === 1
-            );
-        }
+    @RequiredFunction("ProjectManager", "getProjectItem")
+    private initializeEditorsView(
+        currentViewState: EditorsViewState,
+        initialPItemsFocused: Array<string>
+    ) {
+        let className =
+            this.pitemEditorsSel.substr(1)
+            + this.editorsViewState2str(currentViewState)
+            + "-split-";
 
-        this.editorOnFocusId = sourceId;
-        (<EditorManagerView>this.view).update(this.editorInstancesMap[sourceId]);
+        $(this.pitemEditorsSel+"1").addClass(className + "1");
+        $(this.pitemEditorsSel+"2").addClass(className + "2");
+
+        assert(
+            initialPItemsFocused.length<=2,
+            "invalid number of initial focused pitems in Editor Manager"
+        );
+
+        initialPItemsFocused.forEach((pitemId, index) => {
+            let pitem = ComponentsCommunication.functionRequest(
+                this.name,
+                "ProjectManager",
+                "getProjectItem",
+                [pitemId]
+            ).value;
+
+            this.open(pitem, index+1);
+        });
     }
 
     public totalEditorsOpen(): number {
-        return Object.keys(this.editorInstancesMap).length;
+        return Object.keys(this.projectItemsMap).length;
     }
 
-    public getOnFocusEditor(): Editor {
-        return this.editorInstancesMap[this.editorOnFocusId];
-    }
+    // public getOnFocusEditor(): Editor {
+    //     return this.projectItemsMap[this.editorOnFocusId];
+    // }
 
     @ExportedFunction
     public OnFocusEditorId(): string {
-        return this.editorInstancesMap[this.editorOnFocusId].id;
+        return this.projectItemsMap[this.pitemOnFocusId].id;
     }
 
     // returns where the focus of which item is
     @ExportedFunction
     public onRemoveProjectElement(delSystemID: string): string {
-        if (this.editorInstancesMap[delSystemID]) {
-            this.editorInstancesMap[delSystemID].destroy();
-            delete this.editorInstancesMap[delSystemID];
-            if (this.editorOnFocusId === delSystemID) {
+        if (this.projectItemsMap[delSystemID]) {
+            this.projectItemsMap[delSystemID].destroy();
+            delete this.projectItemsMap[delSystemID];
+            if (this.pitemOnFocusId === delSystemID) {
                 let prevFocusEditorID = this.focusPrevStackEditorID.pop();
                 this.onChangeEditorFocus(prevFocusEditorID);
             }
@@ -107,7 +134,7 @@ export class EditorManager extends IDEUIComponent {
                 _.remove(this.focusPrevStackEditorID, id => id === delSystemID);
             }
         }
-        return this.editorOnFocusId;
+        return this.pitemOnFocusId;
     }
 
     public destroy(): void {
@@ -115,10 +142,14 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public registerEvents(): void {}
+    public registerEvents(): void {
+
+    }
 
     @ExportedFunction
-    public update(): void {}
+    public update(): void {
+
+    }
 
     @ExportedFunction
     public onOpen(): void {
@@ -126,19 +157,21 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public onClose(): void {}
+    public onClose(): void {
+
+    }
 
     @ExportedFunction
     public onChangeEditorFocus(systemID): void {
-        this.editorOnFocusId = systemID;
-        (<EditorManagerView>this.view).update(this.editorInstancesMap[systemID]);
+        this.pitemOnFocusId = systemID;
+        (<EditorManagerView>this.view).update(this.projectItemsMap[systemID]);
     }
 
     @ExportedFunction
     public onFocusPreviousEditor(): void {
         if (this.focusNextStackEditorID.length > 0) {
             let nextSystemID = this.focusNextStackEditorID.pop();
-            this.focusPrevStackEditorID.push(this.editorOnFocusId);
+            this.focusPrevStackEditorID.push(this.pitemOnFocusId);
             this.onChangeEditorFocus(nextSystemID);
         }
     }
@@ -147,7 +180,7 @@ export class EditorManager extends IDEUIComponent {
     public onFocusNextEditor(): void {
         if (this.focusPrevStackEditorID.length > 0) {
             let nextSystemID = this.focusPrevStackEditorID.pop();
-            this.focusNextStackEditorID.push(this.editorOnFocusId);
+            this.focusNextStackEditorID.push(this.pitemOnFocusId);
             this.onChangeEditorFocus(nextSystemID);
         }
     }
@@ -159,6 +192,12 @@ export class EditorManager extends IDEUIComponent {
         // Maybe open tabs if exist has to be renamed...
 
         callback (true);
+    }
+
+    private convertEconf(name) {
+        return (name.indexOf("__") !== -1)
+            ? name.substring(0, name.indexOf("__"))
+            : name;
     }
 
     @RequiredFunction("DomainsManager", "getProjectItem")
@@ -191,7 +230,7 @@ export class EditorManager extends IDEUIComponent {
                 "factoryNewItem",
                 [
                     name,
-                    ec_name,
+                    this.convertEconf(ec_name),
                     args,
                     editorConfig
                 ]
@@ -210,27 +249,71 @@ export class EditorManager extends IDEUIComponent {
         return projectItem;
     }
 
+    @ExportedSignal("editor-manager-open-pitem-completed")
     @ExportedFunction
-    public onRequestEditorAction (event: IEventData, itemData: any) {
-        let editorName = itemData.systemID.split("_")[0];
-        assert(editorName, "Invalid systemID exists on the item "+itemData);
+    public open(pi: ProjectItem, pitemArea?: number): void {
+        let pitemData = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [pi.jstreeNode.type]
+        ).value;
         // check if there is instance with systemID
-        if (!this.editorInstancesMap[itemData.systemID]) {
-            // already pinned editor, later may convert to be able to pin to other editors
-            this.editorInstancesMap[itemData.systemID] = <Editor>
-                ComponentRegistry
-                    .getEntry(editorName)
-                    .create([".project-manager-visual-editors-area"]);
-            //editable and setted only by the editor manager
-            this.editorInstancesMap[itemData.systemID]
-                ["_systemID"] = itemData.systemID;
-            (<EditorManagerView>this.view).prepareEditorArea();
-            let resp = this.editorInstancesMap
-                [itemData.systemID]
-                [event.data.mission] (itemData.editorData);
-            return resp;
+        if (!this.projectItemsMap[pi.systemID]) {
+            let econfigs = pitemData.editorConfigs;
+            let editorsSel = Object.keys(econfigs);
+
+            let selector = ".pitem-editors-area-1";
+            // if (this.onFocusData) {}
+
+            const pitemView: PItemView = <PItemView>ViewRegistry
+                .getEntry("PItemView")
+                .create(
+                    this,
+                    selector,
+                    pi,
+                    editorsSel,
+                    pitemData.view.template,
+                    pitemData.view.events
+                );
+            pitemView.render();
+
+            for (let mission of editorsSel) {
+                let sel = pi.systemID + "_" + mission;
+                // only one editor is supported
+                // if domain author give more
+                // TODO: selection by the end-user... now we just choose the 1st
+                let econfig = econfigs[mission][0];
+
+                let editor = <Editor>ComponentRegistry.getEntry(econfig.name)
+                    .create([
+                        sel,
+                        pi.systemID,
+                        this.convertEconf(mission),
+                        econfig.style,
+                        econfig.src
+                    ]);
+                pitemView.addEditor(mission, editor);
+                editor.render();
+            }
         }
 
-        this.onChangeEditorFocus(itemData.systemID);
+        ComponentsCommunication.postSignal(
+            this.name,
+            "editor-manager-open-pitem-completed",
+            [pi]
+        );
+    }
+
+    @RequiredFunction("DomainsManager", "getProjectItem")
+    @ExportedFunction
+    public onRequestAction (event: IEventData, pi: ProjectItem): any {
+        let reqAction = event.action;
+        if (typeof reqAction === "string") {
+            this[reqAction] (pi);
+        }
+        else {
+            reqAction (pi);
+        }
     }
 }

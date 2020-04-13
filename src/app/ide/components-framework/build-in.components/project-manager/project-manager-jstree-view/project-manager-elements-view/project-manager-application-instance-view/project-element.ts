@@ -53,8 +53,8 @@ export abstract class ProjectElement {
             if (action.separator_before) {
                 this._menuObj[index].separator_before = true;
             }
-            if (action.separator_before) {
-                this._menuObj[index].separator_before = true;
+            if (action.separator_after) {
+                this._menuObj[index].separator_after = true;
             }
 
             if (action.submenu) {
@@ -67,5 +67,9 @@ export abstract class ProjectElement {
 
     public get menuObj() {
         return this._menuObj;
+    }
+
+    public trigger(evt) {
+        this.project.trigger(evt, this);
     }
 }

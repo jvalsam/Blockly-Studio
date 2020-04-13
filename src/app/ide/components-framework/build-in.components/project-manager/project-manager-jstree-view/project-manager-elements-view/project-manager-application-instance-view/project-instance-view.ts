@@ -70,12 +70,12 @@ export type IJSTreeNode = IJSTreeNodeChildren | IJSTreeNodeParent;
 export class ProjectInstanceView extends View {
     private readonly categoriesViewSelector;
     private foldingView: PageFoldingView;
+    private _firstPItemId: string;
 
     private renderData: any;
     private actions: ActionsView;
     private projectElems: Array<ProjectElement>;
     private types;
-    private contextmenu;
     private clickaction;
     private treeview;
     private bgRenderItems: Array<string>;
@@ -117,12 +117,13 @@ export class ProjectInstanceView extends View {
         this.foldingView
             .setPFSelector("#folding-app-instance-categories-"+this.id);
 
+        this._firstPItemId = null;
+
         this.initActions(data.meta.actions);
 
         this.initElem("menu", data.meta.actions);
         this.projectElems = new Array<ProjectElement>();
         this.types = {};
-        this.contextmenu = {};
         this.clickaction = {};
         this.bgRenderItems = [];
 
@@ -131,6 +132,14 @@ export class ProjectInstanceView extends View {
         });
 
         this.treeview = null;
+    }
+
+    public get dbID() {
+        return this["projectID"];
+    }
+
+    public get firstPItemID (): string {
+        return this._firstPItemId;
     }
 
     //color, img, text, shared
@@ -167,17 +176,35 @@ export class ProjectInstanceView extends View {
             return obj;
         }
         let value = obj.value;
-        if (typeof value === "string") {
+        if (typeof value === "undefined" || typeof value === "string") {
             return value;
         }
 
         return this["__getValue_"+obj.type](value);
     }
 
-    public addNewElement(itemData, projectCategory, callback): void {
-        let newElem = {};
+    public addNewElement(
+        itemData,
+        projectCategory,
+        callback
+    ): void {
+        let parentId = projectCategory.jstreeNode.id;
+        let pi = this.addProjectItem(parentId, itemData);
 
-        callback(newElem);
+        // tmp solution to pin new node in document, to cache and update 
+        // core data of the jstree. TODO: refactor the plugin of the jstree lib
+        document["jstreeNewNode"] = pi.jstreeNode;
+        $(this.categoriesViewSelector)
+            .jstree()
+            .create_node(
+                parentId,
+                pi.jstreeNode,
+                "last",
+                () => {
+                    this.registerItemClick(pi);
+                    callback(pi);
+                }
+            );
     }
 
     public setClickAction(category) {
@@ -230,7 +257,12 @@ export class ProjectInstanceView extends View {
         );
 
         this.types[category.type] = {};
-        category.validChildren.forEach(type => this.types[type] = {});
+        category.validChildren.forEach(type => this.types[type] = {
+            "icon": this.getMeta(type).renderParts
+                        .find(x => x.type === "img")
+                        .value
+                        .default
+        });
         this.setClickAction(category);
 
         this.projectElems.push(projectCategory);
@@ -255,7 +287,7 @@ export class ProjectInstanceView extends View {
         }
     }
 
-    private addProjectItem (parentId, item): void {
+    private addProjectItem (parentId, item): ProjectItem {
         let infoC: Array<any> = item.renderParts;
         let text = this.getValue(infoC.find(x => x.type === "title"));
         let icon = this.getValue(infoC.find(x => x.type === "img"));
@@ -278,18 +310,39 @@ export class ProjectInstanceView extends View {
             shared_state: shared_state,
             state: {
                 opened: true
+            },
+            options: true
+        };
+
+        jstreeNode.highlighted = {
+            options: {
+                color: "white",
+                hover: "black"
             }
         };
 
         let meta = this.getMeta(item.type);
+        let orderNO = 1 + this.projectElems
+            .reduce((acc, cur) => cur.jstreeNode.type === jstreeNode.type
+                ? ++acc
+                : acc, 0
+            );
 
         let projectItem = new ProjectItem(
             jstreeNode,
             <ProjectCategory>this.getProjectElement(parentId),
-            meta
+            meta,
+            item.systemID,
+            orderNO
         );
 
+        if (this._firstPItemId === null) {
+            this._firstPItemId = projectItem.systemID;
+        }
+
         this.projectElems.push(projectItem);
+
+        return projectItem;
     }
 
     public getProjectElement(id): ProjectElement {
@@ -382,20 +435,26 @@ export class ProjectInstanceView extends View {
 
     private itemsMenu(node) {
         let projectElement = this.projectElems.find(x => x.jstreeNode.id === node.id);
-        return projectElement.menuObj;
+        let menuItems = Object.assign({}, projectElement.menuObj);
+        /* call the collaboration manager in case project is shared*/
+        if (this.data.project.collaborationData && this.data.project.collaborationData.members) {
+            let index = Object.keys(menuItems).length;
+            let collabMenuItems = [];
+            if (collabMenuItems.length > 0) {
+                menuItems[index] = {
+                    separator_before: true
+                };
+                collabMenuItems.forEach(cmitem => menuItems[index++] = {
+                    label: cmitem.label,
+                    icon: cmitem.icon,
+                    action: cmitem.action
+                });
+            }
+        }
+        return menuItems;
     }
 
-    public render(): void {
-        this.renderTmplEl(this.renderData);
-        this.foldingView.render();
-        this.renderElem("actions");
-        this.renderElem("menu");
-
-        if (this.treeview) {
-            this.treeview.destroy();
-        }
-        $(this.categoriesViewSelector).empty();
-
+    private renderJSTree() {
         let jstreeNodes: Array<IJSTreeNode> = [];
         this.projectElems.forEach(elem => jstreeNodes.push(elem.jstreeNode));
 
@@ -416,9 +475,61 @@ export class ProjectInstanceView extends View {
             }
         });
         this.treeview = $.jstree.reference(this.categoriesViewSelector);
+        this.registerItemClick("ALL");
+    }
+
+    public render(): void {
+        this.renderTmplEl(this.renderData);
+        this.foldingView.render();
+        this.renderElem("actions");
+        this.renderElem("menu");
+
+        if (this.treeview) {
+            this.treeview.destroy();
+        }
+        $(this.categoriesViewSelector).empty();
+
+        this.renderJSTree();
 
         // bootstrap adds hidden in overflow which destroys z-index in dropdown menu
         $("#folding-app-instance-categories-"+this.id).css("overflow", "");
+
+        // var onclickFunc = (node) => this.onClickItem(node);
+        // // events for tree view
+        // var sel = this.categoriesViewSelector;
+        // $(sel).on(
+        //         "click",
+        //         ".jstree-anchor",
+        //         function (e, data) {
+        //             var node = $(sel)
+        //                 .jstree(true)
+        //                 .get_node($(this));
+        //             onclickFunc(node);
+        //         }
+        //     );
+    }
+
+    private registerItemClick(data) {
+        var sel = this.categoriesViewSelector;
+        var onclickFunc = (node) => this.onClickItem(node);
+        function registerSItemClick(pe) {
+            $(sel).on(
+                "click",
+                "#" + pe.jstreeNode.id,
+                function (e) {
+                    var node = $(sel)
+                        .jstree(true)
+                        .get_node($(this));
+                    onclickFunc(node);
+                }
+            );
+        }
+        if (data === "ALL") {
+            this.projectElems.forEach(pe => registerSItemClick(pe));
+        }
+        else {
+            registerSItemClick(data);
+        }
     }
 
     public onClickItem(node): void {
@@ -481,20 +592,6 @@ export class ProjectInstanceView extends View {
                 }
             }
         );
-        var onclickFunc = (node) => this.onClickItem(node);
-        // events for tree view
-        $(this.categoriesViewSelector)
-            .on(
-                "click",
-                ".jstree-anchor",
-                function (e) {
-                    var node = $(this.categoriesViewSelector)
-                        .jstree(true)
-                        .get_node($(this));
-                    onclickFunc(node);
-                }
-            );
-
         // $('#options_jstree_SmartObjects').on('click', function (e) {
         //     $('#jstree_SmartObjects_anchor').trigger({
         //         type: 'contextmenu.jstree', pageX: e.pageX, pageY: e.pageY
@@ -530,5 +627,10 @@ export class ProjectInstanceView extends View {
     public getValidChildren(categoryId: string): any {
         let category = this.data.meta.categories.find(x => x.id === categoryId);
         return category.validChildren;
+    }
+
+    public trigger(evt: string, elem :ProjectElement): void {
+        $(this.categoriesViewSelector).jstree().select_node(elem.jstreeNode.id);
+        $("#"+elem.jstreeNode.id).trigger(evt, elem);
     }
 }

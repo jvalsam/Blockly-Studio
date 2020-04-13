@@ -48,9 +48,22 @@ export class BlocklyVPL extends Editor {
     name: string,
     description: string,
     compViewName: string,
-    hookSelector: string
+    hookSelector: string,
+    pitemID: string,
+    srcType: string,
+    configStyle: any,
+    srcDefault: string
   ) {
-    super(name, description, compViewName, hookSelector);
+    super(
+      name,
+      description,
+      compViewName,
+      hookSelector,
+      pitemID,
+      srcType,
+      configStyle,
+      srcDefault
+    );
   }
 
   @ExportedFunction
@@ -60,10 +73,19 @@ export class BlocklyVPL extends Editor {
   @ExportedFunction
   public open(src: Element, toolbox?: string, isFirstInst:boolean =false): void {
     this.changed = false;
-    this.toolbox = (toolbox === undefined) ? /*require("./toolbox.xml")*/document.getElementById("toolbox") : toolbox;
+    this.toolbox = (toolbox === undefined)
+      ? /*require("./toolbox.xml")*/document.getElementById("toolbox")
+      : toolbox;
     this.src = src;
     if (isFirstInst) {
-      ComponentsCommunication.functionRequest(this.name, "Shell", "addTools", [this.view.toolElems]);
+      ComponentsCommunication.functionRequest(
+        this.name,
+        "Shell",
+        "addTools",
+        [
+          this.view.toolElems
+        ]
+      );
     }
   }
 
@@ -81,7 +103,13 @@ export class BlocklyVPL extends Editor {
     this.view.$el = $(this.view.selector);
     this.view.$el.empty();
     this.view.$el.show();
-    this.editor = Blockly.inject(this.view.selector, { "media": "./media/", "toolbox": this.toolbox });
+    this.editor = Blockly.inject(
+      this.view.selector,
+      {
+        "media": "./media/",
+        "toolbox": this.toolbox
+      }
+    );
     if (this.src) {
       Blockly.Xml.domToWorkspace(this.src, this.editor);
     }

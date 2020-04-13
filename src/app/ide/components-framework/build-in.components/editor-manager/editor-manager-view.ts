@@ -5,13 +5,12 @@ import { Editor } from "./editor";
 
 @ComponentViewMetadata({
     name: "EditorManagerView",
-    //selector: ".editor-manager-container",
     templateHTML: EditorManagerTmpl
 })
 export class EditorManagerView extends ComponentView {
     private editorOnFocus: Editor;
 
-    public update(editor: Editor): void {
+    public update(editor: any): void {
         if (this.editorOnFocus && this.editorOnFocus.id===editor.id) {
             return;
         }
