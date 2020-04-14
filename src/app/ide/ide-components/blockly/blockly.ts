@@ -1,4 +1,5 @@
-﻿import {
+﻿import { BlocklyInstance, BlocklyConfig } from './blockly-instance';
+import {
   ResponseValue
 } from "./../../components-framework/component/response-value";
 import {
@@ -19,6 +20,7 @@ import {
 import * as Blockly from "blockly";
 import { DomainElementsHolder } from "../../domain-manager/domains-holder";
 import { assert } from "../../shared/ide-error/ide-error";
+import { PItemView } from '../../components-framework/build-in.components/editor-manager/project-item/pitem-view';
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -38,11 +40,8 @@ var confJson: any = require("./conf_props.json");
   version: "1.1"
 })
 export class BlocklyVPL extends Editor {
-  private editor: any;
-  private editorArea: string;
-  private changed: boolean;
-  private toolbox: any;
-  private src: Element;
+  private instancesMap: {[editorId: string]: BlocklyInstance};
+  private configsMap: {[name: string]: BlocklyConfig};
 
   constructor(
     name: string,
@@ -50,7 +49,12 @@ export class BlocklyVPL extends Editor {
     compViewName: string,
     hookSelector: string
   ) {
-    super(name, description, compViewName, hookSelector);
+    super(
+      name,
+      description,
+      compViewName,
+      hookSelector
+    );
   }
 
   @ExportedFunction
@@ -58,13 +62,26 @@ export class BlocklyVPL extends Editor {
 
   @RequiredFunction("Shell", "addTools")
   @ExportedFunction
-  public open(src: Element, toolbox?: string, isFirstInst:boolean =false): void {
-    this.changed = false;
-    this.toolbox = (toolbox === undefined) ? /*require("./toolbox.xml")*/document.getElementById("toolbox") : toolbox;
-    this.src = src;
-    if (isFirstInst) {
-      ComponentsCommunication.functionRequest(this.name, "Shell", "addTools", [this.view.toolElems]);
-    }
+  public open(
+    src: any,
+    pitem: PItemView,
+    editorId: string
+  ): void {
+    // this.changed = false;
+    // this.toolbox = (toolbox === undefined)
+    //   ? /*require("./toolbox.xml")*/document.getElementById("toolbox")
+    //   : toolbox;
+    // this.src = src;
+    // if (isFirstInst) {
+    //   ComponentsCommunication.functionRequest(
+    //     this.name,
+    //     "Shell",
+    //     "addTools",
+    //     [
+    //       this.view.toolElems
+    //     ]
+    //   );
+    // }
   }
 
   @ExportedFunction
@@ -76,48 +93,54 @@ export class BlocklyVPL extends Editor {
   public render(): void {
     this.setAsRendered();
 
-    var blocklyArea: any = document.getElementById("editors-area-container");
-    var blocklyDiv: any = document.getElementById(this.selector.substring(1));
-    this.view.$el = $(this.view.selector);
-    this.view.$el.empty();
-    this.view.$el.show();
-    this.editor = Blockly.inject(this.view.selector, { "media": "./media/", "toolbox": this.toolbox });
-    if (this.src) {
-      Blockly.Xml.domToWorkspace(this.src, this.editor);
-    }
-    this.editor.addChangeListener(() => this.onChangeListener());
-    var onresize = (e) => {
-      // Compute the absolute coordinates and dimensions of blocklyArea.
-      // var element = blocklyArea;
-      // var x = 0;
-      // var y = 0;
-      // do {
-      //   x += element.offsetLeft;
-      //   y += element.offsetTop;
-      //   element = element.offsetParent;
-      // } while (element);
-      // // Position blocklyDiv over blocklyArea.
-      blocklyDiv.style.left = -12 + "px";
-      blocklyDiv.style.top = 3 + "px";
-      blocklyDiv.style.width = (blocklyArea.offsetWidth+24) + "px";
-      blocklyDiv.style.height = blocklyArea.offsetHeight + "px";
-    };
-    window.addEventListener("resize", onresize, false);
-    onresize(null);
-    Blockly.svgResize(this.editor);
+    // var blocklyArea: any = document.getElementById("editors-area-container");
+    // var blocklyDiv: any = document.getElementById(this.selector.substring(1));
+    // this.view.$el = $(this.view.selector);
+    // this.view.$el.empty();
+    // this.view.$el.show();
+    // this.editor = Blockly.inject(
+    //   this.view.selector,
+    //   {
+    //     "media": "./media/",
+    //     "toolbox": this.toolbox
+    //   }
+    // );
+    // if (this.src) {
+    //   Blockly.Xml.domToWorkspace(this.src, this.editor);
+    // }
+    // this.editor.addChangeListener(() => this.onChangeListener());
+    // var onresize = (e) => {
+    //   // Compute the absolute coordinates and dimensions of blocklyArea.
+    //   // var element = blocklyArea;
+    //   // var x = 0;
+    //   // var y = 0;
+    //   // do {
+    //   //   x += element.offsetLeft;
+    //   //   y += element.offsetTop;
+    //   //   element = element.offsetParent;
+    //   // } while (element);
+    //   // // Position blocklyDiv over blocklyArea.
+    //   blocklyDiv.style.left = -12 + "px";
+    //   blocklyDiv.style.top = 3 + "px";
+    //   blocklyDiv.style.width = (blocklyArea.offsetWidth+24) + "px";
+    //   blocklyDiv.style.height = blocklyArea.offsetHeight + "px";
+    // };
+    // window.addEventListener("resize", onresize, false);
+    // onresize(null);
+    // Blockly.svgResize(this.editor);
   }
 
   @ExportedFunction
   public onClose(): void {
     // changeListeners
     // this.editor.removeChangeListener();
-    let code = Blockly.Xml.workspaceToDom(this.editor);
-    // TODO: notify AutomationEditingManager
-    this.editor.dispose();
+    // let code = Blockly.Xml.workspaceToDom(this.editor);
+    // // TODO: notify AutomationEditingManager
+    // this.editor.dispose();
   }
 
   private onChangeListener(): void {
-    this.src = Blockly.Xml.workspaceToDom(this.editor);
+    // this.src = Blockly.Xml.workspaceToDom(this.editor);
     // TODO: notify AutomationEditingManager
   }
 
@@ -137,12 +160,12 @@ export class BlocklyVPL extends Editor {
 
   @ExportedFunction
   public undo(): void {
-    this.editor.undo(false);
+    // this.editor.undo(false);
   }
 
   @ExportedFunction
   public redo(): void {
-    this.editor.undo(true);
+    // this.editor.undo(true);
   }
 
   @ExportedFunction
@@ -165,7 +188,11 @@ export class BlocklyVPL extends Editor {
   
   @RequiredFunction("EditorManager", "OnFocusEditorId")
   public requestOnFocusEditorId(): string {
-    let resp: ResponseValue = ComponentsCommunication.functionRequest(this.name, "EditorManager", "OnFocusEditorId");
+    let resp: ResponseValue = ComponentsCommunication.functionRequest(
+      this.name,
+      "EditorManager",
+      "OnFocusEditorId"
+    );
     return <string>resp.value;
   }
 

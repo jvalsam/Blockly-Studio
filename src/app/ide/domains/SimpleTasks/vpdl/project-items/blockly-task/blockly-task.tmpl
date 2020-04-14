@@ -1,0 +1,32 @@
+<div class="row pi-blockly-task-container" style="width: 99.9%; margin-left: 1px; height: 100%;">
+    <div class="col">
+        <div class="row project-item-info-area"
+             style="padding: 1px;padding-left: 10px;background: #FFFFFF; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);"
+        >
+        <% if (typeof jstree.color !== "undefined") { %>
+            <span role="presentation" style="
+                    height: 1em;
+                    margin-left: 8px;
+                    padding-left: 2px;
+                    border-left: 6px solid <%= jstree.color %>;
+                    margin-top: 4px;
+                    margin-right: 8px;
+                    ">
+            </span>
+        <% } %> 
+        <% if (jstree.icon.startsWith("fa")) { %>
+        <i class="jstree-icon jstree-themeicon <%= jstree.icon %> jstree-themeicon-custom" role="presentation"
+            style="margin-top: 0.25em;margin-right: 8px;"></i>
+        <% } else { %>
+        <i class="jstree-icon jstree-themeicon jstree-themeicon-custom" role="presentation"
+            style="background-image: url(" <%= jstree.icon %>");
+                   background-position: center center;
+                   background-size: auto;">
+        </i>
+        <% } %>
+            <%= jstree.text %>
+        </div>
+        <div class="row ec-blockly-task" style="height: 97%;">
+        </div>
+    </div>
+</div>

@@ -36,6 +36,8 @@ import {
 import {
     ProjectCategory
 } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-category";
+import { EditorManager } from "../editor-manager/editor-manager";
+import { ProjectItem } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -204,7 +206,7 @@ export class ProjectManager extends IDEUIComponent {
     public loadProject(project): void {
         this.loadedProjects[project._id] = project;
         this.mainProject = project._id;
-        (<ProjectManagerJSTreeView>this._view).loadProject(project);
+        let projView = (<ProjectManagerJSTreeView>this._view).loadProject(project);
 
         ComponentsCommunication.functionRequest(
             this.name,
@@ -212,6 +214,34 @@ export class ProjectManager extends IDEUIComponent {
             "loadProject",
             [project._id, project.domainElements]
         );
+
+        // set default values if there is no state
+        if (!project.editorsState) {
+            project.editorsState = {
+                viewState: 0,
+                onFocusPItems: [
+                    projView.firstPItemID
+                ]
+            };
+        }
+
+        let editorManager = <EditorManager>ComponentRegistry.getEntry("EditorManager").create([
+            ".project-manager-visual-editors-area",
+            project.editorsState.viewState,
+            project.editorsState.onFocusPItems
+        ]);
+        editorManager.initializeEditorsView();
+    }
+
+    @ExportedFunction
+    public getProjectItem(pitemId: string): ProjectItem {
+        let projectId = pitemId.split("_")[0];
+        let projView = (<ProjectManagerJSTreeView>this.view)
+            .getProject(projectId);
+        if (projView) {
+            return <ProjectItem>projView.getProjectElement(pitemId);
+        }
+        return null;
     }
 
     public saveProjectResponse(resp) {
@@ -224,7 +254,7 @@ export class ProjectManager extends IDEUIComponent {
         let projectForSave = JSON.parse(JSON.stringify(project));
         _.forEach(projectForSave.projectItems, (element)=> {
             _.forEach(element.renderParts, (renderPart) => {
-                renderPart.type = renderPart.id;
+                renderPart.type = renderPart.type;
                 delete renderPart.id;
                 if (renderPart.value) {
                     delete renderPart.value.property;
@@ -282,8 +312,8 @@ export class ProjectManager extends IDEUIComponent {
             ComponentsCommunication.functionRequest(
                 this.name,
                 event.providedBy,
-                "onRequestEditorAction",
-                [event, concerned.itemData()]
+                "onRequestAction",
+                [event, concerned]
             );
         }
         else {
@@ -437,10 +467,10 @@ export class ProjectManager extends IDEUIComponent {
             concerned,
             (elem) => {
                 this.onClickProjectElement(elem);
-                this.loadedProjects[concerned.project.id].projectItems
+                this.loadedProjects[concerned.project.dbID].projectItems
                     .push(elem.itemData());
-                this.saveProject(concerned.project.id);
-                elem.onClick();
+                this.saveProject(concerned.project.dbID);
+                elem.trigger("click");
             }
         );
     }
@@ -454,39 +484,48 @@ export class ProjectManager extends IDEUIComponent {
         this.saveProject(src.projectID);
     }
 
-    private onCreateProjectItem(data, index, itemsData, event, concerned) {
-        assert(
-            index !== -1,
-            "Invalid index in sequential dialogues in multi choice of dialogues!"
-        );
-        this.currModalData.itemData = itemsData[index];
-        upload_files(
-            data.form,
-            (paths: Array<String>) => {
-                // update img path
-                for (var i = 0; i < paths.length; i++) {
-                    for (const [key, value] of Object["entries"](data.imgData)) {
-                        if (value === i) {
-                            data.json[key] = paths[i];
-                            break;
-                        }
+    private onSuccessUploadFiles(paths: Array<String>, data, event, concerned) {
+            // update img path
+            for (var i = 0; i < paths.length; i++) {
+                for (const key of Object.keys(data.imgData)) {
+                    let value = data.imgData[key];
+                    if (value === i) {
+                        data.json[key] = paths[i];
+                        break;
                     }
                 }
-                assert(
-                    paths.length === 1,
-                    "Invalid number of paths in save img of Project Manager New Item"
-                );
-                let src = this.createNewElement(
-                    event,
-                    data,
-                    this.newSystemID(concerned.project["projectID"])
-                );
-                this.createNewItem(
-                    concerned,
-                    data,
-                    src
-                );
-            },
+            }
+            assert(
+                paths.length === 0 || paths.length === 1,
+                "Invalid number of paths in save img of Project Manager New Item"
+            );
+            let src = this.createNewElement(
+                event,
+                data,
+                this.newSystemID(concerned.project["projectID"])
+            );
+            this.createNewItem(
+                concerned,
+                data,
+                src
+            );
+    }
+    private onCreateProjectItem(data, event, concerned, index =null, itemsData =null) {
+        if (typeof index === "number") {
+            assert(
+                index !== -1,
+                "Invalid index in sequential dialogues in multi choice of dialogues!"
+            );
+            this.currModalData.itemData = itemsData[index];
+        }
+        upload_files(
+            data.form,
+            (paths: Array<String>) => this.onSuccessUploadFiles(
+                paths,
+                data,
+                event,
+                concerned
+            ),
             (resp) => {
                 IDEError.raise("Error Project Manager Save Img", resp);
             }
@@ -532,7 +571,7 @@ export class ProjectManager extends IDEUIComponent {
                         },
                         {
                             choice: "Create",
-                            type: "submit",
+                            type: "button",
                             providedBy: "creator",
                             validation: (data, callback) =>
                                 ProjectManagerValidation.check(
@@ -541,50 +580,11 @@ export class ProjectManager extends IDEUIComponent {
                                     event.validation,
                                     callback
                             ),
-                            callback: (data) => {
-                                upload_files(
-                                    data.form,
-                                    (paths: Array<String>) => {
-                                        // update img path
-                                        for (var i=0;i<paths.length; i++) {
-                                            for (const [key, value] of
-                                                Object["entries"](data.imgData)
-                                            ) {
-                                                if (value === i) {
-                                                    data.json[key] = paths[i];
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        assert(
-                                            paths.length === 1 || paths.length === 0,
-                                            `Invalid number of paths in save img of
-                                            Project Manager New Item`
-                                        );
-
-                                        let src = this.createNewElement(
-                                            event,
-                                            data,
-                                            this.newSystemID(projectID)
-                                        );
-                                        this.createNewItem(
-                                            concerned,
-                                            data,
-                                            src
-                                        );
-                                    },
-                                    (resp) => {
-                                        IDEError.raise(
-                                            "Error Project Manager Save Img",
-                                            resp
-                                        );
-                                    }
-                                );
-
-                                // let src = this.createNewElement(event, data, this.newSystemID(projectID));
-                                // this.createNewItem(concerned, data, src);
-                            }
+                            callback: (data) => this.onCreateProjectItem(
+                                data,
+                                event,
+                                concerned
+                            )
                         }
                     ]
                 ));

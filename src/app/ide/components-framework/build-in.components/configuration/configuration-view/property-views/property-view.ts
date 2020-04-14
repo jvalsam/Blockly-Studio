@@ -204,7 +204,7 @@ export function CreateRenderPartsWithData (renderParts: Array<any>, data) {
     let newItemParts: Array<any> = [];
 
     _.forEach(renderParts, (renderPart) => {
-        let newItemPart: any = { type: renderPart.id };
+        let newItemPart: any = { type: renderPart.type };
         let value = rdata[renderPart.id];
         switch(renderPart.type) {
             case "img": {

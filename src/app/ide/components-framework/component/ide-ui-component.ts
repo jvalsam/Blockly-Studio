@@ -32,7 +32,9 @@ export abstract class IDEUIComponent extends IDEComponent {
     ) {
         super(name, description);
         this._viewElems = {};
-        this._view = ComponentViewRegistry.getEntry(compViewName).create(this, hookSelector);
+        this._view = ComponentViewRegistry
+            .getEntry(compViewName)
+            .create(this, hookSelector);
     }
 
     get templateHTML(): string {

@@ -5979,24 +5979,30 @@
 
 	var cacheColor = {};
 	var cacheColorNodes = function (self) {
+		function cacheNodeRec(self, node) {
+			self._model.data[node.id].color = node.color;
+			self._model.data[node.id].highlighted = node.highlighted;
+			self._model.data[node.id].options = node.options;
+			self._model.data[node.id].so_state = node.so_state;
+			self._model.data[node.id].shared_state = node.shared_state;
+			if (node.children) {
+				cacheColorNodesRec(self, node.children);
+			}
+		}
 		function cacheColorNodesRec(self, data) {
 			var i, j;
 			for(i = 0, j = data.length; i < j; i++) {
-				var node = data[i];
-				self._model.data[node.id].color = node.color;
-				self._model.data[node.id].highlighted = node.highlighted;
-				self._model.data[node.id].options = node.options;
-				self._model.data[node.id].so_state = node.so_state;
-				self._model.data[node.id].shared_state = node.shared_state;
-				if (node.children) {
-					cacheColorNodesRec(self, node.children);
-				}
+				cacheNodeRec(self, data[i]);
 			}
 		}
         let treeId = self.element[0].id;
 		if (!cacheColor[treeId]) {
             cacheColor[treeId] = true;
 			cacheColorNodesRec(self, self.settings.core.data);
+		}
+		if (document["jstreeNewNode"]) {
+			cacheNodeRec(self, document["jstreeNewNode"]);
+			document["jstreeNewNode"] = null;
 		}
 	};
 
@@ -6075,26 +6081,30 @@
 					}
 					if (highlighted) {
 						var item = obj.children[0];
-						item.style.cssText =
-							"background: "
-							+ highlighted.bgColor
-							+ "!important;";
-						tmp.onmouseover = function () {
+						if (highlighted.bgColor) {
 							item.style.cssText =
 								"background: "
-								+ highlighted.bgColorHover
+								+ highlighted.bgColor
 								+ "!important;";
-
+						}
+						tmp.onmouseover = function () {
+							if (highlighted.bgColorHover) {
+								item.style.cssText =
+									"background: "
+									+ highlighted.bgColorHover
+									+ "!important;";
+							}
 							if (options) {
 								ellitem.style.color = highlighted.options.hover;
 							}
 						};
 						tmp.onmouseout = function () {
-							item.style.cssText =
-								"background: "
-								+ highlighted.bgColor
-								+ "!important;";
-
+							if (highlighted.bgColor) {
+								item.style.cssText =
+									"background: "
+									+ highlighted.bgColor
+									+ "!important;";
+							}
 							if (options) {
 								ellitem.style.color = highlighted.options.color;
 							}

@@ -45,7 +45,8 @@ export class ApplicationListSP extends ComponentViewElement {
         // TODO: application type request to pin data for the actions...
         _.forEach(applications, (application) => {
             application.actions = this.renderData.domain.actions;
-            const appViewBox: View = ViewRegistry.getEntry("ApplicationViewBox").create(this.parent, ".applications-view-list", application);
+            const appViewBox: View = ViewRegistry.getEntry("ApplicationViewBox")
+                .create(this.parent, ".applications-view-list", application);
             appViewBox.clearSelectorArea = false;
             appViewBox.render();
         });

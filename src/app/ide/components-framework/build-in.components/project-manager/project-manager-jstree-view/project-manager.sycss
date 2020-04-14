@@ -1,8 +1,8 @@
 
 .project-manager-treeview-area {
-    border-top: solid 2px #212529;
-    border-left: solid 2px #212529;
-    border-right: solid 2px #212529;
+    border-top: solid 1px #afafaf;
+    border-left: solid 1px #afafaf;
+    border-right: solid 1px #afafaf;
     background-color: #dad9d9;
     color: aliceblue;
     /* font-size: 1.25rem; */
@@ -47,8 +47,8 @@
 
 .project-manager-visual-editors-area {
     height: 100%;
-    border-top: solid 2px #212529;
-    border-right: solid 2px #212529;
+    border-top: solid 1px #afafaf;
+    border-right: solid 1px #dadada;
 }
 
 .project-manager-runtime-console-area {

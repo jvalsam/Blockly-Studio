@@ -111,8 +111,12 @@ export class ComponentView extends ComponentViewElement {
         style: Array<IViewUserStyleData>,
         selector: string,
         mainViews: Array<IComponentViewDataElement> = new Array<IComponentViewDataElement>(),
-        menuViews: { [category: string/*MenuCategory*/]: Array<IComponentViewDataElement> } =
-            { "OnRegistration": new Array<IComponentViewDataElement>(), "OnInstantiation": new Array<IComponentViewDataElement>() },
+        menuViews: {
+            [category: string/*MenuCategory*/]: Array<IComponentViewDataElement>
+        } = {
+            "OnRegistration": new Array<IComponentViewDataElement>(),
+            "OnInstantiation": new Array<IComponentViewDataElement>()
+        },
         toolViews: Array<IComponentViewDataElement> = new Array<IComponentViewDataElement>(),
         renderData: Object = {},
         eventRegdata: Array<IViewEventRegistration> = new Array<IViewEventRegistration>()

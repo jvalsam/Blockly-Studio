@@ -18,6 +18,7 @@ ElementSchema.add({
     systemID: { type: String, required: [true, 'project element systemID not exist'] },
     orderNO: { type: Number, required: [true, 'project element type not exist'] },
     path: { type: String, required: [true, 'project element systemID not exist'] },
+    parent: { type: String, required: [true, 'project element systemID not exist'] },
     editorData: {
         veupInstSource: {}
     },
@@ -41,7 +42,8 @@ var ApplicationSchema = new mongoose.Schema({
     domainType: { type: String, required: [true, 'domainType not exist'] },
     created: { type: Date, required: [true, 'created not exist'] },
     lastModified: { type: Date, required: [true, 'lastModified not exist'] },
-    elements: [ ElementSchema ]
+    projectItems: [ ElementSchema ],
+    domainElements: []
 });
 
 function checkImgContent (img) {

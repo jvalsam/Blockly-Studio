@@ -81,8 +81,13 @@ export class IoTWSPEditor extends IDEUIComponent {
      *  Handlers for events are wsp editor template
      */
     private openAutomation(automationId: string, automationType: string): void {
-        const automation: Automation = this.app.getAutomation(automationId, automationType);
-        this.editorManager.open(automationId, "BlocklyVPL", automation.src, IoTVPL.getToolbox(automation.type));
+        // const automation: Automation = this.app.getAutomation(automationId, automationType);
+        // this.editorManager.open(
+        //     automationId,
+        //     "BlocklyVPL",
+        //     automation.src,
+        //     IoTVPL.getToolbox(automation.type)
+        // );
     }
     
     private createAutomation(): void {
