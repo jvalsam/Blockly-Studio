@@ -225,11 +225,12 @@ export class ProjectManager extends IDEUIComponent {
             };
         }
 
-        <EditorManager>ComponentRegistry.getEntry("EditorManager").create([
+        let editorManager = <EditorManager>ComponentRegistry.getEntry("EditorManager").create([
             ".project-manager-visual-editors-area",
             project.editorsState.viewState,
             project.editorsState.onFocusPItems
         ]);
+        editorManager.initializeEditorsView();
     }
 
     @ExportedFunction

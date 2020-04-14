@@ -48,11 +48,7 @@ export abstract class Editor extends IDEUIComponent {
         name: string,
         description: string,
         compViewName: string,
-        hookSelector: string,
-        protected pitemID: string,
-        protected srcType: string,
-        protected configStyle: any,
-        protected srcDefault: string
+        hookSelector: string
     ) {
         super(name, description, compViewName, hookSelector);
         this._isRendered = false;

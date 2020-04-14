@@ -14,3 +14,10 @@
 .ec-blockly-task {
     height: 97%;
 }
+
+.project-item-info-area {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+}

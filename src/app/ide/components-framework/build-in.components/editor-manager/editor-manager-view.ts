@@ -1,11 +1,15 @@
 
 import EditorManagerTmpl from "./editor-manager.tmpl";
+import EditorManagerSYCSS from "./editor-manager.sycss";
 import { ComponentView, ComponentViewMetadata } from "../../component/component-view";
 import { Editor } from "./editor";
 
 @ComponentViewMetadata({
     name: "EditorManagerView",
-    templateHTML: EditorManagerTmpl
+    templateHTML: EditorManagerTmpl,
+    style: {
+        system: EditorManagerSYCSS
+    }
 })
 export class EditorManagerView extends ComponentView {
     private editorOnFocus: Editor;

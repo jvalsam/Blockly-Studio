@@ -6,28 +6,22 @@ import {
     IViewUserStyleData,
     IViewEventRegistration
 } from "../../../component/view";
-import * as _ from "lodash";
 import { IDEUIComponent } from "../../../component/ide-ui-component";
-import { ProjectItem } from "../../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+import {
+    ProjectItem
+} from "../../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+
+import * as _ from "lodash";
 
 @ViewMetadata({
     name: "PItemView",
     templateHTML: PItemEditorsViewTmpl
 })
 export class PItemView extends View {
+    private _focusState: boolean;
     private editorsMap: { [selector: string]: any };
 
-    private static Template(
-        containerHTML: string,
-        pitemHTML: string,
-        pitemId: string,
-        editorsSel: Array<string>
-    ): string {
-        let tmpl = $($.parseHTML(containerHTML)).append(pitemHTML);
-        editorsSel.forEach(sel => tmpl.find("."+sel).attr("id", pitemId + "_" + sel));
-        return tmpl.html();
-    }
-
+    private pitemTmpl: any;
     constructor(
         parent: IDEUIComponent,
         name: string,
@@ -35,33 +29,54 @@ export class PItemView extends View {
         style: Array<IViewUserStyleData>,
         hookSelector: string,
         private pi: ProjectItem,
-        editorsSel: Array<string>,
-        pitemHTML: string,
-        private tmplEvts: Array<IViewEventRegistration>
+        private editorsSel: Array<string>,
+        private view: any
     ) {
         super(
             parent,
             name,
-            PItemView.Template(
-                templateHTML,
-                pitemHTML,
-                pi.systemID,
-                editorsSel),
+            templateHTML,
             style,
             hookSelector
         );
+        this.pitemTmpl = _.template(this.view.template);
         this.editorsMap = {};
+        this._focusState = false;
     }
 
     public render(callback?: Function): void {
-        this.renderTmplEl(this.pi.itemData());
+        let $local = $($.parseHTML(this.pitemTmpl(this.pi.itemData())));
+        let pitemId = this.pi.systemID;
+        this.editorsSel.forEach(sel => $local.find("." + sel).attr("id", pitemId + "_" + sel));
+        this.template = "<div class=\"project-item-container\">"
+            + $local.html()
+            + "</div>";
+        this.renderTmplEl();
     }
 
     public registerEvents(): void {
-        this.attachEvents(...this.tmplEvts);
+        this.attachEvents(...this.view.events);
     }
 
     public addEditor(selector, editor) {
         this.editorsMap[selector] = editor;
+    }
+
+    public get focusState(): boolean {
+        return this._focusState;
+    }
+
+    public focus(): void {
+        if (!this._focusState) {
+            this._focusState = true;
+            this.view.focus();
+        }
+    }
+
+    public focusOut(): void {
+        if (this._focusState) {
+            this._focusState = false;
+            this.view.focusOut();
+        }
     }
 }

@@ -41,6 +41,7 @@ enum EditorsViewState {
 export class EditorManager extends IDEUIComponent {
     private readonly pitemEditorsSel = ".pitem-editors-area-";
     private projectItemsMap: {[systemId:string]: PItemView};
+    private focusPItemArea: number;
 
     private pitemOnFocusId: string;
 
@@ -54,15 +55,10 @@ export class EditorManager extends IDEUIComponent {
         compViewName: string,
         selector: string,
         private currentViewState: EditorsViewState = EditorsViewState.NO_SPLIT,
-        initialPItemsFocused?: Array<string> // 1 or 2 pitemIds
+        private initialPItemsFocused?: Array<string> // 1 or 2 pitemIds
     ) {
         super(name, description, compViewName, selector);
         this.projectItemsMap = {};
-        this.view.render();
-        this.initializeEditorsView(
-            this.currentViewState,
-            initialPItemsFocused
-        );
     }
 
     private editorsViewState2str(value: EditorsViewState): string {
@@ -76,25 +72,59 @@ export class EditorManager extends IDEUIComponent {
         }
     }
 
+    private swapPItemEditorsArea(): void {
+        $(this.pitemEditorsSel+"1").eq(0).before($(this.pitemEditorsSel+"2").eq(0));
+        // swap class selectors
+        $(this.pitemEditorsSel + "1")
+    }
+
+    public updateSplit(newViewState: EditorsViewState): void {
+        if (this.currentViewState === newViewState) {
+            return;
+        }
+        // remove current classes style of split
+        let removeClassName =
+            this.pitemEditorsSel.substr(1)
+            + this.editorsViewState2str(this.currentViewState)
+            + "-split-";
+        $(this.pitemEditorsSel + "1").removeClass(removeClassName + "1");
+        $(this.pitemEditorsSel + "2").removeClass(removeClassName + "2");
+        // check if new style will be no-split, to regulate the view
+        if (newViewState === EditorsViewState.NO_SPLIT) {
+            if (this.focusPItemArea === 2) {
+                this.swapPItemEditorsArea();
+            }
+        }
+        else {
+            // look up in history if exists
+        }
+
+        // add new classes for style of split
+        let addClassName =
+            this.pitemEditorsSel.substr(1)
+            + this.editorsViewState2str(newViewState)
+            + "-split-";
+        $(this.pitemEditorsSel + "1").removeClass(addClassName + "1");
+        $(this.pitemEditorsSel + "2").removeClass(addClassName + "2");
+    }
+
     @RequiredFunction("ProjectManager", "getProjectItem")
-    private initializeEditorsView(
-        currentViewState: EditorsViewState,
-        initialPItemsFocused: Array<string>
-    ) {
+    public initializeEditorsView() {
+        this.view.render();
         let className =
             this.pitemEditorsSel.substr(1)
-            + this.editorsViewState2str(currentViewState)
+            + this.editorsViewState2str(this.currentViewState)
             + "-split-";
 
         $(this.pitemEditorsSel+"1").addClass(className + "1");
         $(this.pitemEditorsSel+"2").addClass(className + "2");
 
         assert(
-            initialPItemsFocused.length<=2,
+            this.initialPItemsFocused.length<=2,
             "invalid number of initial focused pitems in Editor Manager"
         );
 
-        initialPItemsFocused.forEach((pitemId, index) => {
+        this.initialPItemsFocused.forEach((pitemId, index) => {
             let pitem = ComponentsCommunication.functionRequest(
                 this.name,
                 "ProjectManager",
@@ -102,7 +132,8 @@ export class EditorManager extends IDEUIComponent {
                 [pitemId]
             ).value;
 
-            this.open(pitem, index+1);
+            this.focusPItemArea = index + 1;
+            this.open(pitem, this.focusPItemArea);
         });
     }
 
@@ -258,6 +289,9 @@ export class EditorManager extends IDEUIComponent {
             "getProjectItem",
             [pi.jstreeNode.type]
         ).value;
+        // TODO: check if the project item is already open in the view
+        // in case it is viewed -> just set as focus area its pitem-area
+
         // check if there is instance with systemID
         if (!this.projectItemsMap[pi.systemID]) {
             let econfigs = pitemData.editorConfigs;
@@ -273,8 +307,7 @@ export class EditorManager extends IDEUIComponent {
                     selector,
                     pi,
                     editorsSel,
-                    pitemData.view.template,
-                    pitemData.view.events
+                    pitemData.view
                 );
             pitemView.render();
 

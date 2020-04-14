@@ -14,8 +14,10 @@ export const BlocklyTask = {
     // Editor Layout handles to render and load the respective template
     // and inject the editor parts of the project item
     view: {
-        template: BlocklyTaskTmpl, // load template
+        template: BlocklyTaskTmpl, // load template, by default focus out style
         style: BlocklyTaskSYCSS, // style has to be added dynamically in the first use of template?
+        focus: () => {}, // focus style
+        focusOut: () => {}, // focus out style
         events: [
             // data of one event:
             // {
