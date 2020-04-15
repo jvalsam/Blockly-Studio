@@ -136,6 +136,25 @@ export class VPLDomainElements {
         return null;
     }
 
+    getEditors() {
+        let editors = [];
+        for (let mission of Object.keys(this.vplMissions)) {
+            editors.push(...this.vplMissions[mission].getEditors());
+        }
+        return editors.filter((v, i, a) => a.indexOf(v) === i);
+    }
+
+    getEditorConfigs(editor) {
+        let configs = {};
+        for (let mission of Object.keys(this.vplMissions)) {
+            let econfig = this.vplMissions[mission].getEditorConfig(editor);
+            if (econfig) {
+                configs[mission] = Object.assign({}, econfig);
+            }
+        }
+        return configs;
+    }
+
     // TODO: call all elements and missions to unload
     unload() {
 

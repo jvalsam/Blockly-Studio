@@ -294,6 +294,7 @@ export class ProjectInstanceView extends View {
         let color = this.getValue(infoC.find(x => x.type === "colour"));
         let connection_state = this.getValue(infoC.find(x => x.type === "state"));
         let shared_state = this.getValue(infoC.find(x => x.type === "shared"));
+        let editorsData = item.editorsData ? item.editorsData : {};
 
         item.id = item.systemID
             ? item.systemID
@@ -333,6 +334,7 @@ export class ProjectInstanceView extends View {
             <ProjectCategory>this.getProjectElement(parentId),
             meta,
             item.systemID,
+            editorsData,
             orderNO
         );
 

@@ -312,22 +312,23 @@ export class EditorManager extends IDEUIComponent {
             pitemView.render();
 
             for (let mission of editorsSel) {
-                let sel = pi.systemID + "_" + mission;
+                let sel = "pi_" + pi.systemID + "_" + mission;
                 // only one editor is supported
                 // if domain author give more
                 // TODO: selection by the end-user... now we just choose the 1st
                 let econfig = econfigs[mission][0];
 
-                let editor = <Editor>ComponentRegistry.getEntry(econfig.name)
-                    .create([
+                let editorId = ComponentsCommunication.functionRequest(
+                    this.name,
+                    econfig.name,
+                    "open",
+                    [
                         sel,
-                        pi.systemID,
-                        this.convertEconf(mission),
-                        econfig.style,
-                        econfig.src
-                    ]);
-                pitemView.addEditor(mission, editor);
-                editor.render();
+                        pitemView,
+                        this.convertEconf(mission)
+                    ]
+                ).value;
+                pitemView.addEditor(sel, econfig.name);
             }
         }
 

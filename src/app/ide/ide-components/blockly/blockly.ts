@@ -40,7 +40,7 @@ var confJson: any = require("./conf_props.json");
   version: "1.1"
 })
 export class BlocklyVPL extends Editor {
-  private instancesMap: {[editorId: string]: BlocklyInstance};
+  private instancesMap: {[id: string]: any};
   private configsMap: {[name: string]: BlocklyConfig};
 
   constructor(
@@ -55,18 +55,52 @@ export class BlocklyVPL extends Editor {
       compViewName,
       hookSelector
     );
+
+    this.instancesMap = {};
+    this.configsMap = {};
+  }
+
+  // load domain data: configs
+  @RequiredFunction("DomainsManager", "getEditorConfigs")
+  @ExportedFunction
+  public loadDomain(name: string): void {
+    this.configsMap = ComponentsCommunication.functionRequest(
+      this.name,
+      "DomainsManager",
+      "getEditorConfigs",
+      [this.name]
+    ).value;
   }
 
   @ExportedFunction
   public onOpen(): void {}
 
+  @RequiredFunction("DomainsManager", "getToolbox")
+  private getToolbox(config: string): any {
+    return ComponentsCommunication.functionRequest(
+      this.name,
+      "DomainsManager",
+      "getToolbox",
+      [ config ]
+    ).value;
+  }
+
   @RequiredFunction("Shell", "addTools")
   @ExportedFunction
   public open(
-    src: any,
+    selector: string,
     pitem: PItemView,
-    editorId: string
+    config: string
   ): void {
+    this.instancesMap[selector] = new BlocklyInstance(
+      pitem.pi.systemID,
+      selector,
+      config,
+      this.configsMap[config],
+      (config) => this.getToolbox(config),
+      pitem.pi.editorsData
+    );
+    this.instancesMap[selector].open();
     // this.changed = false;
     // this.toolbox = (toolbox === undefined)
     //   ? /*require("./toolbox.xml")*/document.getElementById("toolbox")

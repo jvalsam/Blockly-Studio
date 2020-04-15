@@ -105,6 +105,14 @@ class _VPLDomainElementsManager {
     getProjectItemInfo(name) {
         return this._currVPLDomainElements.getProjectItemInfo(name);
     }
+
+    getEditorConfigs(name) {
+        return this._currVPLDomainElements.getEditorConfigs(name);
+    }
+
+    getEditors() {
+        return this._currVPLDomainElements.getEditors();
+    }
 }
 
 export const VPLDomainElementsManager = new _VPLDomainElementsManager();

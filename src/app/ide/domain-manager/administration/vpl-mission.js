@@ -578,6 +578,14 @@ export class VPLMission {
     onEditElement(element) {
         this.onUpdateToolbox();
     }
+
+    getEditorConfig(name) {
+        return this._editors.find(editor => editor.name === name);
+    }
+
+    getEditors() {
+        return this._editors.reduce((a, o) => (a.push(o.name), a), []);
+    }
 }
 
 

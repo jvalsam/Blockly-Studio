@@ -28,7 +28,7 @@ export class PItemView extends View {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
-        private pi: ProjectItem,
+        private _pi: ProjectItem,
         private editorsSel: Array<string>,
         private view: any
     ) {
@@ -45,11 +45,11 @@ export class PItemView extends View {
     }
 
     public render(callback?: Function): void {
-        let $local = $($.parseHTML(this.pitemTmpl(this.pi.itemData())));
-        let pitemId = this.pi.systemID;
-        this.editorsSel.forEach(sel => $local.find("." + sel).attr("id", pitemId + "_" + sel));
-        this.template = "<div class=\"project-item-container\">"
-            + $local.html()
+        let $local = $($.parseHTML(this.pitemTmpl(this._pi.itemData())));
+        let pitemId = this._pi.systemID;
+        this.editorsSel.forEach(sel => $local.find("." + sel).attr("id", "pi_"+pitemId + "_" + sel));
+        this.template = "<div class=\"project-item-container\" style=\"height: 100%\">"
+            + $local[0].outerHTML
             + "</div>";
         this.renderTmplEl();
     }
@@ -78,5 +78,9 @@ export class PItemView extends View {
             this._focusState = false;
             this.view.focusOut();
         }
+    }
+
+    public get pi(): ProjectItem {
+        return this._pi;
     }
 }

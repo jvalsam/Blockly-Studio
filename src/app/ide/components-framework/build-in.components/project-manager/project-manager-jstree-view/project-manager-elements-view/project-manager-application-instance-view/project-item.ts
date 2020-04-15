@@ -11,6 +11,7 @@ export class ProjectItem extends ProjectElement {
         private _category: ProjectCategory,
         _meta: any,
         private systemId: string,
+        private _editorsData: {[editorId: string]: any},
         private orderNO: number
     ) {
         super(_jstreeNode, _meta);
@@ -88,5 +89,17 @@ export class ProjectItem extends ProjectElement {
 
     public get systemID(): string {
         return this.systemId;
+    }
+
+    public get editorsData(): any {
+        return this._editorsData;
+    }
+
+    public set editorsData(data: any) {
+        this._editorsData = data;
+    }
+
+    public setEditorData(id: string, data: any): void {
+        this._editorsData[id] = data;
     }
 }

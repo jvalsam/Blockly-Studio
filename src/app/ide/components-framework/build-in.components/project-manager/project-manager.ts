@@ -38,6 +38,7 @@ import {
 } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-category";
 import { EditorManager } from "../editor-manager/editor-manager";
 import { ProjectItem } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+import { Editor } from "../editor-manager/editor";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -179,6 +180,21 @@ export class ProjectManager extends IDEUIComponent {
                 "loadDomain",
                 [this.domainType]
             );
+
+            let editorComponents = ComponentsCommunication.functionRequest(
+                this.name,
+                "DomainsManager",
+                "getEditors"
+            ).value;
+            editorComponents.forEach(name => {
+                let editor = <Editor>(ComponentRegistry.getEntry(name).create([
+                    ".modal-platform-container"
+                ]));
+
+                if (editor.name === "BlocklyVPL" || editor.name === "ReteVPL") {
+                    editor["loadDomain"](this.domainType);
+                }
+            });
 
             var console: RuntimeManager = <RuntimeManager>ComponentRegistry
                 .getEntry("RuntimeManager")
