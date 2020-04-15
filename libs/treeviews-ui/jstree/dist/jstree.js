@@ -5977,7 +5977,7 @@
 	_span.style.cssText = "border-right-width: 6px; height: 1em; width: 6px; margin-left: 2px; padding-left: 2px; border-left: 6px solid white;";
 	_span.setAttribute('role', 'presentation');
 
-	var cacheColor = false;
+	var cacheColor = {};
 	var cacheColorNodes = function (self) {
 		function cacheNodeRec(self, node) {
 			self._model.data[node.id].color = node.color;
@@ -5995,9 +5995,9 @@
 				cacheNodeRec(self, data[i]);
 			}
 		}
-
-		if (!cacheColor) {
-			cacheColor = true;
+        let treeId = self.element[0].id;
+		if (!cacheColor[treeId]) {
+            cacheColor[treeId] = true;
 			cacheColorNodesRec(self, self.settings.core.data);
 		}
 		if (document["jstreeNewNode"]) {
