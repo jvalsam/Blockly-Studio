@@ -87,6 +87,12 @@ export class ProjectItem extends ProjectElement {
         return data;
     }
 
+    public getPrivilleges() {
+        // based on the ProjectManager -> gives which is the user
+        // and then privillege data owner returns the result "READ_ONLY" | "EDITING"
+        return "EDITING";
+    }
+
     public get systemID(): string {
         return this.systemId;
     }

@@ -96,8 +96,10 @@ export class BlocklyVPL extends Editor {
       pitem.pi.systemID,
       selector,
       config,
+      pitem.pi.getPrivilleges(),
       this.configsMap[config],
       (config) => this.getToolbox(config),
+      (data) => this.onChangeWSP(data),
       pitem.pi.editorsData
     );
     this.instancesMap[selector].open();
@@ -210,6 +212,11 @@ export class BlocklyVPL extends Editor {
   @ExportedFunction
   public paste() {
 
+  }
+
+  @ExportedFunction
+  public onChangeWSP(data) {
+    alert("not implemented yet sync with collaboration combonent!");
   }
 
   // public static updateCode() {
