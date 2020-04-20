@@ -21,7 +21,6 @@ import * as _ from "lodash";
 import { ViewRegistry } from "./../../component/registry";
 import { ModalView } from "../../component/view";
 import {
-    RenderPartsToPropertyData,
     CreateRenderPartsWithData
 } from "../configuration/configuration-view/property-views/property-view";
 import {
@@ -37,8 +36,15 @@ import {
     ProjectCategory
 } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-category";
 import { EditorManager } from "../editor-manager/editor-manager";
-import { ProjectItem } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+import {
+    ProjectItem
+} from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 import { Editor } from "../editor-manager/editor";
+import {
+    createDialogue,
+    getTitleValueofRenderParts,
+    getTitleOfRenderParts
+} from "../../common-views/sequential-dialogues-modal-view/dialogue-data";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -213,6 +219,13 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
+    public initializeSharedProject(project): void {
+        // check if project is already loaded
+        if (project) {}
+
+    }
+
+    @ExportedFunction
     public getMainApplicationData() {
         let mainProject = this.loadedProjects[this.mainProject];
         return { main: "srcMain", domain: "IoT" };
@@ -263,7 +276,7 @@ export class ProjectManager extends IDEUIComponent {
     public saveProjectResponse(resp) {
         console.log("----------------------\n");
         console.log(resp);
-        alert("Application saved successfully!\n");
+        // alert("Application saved successfully!\n");
     }
 
     private getProjectDataToSave(project) {
@@ -409,59 +422,15 @@ export class ProjectManager extends IDEUIComponent {
         let index = renderParts
             ? renderParts.map(x => x.type).indexOf("title")
             : -1;
-        
+
         return index > -1
             ? renderParts[index]
             : null;
     }
 
-    public getTitleValueofRenderParts(renderParts): string {
-        let data = this.getRenderDataTitle(renderParts);
-        return (data && data.value.text) || "";
-    }
-
     public getDefaultTitleofRenderParts(renderParts): string {
         let data = this.getRenderDataTitle(renderParts);
         return (data && data.value.default) || "";
-    }
-
-    private getTitleOfRenderParts(renderParts): string {
-        let data = this.getRenderDataTitle(renderParts);
-        return (data && (data.value.default || data.value.text)) || "";
-    }
-
-    private createDialogueTitle(action: string, renderParts, type) {
-        let renderPartsTitle = this.getTitleOfRenderParts(renderParts);
-        return  action + (renderPartsTitle || type);
-    }
-
-    private createDialogue(
-        actionTitle: string,
-        body: {
-            formElems?: any,
-            text?: any,
-            systemIDs?: number
-        },
-        type,
-        actions,
-        dtype: string = "simple"
-    ) {
-        if (body.formElems) {
-            body.formElems = RenderPartsToPropertyData(
-                body.formElems,
-                body.systemIDs);
-        }
-        return {
-            type: dtype,
-            data: {
-                title: this.createDialogueTitle(
-                    actionTitle,
-                    body.formElems,
-                    type),
-                body: body,
-                actions: actions
-            }
-        };
     }
 
     private createNewItem(
@@ -568,11 +537,13 @@ export class ProjectManager extends IDEUIComponent {
         // specific element to select
         if (event.data.choices.length === 1) {
             let type = event.data.choices[0].type;
-            this.currModalData.itemData = (<ProjectCategory>concerned).getChildElementData(type);
-            let renderData = (<ProjectCategory>concerned).getReversedChildElementRenderData(type);
+            this.currModalData.itemData = (<ProjectCategory>concerned)
+                .getChildElementData(type);
+            let renderData = (<ProjectCategory>concerned)
+                .getReversedChildElementRenderData(type);
 
             dialoguesData.push(
-                this.createDialogue(
+                createDialogue(
                     "Create New ",
                     {
                         formElems: renderData,
@@ -595,7 +566,7 @@ export class ProjectManager extends IDEUIComponent {
                                     projInstView,
                                     event.validation,
                                     callback
-                            ),
+                                ),
                             callback: (data) => this.onCreateProjectItem(
                                 data,
                                 event,
@@ -627,7 +598,7 @@ export class ProjectManager extends IDEUIComponent {
                     .value
                     .default;
                 titles.push(title);
-                let dialogue = this.createDialogue(
+                let dialogue = createDialogue(
                     "Create New ",
                     {
                         formElems: renderData,
@@ -696,6 +667,7 @@ export class ProjectManager extends IDEUIComponent {
                 dialogues: dialogues
             });
         }
+
         let modalActionView = <ModalView>ViewRegistry
             .getEntry("SequentialDialoguesModalView")
             .create(this, dialoguesData);
@@ -754,10 +726,10 @@ export class ProjectManager extends IDEUIComponent {
             itemData: Object.assign({}, concerned.itemData()),
             projectID: concerned.projectID
         };
-        let title: string = this.getTitleValueofRenderParts(concerned.itemData().renderParts);
+        let title: string = getTitleValueofRenderParts(concerned.itemData().renderParts);
         (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
             this,
-            [this.createDialogue (
+            [createDialogue (
                 "Remove ",
                 {
                     text: "Deleting <b>"
@@ -825,10 +797,10 @@ export class ProjectManager extends IDEUIComponent {
             itemData: Object.assign({}, concerned.itemData()),
             projectID: concerned.projectID
         };
-        let title: string = this.getTitleOfRenderParts(renderData);
+        let title: string = getTitleOfRenderParts(renderData);
         (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
             this,
-            [this.createDialogue (
+            [createDialogue (
                 "Rename " + concerned.defaultTitle() + ": ",
                 { formElems: renderData },
                 title ? title : "Element",

@@ -12,15 +12,15 @@ var menuJson;
 var configJson;
 
 @UIComponentMetadata({
-    description: "Project Manager of the IDE",
+    description: "Collaboration Manager of the IDE",
     authors: [
         {
-            date: "March 2018",
-            name: "Yannis Valsamakis",
-            email: "jvalsam@ics.forth.gr"
+            date: "",
+            name: "",
+            email: ""
         }
     ],
-    componentView: "CollaborationView",
+    componentView: "CollaborationManagerView",
     menuDef: menuJson,
     configDef: configJson,
     version: "1.0"
@@ -57,7 +57,9 @@ export class CollaborationManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public joinSession(selector: string, type: string) {}
+    public joinSession(selDialog: any, callback: Function) {
+        alert("Collabotaion join session is not implemented yet.")
+    }
 
     @ExportedFunction
     public getMembers(sessionId) {

@@ -66,12 +66,17 @@ export class ApplicationListSP extends ComponentViewElement {
             {
                 eventType: "click",
                 selector: ".ts-start-page-new-application",
-                handler: this.openApplication
+                handler: () => this.createApplication()
+            },
+            {
+                eventType: "click",
+                selector: ".ts-start-page-join-application",
+                handler: () => this.joinApplication()
             },
             {
                 eventType: "click",
                 selector: ".ts-start-page-search-application",
-                handler: this.searchApplication
+                handler: () => () => this.searchApplication()
             }
         );
     }
@@ -85,8 +90,12 @@ export class ApplicationListSP extends ComponentViewElement {
      *  Events Function Callbacks
      */
 
-    private openApplication(): void {
-        alert("openApplication: Not implemented yet.");
+    private createApplication(): void {
+        this.parent["createNewApplicationRequest"] (this.renderData.filters.domainType);
+    }
+
+    private joinApplication(): void {
+        this.parent["joinSharedApplicationRequest"](this.renderData.filters.domainType);
     }
 
     private searchApplication(): void {

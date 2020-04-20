@@ -1,19 +1,22 @@
 <div class="application-list-container row">
     <div class="col-xs-12">
-        <div class="row applications-user-actions">
-            <div class="col" style="margin-left: 2em; margin-top:5px;">
+        <div class="row applications-user-actions" style="width: 60em;">
+            <div class="col-7" style="margin-left: 5em; margin-top:5px;">
                 <h3><u>Applications</u></h3>
             </div>
-            <div class="col">
-                <button type="button" class="btn btn-outline-primary btn-sm ts-start-page-new-application">
+            <div class="col" style="margin-left: 2em">
+                <button type="button" title="Create new project" class="btn btn-outline-primary btn-sm ts-start-page-new-application">
                     <i class="fa fa-plus fa-2x" aria-hidden="true"></i>
+                </button>
+                <button type="button" title="Join shared project" class="btn btn-outline-primary btn-sm ts-start-page-join-application">
+                    <i class="fa fa-sign-in-alt fa-2x" aria-hidden="true"></i>
                 </button>
                 <button type="button" class="btn btn-outline-primary btn-sm ts-start-page-search-application">
                     <i class="fa fa-search fa-2x" aria-hidden="true"></i>
                 </button>
             </div>
         </div>
-        <div class="row applications-view-list" style="margin-top: 1em;">
+        <div class="row applications-view-list" style="margin-top: 1em; margin-left: 5em;">
             <% if (totalApplications === 0) { %>
                 <div class="col-sm-5 text-center msg-no-applications-created" style="margin-left:15px;">
                     <p>No applications are created. Click below add button to create your first application.</p>

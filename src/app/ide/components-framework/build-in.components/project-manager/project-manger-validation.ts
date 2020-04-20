@@ -41,7 +41,13 @@ export class ProjectManagerValidation {
             _.forEach(vchecks, (vcheck) => {
                 switch(vcheck.type) {
                     case "system":
-                        _.forEach(vcheck.rules, (rule) => this[rule.action](_.pick(items, rule.items), projectInst, rule.args));
+                        _.forEach(
+                            vcheck.rules,
+                            (rule) => this[rule.action](
+                                _.pick(items, rule.items),
+                                projectInst,
+                                rule.args)
+                        );
                         break;
                     case "custom":
                         _.forEach(

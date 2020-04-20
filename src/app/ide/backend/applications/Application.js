@@ -27,7 +27,15 @@ ElementSchema.add({
             type: { type: String, required: [true, 'project renderParts type not exist'] },
             value: {}
         }
-    ]
+    ],
+    privileges: {
+        author: { type: String, required: [true, 'author name is missing in project item'] },
+        owner: { type: String, required: [true, 'owner name is missing in project item'] },
+        shared: {
+            type: { type: String, required: [true, 'privileges shared type is missing.'] },
+            members: [String]
+        }
+    }
 });
 
 var ApplicationSchema = new mongoose.Schema({
@@ -84,11 +92,7 @@ ApplicationSchema.pre("save", function (next) {
     });
 });
 ApplicationSchema.statics.fixFilesData = function (schema, files) {
-    console.log('FixFilesData for the Applications: Not implemented yet!');
-    // TODO: complete it when post respective request in the front-end
-    // if (files && files.img) {
-    //     schema.img.data = fs.readFileSync(files.img.path);
-    //     schema.img.contentType = files.img.type;
-    // }
+    schema.lastModified = Date.now();
+    schema.created = Date.now();
 };
 module.exports = mongoose.model('Application', ApplicationSchema, 'Applications');
