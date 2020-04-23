@@ -45,15 +45,24 @@ export class CollaborationManager extends IDEUIComponent {
     /**
      * 1. Pop up modal dialogue to start the collaboration process
      * 2. Collaboration toolbar opens...
-     * @param dialogSel
+     * @param dialogSel JQUERY div
+     * @param dialogSel JQUERY div
+     * @param dialogSel JQUERY div
+     * @param dialogSel JQUERY div
+     * 
      */
     @ExportedFunction
-    public startSession(dialogSel: string, projectId: string) {
+    public startSession(
+        $dialog: any,
+        projectObj: any,
+        $container: any,
+        callback: (sharedProjectObj:any) => void
+    ) {
         // opens dialogue
-
+        
         // in case start:
         // opens collaboration toolbar
-
+        callback(projectObj);
     }
 
     @ExportedFunction

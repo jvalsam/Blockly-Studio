@@ -28,25 +28,25 @@ const Privillege = Object.freeze({
 
 export class BlocklyInstance {
     constructor(
-        pitemId,
+        pitem,
         selector,
         type,
         privillege,
         config,
         _toolbox,
         _syncWSP,
-        src
+        text
     ) {
-        this.pitemId = pitemId;
+        this.pitem = pitem;
         this.selector = selector;
         this.type = type;
         this.privillege = privillege;
         this.config = config;
-        this.src = src;
+        this.text = text;
         this.wsp = null;
         this.state = InstStateEnum.INIT;
         this.toolbox = () => _toolbox(type);
-        this._syncWSP = (data) => _syncWSP(data);
+        this._syncWSP = (event) => _syncWSP(event);
     }
 
     open() {
@@ -66,6 +66,12 @@ export class BlocklyInstance {
             this._blocklyDiv = document.getElementById(blocklySel);
             
             this["initWSP_" + this.privillege]();
+            
+            // load text
+            if (this.text) {
+                var xml = Blockly.Xml.textToDom(this.text);
+                Blockly.Xml.domToWorkspace(xml, this.wsp);
+            }
             
             window.addEventListener(
                 'resize',
@@ -104,7 +110,7 @@ export class BlocklyInstance {
 
         this.wsp = Blockly.inject(
             this._blocklyDiv, {
-                // "media": "../../../../.././media/",
+                media: "../../../../../node_modules/blockly/media/",
                 toolbox: toolboxXml
             });
         
@@ -135,10 +141,7 @@ export class BlocklyInstance {
             return; // Don't mirror UI events.
         }
 
-        this._syncWSP({
-            id: this.selector,
-            event: event.toJson(),
-        });
+        this._syncWSP(event.toJson());
     }
 
     editPrivilege() {
@@ -151,5 +154,10 @@ export class BlocklyInstance {
             this.privillege = Privillege.READ_ONLY;
         }
         this["initWSP_"+this.privillege]();
+    }
+
+    getText() {
+        var xml = Blockly.Xml.workspaceToDom(this.wsp);
+        return Blockly.Xml.domToText(xml);
     }
 }

@@ -11,6 +11,7 @@ import {ExportedFunction, RequiredFunction,  UIComponentMetadata,   ExportedStat
 import { ResponseValue } from "../../component/response-value";
 
 import * as _ from "lodash";
+import { ProjectItem } from '../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item';
 
 // const enum EditorRenderState {
 //     constructed = 0,
@@ -64,13 +65,16 @@ export abstract class Editor extends IDEUIComponent {
     public abstract copy(): void;
     public abstract paste(): void;
 
-    @RequiredFunction("ProjectManager", "saveEditorData")
-    public save (src:any): void {
+    public save (id: string, pitem: ProjectItem, event: any): void {
         ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
             "saveEditorData",
-            [ src ]
+            [
+                id,
+                pitem,
+                event
+            ]
         );
     }
 

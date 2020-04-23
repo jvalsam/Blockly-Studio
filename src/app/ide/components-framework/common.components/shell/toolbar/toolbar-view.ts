@@ -33,6 +33,18 @@ export class ToolbarView extends ComponentView {
         }
     }
 
+    public addArea(order: number): string {
+        let sel = "toolbar-area-" + order;
+        $(".tools-view-container").append(
+            "<div id=\"" + sel + "\"></div>"
+        );
+        return sel;
+    }
+
+    public deleteArea(selector: string): void {
+        $("#"+selector).remove();
+    }
+
     public removeTools(tools: IViewElements): void {
         //TODO: implement
 

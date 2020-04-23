@@ -4,11 +4,11 @@
     width: 100%;
 }
 
-.pitem-editors-area-no-split-1 {
+.pitem-editors-area-normal-split-1 {
     height: 100%;
 }
 
-.pitem-editors-area-no-split-2 {
+.pitem-editors-area-normal-split-2 {
     display: none;
 }
 

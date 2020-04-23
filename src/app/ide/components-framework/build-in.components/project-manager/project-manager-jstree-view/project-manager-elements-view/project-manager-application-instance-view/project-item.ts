@@ -97,6 +97,10 @@ export class ProjectItem extends ProjectElement {
         return this.systemId;
     }
 
+    public editorData(id: string): any {
+        return this._editorsData[id];
+    }
+
     public get editorsData(): any {
         return this._editorsData;
     }

@@ -64,9 +64,19 @@ export class Shell extends IDEUIComponent {
   }
 
   @ExportedFunction
+  public newToolbarArea(): string {
+    return this._toolbar.addNewArea();
+  }
+
+  @ExportedFunction
+  public deleteToolbarArea(selector: string): void {
+    this._toolbar.deleteArea(selector);
+  }
+
+  @ExportedFunction
   public openComponent(comp: IDEUIComponent): void {
     //this.updateComponentsViewTree(comp);
-    
+
     this._menu.activateMenuItems(comp.view.menuElems);
     this._toolbar.addTools(comp.view.toolElems);
 

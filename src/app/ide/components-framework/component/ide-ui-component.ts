@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import { IDEComponent } from "./ide-component";
-import { ComponentMetadata, ExportedFunction } from "./component-loader";
+import { ComponentMetadata, ExportedFunction, RequiredFunction } from "./component-loader";
 import { IViewElement } from "./view";
 import {
     ComponentView,
@@ -34,7 +34,9 @@ export abstract class IDEUIComponent extends IDEComponent {
         this._viewElems = {};
         this._view = ComponentViewRegistry
             .getEntry(compViewName)
-            .create(this, hookSelector);
+            .create(
+                this,
+                hookSelector);
     }
 
     get templateHTML(): string {
@@ -49,6 +51,7 @@ export abstract class IDEUIComponent extends IDEComponent {
         return this._view;
     }
 
+    @RequiredFunction("Shell", "newToolbarArea")
     @ExportedFunction
     public render(): void {
             this.view.render();

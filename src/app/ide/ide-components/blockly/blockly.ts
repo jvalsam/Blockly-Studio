@@ -1,4 +1,7 @@
-﻿import { BlocklyInstance, BlocklyConfig } from './blockly-instance';
+﻿import {
+  BlocklyInstance,
+  BlocklyConfig
+} from "./blockly-instance";
 import {
   ResponseValue
 } from "./../../components-framework/component/response-value";
@@ -17,10 +20,11 @@ import {
   PlatformEditorMetadata
 } from "../../components-framework/component/component-loader";
 
-import * as Blockly from "blockly";
 import { DomainElementsHolder } from "../../domain-manager/domains-holder";
 import { assert } from "../../shared/ide-error/ide-error";
-import { PItemView } from '../../components-framework/build-in.components/editor-manager/project-item/pitem-view';
+import {
+  PItemView
+} from "../../components-framework/build-in.components/editor-manager/project-item/pitem-view";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -85,6 +89,7 @@ export class BlocklyVPL extends Editor {
     ).value;
   }
 
+  @RequiredFunction("ProjectManager", "saveEditorData")
   @RequiredFunction("Shell", "addTools")
   @ExportedFunction
   public open(
@@ -92,15 +97,22 @@ export class BlocklyVPL extends Editor {
     pitem: PItemView,
     config: string
   ): void {
+    let src = pitem.pi.editorsData.find(e => e.id === selector);
+    let text = src ? src.data.text : null;
     this.instancesMap[selector] = new BlocklyInstance(
-      pitem.pi.systemID,
+      pitem.pi,
       selector,
       config,
       pitem.pi.getPrivilleges(),
       this.configsMap[config],
       (config) => this.getToolbox(config),
-      (data) => this.onChangeWSP(data),
-      pitem.pi.editorsData
+      (jsonEvent) => this.save(
+          selector,
+          pitem.pi,
+          (mode) => mode === "SHARED"
+            ? jsonEvent
+            : this.getEditorData(selector)),
+      text
     );
     this.instancesMap[selector].open();
     // this.changed = false;
@@ -118,6 +130,13 @@ export class BlocklyVPL extends Editor {
     //     ]
     //   );
     // }
+  }
+
+  public getEditorData(editorId: string): any {
+    return {
+      name: this.name,
+      text: this.instancesMap[editorId].getText()
+    };
   }
 
   @ExportedFunction
@@ -214,11 +233,6 @@ export class BlocklyVPL extends Editor {
 
   }
 
-  @ExportedFunction
-  public onChangeWSP(data) {
-    alert("not implemented yet sync with collaboration combonent!");
-  }
-
   // public static updateCode() {
   //   document.getElementById("js").innerText = Blockly.JavaScript.workspaceToCode(editor);
   //   document.getElementById("php").innerText = Blockly.PHP.workspaceToCode(editor);
@@ -227,14 +241,14 @@ export class BlocklyVPL extends Editor {
   //   document.getElementById("python").innerText = Blockly.Python.workspaceToCode(editor);
   // }
   
-  @RequiredFunction("EditorManager", "OnFocusEditorId")
+  // @RequiredFunction("EditorManager", "OnFocusEditorId")
   public requestOnFocusEditorId(): string {
-    let resp: ResponseValue = ComponentsCommunication.functionRequest(
-      this.name,
-      "EditorManager",
-      "OnFocusEditorId"
-    );
-    return <string>resp.value;
+    // let resp: ResponseValue = ComponentsCommunication.functionRequest(
+    //   this.name,
+    //   "EditorManager",
+    //   "OnFocusEditorId"
+    // );
+    return "<string>resp.value";
   }
 
   /////////////////////////////////////////////////

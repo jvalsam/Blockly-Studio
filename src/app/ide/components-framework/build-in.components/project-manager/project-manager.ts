@@ -233,6 +233,7 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public loadProject(project): void {
+        project.saveMode = "DB";
         this.loadedProjects[project._id] = project;
         this.mainProject = project._id;
         let projView = (<ProjectManagerJSTreeView>this._view).loadProject(project);
@@ -247,7 +248,7 @@ export class ProjectManager extends IDEUIComponent {
         // set default values if there is no state
         if (!project.editorsState) {
             project.editorsState = {
-                viewState: 0,
+                viewState: "normal",
                 onFocusPItems: [
                     projView.firstPItemID
                 ]
@@ -405,7 +406,21 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public onShareProject(event: IEventData, concerned: any): void {
-        alert("onShareProject not developed yet!");
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "startSession",
+            [
+                $(".modal-platform-container"),
+                concerned.data.project,
+                $(".collaboration-manager-container"),
+                (collabProject) => {
+                    collabProject.saveMode = "SHARED";
+                    this.loadedProjects[collabProject._id] = collabProject;
+                    (<ProjectManagerJSTreeView>this.view).updateProject(collabProject);
+                }
+            ]
+        );
     }
 
     @ExportedFunction
@@ -460,13 +475,68 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
+    private saveEditorData_SHARED(
+        editorId: string,
+        pitem: ProjectItem,
+        project: any,
+        event: any
+    ): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "pitemUpdated",
+            [
+                pitem.systemID,
+                "EDITOR_SRC",
+                {
+                    editorId: editorId,
+                    event: event
+                }
+            ]
+        );
+    }
+
+    private saveEditorData_DB(
+        editorId: string,
+        pitem: ProjectItem,
+        project: any,
+        data: any
+    ) {
+        let projectItem = project.projectItems
+            .find(x => x.systemID === pitem.systemID);
+
+        if (!projectItem.editorsData) {
+            projectItem.editorsData = [];
+        }
+        let index = projectItem.editorsData.map(x => x.id).indexOf(editorId);
+        if (index < 0) {
+            projectItem.editorsData.push({
+                id: editorId,
+                data: data
+            });
+        }
+        else {
+            projectItem.editorsData[index].data = data;
+        }
+
+        this.saveProject(project._id);
+    }
+
     @ExportedFunction
-    public saveEditorData(src: any) {
-        let index = this.loadedProjects[src.projectID].projectItems
-            .map(x=>x.systemID)
-            .indexOf(src.systemID);
-        this.loadedProjects[src.projectID].projectItems[index].editorData = src;
-        this.saveProject(src.projectID);
+    public saveEditorData(
+        editorId: string,
+        pitem: ProjectItem,
+        data: (mode: string) => any
+    ): void {
+        let projectId = pitem.project.dbID;
+        let project = this.loadedProjects[projectId];
+
+        this["saveEditorData_" + project.saveMode](
+            editorId,
+            pitem,
+            project,
+            data(project.saveMode)
+        );
     }
 
     private onSuccessUploadFiles(paths: Array<String>, data, event, concerned) {

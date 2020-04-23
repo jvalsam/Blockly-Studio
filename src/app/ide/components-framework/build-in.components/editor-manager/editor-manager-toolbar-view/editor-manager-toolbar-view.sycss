@@ -1,0 +1,45 @@
+.editor-manager-toolbar-container {
+    background-color: aliceblue;
+    border: solid rgb(192, 192, 192) 1px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.editor-tool-split-layout-btn {
+    padding: 0px 3px 0px 3px;
+    margin-right: 1px;
+    margin-left: -4px;
+}
+
+.editor-tool-split-layout-btn img {
+    margin-top: -7px;
+}
+
+.editor-toolbar-split-btn {
+    opacity: 1.0;
+    cursor: pointer;
+}
+
+.editor-toolbar-split-btn:hover {
+    opacity: 0.5;
+}
+
+.editor-toolbar-split-btn img:hover {
+    background: lightgrey;
+}
+
+.editor-toolbar-split-disabled-btn {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.editor-toolbar-split-disabled-btn img {
+    background: lightgrey;
+    border: solid 1px grey;
+}
+
+.editor-toolbar-split-vertical-btn:hover {
+    opacity: 0.5;
+}

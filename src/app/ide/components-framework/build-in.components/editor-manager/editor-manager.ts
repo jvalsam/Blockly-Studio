@@ -21,9 +21,9 @@ import { ProjectItem } from "../project-manager/project-manager-jstree-view/proj
 import { assert } from "../../../shared/ide-error/ide-error";
 
 enum EditorsViewState {
-    NO_SPLIT = 0,
-    VERTICAL_SPLIT = 1,
-    HORIZONTAL_SPLIT = 2
+    NO_SPLIT = "normal",
+    VERTICAL_SPLIT = "vertical",
+    HORIZONTAL_SPLIT = "horizontal"
 };
 
 @UIComponentMetadata({
@@ -61,17 +61,6 @@ export class EditorManager extends IDEUIComponent {
         this.projectItemsMap = {};
     }
 
-    private editorsViewState2str(value: EditorsViewState): string {
-        switch (value) {
-            case EditorsViewState.NO_SPLIT:
-                return "no";
-            case EditorsViewState.VERTICAL_SPLIT:
-                return "horizontal";
-            case EditorsViewState.HORIZONTAL_SPLIT:
-                return "vertical";
-        }
-    }
-
     private swapPItemEditorsArea(): void {
         $(this.pitemEditorsSel+"1").eq(0).before($(this.pitemEditorsSel+"2").eq(0));
         // swap class selectors
@@ -85,7 +74,7 @@ export class EditorManager extends IDEUIComponent {
         // remove current classes style of split
         let removeClassName =
             this.pitemEditorsSel.substr(1)
-            + this.editorsViewState2str(this.currentViewState)
+            + this.currentViewState
             + "-split-";
         $(this.pitemEditorsSel + "1").removeClass(removeClassName + "1");
         $(this.pitemEditorsSel + "2").removeClass(removeClassName + "2");
@@ -102,7 +91,7 @@ export class EditorManager extends IDEUIComponent {
         // add new classes for style of split
         let addClassName =
             this.pitemEditorsSel.substr(1)
-            + this.editorsViewState2str(newViewState)
+            + newViewState
             + "-split-";
         $(this.pitemEditorsSel + "1").removeClass(addClassName + "1");
         $(this.pitemEditorsSel + "2").removeClass(addClassName + "2");
@@ -113,7 +102,7 @@ export class EditorManager extends IDEUIComponent {
         this.view.render();
         let className =
             this.pitemEditorsSel.substr(1)
-            + this.editorsViewState2str(this.currentViewState)
+            + this.currentViewState
             + "-split-";
 
         $(this.pitemEditorsSel+"1").addClass(className + "1");
@@ -278,6 +267,11 @@ export class EditorManager extends IDEUIComponent {
         }
 
         return projectItem;
+    }
+
+    public onSplitEditorsBtn(btn: string): void {
+        alert("split " + btn);
+        // this.updateSplit(EditorsViewState.)
     }
 
     @ExportedSignal("editor-manager-open-pitem-completed")

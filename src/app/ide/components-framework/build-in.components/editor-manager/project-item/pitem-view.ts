@@ -47,7 +47,9 @@ export class PItemView extends View {
     public render(callback?: Function): void {
         let $local = $($.parseHTML(this.pitemTmpl(this._pi.itemData())));
         let pitemId = this._pi.systemID;
-        this.editorsSel.forEach(sel => $local.find("." + sel).attr("id", "pi_"+pitemId + "_" + sel));
+        this.editorsSel.forEach(
+            sel => $local.find("." + sel).attr("id", "pi_"+pitemId + "_" + sel)
+        );
         this.template = "<div class=\"project-item-container\" style=\"height: 100%\">"
             + $local[0].outerHTML
             + "</div>";

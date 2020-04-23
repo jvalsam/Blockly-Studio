@@ -6004,6 +6004,10 @@
 			cacheNodeRec(self, document["jstreeNewNode"]);
 			document["jstreeNewNode"] = null;
 		}
+		if (document["refresh_treeView"]) {
+			document["refresh_treeView"] = null;
+			cacheColorNodesRec(self, self.settings.core.data);
+		}
 	};
 
     $.jstree.plugins.colorv = function (options, parent) {

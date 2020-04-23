@@ -16,7 +16,16 @@ import { ToolbarView } from "./toolbar-view";
     componentView: "ToolbarView"
 })
 export class Toolbar extends IDEUIComponent {
+    private totalAreas = 0;
     protected _tools: Array<string> = [];
+
+    public addNewArea(): string {
+        return (<ToolbarView>this.view).addArea(++this.totalAreas);
+    }
+
+    public deleteArea(selector: string): void {
+        (<ToolbarView>this.view).deleteArea(selector);
+    }
 
     @ExportedFunction
     public addTools(tools: IViewElements): void {
