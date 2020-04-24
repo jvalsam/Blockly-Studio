@@ -1,10 +1,14 @@
-.editor-manager-toolbar-container {
+.component-toolbar-container {
     background-color: aliceblue;
     border: solid rgb(192, 192, 192) 1px;
     margin-left: 10px;
     margin-right: 10px;
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+.toolbar-separator {
+    border-left: solid 1px grey;
 }
 
 .editor-tool-split-layout-btn {
@@ -32,12 +36,12 @@
 
 .editor-toolbar-split-disabled-btn {
     opacity: 0.5;
-    cursor: not-allowed;
+    cursor: none;
 }
 
 .editor-toolbar-split-disabled-btn img {
     background: lightgrey;
-    border: solid 1px grey;
+    border: solid 1px rgb(151, 151, 151);
 }
 
 .editor-toolbar-split-vertical-btn:hover {

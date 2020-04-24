@@ -30,14 +30,14 @@ export class EditorManagerToolbarView extends ComponentViewElement {
     private onClickBtn(name: string): void {
         this.detachAllEvents();
 
-        let $el = this.findEl("." + name + "-split-btn", true);
-        $el.removeClass(".editor-toolbar-split-btn")
-           .addClass(".editor-toolbar-split-disabled-btn");
+        let $el = $(".ts-" + name + "-split-btn");
+        $el.removeClass("editor-toolbar-split-btn")
+            .addClass("editor-toolbar-split-disabled-btn");
 
         this.getOthers(name).forEach(btn => {
-            let $el = this.findEl("." + btn + "-split-btn", true);
-            $el.removeClass(".editor-toolbar-split-disabled-btn")
-               .addClass(".editor-toolbar-split-btn");
+            let $el = $(".ts-" + btn + "-split-btn");
+            $el.removeClass("editor-toolbar-split-disabled-btn")
+                .addClass("editor-toolbar-split-btn");
 
             this.attachEvents({
                     eventType: "click",
