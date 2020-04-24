@@ -258,3 +258,7 @@ function printDB(){
 function broadcastChange(info){
 	//TODO:
 }
+
+export function collaborationFilter(project, memberInfo, settings) {
+    return project;
+}

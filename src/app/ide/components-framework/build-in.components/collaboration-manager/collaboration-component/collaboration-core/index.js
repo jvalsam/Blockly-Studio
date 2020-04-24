@@ -1,6 +1,15 @@
-import {generateRandom,receiveRegisterUser,receiveRemoveUser,receivePItemAdded,receivePItemRemoved,receivePItemUpdated} from './utilities.js';
+import Peer from "peerjs";
+import {
+  generateRandom,
+  receiveRegisterUser,
+  receiveRemoveUser,
+  receivePItemAdded,
+  receivePItemRemoved,
+  receivePItemUpdated
+}
+from './utilities.js';
 
-function Collaboration() {
+export function communicationInitialize() {
   var receivedHandler = {
     "registerUser": receiveRegisterUser ,
     "removeUser": receiveRemoveUser ,
@@ -10,7 +19,6 @@ function Collaboration() {
   };
 
   var connected_users = [];
-
 
   var randomId = generateRandom(20);
   var peer = new Peer(randomId);
@@ -35,5 +43,3 @@ function Collaboration() {
     });
   });
 }
-
-var collab = new Collaboration();
