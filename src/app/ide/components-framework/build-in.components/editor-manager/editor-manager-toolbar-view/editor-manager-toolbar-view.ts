@@ -6,6 +6,12 @@ import {
 import EditorManagerToolbarTmpl from "./editor-manager-toolbar-view.tmpl";
 import EditorManagerToolbarSYCSS from "./editor-manager-toolbar-view.sycss";
 
+interface ITool {
+    icon: string;
+    tooltip: string;
+    action: Function;
+}
+
 @ComponentViewElementMetadata({
     name: "EditorManagerToolbarView",
     templateHTML: EditorManagerToolbarTmpl,
@@ -16,6 +22,45 @@ import EditorManagerToolbarSYCSS from "./editor-manager-toolbar-view.sycss";
 export class EditorManagerToolbarView extends ComponentViewElement {
     public render(): void {
         this.renderTmplEl();
+    }
+
+    private pitemToolSelectors = [];
+    private removeToolItem(selector: any): void {
+        let $pitem = $(selector);
+        if ($pitem["nodeName"] === "A") {
+            $pitem.unbind("click");
+        }
+        $pitem.remove();
+    }
+    private addToolItem(tool: ITool) {
+        let selector = "ts-pitem-tool-" + this.pitemToolSelectors.length;
+
+        let html = "<a href=\"#\" class=\"navbar-brand navbar-left "
+        + selector
+        + " editor-tool-split-layout-btn\""
+        + "data-toggle=\"tooltip\" title =\""
+        + tool.tooltip
+        + "\""
+        + "style=\"margin-right: 2px;\">"
+        + "<img src=\""
+        + tool.icon
+        + "\" >"
+        + "</a>";
+
+        selector = "." + selector;
+        $(".component-toolbar-container").append(html);
+        $(selector).bind("click", (evt) => tool.action(evt));
+
+        this.pitemToolSelectors.push(selector);
+    }
+    public setPItemTools (tools: Array<ITool>): void {
+        // clear previous items
+        if (this.pitemToolSelectors.length>0) {
+            this.pitemToolSelectors.forEach(sel => this.removeToolItem(sel));
+            this.pitemToolSelectors.splice(0, this.pitemToolSelectors.length);
+        }
+        // add new items
+        tools.forEach(tool => this.addToolItem(tool));
     }
 
     private getOthers (name: string) {

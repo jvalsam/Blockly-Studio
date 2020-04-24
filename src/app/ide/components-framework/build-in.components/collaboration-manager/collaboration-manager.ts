@@ -70,7 +70,6 @@ export class CollaborationManager extends IDEUIComponent {
                     memberInfo,
                     settings
                 );
-                // TODO: initialize communication
                 communicationInitialize();
                 //
                 callback(sharedProject);

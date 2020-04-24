@@ -19,6 +19,7 @@ import { View } from "../../component/view";
 import { PItemView } from "./project-item/pitem-view";
 import { ProjectItem } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 import { assert } from "../../../shared/ide-error/ide-error";
+import { EditorManagerToolbarView } from "./editor-manager-toolbar-view/editor-manager-toolbar-view";
 
 enum EditorsViewState {
     NO_SPLIT = "normal",
@@ -304,6 +305,14 @@ export class EditorManager extends IDEUIComponent {
                     pitemData.view
                 );
             pitemView.render();
+
+            // set tools for the pitem 
+            let toolsView = (<EditorManagerToolbarView>this._view
+                .toolElems["EditorManagerToolbarView"]);
+            toolsView.setPItemTools([]);
+            // request from the collaboration
+            // collect from the vpl editors
+            // identify which is on focus...
 
             for (let mission of editorsSel) {
                 let sel = "pi_" + pi.systemID + "_" + mission;
