@@ -16,3 +16,13 @@ Domain authors are able to design the application domain in the context of:
 3. Run-time Console
   * define the script for run-time purposes (implementing the interfaces for run-time scripts)
   * define extra run-time views (e.g. view area of monitoring smart objects)
+
+- Build and run the project:
+
+1. Install MongoDB, python 2.7, latest npm and node
+2. Start DB: .\mongod.exe --dbpath="path of the DB/data" #default port is 27017
+3. npm install #in the folder includes webpack
+4. Run server: cd ./src/app/ide/backend/ & node --inspect server.js # default port is 3031
+5. webpack --watch # deafult port is 8080
+6. choose index.html from the list of sources will be presented on webpage will open automatically in the browser
+
