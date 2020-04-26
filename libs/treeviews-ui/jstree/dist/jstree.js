@@ -6049,8 +6049,15 @@
 					}
 					
 					var shared = this._model.data[obj.id].shared_state;
-					if (shared) {
-
+					if (shared && shared !== "NOT_SHARED") {
+						let html = createElementFromHTML(
+							"<i class=\"jstree-icon jstree-themeicon "
+							+ "jstree-themeicon-custom\" role=\"presentation\" "
+							+ "style=\"background-image: url('"
+							+ "../../images/collaboration/" + shared + ".png"
+							+ "'); background-position: center center; "
+							+ "background-size: 20px 20px; margin-left:10px;\"></i>");
+						tmp.appendChild(html);
 					}
 
 					var options = this._model.data[obj.id].options;

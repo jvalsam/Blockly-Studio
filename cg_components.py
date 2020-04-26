@@ -6,12 +6,15 @@
 # August 2017
 ##
 
+import sys
 import datetime
 import os
 from os import listdir
 from os.path import isfile, join
 
 import urllib2
+
+print(sys.version)
 
 print('Starts Components Bridge Codegeneration...')
 
