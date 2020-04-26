@@ -7,9 +7,15 @@ import { IDEUIComponent } from "../../component/ide-ui-component";
 import {
     ComponentsCommunication
 } from "./../../component/components-communication";
-import { openStartSessionDialogue } from "./collaboration-component/collaboration-gui/dialogs";
-import { collaborationFilter } from "./collaboration-component/collaboration-core/utilities";
-import { communicationInitialize } from "./collaboration-component/collaboration-core/index";
+import { 
+    openStartSessionDialogue,
+    openJoinSessionDialogue 
+} from "./collaboration-component/collaboration-gui/dialogs";
+
+import { 
+    communicationInitialize,
+    startCommunicationUser 
+} from "./collaboration-component/collaboration-core/index";
 
 var menuJson;
 var configJson;
@@ -65,14 +71,16 @@ export class CollaborationManager extends IDEUIComponent {
             $dialog,
             $container,
             (memberInfo, settings) => {
-                let sharedProject = collaborationFilter(
+                /*let sharedProject = collaborationFilter(
                     projectObj,
                     memberInfo,
                     settings
-                );
-                communicationInitialize();
+                );*/
+
+                communicationInitialize(memberInfo);
                 //
-                callback(sharedProject);
+                //callback(sharedProject);
+                callback(projectObj);
             },
             () => { callback(null); }
         );
@@ -80,7 +88,14 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public joinSession(selDialog: any, callback: Function) {
-        alert("Collabotaion join session is not implemented yet.");
+        openJoinSessionDialogue(
+            selDialog,
+            (memberInfo, externalLink) => {
+                console.log("Will try to connect to "+externalLink);
+                startCommunicationUser(memberInfo, externalLink);
+            },
+            () => { callback(null); }
+        );
     }
 
     // @RequiredFunction("ProjectManager", "getProject")

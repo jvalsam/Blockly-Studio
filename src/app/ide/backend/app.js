@@ -43,7 +43,7 @@ app.use('/wsp_styles', authentication.check, WSPDomainStyleController);
 var DebuggerController = require('./debugger/DebuggerController');
 app.use('/debugger', DebuggerController);
 
-var SmartObjectController = require('./smart-objects/smartObjectController');
+var SmartObjectController = require('./smart-objects/SmartObjectController');
 app.use('/smart-objects', authentication.check, SmartObjectController);
 
 var UploadFilesController = require('./upload_files/UploadFilesController');
