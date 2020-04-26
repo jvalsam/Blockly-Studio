@@ -306,13 +306,13 @@ export class EditorManager extends IDEUIComponent {
                 );
             pitemView.render();
 
-            // set tools for the pitem 
-            let toolsView = (<EditorManagerToolbarView>this._view
-                .toolElems["EditorManagerToolbarView"]);
-            toolsView.setPItemTools([]);
-            // request from the collaboration
-            // collect from the vpl editors
-            // identify which is on focus...
+            let tools = ComponentsCommunication.functionRequest(
+                this.name,
+                "CollaborationManager",
+                "pitemTools",
+                [ pi.systemID ]
+            ).value;
+            tools.push("separator");
 
             for (let mission of editorsSel) {
                 let sel = "pi_" + pi.systemID + "_" + mission;
@@ -321,7 +321,7 @@ export class EditorManager extends IDEUIComponent {
                 // TODO: selection by the end-user... now we just choose the 1st
                 let econfig = econfigs[mission][0];
 
-                let editorId = ComponentsCommunication.functionRequest(
+                ComponentsCommunication.functionRequest(
                     this.name,
                     econfig.name,
                     "open",
@@ -330,9 +330,23 @@ export class EditorManager extends IDEUIComponent {
                         pitemView,
                         this.convertEconf(mission)
                     ]
-                ).value;
+                );
                 pitemView.addEditor(sel, econfig.name);
             }
+
+            let editorTools = ComponentsCommunication.functionRequest(
+                this.name,
+                pitemView.getOnFocusEditor(),
+                "tools",
+                [pitemView.getFocusEditorId()]
+            ).value;
+
+            let toolsView = (<EditorManagerToolbarView>this._view
+                .toolElems["EditorManagerToolbarView"]);
+            toolsView.setPItemTools(tools.concat(editorTools));
+            // request from the collaboration
+            // collect from the vpl editors
+            // identify which is on focus...
         }
 
         ComponentsCommunication.postSignal(

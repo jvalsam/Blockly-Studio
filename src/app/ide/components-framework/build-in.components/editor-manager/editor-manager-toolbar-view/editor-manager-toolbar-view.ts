@@ -6,7 +6,7 @@ import {
 import EditorManagerToolbarTmpl from "./editor-manager-toolbar-view.tmpl";
 import EditorManagerToolbarSYCSS from "./editor-manager-toolbar-view.sycss";
 
-interface ITool {
+export interface ITool {
     icon: string;
     tooltip: string;
     action: Function;
@@ -20,7 +20,9 @@ interface ITool {
     }
 })
 export class EditorManagerToolbarView extends ComponentViewElement {
+    private currSplit: string;
     public render(): void {
+        this.currSplit = "normal";
         this.renderTmplEl();
     }
 
@@ -32,19 +34,20 @@ export class EditorManagerToolbarView extends ComponentViewElement {
         }
         $pitem.remove();
     }
-    private addToolItem(tool: ITool) {
+
+    private addToolItem(tool: ITool): void {
         let selector = "ts-pitem-tool-" + this.pitemToolSelectors.length;
 
         let html = "<a href=\"#\" class=\"navbar-brand navbar-left "
         + selector
-        + " editor-tool-split-layout-btn\""
+        + " editor-toolbar-split-btn\""
         + "data-toggle=\"tooltip\" title =\""
         + tool.tooltip
         + "\""
-        + "style=\"margin-right: 2px;\">"
+        + "style=\"margin-right: 4px; padding: 0px;\">"
         + "<img src=\""
         + tool.icon
-        + "\" >"
+        + "\" style=\"width:22px;height:22px;max-width: 22px; max-height: 22px; margin-top:-7px;\">"
         + "</a>";
 
         selector = "." + selector;
@@ -53,6 +56,11 @@ export class EditorManagerToolbarView extends ComponentViewElement {
 
         this.pitemToolSelectors.push(selector);
     }
+    private addSeparator(): void {
+        $(".component-toolbar-container").append(
+            "<span style=\"margin-right: 6px; border-right: solid 1px grey;\"></span>"
+        );
+    }
     public setPItemTools (tools: Array<ITool>): void {
         // clear previous items
         if (this.pitemToolSelectors.length>0) {
@@ -60,7 +68,9 @@ export class EditorManagerToolbarView extends ComponentViewElement {
             this.pitemToolSelectors.splice(0, this.pitemToolSelectors.length);
         }
         // add new items
-        tools.forEach(tool => this.addToolItem(tool));
+        tools.forEach(tool => (typeof tool === "object")
+            ? this.addToolItem(tool)
+            : this.addSeparator());
     }
 
     private getOthers (name: string) {
@@ -73,34 +83,33 @@ export class EditorManagerToolbarView extends ComponentViewElement {
     }
 
     private onClickBtn(name: string): void {
-        this.detachAllEvents();
+        if (this.currSplit === name) {
+            return;
+        }
 
+        this.currSplit = name;
         let $el = $(".ts-" + name + "-split-btn");
         $el.removeClass("editor-toolbar-split-btn")
             .addClass("editor-toolbar-split-disabled-btn");
+        this.currSplit = name;
 
         this.getOthers(name).forEach(btn => {
             let $el = $(".ts-" + btn + "-split-btn");
             $el.removeClass("editor-toolbar-split-disabled-btn")
                 .addClass("editor-toolbar-split-btn");
-
-            this.attachEvents({
-                    eventType: "click",
-                    selector: ".ts-" + name + "-split-btn",
-                    handler: () => this.onClickBtn(name)
-                },
-                {
-                    eventType: "click",
-                    selector: ".ts-" + name + "-split-btn",
-                    handler: () => this.onClickBtn(name)
-                });
         });
 
         this.parent["onSplitEditorsBtn"](name);
     }
 
     public registerEvents(): void {
-        this.attachEvents({
+        this.attachEvents(
+            {
+                eventType: "click",
+                selector: ".ts-normal-split-btn",
+                handler: () => this.onClickBtn("normal")
+            },
+            {
                 eventType: "click",
                 selector: ".ts-vertical-split-btn",
                 handler: () => this.onClickBtn("vertical")
@@ -109,6 +118,7 @@ export class EditorManagerToolbarView extends ComponentViewElement {
                 eventType: "click",
                 selector: ".ts-horizontal-split-btn",
                 handler: () => this.onClickBtn("horizontal")
-            });
+            }
+        );
     }
 }

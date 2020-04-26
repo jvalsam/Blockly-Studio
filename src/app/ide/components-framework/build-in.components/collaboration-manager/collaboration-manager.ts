@@ -14,6 +14,18 @@ import { communicationInitialize } from "./collaboration-component/collaboration
 var menuJson;
 var configJson;
 
+interface IOption {
+    label: string;
+    icon: string;
+    action: Function;
+};
+interface ITool {
+    icon: string;
+    tooltip: string;
+    action: Function;
+};
+
+
 @UIComponentMetadata({
     description: "Collaboration Manager of the IDE",
     authors: [
@@ -94,9 +106,20 @@ export class CollaborationManager extends IDEUIComponent {
     // }
 
     @ExportedFunction
-    // public pitemOptions(pitemId): Array<Option> {} /* Option = { label, icon, action } */
-    // public pitemTools(pitemId): Array<Tool> {} /* Tool = { icon, tooltip, action } */
+    public pitemOptions(pitemId: string): Array<IOption> {
+        return [];
+    }
 
+    @ExportedFunction
+    public pitemTools(pitemId: string): Array<ITool> {
+        return [
+            {
+                tooltip: "test",
+                icon: "../../../../../../images/air-condition.png",
+                action: () => alert("test")
+            }
+        ];
+    }
 
     @ExportedFunction
     public getMembers(sessionId) {

@@ -20,6 +20,7 @@ import * as _ from "lodash";
 export class PItemView extends View {
     private _focusState: boolean;
     private editorsMap: { [selector: string]: any };
+    private focusEditor: string;
 
     private pitemTmpl: any;
     constructor(
@@ -42,6 +43,7 @@ export class PItemView extends View {
         this.pitemTmpl = _.template(this.view.template);
         this.editorsMap = {};
         this._focusState = false;
+        this.focusEditor = null;
     }
 
     public render(callback?: Function): void {
@@ -62,6 +64,15 @@ export class PItemView extends View {
 
     public addEditor(selector, editor) {
         this.editorsMap[selector] = editor;
+        this.focusEditor = selector;
+    }
+
+    public getFocusEditorId(): string {
+        return this.focusEditor;
+    }
+
+    public getOnFocusEditor(): string {
+        return this.editorsMap[this.focusEditor];
     }
 
     public get focusState(): boolean {

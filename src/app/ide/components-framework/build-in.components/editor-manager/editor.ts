@@ -11,8 +11,10 @@ import {ExportedFunction, RequiredFunction,  UIComponentMetadata,   ExportedStat
 import { ResponseValue } from "../../component/response-value";
 
 import * as _ from "lodash";
-import { ProjectItem } from '../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item';
-
+import {
+    ProjectItem
+} from '../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item';
+import { ITool } from "./editor-manager-toolbar-view/editor-manager-toolbar-view";
 // const enum EditorRenderState {
 //     constructed = 0,
 //     rendered = 1
@@ -64,6 +66,8 @@ export abstract class Editor extends IDEUIComponent {
 
     public abstract copy(): void;
     public abstract paste(): void;
+
+    public abstract tools(editorId: string): Array<ITool>;
 
     public save (id: string, pitem: ProjectItem, event: any): void {
         ComponentsCommunication.functionRequest(
