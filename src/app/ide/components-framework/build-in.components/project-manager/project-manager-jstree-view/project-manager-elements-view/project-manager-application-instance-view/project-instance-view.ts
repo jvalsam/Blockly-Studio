@@ -304,7 +304,7 @@ export class ProjectInstanceView extends View {
         let icon = this.getValue(infoC.find(x => x.type === "img"));
         let color = this.getValue(infoC.find(x => x.type === "colour"));
         let connection_state = this.getValue(infoC.find(x => x.type === "state"));
-        let shared_state = this.getValue(infoC.find(x => x.type === "shared"));
+        let shared_state = item.privileges.shared.type;
         let editorsData = item.editorsData ? item.editorsData : {};
 
         item.id = item.systemID

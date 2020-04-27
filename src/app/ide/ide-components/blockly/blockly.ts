@@ -25,6 +25,7 @@ import { assert } from "../../shared/ide-error/ide-error";
 import {
   PItemView
 } from "../../components-framework/build-in.components/editor-manager/project-item/pitem-view";
+import { ITool } from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -130,6 +131,22 @@ export class BlocklyVPL extends Editor {
     //     ]
     //   );
     // }
+  }
+
+  @ExportedFunction
+  public tools(editorId: string): Array<ITool> {
+    return [
+      {
+        icon: "../../../../../images/blockly/undo.png",
+        tooltip: "undo",
+        action: () => this.instancesMap[editorId].undo()
+      },
+      {
+        icon: "../../../../../images/blockly/redo.png",
+        tooltip: "redo",
+        action: () => this.instancesMap[editorId].redo()
+      }
+    ];
   }
 
   public getEditorData(editorId: string): any {

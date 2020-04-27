@@ -160,4 +160,12 @@ export class BlocklyInstance {
         var xml = Blockly.Xml.workspaceToDom(this.wsp);
         return Blockly.Xml.domToText(xml);
     }
+
+    undo() {
+        this.wsp.undo(false);
+    }
+
+    redo() {
+        this.wsp.undo(true);
+    }
 }

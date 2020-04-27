@@ -90,6 +90,10 @@ export class ViSmaOE extends Editor {
 
     }
 
+    public tools(editorId: string) {
+        return [];
+    }
+
     // @ExportedSignal('create-smart-object')
     @ExportedStaticFunction
     public static CreateSmartObject(): any {

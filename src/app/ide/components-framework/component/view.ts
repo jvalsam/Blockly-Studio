@@ -337,7 +337,6 @@ export abstract class View {
             return this.attachEvent(reg, true);
           });
     }
-    
     public attachEvents(...eventRegs: Array<IViewEventRegistration>) {
         this.ensureElement();
 

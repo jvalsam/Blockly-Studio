@@ -1,3 +1,4 @@
+import { SessionHolder } from './session-holder';
 import {
     ExportedFunction,
     UIComponentMetadata,
@@ -19,6 +20,18 @@ import {
 
 var menuJson;
 var configJson;
+
+interface IOption {
+    label: string;
+    icon: string;
+    action: Function;
+};
+interface ITool {
+    icon: string;
+    tooltip: string;
+    action: Function;
+};
+
 
 @UIComponentMetadata({
     description: "Collaboration Manager of the IDE",
@@ -109,9 +122,20 @@ export class CollaborationManager extends IDEUIComponent {
     // }
 
     @ExportedFunction
-    // public pitemOptions(pitemId): Array<Option> {} /* Option = { label, icon, action } */
-    // public pitemTools(pitemId): Array<Tool> {} /* Tool = { icon, tooltip, action } */
+    public pitemOptions(pitemId: string): Array<IOption> {
+        return [];
+    }
 
+    @ExportedFunction
+    public pitemTools(pitemId: string): Array<ITool> {
+        return [
+            {
+                tooltip: "Change project item floor.",
+                icon: "../../../../../../images/collaboration/send.png",
+                action: () => alert("test")
+            }
+        ];
+    }
 
     @ExportedFunction
     public getMembers(sessionId) {
