@@ -17,6 +17,9 @@ import {
     communicationInitialize,
     startCommunicationUser 
 } from "./collaboration-component/collaboration-core/index";
+import {
+    ProjectItem
+} from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 
 var menuJson;
 var configJson;
@@ -31,6 +34,13 @@ interface ITool {
     tooltip: string;
     action: Function;
 };
+
+enum PItemEditType {
+    SRC = "src",              // source editor changed
+    RENAME = "rename",        // rename (color, title, img)
+    OWNERSHIP = "ownership",  // change the floor
+    PRIVILEGES = "privileges" // change if it will be visible or not
+}
 
 
 @UIComponentMetadata({
@@ -144,6 +154,59 @@ export class CollaborationManager extends IDEUIComponent {
             "ProjectManager",
             "function",
             []
+        );
+    }
+
+    /** IDE provided API functions */
+
+    public getPItem(pitemId: string): ProjectItem {
+        return ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getProjectItem",
+            [pitemId ]
+        ).value;
+    }
+
+    public getProject(projectId: string): any {
+        // ?????????????????????????????????
+    }
+
+    public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
+
+        return true;
+    }
+
+    public pitemRemoved(pitemId: string): boolean {
+        return true;
+    }
+
+    public pitemAdded(pitem: any): boolean {
+        return true;
+    }
+
+    public pitemFocus(pitemId: string, location: number =2): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "open",
+            [
+                this.getPItem(pitemId),
+                location
+            ]
+        );
+    }
+
+    @RequiredFunction("ProjectManager", "saveProjectObj")
+    public saveProject(projectObj: any, cb: Function) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "saveProjectObj",
+            [
+                projectObj,
+                (resp) => cb(resp)
+            ]
         );
     }
 }

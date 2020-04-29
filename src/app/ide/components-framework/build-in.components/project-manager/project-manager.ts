@@ -297,6 +297,7 @@ export class ProjectManager extends IDEUIComponent {
         return projectForSave;
     }
 
+    @ExportedFunction
     public saveProject(projectID: string): void {
         ComponentsCommunication.functionRequest(
             this.name,
@@ -307,6 +308,43 @@ export class ProjectManager extends IDEUIComponent {
                 (resp) => this.saveProjectResponse(resp)
             ]
         );
+    }
+
+    @ExportedFunction
+    public saveProjectObj(projectObj: any, cb: Function): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ApplicationWSPManager",
+            "updateApplication",
+            [
+                this.getProjectDataToSave(projectObj),
+                (resp) => cb(typeof resp === "object")
+            ]
+        );
+    }
+
+    @ExportedFunction
+    public pitemUpdated(pitem: any, type: any, data: any): boolean {
+        switch(type) {
+            case "src":
+                return ComponentsCommunication.functionRequest(
+                    this.name,
+                    "EditorManager",
+                    "pitemUpdated",
+                    [
+                        pitem,
+                        data
+                    ]
+                ).value;
+                break;
+            case "rename":
+                break;
+            case "ownership":
+                break;
+            case "privileges":
+                break;
+        };
+        return true;
     }
 
     private newSystemID (projectID): string {

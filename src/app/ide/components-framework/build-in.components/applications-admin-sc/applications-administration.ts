@@ -67,6 +67,7 @@ export class ApplicationsAdministration {
                 callback(data);
             },
             error: function (data) {
+                callback (false);
                 IDEError.raise(data.statusText, data.responseText);
             }
         });
