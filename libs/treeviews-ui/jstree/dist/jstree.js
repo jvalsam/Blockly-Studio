@@ -5977,10 +5977,20 @@
 	_span.style.cssText = "border-right-width: 6px; height: 1em; width: 6px; margin-left: 2px; padding-left: 2px; border-left: 6px solid white;";
 	_span.setAttribute('role', 'presentation');
 
+    var _bubble_div = $("<div></div>").addClass("collaboration-bubble");
+    _bubble_div.css("width", "10px")
+               .css("height", "10px")
+               .css("border-radius", "50%")
+               .css("margin-right", "10px")
+               .css("background-color", "purple")
+    ;
+    _bubble_div.attr('role', 'presentation');
+
 	var cacheColor = {};
 	var cacheColorNodes = function (self) {
 		function cacheNodeRec(self, node) {
-			self._model.data[node.id].color = node.color;
+            self._model.data[node.id].color = node.color;
+            self._model.data[node.id].bubble_color = node.bubble_color;
 			self._model.data[node.id].highlighted = node.highlighted;
 			self._model.data[node.id].options = node.options;
 			self._model.data[node.id].so_state = node.so_state;
@@ -6047,7 +6057,18 @@
 						}
 						
 					}
-					
+                    
+                    var bubble_color = this._model.data[obj.id].bubble_color;
+					if(bubble_color) {
+                        var bubble_div = _bubble_div.clone().css("background-color", bubble_color);;
+						if (tmp.nodeName === 'A') {
+                            tmp.insertBefore(bubble_div.get(0), tmp.childNodes[0]);
+						}
+						else {
+							tmp.after(bubble_div.get(0), tmp.childNodes[0]);
+						}
+					}
+
 					var shared = this._model.data[obj.id].shared_state;
 					if (shared && shared !== "NOT_SHARED") {
 						let html = createElementFromHTML(
@@ -8662,7 +8683,21 @@
 				node.text = n;
 			}
 			return parent.create_node.call(this, par, node, pos, callback, is_loaded);
-		};
+        };
+        
+        this.create_node_ext = function(par, node, extra_fields, pos, callback, is_loaded){
+            this.create_node(par, node, pos, callback, is_loaded);
+            this.update_node(node.id, extra_fields);
+        }
+
+        this.update_node = function(id, updated_fields){
+            let node = this.get_node(id);
+            for (let key of Object.keys(updated_fields))
+                node[key] = updated_fields[key];
+            this.sort(node["parent"], false);
+            this.draw_children(node["parent"]);
+            this.redraw_node(node);
+        }
 	};
 
 	// include the unique plugin by default
