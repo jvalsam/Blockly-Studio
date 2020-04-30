@@ -311,6 +311,18 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
+    public getProject(projectID: string): any {
+        return this.loadedProjects[projectID];
+    }
+
+    @ExportedFunction
+    public getPItem(pitemID: string): void {
+        let projectID = pitemID.split("_")[0];
+        let project = this.loadedProjects[projectID];
+        return project.projectItems.find(x => x.systemID === pitemID);
+    }
+
+    @ExportedFunction
     public saveProjectObj(projectObj: any, cb: Function): void {
         ComponentsCommunication.functionRequest(
             this.name,
@@ -324,7 +336,10 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public pitemUpdated(pitem: any, type: any, data: any): boolean {
+    public pitemUpdated(pitemId: any, type: any, data: any): boolean {
+        let pitem = this.getPItem(pitemId);
+        let projectId = pitemId.split("_")[0];
+
         switch(type) {
             case "src":
                 return ComponentsCommunication.functionRequest(
@@ -333,12 +348,26 @@ export class ProjectManager extends IDEUIComponent {
                     "pitemUpdated",
                     [
                         pitem,
+                        projectId,
                         data
                     ]
                 ).value;
-                break;
             case "rename":
-                break;
+                (<ProjectManagerJSTreeView>this._view).pitemRename(
+                    pitem,
+                    projectId,
+                    data
+                );
+                ComponentsCommunication.functionRequest(
+                    this.name,
+                    "EditorManager",
+                    "pitemRename",
+                    [
+                        pitem,
+                        projectId,
+                        data
+                    ]
+                );
             case "ownership":
                 break;
             case "privileges":

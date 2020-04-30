@@ -362,6 +362,15 @@ export class ProjectInstanceView extends View {
         return this.projectElems.find(elem => elem.jstreeNode.id === id);
     }
 
+    public pitemRename(pitem, data) {
+        let el = this.projectElems.find(el => el["systemID"] === pitem);
+        el.jstreeNode.color = data.color;
+        el.jstreeNode.icon = data.icon;
+        el.jstreeNode.text = data.text;
+        // redraw update
+        
+    }
+
     private getMetaHelper(type, categories): any {
         let res = categories.find(c => c.type === type);
         if (res) {
