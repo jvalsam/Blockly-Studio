@@ -29,6 +29,13 @@
     mask-size: 22px 22px;
 }
 
+.size18x18{
+    width:18px;
+    height:18px;
+    -webkit-mask-size: 18px;
+    mask-size: 18px
+}
+
 .size30x30{
     width: 30px;
     height:30px;
@@ -142,6 +149,11 @@
     margin-top: 7px;
 }
 
+#members span {
+    height: 19px !important;
+    margin-right: 10px !important;
+}
+
 /****************************************************************************
 ---> members files
 ****************************************************************************/
@@ -166,6 +178,14 @@
 
 #members-me > .jstree-children > .jstree-node > .jstree-children > .jstree-node > i {
     float: left;
+}
+
+#members-collaborators > .jstree-children > .jstree-node > .jstree-children > .jstree-node > .jstree-ocl {
+    width: 10px;
+}
+
+#members-me > .jstree-children > .jstree-node > .jstree-children > .jstree-node > .jstree-ocl {
+    width: 10px;
 }
 
 /****************************************************************************
@@ -308,4 +328,94 @@
 
 #collaboration-shared-to-me {
     display: none;
+}
+
+/****************************************************************************
+---> popups
+****************************************************************************/
+
+.collaboration-popup {
+    font-family: "Roboto" !important;
+    font-size: 14px !important;
+    width: 350px;
+    height: 295px;
+    box-sizing: border-box;
+}
+
+.collaboration-popup-header-bar{
+    position: relative;
+    height: 15%;
+    width: 100%;
+    
+    background-color: #4A81B1;
+    color: #eeeeee;
+    font-size: 18px;
+    
+    padding: 0px 20px;
+    box-sizing: border-box;
+}
+
+.collaboration-popup-header-x{
+    margin-right: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-color: #eeeeee;
+    -webkit-mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+    mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+}
+
+.collaboration-popup-content-container {
+    border: 1px solid #b1b1b1;
+    height: 85%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.collaboration-popup-row {
+    display: block;
+    margin: 20px 0px;
+    width: 100%;
+    position: relative;
+}
+
+.collaboration-popup input[type=text] {
+    width: 175px;
+    height: 25px;
+    text-align: center;
+    border: 1px solid #5B9BD5;
+}
+
+.collaboration-popup input[type=button]{
+    height: 29px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    color: #eeeeee;
+    background-color: #4A81B1;
+    -webkit-box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+    box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+}
+
+.collaboration-popup-user-icon{
+    background-position: center center !important;
+    background-size: 35px 35px !important;
+    size: 55px 55px !important;
+    width: 55px !important;
+    height: 55px !important;
+    background-color: #4A81B1 !important;
+    background-image: url(./Icons/man0.png);
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    margin-top: 0px;
+    margin-right: 10px;
+    box-sizing: border-box;
+    border: solid 2px #24537E;
+    display: inline-flex;
+}
+
+.collaboration-popup-edit {
+    text-decoration: underline;
+    color: #787D82;
 }

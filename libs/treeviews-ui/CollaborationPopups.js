@@ -53,15 +53,10 @@ function CollaborationUI_API(){
         };
 
         if (!members.get_node(node.id)){
-            // members.create_node(MEMBER_PREFIX + member, node, 'last', cb);
-            // members.get_node(node.id)['bubble_color'] = bubble_color;
-            // members.get_node(node.id)['color'] = color;
-            // members.redraw_node(node.id);
-            var extra_fields = {
-                'bubble_color' : bubble_color,
-                'color' : color
-            }
-            members.create_node_ext(MEMBER_PREFIX + member, node, extra_fields, 'last', cb);
+            members.create_node(MEMBER_PREFIX + member, node, 'last', cb);
+            members.get_node(node.id)['bubble_color'] = bubble_color;
+            members.get_node(node.id)['color'] = color;
+            members.redraw_node(node.id);
         }
     }
 
@@ -176,6 +171,7 @@ function CollaborationUI_API(){
 
     this.addPersonalFile = addPersonalFile;
     this.clearAndAddMemberPersonalFiles = clearAndAddMemberPersonalFiles;
+    this.setPersonalFileOnClick = setPersonalFileOnClick;
 }
 
 var ui;
@@ -507,9 +503,6 @@ $(function () {
         $('#collaboration-shared-to-me-tab-ui').removeClass('collaboration-shared-tab-active').addClass('collaboration-shared-tab-active');
     });
 
-    ui = new CollaborationUI_API();
-    examples = new CollaborationUI_API_Examples();
-
     members.create_node('#',{
         'id': 'members',
         'parent': '#',
@@ -569,6 +562,9 @@ $(function () {
         });
         
     });    
+
+    ui = new CollaborationUI_API();
+    examples = new CollaborationUI_API_Examples();
 });
 
 /* Examples */
