@@ -187,6 +187,7 @@ $(function () {
         "plugins": [
             "wholerow",
             "colorv",
+            "sort",
             "contextmenu",
             "unique",
             "types"
@@ -559,12 +560,12 @@ $(function () {
         },
         'last',
         function(){
+            ui.addMember('Mary', './Icons/woman0.png', function(){
+                ui.addNoteAnnotation('Mary', 'Water Is Ready', 'blue', './Icons/water.png');
+            });
             ui.addMember('James', './Icons/man0.png', function(){
                 ui.addSuggestionAnnotation('James', 'Water Is Ready', 'blue', './Icons/water.png');
                 ui.addNoteAnnotation('James','Alarm Clock Rings', 'red', './Icons/clock.png');
-            });
-            ui.addMember('Mary', './Icons/woman0.png', function(){
-                ui.addNoteAnnotation('Mary', 'Water Is Ready', 'blue', './Icons/water.png');
             });
         });
         

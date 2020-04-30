@@ -8694,6 +8694,8 @@
             let node = this.get_node(id);
             for (let key of Object.keys(updated_fields))
                 node[key] = updated_fields[key];
+            this.sort(node["parent"], false);
+            this.draw_children(node["parent"]);
             this.redraw_node(node);
         }
 	};
