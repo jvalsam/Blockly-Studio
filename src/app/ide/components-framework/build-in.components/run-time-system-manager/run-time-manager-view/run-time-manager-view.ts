@@ -12,8 +12,8 @@ import RuntimeManagerSYCSS from "./run-time-manager.sycss";
     templateHTML: RuntimeManagerTmpl,
     toolsElems: [
         {
-            name: "RuntimeManagerToolbarView",
-            selector: ".tools-view-container"
+            name: "RuntimeManagerToolbarView"
+            , selector: ".tools-view-container"
         }
     ],
     mainElems: [

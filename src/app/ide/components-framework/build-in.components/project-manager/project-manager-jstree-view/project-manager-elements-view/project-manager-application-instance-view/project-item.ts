@@ -11,6 +11,7 @@ export class ProjectItem extends ProjectElement {
         private _category: ProjectCategory,
         _meta: any,
         private systemId: string,
+        private _editorsData: {[editorId: string]: any},
         private orderNO: number
     ) {
         super(_jstreeNode, _meta);
@@ -86,7 +87,29 @@ export class ProjectItem extends ProjectElement {
         return data;
     }
 
+    public getPrivilleges() {
+        // based on the ProjectManager -> gives which is the user
+        // and then privillege data owner returns the result "READ_ONLY" | "EDITING"
+        return "EDITING";
+    }
+
     public get systemID(): string {
         return this.systemId;
+    }
+
+    public editorData(id: string): any {
+        return this._editorsData[id];
+    }
+
+    public get editorsData(): any {
+        return this._editorsData;
+    }
+
+    public set editorsData(data: any) {
+        this._editorsData = data;
+    }
+
+    public setEditorData(id: string, data: any): void {
+        this._editorsData[id] = data;
     }
 }

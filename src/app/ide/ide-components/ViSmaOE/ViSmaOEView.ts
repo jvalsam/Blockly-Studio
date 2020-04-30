@@ -1,5 +1,5 @@
 import { ComponentView, ComponentViewMetadata } from "../../components-framework/component/component-view";
-import ViSmaOEViewSYCSS from "./VismaOEView.sycss";
+import ViSmaOEViewSYCSS from "./ViSmaOEView.sycss";
 
 
 @ComponentViewMetadata({

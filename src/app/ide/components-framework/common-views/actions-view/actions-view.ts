@@ -46,15 +46,24 @@ export class ActionsView extends View {
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         this.data.id = this.id;
-        
+
         if (!this.data.fa) {
             this.data.fa = "fa-ellipsis-v";
         }
 
         // in font awesome icons add prefix fa in case there is no prefix
         _.forEach(this.data.actions, (action) =>
-            action.img = ( action.img && _.includes(action.img, "fa-") && action.img.split(" ").length < 2 ) ? "fa " + action.img : action.img
+            action.img = (action.img && _.includes(action.img, "fa-") && action.img.split(" ").length < 2)
+                ? "fa " + action.img
+                : action.img
         );
+    }
+
+    public removeOption(title: string): void {
+        let index = this.data.actions.map(action => action.title).indexOf(title);
+        if (index > -1) {
+            this.data.actions.splice(index, 1);
+        }
     }
 
     public registerEvents(): void {
@@ -65,14 +74,17 @@ export class ActionsView extends View {
                     eventType: event.type,
                     selector: "#" + action.title.replace(/ /g, '') + "_" + this.id,
                     handler: (evt) => {
-                                        // this.hideMenu();
-                                        typeof event.action === "string" ?
-                                        (!event.providedBy || event.providedBy === "Platform" ?
-                                            this.parent[event.action](event, this.data.concerned) :
-                                            this.parent["onOuterFunctionRequest"](event, this.data.concerned)
-                                        ) :
-                                        event.action(this.data.concerned);
-                                        evt.stopImmediatePropagation();
+                        // this.hideMenu();
+                        typeof event.action === "string"
+                            ? (!event.providedBy || event.providedBy === "Platform"
+                                ? this.parent[event.action](
+                                    event,
+                                    this.data.concerned)
+                                : this.parent["onOuterFunctionRequest"](
+                                    event,
+                                    this.data.concerned))
+                            : event.action(this.data.concerned);
+                        evt.stopImmediatePropagation();
                     }
                 });
             });

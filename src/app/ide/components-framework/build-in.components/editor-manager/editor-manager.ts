@@ -19,11 +19,12 @@ import { View } from "../../component/view";
 import { PItemView } from "./project-item/pitem-view";
 import { ProjectItem } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 import { assert } from "../../../shared/ide-error/ide-error";
+import { EditorManagerToolbarView } from "./editor-manager-toolbar-view/editor-manager-toolbar-view";
 
 enum EditorsViewState {
-    NO_SPLIT = 0,
-    VERTICAL_SPLIT = 1,
-    HORIZONTAL_SPLIT = 2
+    NO_SPLIT = "normal",
+    VERTICAL_SPLIT = "vertical",
+    HORIZONTAL_SPLIT = "horizontal"
 };
 
 @UIComponentMetadata({
@@ -61,17 +62,6 @@ export class EditorManager extends IDEUIComponent {
         this.projectItemsMap = {};
     }
 
-    private editorsViewState2str(value: EditorsViewState): string {
-        switch (value) {
-            case EditorsViewState.NO_SPLIT:
-                return "no";
-            case EditorsViewState.VERTICAL_SPLIT:
-                return "horizontal";
-            case EditorsViewState.HORIZONTAL_SPLIT:
-                return "vertical";
-        }
-    }
-
     private swapPItemEditorsArea(): void {
         $(this.pitemEditorsSel+"1").eq(0).before($(this.pitemEditorsSel+"2").eq(0));
         // swap class selectors
@@ -85,7 +75,7 @@ export class EditorManager extends IDEUIComponent {
         // remove current classes style of split
         let removeClassName =
             this.pitemEditorsSel.substr(1)
-            + this.editorsViewState2str(this.currentViewState)
+            + this.currentViewState
             + "-split-";
         $(this.pitemEditorsSel + "1").removeClass(removeClassName + "1");
         $(this.pitemEditorsSel + "2").removeClass(removeClassName + "2");
@@ -102,7 +92,7 @@ export class EditorManager extends IDEUIComponent {
         // add new classes for style of split
         let addClassName =
             this.pitemEditorsSel.substr(1)
-            + this.editorsViewState2str(newViewState)
+            + newViewState
             + "-split-";
         $(this.pitemEditorsSel + "1").removeClass(addClassName + "1");
         $(this.pitemEditorsSel + "2").removeClass(addClassName + "2");
@@ -113,7 +103,7 @@ export class EditorManager extends IDEUIComponent {
         this.view.render();
         let className =
             this.pitemEditorsSel.substr(1)
-            + this.editorsViewState2str(this.currentViewState)
+            + this.currentViewState
             + "-split-";
 
         $(this.pitemEditorsSel+"1").addClass(className + "1");
@@ -280,6 +270,11 @@ export class EditorManager extends IDEUIComponent {
         return projectItem;
     }
 
+    public onSplitEditorsBtn(btn: string): void {
+        alert("split " + btn);
+        // this.updateSplit(EditorsViewState.)
+    }
+
     @ExportedSignal("editor-manager-open-pitem-completed")
     @ExportedFunction
     public open(pi: ProjectItem, pitemArea?: number): void {
@@ -311,24 +306,47 @@ export class EditorManager extends IDEUIComponent {
                 );
             pitemView.render();
 
+            let tools = ComponentsCommunication.functionRequest(
+                this.name,
+                "CollaborationManager",
+                "pitemTools",
+                [ pi.systemID ]
+            ).value;
+            tools.push("separator");
+
             for (let mission of editorsSel) {
-                let sel = pi.systemID + "_" + mission;
+                let sel = "pi_" + pi.systemID + "_" + mission;
                 // only one editor is supported
                 // if domain author give more
                 // TODO: selection by the end-user... now we just choose the 1st
                 let econfig = econfigs[mission][0];
 
-                let editor = <Editor>ComponentRegistry.getEntry(econfig.name)
-                    .create([
+                ComponentsCommunication.functionRequest(
+                    this.name,
+                    econfig.name,
+                    "open",
+                    [
                         sel,
-                        pi.systemID,
-                        this.convertEconf(mission),
-                        econfig.style,
-                        econfig.src
-                    ]);
-                pitemView.addEditor(mission, editor);
-                editor.render();
+                        pitemView,
+                        this.convertEconf(mission)
+                    ]
+                );
+                pitemView.addEditor(sel, econfig.name);
             }
+
+            let editorTools = ComponentsCommunication.functionRequest(
+                this.name,
+                pitemView.getOnFocusEditor(),
+                "tools",
+                [pitemView.getFocusEditorId()]
+            ).value;
+
+            let toolsView = (<EditorManagerToolbarView>this._view
+                .toolElems["EditorManagerToolbarView"]);
+            toolsView.setPItemTools(tools.concat(editorTools));
+            // request from the collaboration
+            // collect from the vpl editors
+            // identify which is on focus...
         }
 
         ComponentsCommunication.postSignal(

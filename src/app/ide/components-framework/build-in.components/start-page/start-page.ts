@@ -74,24 +74,61 @@ export class StartPageComponent extends IDEUIComponent {
 
     @RequiredFunction("ApplicationWSPManager", "openApplication")
     public action_open (applicationID: string): void {
-        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "openApplication", [applicationID]);
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ApplicationWSPManager",
+            "openApplication",
+            [applicationID]);
     }
 
     @RequiredFunction("ApplicationWSPManager", "deleteApplication")
     public action_delete (applicationID: string): void {
-        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "deleteApplication", [applicationID]);
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ApplicationWSPManager",
+            "deleteApplication",
+            [applicationID]);
     }
 
     @RequiredFunction("ApplicationWSPManager", "shareApplication")
     public action_share (applicationID: string, shareData: any): void {
         alert("Functionality of share is not implemented yet!");
-        ComponentsCommunication.functionRequest(this.name, "ApplicationWSPManager", "shareApplication", [applicationID]);
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ApplicationWSPManager",
+            "shareApplication",
+            [applicationID]);
     }
 
     @RequiredFunction("ApplicationWSPManager", "shareApplication")
     public action_details (application: any): void {
-        let detailsBox = <ModalView>ViewRegistry.getEntry("ApplicationViewDetailsModal").create(this, ".modal-platform-container", application);
+        let detailsBox = <ModalView>ViewRegistry
+            .getEntry("ApplicationViewDetailsModal")
+            .create(
+                this,
+                ".modal-platform-container",
+                application);
         detailsBox.open();
     }
+
+    @RequiredFunction("ApplicationWSPManager", "createApplication")
+    public createNewApplicationRequest(domainType: string): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ApplicationWSPManager",
+            "createApplication",
+            [domainType]
+        );
+    }
+
+    @RequiredFunction("ApplicationWSPManager", "joinApplication")
+    public joinSharedApplicationRequest(domainType: string): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ApplicationWSPManager",
+            "joinApplication"
+        );
+    }
+
 
 }

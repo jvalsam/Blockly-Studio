@@ -6014,6 +6014,10 @@
 			cacheNodeRec(self, document["jstreeNewNode"]);
 			document["jstreeNewNode"] = null;
 		}
+		if (document["refresh_treeView"]) {
+			document["refresh_treeView"] = null;
+			cacheColorNodesRec(self, self.settings.core.data);
+		}
 	};
 
     $.jstree.plugins.colorv = function (options, parent) {
@@ -6066,8 +6070,15 @@
 					}
 
 					var shared = this._model.data[obj.id].shared_state;
-					if (shared) {
-
+					if (shared && shared !== "NOT_SHARED") {
+						let html = createElementFromHTML(
+							"<i class=\"jstree-icon jstree-themeicon "
+							+ "jstree-themeicon-custom\" role=\"presentation\" "
+							+ "style=\"background-image: url('"
+							+ "../../images/collaboration/" + shared + ".png"
+							+ "'); background-position: center center; "
+							+ "background-size: 20px 20px; margin-left:10px;\"></i>");
+						tmp.appendChild(html);
 					}
 
 					var options = this._model.data[obj.id].options;

@@ -117,6 +117,22 @@ export class DomainsManager extends IDEComponent {
         return VPLDomainElementsManager.getProjectItemInfo(name);
     }
 
+    @ExportedFunction
+    public getEditorConfigs(editor: string) {
+        return VPLDomainElementsManager.getEditorConfigs(editor);
+    }
+
+    @ExportedFunction
+    public getEditors(): Array<string> {
+        return VPLDomainElementsManager.getEditors();
+    }
+
+    @ExportedFunction
+    public getToolbox(config: string): any {
+        return VPLDomainElementsManager.getToolbox(config);
+    }
+
+
     @RequiredFunction("ProjectManager", "openProject")
     @ExportedFunction
     public getProjectManagerDescription (domain: string): JSON {

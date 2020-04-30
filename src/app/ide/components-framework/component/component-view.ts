@@ -1,3 +1,4 @@
+import { ComponentsCommunication } from './components-communication';
 import { IDEUIComponent } from "./ide-ui-component";
 import {
     View,
@@ -95,15 +96,42 @@ export class ComponentView extends ComponentViewElement {
     private menuViewElems: IMenuViewElements;
     private toolsViewElems: IViewElements;
 
-    private initViews (views: Array<IComponentViewDataElement>, parent: IDEUIComponent) {
+    private initViews (
+        views: Array<IComponentViewDataElement>,
+        parent: IDEUIComponent
+    ) {
         let viewElems = {};
         if (views) {
             for (let view of views) {
-                viewElems[view.name] = ViewRegistry.getEntry(view.name).create(parent, view.selector);
+                viewElems[view.name] = ViewRegistry
+                    .getEntry(view.name)
+                    .create(parent, view.selector);
             }
         }
         return viewElems;
     }
+
+    private initToolViews (
+        views: Array<IComponentViewDataElement>,
+        parent: IDEUIComponent
+    ) {
+        let viewElems = {};
+        if (views) {
+            for (let view of views) {
+                let selector = ComponentsCommunication.functionRequest(
+                    "IDEUIComponent",
+                    "Shell",
+                    "newToolbarArea",
+                    []
+                ).value;
+                viewElems[view.name] = ViewRegistry
+                    .getEntry(view.name)
+                    .create(parent, "#"+selector);
+            }
+        }
+        return viewElems;
+    }
+
     constructor(
         parent: IDEUIComponent,
         name: string,
@@ -126,7 +154,7 @@ export class ComponentView extends ComponentViewElement {
         this.menuViewElems = { OnRegistration: {}, OnInstantiation: {} };
         this.menuViewElems.OnRegistration = this.initViews(menuViews["OnRegistration"], parent);
         this.menuViewElems.OnInstantiation = this.initViews(menuViews["OnInstantiation"], parent);
-        this.toolsViewElems = this.initViews(toolViews, parent);
+        this.toolsViewElems = this.initToolViews(toolViews, parent);
     }
 
     public get main(): JQuery {
@@ -200,7 +228,7 @@ export let ComponentViewRegistry = new Registry<ComponentView>();
 
 export interface IComponentViewDataElement {
     name: string;
-    selector: string;
+    selector?: string;
 }
 
 export interface IComponentViewData extends IViewElementData {

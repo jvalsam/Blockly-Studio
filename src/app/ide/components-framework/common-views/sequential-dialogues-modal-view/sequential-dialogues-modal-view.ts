@@ -50,7 +50,9 @@ export class SequentialDialoguesModalView extends ModalView {
             for (let i=1; i<=data.body.formElems.length; i++) {
                 let elem = data.body.formElems[orderNOs.indexOf(i)];
                 let key = elem.descriptionID;
-                formElems[key] = <PropertyView>ViewRegistry.getEntry(TypeToNameOfPropertyView(elem.type)).create(
+                formElems[key] = <PropertyView>ViewRegistry
+                    .getEntry(TypeToNameOfPropertyView(elem.type))
+                    .create(
                     this.parent,
                     ".project-manager-action-form-elements",
                     elem

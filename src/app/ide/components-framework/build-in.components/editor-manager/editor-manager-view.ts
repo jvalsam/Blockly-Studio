@@ -7,6 +7,11 @@ import { Editor } from "./editor";
 @ComponentViewMetadata({
     name: "EditorManagerView",
     templateHTML: EditorManagerTmpl,
+    toolsElems: [
+        {
+            name: "EditorManagerToolbarView"
+        }
+    ],
     style: {
         system: EditorManagerSYCSS
     }

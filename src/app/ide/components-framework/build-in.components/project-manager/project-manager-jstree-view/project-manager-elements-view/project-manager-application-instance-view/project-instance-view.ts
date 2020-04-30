@@ -134,6 +134,17 @@ export class ProjectInstanceView extends View {
         this.treeview = null;
     }
 
+    public updateProjectData(project: any): void {
+        this.data.project = project;
+        this.projectElems.splice(0, this.projectElems.length);
+        if (project.saveMode === "SHARED") {
+            this.actions.removeOption("Share");
+        }
+        _.forEach(this.data.meta.categories, (category) => {
+            this.createCategoryItems(category, this.data.project.projectItems);
+        });
+    }
+
     public get dbID() {
         return this["projectID"];
     }
@@ -293,7 +304,8 @@ export class ProjectInstanceView extends View {
         let icon = this.getValue(infoC.find(x => x.type === "img"));
         let color = this.getValue(infoC.find(x => x.type === "colour"));
         let connection_state = this.getValue(infoC.find(x => x.type === "state"));
-        let shared_state = this.getValue(infoC.find(x => x.type === "shared"));
+        let shared_state = item.privileges.shared.type;
+        let editorsData = item.editorsData ? item.editorsData : {};
 
         item.id = item.systemID
             ? item.systemID
@@ -333,6 +345,7 @@ export class ProjectInstanceView extends View {
             <ProjectCategory>this.getProjectElement(parentId),
             meta,
             item.systemID,
+            editorsData,
             orderNO
         );
 
@@ -405,7 +418,8 @@ export class ProjectInstanceView extends View {
                         }
                     ],
                     {
-                        "actions": data
+                        "actions": data,
+                        "concerned": this
                     }
                 );
         }
@@ -455,6 +469,7 @@ export class ProjectInstanceView extends View {
     }
 
     private renderJSTree() {
+        document["refresh_treeView"] = true;
         let jstreeNodes: Array<IJSTreeNode> = [];
         this.projectElems.forEach(elem => jstreeNodes.push(elem.jstreeNode));
 
@@ -479,16 +494,16 @@ export class ProjectInstanceView extends View {
     }
 
     public render(): void {
-        this.renderTmplEl(this.renderData);
-        this.foldingView.render();
-        this.renderElem("actions");
-        this.renderElem("menu");
-
         if (this.treeview) {
             this.treeview.destroy();
         }
         $(this.categoriesViewSelector).empty();
-
+        //
+        $("#"+this.id).remove();
+        this.renderTmplEl(this.renderData);
+        this.foldingView.render();
+        this.renderElem("actions");
+        this.renderElem("menu");
         this.renderJSTree();
 
         // bootstrap adds hidden in overflow which destroys z-index in dropdown menu
@@ -604,10 +619,9 @@ export class ProjectInstanceView extends View {
     }
 
     public destroy(): void {
+        $(this.categoriesViewSelector).jstree("destroy").empty();
+        $(this.categoriesViewSelector).empty();
         super.destroy();
-        $("#" + this.id).find("div:jstree").each(function (): void {
-            $(this).jstree("destroy");
-        });
     }
 
     // on remove element has to ask logic deps etc.

@@ -67,6 +67,24 @@ export class ApplicationsAdministration {
                 callback(data);
             },
             error: function (data) {
+                callback (false);
+                IDEError.raise(data.statusText, data.responseText);
+            }
+        });
+    }
+
+    public static requestNewApplication(application: any, callback: (wsps) => void): void {
+        console.log(application);
+        $.ajax({
+            url: RunPlatformData.URL + "applications/new",
+            type: "POST",
+            data: {
+                data: application
+            },
+            success: function (data) {
+                callback(data);
+            },
+            error: function (data) {
                 IDEError.raise(data.statusText, data.responseText);
             }
         });

@@ -21,7 +21,6 @@ import * as _ from "lodash";
 import { ViewRegistry } from "./../../component/registry";
 import { ModalView } from "../../component/view";
 import {
-    RenderPartsToPropertyData,
     CreateRenderPartsWithData
 } from "../configuration/configuration-view/property-views/property-view";
 import {
@@ -37,7 +36,15 @@ import {
     ProjectCategory
 } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-category";
 import { EditorManager } from "../editor-manager/editor-manager";
-import { ProjectItem } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+import {
+    ProjectItem
+} from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+import { Editor } from "../editor-manager/editor";
+import {
+    createDialogue,
+    getTitleValueofRenderParts,
+    getTitleOfRenderParts
+} from "../../common-views/sequential-dialogues-modal-view/dialogue-data";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -180,6 +187,21 @@ export class ProjectManager extends IDEUIComponent {
                 [this.domainType]
             );
 
+            let editorComponents = ComponentsCommunication.functionRequest(
+                this.name,
+                "DomainsManager",
+                "getEditors"
+            ).value;
+            editorComponents.forEach(name => {
+                let editor = <Editor>(ComponentRegistry.getEntry(name).create([
+                    ".modal-platform-container"
+                ]));
+
+                if (editor.name === "BlocklyVPL" || editor.name === "ReteVPL") {
+                    editor["loadDomain"](this.domainType);
+                }
+            });
+
             var console: RuntimeManager = <RuntimeManager>ComponentRegistry
                 .getEntry("RuntimeManager")
                 .create([".project-manager-runtime-console-area"]);
@@ -197,6 +219,13 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
+    public initializeSharedProject(project): void {
+        // check if project is already loaded
+        if (project) {}
+
+    }
+
+    @ExportedFunction
     public getMainApplicationData() {
         let mainProject = this.loadedProjects[this.mainProject];
         return { main: "srcMain", domain: "IoT" };
@@ -204,6 +233,7 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public loadProject(project): void {
+        project.saveMode = "DB";
         this.loadedProjects[project._id] = project;
         this.mainProject = project._id;
         let projView = (<ProjectManagerJSTreeView>this._view).loadProject(project);
@@ -218,7 +248,7 @@ export class ProjectManager extends IDEUIComponent {
         // set default values if there is no state
         if (!project.editorsState) {
             project.editorsState = {
-                viewState: 0,
+                viewState: "normal",
                 onFocusPItems: [
                     projView.firstPItemID
                 ]
@@ -247,7 +277,7 @@ export class ProjectManager extends IDEUIComponent {
     public saveProjectResponse(resp) {
         console.log("----------------------\n");
         console.log(resp);
-        alert("Application saved successfully!\n");
+        // alert("Application saved successfully!\n");
     }
 
     private getProjectDataToSave(project) {
@@ -267,6 +297,7 @@ export class ProjectManager extends IDEUIComponent {
         return projectForSave;
     }
 
+    @ExportedFunction
     public saveProject(projectID: string): void {
         ComponentsCommunication.functionRequest(
             this.name,
@@ -277,6 +308,43 @@ export class ProjectManager extends IDEUIComponent {
                 (resp) => this.saveProjectResponse(resp)
             ]
         );
+    }
+
+    @ExportedFunction
+    public saveProjectObj(projectObj: any, cb: Function): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ApplicationWSPManager",
+            "updateApplication",
+            [
+                this.getProjectDataToSave(projectObj),
+                (resp) => cb(typeof resp === "object")
+            ]
+        );
+    }
+
+    @ExportedFunction
+    public pitemUpdated(pitem: any, type: any, data: any): boolean {
+        switch(type) {
+            case "src":
+                return ComponentsCommunication.functionRequest(
+                    this.name,
+                    "EditorManager",
+                    "pitemUpdated",
+                    [
+                        pitem,
+                        data
+                    ]
+                ).value;
+                break;
+            case "rename":
+                break;
+            case "ownership":
+                break;
+            case "privileges":
+                break;
+        };
+        return true;
     }
 
     private newSystemID (projectID): string {
@@ -376,7 +444,21 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public onShareProject(event: IEventData, concerned: any): void {
-        alert("onShareProject not developed yet!");
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "startSession",
+            [
+                $(".modal-platform-container"),
+                concerned.data.project,
+                $(".collaboration-manager-container"),
+                (collabProject) => {
+                    collabProject.saveMode = "SHARED";
+                    this.loadedProjects[collabProject._id] = collabProject;
+                    (<ProjectManagerJSTreeView>this.view).updateProject(collabProject);
+                }
+            ]
+        );
     }
 
     @ExportedFunction
@@ -393,59 +475,15 @@ export class ProjectManager extends IDEUIComponent {
         let index = renderParts
             ? renderParts.map(x => x.type).indexOf("title")
             : -1;
-        
+
         return index > -1
             ? renderParts[index]
             : null;
     }
 
-    public getTitleValueofRenderParts(renderParts): string {
-        let data = this.getRenderDataTitle(renderParts);
-        return (data && data.value.text) || "";
-    }
-
     public getDefaultTitleofRenderParts(renderParts): string {
         let data = this.getRenderDataTitle(renderParts);
         return (data && data.value.default) || "";
-    }
-
-    private getTitleOfRenderParts(renderParts): string {
-        let data = this.getRenderDataTitle(renderParts);
-        return (data && (data.value.default || data.value.text)) || "";
-    }
-
-    private createDialogueTitle(action: string, renderParts, type) {
-        let renderPartsTitle = this.getTitleOfRenderParts(renderParts);
-        return  action + (renderPartsTitle || type);
-    }
-
-    private createDialogue(
-        actionTitle: string,
-        body: {
-            formElems?: any,
-            text?: any,
-            systemIDs?: number
-        },
-        type,
-        actions,
-        dtype: string = "simple"
-    ) {
-        if (body.formElems) {
-            body.formElems = RenderPartsToPropertyData(
-                body.formElems,
-                body.systemIDs);
-        }
-        return {
-            type: dtype,
-            data: {
-                title: this.createDialogueTitle(
-                    actionTitle,
-                    body.formElems,
-                    type),
-                body: body,
-                actions: actions
-            }
-        };
     }
 
     private createNewItem(
@@ -475,13 +513,68 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
+    private saveEditorData_SHARED(
+        editorId: string,
+        pitem: ProjectItem,
+        project: any,
+        event: any
+    ): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "pitemUpdated",
+            [
+                pitem.systemID,
+                "EDITOR_SRC",
+                {
+                    editorId: editorId,
+                    event: event
+                }
+            ]
+        );
+    }
+
+    private saveEditorData_DB(
+        editorId: string,
+        pitem: ProjectItem,
+        project: any,
+        data: any
+    ) {
+        let projectItem = project.projectItems
+            .find(x => x.systemID === pitem.systemID);
+
+        if (!projectItem.editorsData) {
+            projectItem.editorsData = [];
+        }
+        let index = projectItem.editorsData.map(x => x.id).indexOf(editorId);
+        if (index < 0) {
+            projectItem.editorsData.push({
+                id: editorId,
+                data: data
+            });
+        }
+        else {
+            projectItem.editorsData[index].data = data;
+        }
+
+        this.saveProject(project._id);
+    }
+
     @ExportedFunction
-    public saveEditorData(src: any) {
-        let index = this.loadedProjects[src.projectID].projectItems
-            .map(x=>x.systemID)
-            .indexOf(src.systemID);
-        this.loadedProjects[src.projectID].projectItems[index].editorData = src;
-        this.saveProject(src.projectID);
+    public saveEditorData(
+        editorId: string,
+        pitem: ProjectItem,
+        data: (mode: string) => any
+    ): void {
+        let projectId = pitem.project.dbID;
+        let project = this.loadedProjects[projectId];
+
+        this["saveEditorData_" + project.saveMode](
+            editorId,
+            pitem,
+            project,
+            data(project.saveMode)
+        );
     }
 
     private onSuccessUploadFiles(paths: Array<String>, data, event, concerned) {
@@ -552,11 +645,13 @@ export class ProjectManager extends IDEUIComponent {
         // specific element to select
         if (event.data.choices.length === 1) {
             let type = event.data.choices[0].type;
-            this.currModalData.itemData = (<ProjectCategory>concerned).getChildElementData(type);
-            let renderData = (<ProjectCategory>concerned).getReversedChildElementRenderData(type);
+            this.currModalData.itemData = (<ProjectCategory>concerned)
+                .getChildElementData(type);
+            let renderData = (<ProjectCategory>concerned)
+                .getReversedChildElementRenderData(type);
 
             dialoguesData.push(
-                this.createDialogue(
+                createDialogue(
                     "Create New ",
                     {
                         formElems: renderData,
@@ -579,7 +674,7 @@ export class ProjectManager extends IDEUIComponent {
                                     projInstView,
                                     event.validation,
                                     callback
-                            ),
+                                ),
                             callback: (data) => this.onCreateProjectItem(
                                 data,
                                 event,
@@ -611,7 +706,7 @@ export class ProjectManager extends IDEUIComponent {
                     .value
                     .default;
                 titles.push(title);
-                let dialogue = this.createDialogue(
+                let dialogue = createDialogue(
                     "Create New ",
                     {
                         formElems: renderData,
@@ -680,6 +775,7 @@ export class ProjectManager extends IDEUIComponent {
                 dialogues: dialogues
             });
         }
+
         let modalActionView = <ModalView>ViewRegistry
             .getEntry("SequentialDialoguesModalView")
             .create(this, dialoguesData);
@@ -738,10 +834,10 @@ export class ProjectManager extends IDEUIComponent {
             itemData: Object.assign({}, concerned.itemData()),
             projectID: concerned.projectID
         };
-        let title: string = this.getTitleValueofRenderParts(concerned.itemData().renderParts);
+        let title: string = getTitleValueofRenderParts(concerned.itemData().renderParts);
         (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
             this,
-            [this.createDialogue (
+            [createDialogue (
                 "Remove ",
                 {
                     text: "Deleting <b>"
@@ -809,10 +905,10 @@ export class ProjectManager extends IDEUIComponent {
             itemData: Object.assign({}, concerned.itemData()),
             projectID: concerned.projectID
         };
-        let title: string = this.getTitleOfRenderParts(renderData);
+        let title: string = getTitleOfRenderParts(renderData);
         (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
             this,
-            [this.createDialogue (
+            [createDialogue (
                 "Rename " + concerned.defaultTitle() + ": ",
                 { formElems: renderData },
                 title ? title : "Element",

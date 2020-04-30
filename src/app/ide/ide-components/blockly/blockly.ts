@@ -1,4 +1,7 @@
-﻿import { BlocklyInstance, BlocklyConfig } from './blockly-instance';
+﻿import {
+  BlocklyInstance,
+  BlocklyConfig
+} from "./blockly-instance";
 import {
   ResponseValue
 } from "./../../components-framework/component/response-value";
@@ -17,10 +20,12 @@ import {
   PlatformEditorMetadata
 } from "../../components-framework/component/component-loader";
 
-import * as Blockly from "blockly";
 import { DomainElementsHolder } from "../../domain-manager/domains-holder";
 import { assert } from "../../shared/ide-error/ide-error";
-import { PItemView } from '../../components-framework/build-in.components/editor-manager/project-item/pitem-view';
+import {
+  PItemView
+} from "../../components-framework/build-in.components/editor-manager/project-item/pitem-view";
+import { ITool } from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -40,7 +45,7 @@ var confJson: any = require("./conf_props.json");
   version: "1.1"
 })
 export class BlocklyVPL extends Editor {
-  private instancesMap: {[editorId: string]: BlocklyInstance};
+  private instancesMap: {[id: string]: any};
   private configsMap: {[name: string]: BlocklyConfig};
 
   constructor(
@@ -55,18 +60,62 @@ export class BlocklyVPL extends Editor {
       compViewName,
       hookSelector
     );
+
+    this.instancesMap = {};
+    this.configsMap = {};
+  }
+
+  // load domain data: configs
+  @RequiredFunction("DomainsManager", "getEditorConfigs")
+  @ExportedFunction
+  public loadDomain(name: string): void {
+    this.configsMap = ComponentsCommunication.functionRequest(
+      this.name,
+      "DomainsManager",
+      "getEditorConfigs",
+      [this.name]
+    ).value;
   }
 
   @ExportedFunction
   public onOpen(): void {}
 
+  @RequiredFunction("DomainsManager", "getToolbox")
+  private getToolbox(config: string): any {
+    return ComponentsCommunication.functionRequest(
+      this.name,
+      "DomainsManager",
+      "getToolbox",
+      [ config ]
+    ).value;
+  }
+
+  @RequiredFunction("ProjectManager", "saveEditorData")
   @RequiredFunction("Shell", "addTools")
   @ExportedFunction
   public open(
-    src: any,
+    selector: string,
     pitem: PItemView,
-    editorId: string
+    config: string
   ): void {
+    let src = pitem.pi.editorsData.find(e => e.id === selector);
+    let text = src ? src.data.text : null;
+    this.instancesMap[selector] = new BlocklyInstance(
+      pitem.pi,
+      selector,
+      config,
+      pitem.pi.getPrivilleges(),
+      this.configsMap[config],
+      (config) => this.getToolbox(config),
+      (jsonEvent) => this.save(
+          selector,
+          pitem.pi,
+          (mode) => mode === "SHARED"
+            ? jsonEvent
+            : this.getEditorData(selector)),
+      text
+    );
+    this.instancesMap[selector].open();
     // this.changed = false;
     // this.toolbox = (toolbox === undefined)
     //   ? /*require("./toolbox.xml")*/document.getElementById("toolbox")
@@ -82,6 +131,29 @@ export class BlocklyVPL extends Editor {
     //     ]
     //   );
     // }
+  }
+
+  @ExportedFunction
+  public tools(editorId: string): Array<ITool> {
+    return [
+      {
+        icon: "../../../../../images/blockly/undo.png",
+        tooltip: "undo",
+        action: () => this.instancesMap[editorId].undo()
+      },
+      {
+        icon: "../../../../../images/blockly/redo.png",
+        tooltip: "redo",
+        action: () => this.instancesMap[editorId].redo()
+      }
+    ];
+  }
+
+  public getEditorData(editorId: string): any {
+    return {
+      name: this.name,
+      text: this.instancesMap[editorId].getText()
+    };
   }
 
   @ExportedFunction
@@ -186,14 +258,14 @@ export class BlocklyVPL extends Editor {
   //   document.getElementById("python").innerText = Blockly.Python.workspaceToCode(editor);
   // }
   
-  @RequiredFunction("EditorManager", "OnFocusEditorId")
+  // @RequiredFunction("EditorManager", "OnFocusEditorId")
   public requestOnFocusEditorId(): string {
-    let resp: ResponseValue = ComponentsCommunication.functionRequest(
-      this.name,
-      "EditorManager",
-      "OnFocusEditorId"
-    );
-    return <string>resp.value;
+    // let resp: ResponseValue = ComponentsCommunication.functionRequest(
+    //   this.name,
+    //   "EditorManager",
+    //   "OnFocusEditorId"
+    // );
+    return "<string>resp.value";
   }
 
   /////////////////////////////////////////////////
