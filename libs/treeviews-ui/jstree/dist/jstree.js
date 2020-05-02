@@ -5986,15 +5986,21 @@
     ;
     _bubble_div.attr('role', 'presentation');
 
+    var updated_fields = [
+        'bubble_color', 
+        'color',
+        'highlighted',
+		'options',
+		'so_state',
+		'shared_state'
+    ];
+
 	var cacheColor = {};
 	var cacheColorNodes = function (self) {
 		function cacheNodeRec(self, node) {
-            self._model.data[node.id].color = node.color;
-            self._model.data[node.id].bubble_color = node.bubble_color;
-			self._model.data[node.id].highlighted = node.highlighted;
-			self._model.data[node.id].options = node.options;
-			self._model.data[node.id].so_state = node.so_state;
-			self._model.data[node.id].shared_state = node.shared_state;
+            for (let field of updated_fields)
+                self._model.data[node.id][field] = node[field];
+
 			if (node.children) {
 				cacheColorNodesRec(self, node.children);
 			}
@@ -6147,7 +6153,35 @@
 				}
 			}
 			return obj;
-		};
+        };
+
+        this.create_node = function(par, node, pos, callback, is_loaded){
+
+            return parent.create_node.call(this, par, node, pos, () => { 
+                if (typeof node === "object")
+                    this.update_node(node.id, node, ()=>{
+                        if (callback)
+                            callback(...arguments);
+                    });
+            }, is_loaded);
+        }
+
+        this.update_node = function(id, fields, callback){
+            let node = this.get_node(id);
+            
+            if (!node) return false;
+
+            for (let key of updated_fields){
+                if (fields[key])
+                    node[key] = fields[key];
+            }
+
+            this.sort(node["parent"], false);
+            this.draw_children(node["parent"]);
+            this.redraw_node(node);
+
+            if (callback) callback();
+        }
     };
 
 /**
@@ -8685,19 +8719,6 @@
 			return parent.create_node.call(this, par, node, pos, callback, is_loaded);
         };
         
-        this.create_node_ext = function(par, node, extra_fields, pos, callback, is_loaded){
-            this.create_node(par, node, pos, callback, is_loaded);
-            this.update_node(node.id, extra_fields);
-        }
-
-        this.update_node = function(id, updated_fields){
-            let node = this.get_node(id);
-            for (let key of Object.keys(updated_fields))
-                node[key] = updated_fields[key];
-            this.sort(node["parent"], false);
-            this.draw_children(node["parent"]);
-            this.redraw_node(node);
-        }
 	};
 
 	// include the unique plugin by default
