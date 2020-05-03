@@ -57,11 +57,9 @@ function CollaborationUI_API(){
             // members.get_node(node.id)['bubble_color'] = bubble_color;
             // members.get_node(node.id)['color'] = color;
             // members.redraw_node(node.id);
-            var extra_fields = {
-                'bubble_color' : bubble_color,
-                'color' : color
-            }
-            members.create_node_ext(MEMBER_PREFIX + member, node, extra_fields, 'last', cb);
+            node.bubble_color = bubble_color;
+            node.color = color; 
+            members.create_node(MEMBER_PREFIX + member, node, 'last', cb);
         }
     }
 
