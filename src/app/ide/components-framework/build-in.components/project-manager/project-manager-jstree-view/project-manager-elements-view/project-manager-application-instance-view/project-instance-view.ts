@@ -205,10 +205,9 @@ export class ProjectInstanceView extends View {
         // tmp solution to pin new node in document, to cache and update 
         // core data of the jstree. TODO: refactor the plugin of the jstree lib
         document["jstreeNewNode"] = pi.jstreeNode;
-        $(this.categoriesViewSelector)
-            .jstree()
-            .create_node(
+        this.treeview.create_node_ext(
                 parentId,
+                pi.jstreeNode,
                 pi.jstreeNode,
                 "last",
                 () => {
@@ -304,7 +303,7 @@ export class ProjectInstanceView extends View {
         let icon = this.getValue(infoC.find(x => x.type === "img"));
         let color = this.getValue(infoC.find(x => x.type === "colour"));
         let connection_state = this.getValue(infoC.find(x => x.type === "state"));
-        let shared_state = item.privileges.shared.type;
+        let shared_state = item.privileges ? item.privileges.shared.type : null;
         let editorsData = item.editorsData ? item.editorsData : {};
 
         item.id = item.systemID
@@ -364,11 +363,10 @@ export class ProjectInstanceView extends View {
 
     public pitemRename(pitem, data) {
         let el = this.projectElems.find(el => el["systemID"] === pitem);
-        el.jstreeNode.color = data.color;
-        el.jstreeNode.icon = data.icon;
-        el.jstreeNode.text = data.text;
-        // redraw update
-        
+        for (let key of Object.keys(data)) {
+            el.jstreeNode[key] = data[key];
+        }
+        this.treeview.update_node(pitem, data);
     }
 
     private getMetaHelper(type, categories): any {
@@ -482,12 +480,13 @@ export class ProjectInstanceView extends View {
         let jstreeNodes: Array<IJSTreeNode> = [];
         this.projectElems.forEach(elem => jstreeNodes.push(elem.jstreeNode));
 
-        $(this.categoriesViewSelector).jstree({
+        $(this.categoriesViewSelector)["jstree"]({
             "plugins": [
                 "wholerow", // has to be first for the highlighted categories
                 "colorv",
                 "contextmenu",
-                "types"
+                "types",
+                "sort"
             ],
             "contextmenu": {
                 "items": (node) => this.itemsMenu(node)
@@ -498,7 +497,7 @@ export class ProjectInstanceView extends View {
                 "data": jstreeNodes
             }
         });
-        this.treeview = $.jstree.reference(this.categoriesViewSelector);
+        this.treeview = $["jstree"].reference(this.categoriesViewSelector);
         this.registerItemClick("ALL");
     }
 
@@ -535,15 +534,14 @@ export class ProjectInstanceView extends View {
 
     private registerItemClick(data) {
         var sel = this.categoriesViewSelector;
+        var treeview = this.treeview;
         var onclickFunc = (node) => this.onClickItem(node);
         function registerSItemClick(pe) {
             $(sel).on(
                 "click",
                 "#" + pe.jstreeNode.id,
                 function (e) {
-                    var node = $(sel)
-                        .jstree(true)
-                        .get_node($(this));
+                    var node = treeview.get_node($(this));
                     onclickFunc(node);
                 }
             );
@@ -628,7 +626,7 @@ export class ProjectInstanceView extends View {
     }
 
     public destroy(): void {
-        $(this.categoriesViewSelector).jstree("destroy").empty();
+        this.treeview.jstree("destroy").empty();
         $(this.categoriesViewSelector).empty();
         super.destroy();
     }
@@ -653,7 +651,7 @@ export class ProjectInstanceView extends View {
     }
 
     public trigger(evt: string, elem :ProjectElement): void {
-        $(this.categoriesViewSelector).jstree().select_node(elem.jstreeNode.id);
+        this.treeview.jstree().select_node(elem.jstreeNode.id);
         $("#"+elem.jstreeNode.id).trigger(evt, elem);
     }
 }

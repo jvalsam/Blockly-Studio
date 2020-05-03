@@ -237,7 +237,7 @@ export class ProjectManagerAppInstanceView extends View {
     public destroy(): void {
         super.destroy();
         $("#" + this.id).find("div:jstree").each(function (): void {
-            $(this).jstree("destroy");
+            $(this)["jstree"]("destroy");
         });
     }
 

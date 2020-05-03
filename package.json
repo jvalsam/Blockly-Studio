@@ -44,7 +44,6 @@
   },
   "dependencies": {
     "@types/jqueryui": "^1.11.36",
-    "@types/jstree": "^3.3.39",
     "@types/lodash": "^4.14.74",
     "bcrypt": "^3.0.7",
     "blockly": "^3.20191014.4",
@@ -60,7 +59,6 @@
     "html-minifier": "^3.5.7",
     "http-server": "^0.11.1",
     "imagemin-pngquant": "^5.0.1",
-    "jstree": "^3.3.8",
     "lodash": "^4.17.15",
     "lodash.template": "^4.5.0",
     "mongodb": "^3.0.5",

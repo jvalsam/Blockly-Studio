@@ -3916,6 +3916,19 @@
 			if(callback) { callback.call(this, this.get_node(node)); }
 			return node.id;
 		},
+		create_node_ext: function (par, node, extra_fields, pos, callback, is_loaded) {
+			let id = this.create_node(par, node, pos, callback, is_loaded);
+			this.update_node(node.id, extra_fields);
+			return id;
+		},
+		update_node: function (id, updated_fields) {
+			let node = this.get_node(id);
+			for (let key of Object.keys(updated_fields))
+				node[key] = updated_fields[key];
+			this.sort(node["parent"], false);
+			this.draw_children(node["parent"]);
+			this.redraw_node(node);
+		},
 		/**
 		 * set the text value of a node
 		 * @name rename_node(obj, val)
@@ -8686,8 +8699,9 @@
         };
         
         this.create_node_ext = function(par, node, extra_fields, pos, callback, is_loaded){
-            this.create_node(par, node, pos, callback, is_loaded);
-            this.update_node(node.id, extra_fields);
+            let id = this.create_node(par, node, pos, callback, is_loaded);
+			this.update_node(node.id, extra_fields);
+			return id;
         }
 
         this.update_node = function(id, updated_fields){

@@ -32,7 +32,7 @@
                 ">
             </span>
         <% } %> 
-        <% if (jstree.icon.startsWith("fa")) { %>
+        <% if (jstree.icon && jstree.icon.startsWith("fa")) { %>
         <i class="jstree-icon jstree-themeicon <%= jstree.icon %> jstree-themeicon-custom" role="presentation"
             style="margin-top: 0.25em;margin-right: 8px;"></i>
         <% } else { %>
