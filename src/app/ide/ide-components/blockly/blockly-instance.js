@@ -50,7 +50,26 @@ export class BlocklyInstance {
     }
 
     static update_src(data, pitem) {
-        
+        if (!this._syncNotFocusedEditorId
+            || this._syncNotFocusedInst !== data.editorId) {
+            this._syncNotFocusedInst = document
+                .getElementsByClassName("blockly-sync-editors-area-diplay-none");
+            
+            this._notFocusedWSP = Blockly.inject(
+                this._syncNotFocusedInst,
+                {
+                    media: "../../../../../node_modules/blockly/media/",
+                    toolbox: toolboxXml
+                });
+
+            let editorData = pitem.editorsData.find(e => e.id === editorId);
+
+            var xml = Blockly.Xml.textToDom(editorData.data.text);
+            Blockly.Xml.domToWorkspace(xml, this._notFocusedWSP);
+        }
+
+        let event = Blockly.Events.fromJson(data.event, this._notFocusedWSP);
+        event.run(true);
     }
 
     open() {
