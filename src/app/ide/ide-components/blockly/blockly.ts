@@ -133,6 +133,17 @@ export class BlocklyVPL extends Editor {
     // }
   }
 
+  public update_src(data: any, pitem: any, focus: boolean =false): void {
+    let id = data.editorId;
+    let event = data.event;
+    if (focus) {
+      this.instancesMap[id].syncWSP(event);
+    }
+    else {
+
+    }
+  }
+
   @ExportedFunction
   public tools(editorId: string): Array<ITool> {
     return [

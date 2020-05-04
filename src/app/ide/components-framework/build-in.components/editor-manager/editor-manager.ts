@@ -44,7 +44,9 @@ export class EditorManager extends IDEUIComponent {
     private projectItemsMap: {[systemId:string]: PItemView};
     private focusPItemArea: number;
 
-    private pitemOnFocusId: string;
+    // private pitemOnFocusId: string;
+    private pitemOnFocusIds: Array<string>;
+    private onFocusLocation: number;
 
     // use it to implement browse previous editor instances viewed
     private focusNextStackEditorID: Array<string>;
@@ -136,8 +138,10 @@ export class EditorManager extends IDEUIComponent {
     // }
 
     @ExportedFunction
-    public OnFocusEditorId(): string {
-        return this.projectItemsMap[this.pitemOnFocusId].id;
+    public OnFocusEditorId(location: number=0): string {
+        return this.projectItemsMap[
+            this.pitemOnFocusIds[location]
+        ].id;
     }
 
     // returns where the focus of which item is
@@ -146,16 +150,16 @@ export class EditorManager extends IDEUIComponent {
         if (this.projectItemsMap[delSystemID]) {
             this.projectItemsMap[delSystemID].destroy();
             delete this.projectItemsMap[delSystemID];
-            if (this.pitemOnFocusId === delSystemID) {
+            if (this.isOnFocus(delSystemID)) {
                 let prevFocusEditorID = this.focusPrevStackEditorID.pop();
-                this.onChangeEditorFocus(prevFocusEditorID);
+                this.onChangePItemFocus(prevFocusEditorID);
             }
             else {
                 _.remove(this.focusNextStackEditorID, id => id === delSystemID);
                 _.remove(this.focusPrevStackEditorID, id => id === delSystemID);
             }
         }
-        return this.pitemOnFocusId;
+        return this.pitemOnFocusIds[this.onFocusLocation];
     }
 
     public destroy(): void {
@@ -183,8 +187,9 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public onChangeEditorFocus(systemID): void {
-        this.pitemOnFocusId = systemID;
+    public onChangePItemFocus(systemID): void {
+        this.pitemOnFocusIds[this.onFocusLocation] = systemID;
+        // TODO: open or inject
         (<EditorManagerView>this.view).update(this.projectItemsMap[systemID]);
     }
 
@@ -192,8 +197,11 @@ export class EditorManager extends IDEUIComponent {
     public onFocusPreviousEditor(): void {
         if (this.focusNextStackEditorID.length > 0) {
             let nextSystemID = this.focusNextStackEditorID.pop();
-            this.focusPrevStackEditorID.push(this.pitemOnFocusId);
-            this.onChangeEditorFocus(nextSystemID);
+            this.focusPrevStackEditorID
+                .push(this.pitemOnFocusIds[
+                    this.onFocusLocation
+                ]);
+            this.onChangePItemFocus(nextSystemID);
         }
     }
 
@@ -201,8 +209,11 @@ export class EditorManager extends IDEUIComponent {
     public onFocusNextEditor(): void {
         if (this.focusPrevStackEditorID.length > 0) {
             let nextSystemID = this.focusPrevStackEditorID.pop();
-            this.focusNextStackEditorID.push(this.pitemOnFocusId);
-            this.onChangeEditorFocus(nextSystemID);
+            this.focusNextStackEditorID
+                .push(this.pitemOnFocusIds[
+                    this.onFocusLocation
+                ]);
+            this.onChangePItemFocus(nextSystemID);
         }
     }
 
@@ -354,6 +365,36 @@ export class EditorManager extends IDEUIComponent {
             "editor-manager-open-pitem-completed",
             [pi]
         );
+    }
+
+    public isOnFocus(id: string, type: string = "pitem"): boolean {
+        if (type === "pitem") {
+            // this
+        }
+        else {
+
+        }
+        return false;
+    }
+
+    @ExportedFunction
+    public pitemUpdated_src(pitem: any, data: any): void {
+        if (this.isOnFocus(pitem.systemID)) {
+
+        }
+        else {
+            // call the editor to update src
+            // input elements (data, div display none)
+            ComponentsCommunication.functionRequest(
+                this.name,
+                data.editor,
+                "update_src",
+                [
+                    pitem,
+                    data
+                ]
+            );
+        }
     }
 
     @RequiredFunction("DomainsManager", "getProjectItem")

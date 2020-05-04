@@ -86,6 +86,10 @@ export class ViSmaOE extends Editor {
 
     }
 
+    public update_src(data: any, pitem: any, focus: boolean): void {
+
+    }
+
     public destroy(): void {
 
     }

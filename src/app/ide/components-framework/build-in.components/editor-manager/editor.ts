@@ -77,10 +77,13 @@ export abstract class Editor extends IDEUIComponent {
             [
                 id,
                 pitem,
+                this.name,
                 event
             ]
         );
     }
+
+    public abstract update_src(data: any, pitem: any, focus : boolean): void;
 
     // public create_src(data: INewItemData): string;
 

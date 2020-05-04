@@ -316,7 +316,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public getPItem(pitemID: string): void {
+    public getPItem(pitemID: string): any {
         let projectID = pitemID.split("_")[0];
         let project = this.loadedProjects[projectID];
         return project.projectItems.find(x => x.systemID === pitemID);
@@ -345,10 +345,9 @@ export class ProjectManager extends IDEUIComponent {
                 return ComponentsCommunication.functionRequest(
                     this.name,
                     "EditorManager",
-                    "pitemUpdated",
+                    "pitemUpdated_src",
                     [
                         pitem,
-                        projectId,
                         data
                     ]
                 ).value;
@@ -546,6 +545,7 @@ export class ProjectManager extends IDEUIComponent {
         editorId: string,
         pitem: ProjectItem,
         project: any,
+        editor: string,
         event: any
     ): void {
         ComponentsCommunication.functionRequest(
@@ -557,6 +557,7 @@ export class ProjectManager extends IDEUIComponent {
                 "EDITOR_SRC",
                 {
                     editorId: editorId,
+                    editor: editor,
                     event: event
                 }
             ]
@@ -567,6 +568,7 @@ export class ProjectManager extends IDEUIComponent {
         editorId: string,
         pitem: ProjectItem,
         project: any,
+        editor: string,
         data: any
     ) {
         let projectItem = project.projectItems
@@ -593,6 +595,7 @@ export class ProjectManager extends IDEUIComponent {
     public saveEditorData(
         editorId: string,
         pitem: ProjectItem,
+        editor: string,
         data: (mode: string) => any
     ): void {
         let projectId = pitem.project.dbID;
@@ -602,6 +605,7 @@ export class ProjectManager extends IDEUIComponent {
             editorId,
             pitem,
             project,
+            editor,
             data(project.saveMode)
         );
     }

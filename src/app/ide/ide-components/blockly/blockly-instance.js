@@ -49,6 +49,10 @@ export class BlocklyInstance {
         this._syncWSP = (event) => _syncWSP(event);
     }
 
+    static update_src(data, pitem) {
+        
+    }
+
     open() {
         if (this.state === InstStateEnum.OPEN) {
             return;
