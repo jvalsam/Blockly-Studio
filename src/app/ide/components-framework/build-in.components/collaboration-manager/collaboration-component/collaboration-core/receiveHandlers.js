@@ -12,19 +12,11 @@ import {
     printDB
 }from "./utilities.js"
 
+import {
+    filterProjectItem
+}from "./projectItemFilters"
 
 //Communication between users on collab level
-
-function filterProjectItem(pItem){
-    if(pItem.owner != collabInfo.myInfo.name){
-        pItem.privileges.readOnly = true;
-    }
-    //PANTA SHARED PROJECT
-    //DEN VAZO POTE MEMBERS
-    
-    return pItem;
-}
-
 
 
 

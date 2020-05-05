@@ -23,46 +23,16 @@ export function generateRandom(length) {
 }
 
 
-export function initialiseProject(myInfo){
+export function initialiseProject(myInfo,settings){
     var DB = getProject();
     collabInfo.myInfo = myInfo;
     var tempCollabData = {
         members: [myInfo]
     }
     DB.collaborationData = tempCollabData;
-}
 
+    
 
-//Events to be done after an action on IDE
-
-function startSession(selDialogObj,projectObj,selCompObj,cb){
-    //BuildDialogObj ...agapakis
-    //if successfull agapakis inform me...
-    //and agapakis call my callback
-    for(item in projectObj.projectItems){
-        //Initialise
-        var priv = projectObj.projectItems[item].privileges;
-        priv.author = myName;
-        priv.owner = myName;
-        priv.shared.type = "SHARED_PROJECT";
-        priv.shared.members = [];
-    }
-    //start the whole session
-}
-
-function joinSession(selDialogObj,cb){
-    //BuildDialogObj ...agapakis
-    //if successfull agapakis inform me...
-    /* my callback consist of the following + other new
-    var arg = {
-        type: "registerUser",
-        info: {
-          name: "myName",
-          icon: "myIcon"
-        }
-      };
-    */
-   //cb(project);
 }
 
 var currentPItemsPriviledges = {

@@ -57,6 +57,12 @@ export class IDECore {
         shell.openComponent(startpage);
       }
     );
+    let x = document.createElement('input');
+    x.type = "text";
+    x.id = "toparathiraki";
+    x.style.width = "100px";
+    x.style.height = "50px";
+    document.body.appendChild(x);
   }
 
 }

@@ -16,7 +16,7 @@ import {
   receiveAddUser
 } from "./receiveHandlers.js"
 
-export function communicationInitialize(myInfo) {
+export function communicationInitialize(myInfo,settings) {
   var receivedHandler = {
     "registerUser": receiveRegisterUser ,
     "removeUser": receiveRemoveUser ,
@@ -26,9 +26,9 @@ export function communicationInitialize(myInfo) {
     "addUser": receiveAddUser
   };
 
-  initialiseProject(myInfo);
+  initialiseProject(myInfo,settings);
 
-  var randomId = "Alexkatsarakis123";//generateRandom(20);
+  var randomId = generateRandom(20);
   var peer = new Peer(randomId);
   peer.on('open', function (id) {
     console.log('My peer ID is: ' + id);

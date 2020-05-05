@@ -20,5 +20,5 @@ export function openJoinSessionDialogue(
         onSuccess({
             name: "a",
             icon: "myIcon"
-        },"Alexkatsarakis123");
+        },document.getElementById("toparathiraki").value);
 }
