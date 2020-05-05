@@ -319,6 +319,14 @@ export class ProjectManager extends IDEUIComponent {
     public getPItem(pitemID: string): any {
         let projectID = pitemID.split("_")[0];
         let project = this.loadedProjects[projectID];
+        if (project.saveMode === "SHARED") {
+            return ComponentsCommunication.functionRequest(
+                this.name,
+                "CollaborationManager",
+                "getPItem",
+                [pitemID]
+            ).value;
+        }
         return project.projectItems.find(x => x.systemID === pitemID);
     }
 
@@ -373,6 +381,15 @@ export class ProjectManager extends IDEUIComponent {
                 break;
         };
         return true;
+    }
+
+    @ExportedFunction
+    public pitemAdded(pitem: any): void {
+
+    }
+
+    public pitemRemoved(pitemId: string): void {
+        
     }
 
     private newSystemID (projectID): string {

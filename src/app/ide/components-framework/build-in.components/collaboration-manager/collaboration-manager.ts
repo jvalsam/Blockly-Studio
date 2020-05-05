@@ -125,16 +125,6 @@ export class CollaborationManager extends IDEUIComponent {
         );
     }
 
-    // @RequiredFunction("ProjectManager", "getProject")
-    // public getProject(projectId): any {
-    //     let project = ComponentsCommunication.functionRequest(
-    //         this.name,
-    //         "ProjectManager",
-    //         "getProject",
-    //         []
-    //     ).value;
-    // }
-
     @ExportedFunction
     public pitemOptions(pitemId: string): Array<IOption> {
         return [];
@@ -161,15 +151,8 @@ export class CollaborationManager extends IDEUIComponent {
         );
     }
 
-    /** IDE provided API functions */
-
     public getPItem(pitemId: string): ProjectItem {
-        return ComponentsCommunication.functionRequest(
-            this.name,
-            "ProjectManager",
-            "getProjectItem",
-            [pitemId ]
-        ).value;
+        return this.shProject.projectItems.find(pi => pi.systemID === pitemId);
     }
 
     public setProject(projectObj: any) {
@@ -193,6 +176,9 @@ export class CollaborationManager extends IDEUIComponent {
         return true;
     }
 
+
+    /** Blockly Studio provided functionality */
+
     public pitemFocus(pitemId: string, location: number =2): void {
         ComponentsCommunication.functionRequest(
             this.name,
@@ -214,6 +200,44 @@ export class CollaborationManager extends IDEUIComponent {
             [
                 projectObj,
                 (resp) => cb(resp)
+            ]
+        );
+    }
+
+    @RequiredFunction("ProjectManager", "pitemUpdated")
+    public onPItemUpdate(pitemId: string, type: string, data: any) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "pitemUpdated",
+            [
+                pitemId,
+                type,
+                data
+            ]
+        );
+    }
+
+    @RequiredFunction("ProjectManager", "pitemAdded")
+    public onPitemAdded(pitem: any): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "pitemAdded",
+            [
+                pitem
+            ]
+        );
+    }
+
+    @RequiredFunction("ProjectManager", "pitemRemoved")
+    public onPitemRemoved(pitemId: string): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "pitemRemoved",
+            [
+                pitemId
             ]
         );
     }
