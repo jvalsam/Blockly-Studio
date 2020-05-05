@@ -1,6 +1,8 @@
 import { ViewRegistry } from "./../../component/registry";
-import { DomainsManager } from "./../../../domain-manager/domains-manager";
-import { ComponentsCommunication, PostsSignal } from "./../../component/components-communication";
+import {
+    ComponentsCommunication,
+    PostsSignal
+} from "./../../component/components-communication";
 import { BlocklyVPL } from "./../../../ide-components/blockly/blockly";
 import {
     ExportedFunction,
@@ -61,11 +63,15 @@ export class EditorManager extends IDEUIComponent {
         private initialPItemsFocused?: Array<string> // 1 or 2 pitemIds
     ) {
         super(name, description, compViewName, selector);
+
         this.projectItemsMap = {};
+        this.pitemOnFocusIds = [];
+        this.onFocusLocation = 0;
     }
 
     private swapPItemEditorsArea(): void {
-        $(this.pitemEditorsSel+"1").eq(0).before($(this.pitemEditorsSel+"2").eq(0));
+        $(this.pitemEditorsSel+"1").eq(0)
+            .before($(this.pitemEditorsSel+"2").eq(0));
         // swap class selectors
         $(this.pitemEditorsSel + "1")
     }
@@ -286,25 +292,28 @@ export class EditorManager extends IDEUIComponent {
         // this.updateSplit(EditorsViewState.)
     }
 
+    @ExportedFunction
+    public closePItem(pitemArea: number) {
+        
+    }
+
     @ExportedSignal("editor-manager-open-pitem-completed")
     @ExportedFunction
-    public open(pi: ProjectItem, pitemArea?: number): void {
+    public open(pi: ProjectItem, pitemArea: number =1): void {
         let pitemData = ComponentsCommunication.functionRequest(
             this.name,
             "DomainsManager",
             "getProjectItem",
             [pi.jstreeNode.type]
         ).value;
-        // TODO: check if the project item is already open in the view
-        // in case it is viewed -> just set as focus area its pitem-area
-
-        // check if there is instance with systemID
-        if (!this.projectItemsMap[pi.systemID]) {
+        
+        this.closePItem(pitemArea);
+        
+        // if (!this.projectItemsMap[pi.systemID]) {
             let econfigs = pitemData.editorConfigs;
             let editorsSel = Object.keys(econfigs);
 
-            let selector = ".pitem-editors-area-1";
-            // if (this.onFocusData) {}
+            let selector = ".pitem-editors-area-" + pitemArea;
 
             const pitemView: PItemView = <PItemView>ViewRegistry
                 .getEntry("PItemView")
@@ -358,7 +367,8 @@ export class EditorManager extends IDEUIComponent {
             // request from the collaboration
             // collect from the vpl editors
             // identify which is on focus...
-        }
+            this.projectItemsMap[pi.systemID] = pitemView;
+        // }
 
         ComponentsCommunication.postSignal(
             this.name,
@@ -379,21 +389,22 @@ export class EditorManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemUpdated_src(pitem: any, data: any): void {
-        if (this.isOnFocus(pitem.systemID)) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            data.editor,
+            "update_src",
+            [
+                data,
+                pitem,
+                this.isOnFocus(pitem.systemID)
+            ]
+        );
+    }
 
-        }
-        else {
-            // call the editor to update src
-            // input elements (data, div display none)
-            ComponentsCommunication.functionRequest(
-                this.name,
-                data.editor,
-                "update_src",
-                [
-                    pitem,
-                    data
-                ]
-            );
+    @ExportedFunction
+    public pitemRename(pitem, projectId, data) {
+        if (this.isOnFocus(pitem.systemID)) {
+            
         }
     }
 

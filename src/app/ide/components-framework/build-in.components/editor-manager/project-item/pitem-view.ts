@@ -46,6 +46,10 @@ export class PItemView extends View {
         this.focusEditor = null;
     }
 
+    public set selector(sel: string) {
+        this._selector = sel;
+    }
+
     public render(callback?: Function): void {
         let $local = $($.parseHTML(this.pitemTmpl(this._pi.itemData())));
         let pitemId = this._pi.systemID;

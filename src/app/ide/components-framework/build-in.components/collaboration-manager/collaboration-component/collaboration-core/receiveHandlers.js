@@ -1,5 +1,4 @@
 import {
-    getProject,
     getPItem,
     updateProject,
     pItemExists,
@@ -24,7 +23,7 @@ import {
 
 //Receive functions
 export function receiveRegisterUser(data,conn){
-    let DB = getProject();
+    let DB = collabInfo.plugin.getProject();
     var info = data.info;
 	for(var item in DB.collaborationData.members){
 		item = DB.collaborationData.members[item];
@@ -38,7 +37,7 @@ export function receiveRegisterUser(data,conn){
 }
 
 export function receiveRemoveUser(data,conn){
-    let DB = getProject();
+    let DB = collabInfo.plugin.getProject();
 	var info = data.info;
 	var position = 0;
 	for(var item in DB.collaborationData.members){
@@ -89,7 +88,7 @@ export function receivePItemUpdated(data,conn){
 	var updateType = data.updateType;
     var pItemId = data.pItemId;
     console.log(data);
-    let DB = getProject();
+    let DB = collabInfo.plugin.getProject();
 	for(var item in DB.projectItems){
         item = DB.projectItems[item];
 		if(item.systemID === pItemId){
@@ -107,13 +106,13 @@ export function receivePItemUpdated(data,conn){
 
 
 export function receiveAddUser(data,conn){
-    let DB = getProject();
+    let DB = collabInfo.plugin.getProject();
     DB.collaborationData.members.push(data.info);
     printDB();
 }
 
 function acceptUser(conn,infom){
-    let DB = getProject();
+    let DB = collabInfo.plugin.getProject();
 
     let arg = {
         type: "addUser",

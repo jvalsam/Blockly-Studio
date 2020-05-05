@@ -9,6 +9,9 @@ export function openStartSessionDialogue(
         onSuccess({
             name: "alex",
             icon: "myIcon"
+        },
+        {
+            //TODO: return array of shared pitem ids
         });
 }
 

@@ -2,8 +2,7 @@ import Peer from "peerjs"
 
 import {
   collabInfo,
-  generateRandom,
-  initialiseProject
+  generateRandom
 }
 from './utilities.js';
 
@@ -16,7 +15,7 @@ import {
   receiveAddUser
 } from "./receiveHandlers.js"
 
-export function communicationInitialize(myInfo,settings) {
+export function communicationInitialize(myInfo, settings, CollabManager) {
   var receivedHandler = {
     "registerUser": receiveRegisterUser ,
     "removeUser": receiveRemoveUser ,
@@ -26,7 +25,7 @@ export function communicationInitialize(myInfo,settings) {
     "addUser": receiveAddUser
   };
 
-  initialiseProject(myInfo,settings);
+  collabInfo.plugin = CollabManager;
 
   var randomId = generateRandom(20);
   var peer = new Peer(randomId);
@@ -35,7 +34,7 @@ export function communicationInitialize(myInfo,settings) {
   });
 
   peer.on('connection', function (conn) {
-    console.log('connected ' + conn.id);
+    console.log('connected ' + conn);
 
     conn.on('open', function () {
         conn.on('data', function (data) { 

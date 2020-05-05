@@ -20,6 +20,9 @@ import {
 import {
     ProjectItem
 } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+import {
+    collaborationFilter
+} from "./collaboration-component/collaboration-core/utilities";
 
 var menuJson;
 var configJson;
@@ -58,6 +61,8 @@ enum PItemEditType {
     version: "1.0"
 })
 export class CollaborationManager extends IDEUIComponent {
+    private shProject: any;
+
     public registerEvents(): void {
         throw new Error("Method not implemented.");
     }
@@ -94,16 +99,15 @@ export class CollaborationManager extends IDEUIComponent {
             $dialog,
             $container,
             (memberInfo, settings) => {
-                /*let sharedProject = collaborationFilter(
+                communicationInitialize(memberInfo, settings, this);
+                
+                let sharedProject = collaborationFilter(
                     projectObj,
                     memberInfo,
                     settings
-                );*/
-
-                communicationInitialize(memberInfo);
-                //
-                //callback(sharedProject);
-                callback(projectObj);
+                );
+                
+                callback(sharedProject);
             },
             () => { callback(null); }
         );
@@ -168,8 +172,12 @@ export class CollaborationManager extends IDEUIComponent {
         ).value;
     }
 
-    public getProject(projectId: string): any {
-        // ?????????????????????????????????
+    public setProject(projectObj: any) {
+        this.shProject = projectObj;
+    }
+
+    public getProject(): any {
+        return this.shProject;
     }
 
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {

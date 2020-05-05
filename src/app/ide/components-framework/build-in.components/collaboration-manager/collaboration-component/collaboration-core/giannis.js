@@ -1,6 +1,3 @@
-export function getProject(){
-    return DB;
-}
 
 export function getPItem(pItemId){
     var retVal = false;

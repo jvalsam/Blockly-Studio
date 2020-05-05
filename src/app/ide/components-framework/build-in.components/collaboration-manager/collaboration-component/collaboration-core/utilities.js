@@ -1,10 +1,4 @@
-import {
-    getProject,
-    getPItem,
-    updateProject,
-    pItemExists
-}from "./giannis.js"
-
+import { collabInfo } from './utilities';
 
 export let collabInfo = {
     /*myInfo = {
@@ -23,16 +17,33 @@ export function generateRandom(length) {
 }
 
 
-export function initialiseProject(myInfo,settings){
-    var DB = getProject();
+export function collaborationFilter(projectObj, myInfo, settings){
+    if (!settings.sharedPItems) {
+        settings.sharedPItems = projectObj.projectItems.map(x=>x.systemID);
+    }
+
     collabInfo.myInfo = myInfo;
     var tempCollabData = {
         members: [myInfo]
     }
-    DB.collaborationData = tempCollabData;
-
+    projectObj.collaborationData = tempCollabData;
     
+    // pin privileges per pitem
+    projectObj.projectItems.forEach(pitem => {
+        pitem.privileges = {};
+        pitem.privileges.author = collabInfo.myInfo.name;
+        pitem.privileges.owner = collabInfo.myInfo.name;
+        pitem.privileges.shared = {};
+        // TODO: add info for settings hidden field
+        pitem.privileges.shared.type = settings.sharedPItems.indexOf(pitem.systemID) > -1
+            ? "SHARED_PROJECT"
+            : "NOT_SHARED";
+        pitem.privileges.shared.readOnly = false;
+    });
 
+    collabInfo.plugin.setProject (projectObj);
+
+    return projectObj;
 }
 
 var currentPItemsPriviledges = {
@@ -58,15 +69,8 @@ function pItemTools(pItemId){
     return temp;
 }
 
-
-
-
-
-
-
-
 export function printDB(){
-    let DB = getProject();
+    let DB = collabInfo.plugin.getProject();
 	console.log(DB);
 }
 
