@@ -1,6 +1,0 @@
-{
-    "line-counter.excludes": [
-        "**/.vscode/**",
-        "**/node_modules/**",
-    ]
-}

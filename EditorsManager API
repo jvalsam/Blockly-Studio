@@ -1,8 +1,0 @@
-* EditorsManager API
-
-// basics
-- factoryNewProjectItem (name, args, systemID, projectID, restriction?: Array<string>);
-- open (pitem);
-- delete (pitem);
-- edit (pitem, type);
-- split(type);
