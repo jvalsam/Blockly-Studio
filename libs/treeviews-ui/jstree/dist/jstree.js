@@ -6155,11 +6155,25 @@
 			return obj;
         };
 
-        this.create_node = function(par, node, pos, callback, is_loaded){
+		this.update_custom_fields_only = function(id, fields, callback) {
+            let node = this.get_node(id);
+			if (!node) return;
 
+			for (let field of updated_fields)
+				if (fields[field] !== undefined)
+					node[field] = fields[field];
+
+			this.sort(node["parent"], false);
+			this.draw_children(node["parent"]);
+			this.redraw_node(node);
+
+			if (callback) callback();
+        }
+
+        this.create_node = function(par, node, pos, callback, is_loaded){
             return parent.create_node.call(this, par, node, pos, () => { 
                 if (typeof node === "object")
-                    this.update_node(node.id, node, ()=>{
+                    this.update_custom_fields_only(node.id, node, ()=>{
                         if (callback)
                             callback(...arguments);
                     });
