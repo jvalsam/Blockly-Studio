@@ -663,6 +663,13 @@ export class ProjectManager extends IDEUIComponent {
             );
             this.currModalData.itemData = itemsData[index];
         }
+        // data.files =
+        
+        // const formData  = new FormData();
+        // for(const name in data.json) {
+        //     formData.append(name, data[name]);
+        // }
+
         upload_files(
             data.form,
             (paths: Array<String>) => this.onSuccessUploadFiles(

@@ -14,6 +14,10 @@ export function upload_files(files, on_success, on_failure) {
         {
             method: "POST",
             body: files
+            // ,
+            // headers: {
+            //     'Content-Type': 'multipart/form-data'
+            // }
         }
     )
     .then(handle_response_errors)
