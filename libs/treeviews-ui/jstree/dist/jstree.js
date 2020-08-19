@@ -6166,14 +6166,13 @@
             }, is_loaded);
         }
 
-        this.update_node = function(id, fields, callback){
+        this.update_node = function(id, fields, callback) {
             let node = this.get_node(id);
             
             if (!node) return false;
 
-            for (let key of updated_fields){
-                if (fields[key])
-                    node[key] = fields[key];
+            for (let key of Object.keys(fields)){
+				node[key] = fields[key];
             }
 
             this.sort(node["parent"], false);

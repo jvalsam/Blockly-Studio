@@ -205,7 +205,7 @@ export class ProjectInstanceView extends View {
         // tmp solution to pin new node in document, to cache and update 
         // core data of the jstree. TODO: refactor the plugin of the jstree lib
         document["jstreeNewNode"] = pi.jstreeNode;
-        this.treeview.create_node_ext(
+        this.treeview.create_node(
                 parentId,
                 pi.jstreeNode,
                 pi.jstreeNode,
@@ -361,12 +361,29 @@ export class ProjectInstanceView extends View {
         return this.projectElems.find(elem => elem.jstreeNode.id === id);
     }
 
+    private treevaluemap = {
+        "colour": "color",
+        "img": "icon",
+        "title": "text"
+    };
+    private mapTreeValues(prop): string {
+        return this.treevaluemap[prop] || prop;
+    }
+
     public pitemRename(pitem, data) {
+        // mapped data
+        let mdata = {};
+        
         let el = this.projectElems.find(el => el["systemID"] === pitem);
         for (let key of Object.keys(data)) {
-            el.jstreeNode[key] = data[key];
+            if (key === 'img' && Array.isArray(data.img.path) && data.img.path.length === 0) {
+                continue;
+            }
+            mdata[this.mapTreeValues(key)] = data[key];
+            el.jstreeNode[this.mapTreeValues(key)] = data[key];
         }
-        this.treeview.update_node(pitem, data);
+
+        this.treeview.update_node(pitem, mdata);
     }
 
     private getMetaHelper(type, categories): any {

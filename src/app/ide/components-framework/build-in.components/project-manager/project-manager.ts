@@ -249,10 +249,11 @@ export class ProjectManager extends IDEUIComponent {
         if (!project.editorsState) {
             project.editorsState = {
                 viewState: "normal",
-                onFocusPItems: [
-                    projView.firstPItemID
-                ]
+                onFocusPItems: []
             };
+            if (projView.firstPItemID) {
+                project.editorsState.onFocusPItems[0] = projView.firstPItemID;
+            }
         }
 
         let editorManager = <EditorManager>ComponentRegistry.getEntry("EditorManager").create([
@@ -275,8 +276,8 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     public saveProjectResponse(resp) {
-        console.log("----------------------\n");
-        console.log(resp);
+        // console.log("----------------------\n");
+        // console.log(resp);
         // alert("Application saved successfully!\n");
     }
 
@@ -388,6 +389,7 @@ export class ProjectManager extends IDEUIComponent {
 
     }
 
+    @ExportedFunction
     public pitemRemoved(pitemId: string): void {
         
     }
@@ -945,22 +947,35 @@ export class ProjectManager extends IDEUIComponent {
         return value;
     }
 
+    private renderDataForDialogue(meta, renderData): any {
+        let rdfd = JSON.parse(JSON.stringify(meta));
+
+        for (let i=0; i< rdfd.length; i++) {
+            let property = rdfd[i].value.property;
+            rdfd[i].value = renderData[i].value;
+            rdfd[i].value.property = property;
+        }
+
+        return rdfd;
+    }
+
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
-        let projInstView = (<ProjectManagerJSTreeView>this._view).getProject(concerned.projectID);
-        let renderData = concerned.renderData();
+        let projInstView = (<ProjectManagerJSTreeView>this._view).getProject(concerned["project"].projectID);
+        let itemData = concerned.itemData();
+        let renderMData = this.renderDataForDialogue(concerned["_meta"].renderParts, itemData.renderParts);
 
         assert(projInstView !== null);
         this.currModalData = {
             itemData: Object.assign({}, concerned.itemData()),
             projectID: concerned.projectID
         };
-        let title: string = getTitleOfRenderParts(renderData);
+        let title: string = itemData.jstree.text;
         (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
             this,
             [createDialogue (
-                "Rename " + concerned.defaultTitle() + ": ",
-                { formElems: renderData },
+                "Rename: ",
+                { formElems: renderMData },
                 title ? title : "Element",
                 [
                     {
@@ -987,19 +1002,23 @@ export class ProjectManager extends IDEUIComponent {
                                     data,
                                     concerned.systemID,
                                     (resp) => {
-                                        let loadedProject = this.loadedProjects[concerned.projectID];
+                                        let loadedProject = this.loadedProjects[concerned["project"].projectID];
                                         // edit name in title
                                         let index = loadedProject.projectItems.map(x=>x.systemID).indexOf(concerned.systemID);
                                         assert(index>-1, "Not found element in project to rename!");
                                         let element = loadedProject.projectItems[index];
                                         let viewData = {};
-                                        Object.keys(data[0]).forEach((type) => {
-                                            let value = data[0][type];
-                                            let renderPart = element.renderParts[ element.renderParts.map(x=>x.id).indexOf(type) ];
+                                        Object.keys(data.json[0]).forEach((type) => {
+                                            let value = data.json[0][type];
+                                            // map defined id with the type: id == label + '_' + type
+                                            let mtype = type.split('_')[1];
+                                            let index = element.renderParts.map(x=>x.type).indexOf(mtype);
+                                            
+                                            let renderPart = element.renderParts[ index ];
                                             viewData[renderPart.type] = this.assignRenderPartValue(renderPart, value);
                                         });
                                         concerned.rename(viewData);
-                                        this.saveProject(concerned.projectID);
+                                        this.saveProject(concerned["project"].projectID);
                                     }
                                 ]
                             );

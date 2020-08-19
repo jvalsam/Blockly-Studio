@@ -26,6 +26,15 @@ export abstract class ProjectElement {
         return this._jstreeNode;
     }
 
+    // public rename(value: any): void {
+    //     for (let prop in value) {
+    //         if (prop === 'img' && Array.isArray(value.img.path) && value.img.path.length === 0) {
+    //             continue;
+    //         }
+    //         this._jstreeNode[this.mapTreeValues(prop)] = value[prop];
+    //     }
+    // }
+
     public getValidChildren() {
         return this.meta.validChildren;
     }
