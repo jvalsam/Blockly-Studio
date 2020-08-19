@@ -56,7 +56,6 @@ export class ApplicationsAdministration {
     }
 
     public static requestUpdateApplication(application: any, callback: (wsps) => void): void {
-        console.log(application);
         $.ajax({
             url: RunPlatformData.URL + "applications/"+application._id,
             type: "PUT",
@@ -74,7 +73,6 @@ export class ApplicationsAdministration {
     }
 
     public static requestNewApplication(application: any, callback: (wsps) => void): void {
-        console.log(application);
         $.ajax({
             url: RunPlatformData.URL + "applications/new",
             type: "POST",
@@ -90,8 +88,17 @@ export class ApplicationsAdministration {
         });
     }
 
-    public static delete(appId: string): boolean {
-        return false;
+    public static delete(appId: string, callback: Function): void {
+        $.ajax({
+            url: RunPlatformData.URL + "applications/" + appId,
+            type: 'DELETE',
+            success: function(result) {
+                callback(result);
+            },
+            error: function (data) {
+                IDEError.raise(data.statusText, data.responseText);
+            }
+        });
     }
 
     public static share(appId: string, data: any): boolean {

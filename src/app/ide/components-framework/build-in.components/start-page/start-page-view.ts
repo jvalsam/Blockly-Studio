@@ -15,4 +15,7 @@ import { ComponentView, ComponentViewMetadata } from "../../../components-framew
     ]
 })
 export class StartPageView extends ComponentView {
+    public update(): void {
+        this.render();
+    }
 }

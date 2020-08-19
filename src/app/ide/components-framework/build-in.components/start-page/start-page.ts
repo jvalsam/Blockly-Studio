@@ -87,7 +87,13 @@ export class StartPageComponent extends IDEUIComponent {
             this.name,
             "ApplicationWSPManager",
             "deleteApplication",
-            [applicationID]);
+            [
+                applicationID,
+                // callback to refresh UI of start page
+                () => {
+                    this.view.render();
+                }
+            ]);
     }
 
     @RequiredFunction("ApplicationWSPManager", "shareApplication")

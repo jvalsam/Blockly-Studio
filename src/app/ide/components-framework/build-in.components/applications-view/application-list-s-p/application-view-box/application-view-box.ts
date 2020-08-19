@@ -43,7 +43,7 @@ export class ApplicationViewBox extends View {
                 events: [
                     {
                         type: "click",
-                        callback: () => this.parent["action_"+action](
+                        action: () => this.parent["action_"+action](
                             action==="details"
                                 ? this.application
                                 : this.application._id

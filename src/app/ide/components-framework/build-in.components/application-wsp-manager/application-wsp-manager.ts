@@ -124,8 +124,8 @@ export class ApplicationWSPManager extends IDEComponent {
     }
 
     @ExportedFunction
-    public deleteApplication (applicationId: string): void {
-        ApplicationsAdministration.delete(applicationId);
+    public deleteApplication (applicationId: string, callback: Function): void {
+        ApplicationsAdministration.delete(applicationId, callback);
     }
 
     @ExportedFunction
