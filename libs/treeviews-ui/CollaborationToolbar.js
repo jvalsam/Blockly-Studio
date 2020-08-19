@@ -566,8 +566,7 @@ $(function () {
                 ui.addNoteAnnotation('James','Alarm Clock Rings', 'red', './Icons/clock.png');
             });
         });
-        
-    });    
+    });
 });
 
 /* Examples */
@@ -604,6 +603,67 @@ function CollaborationUI_API_Examples(){
             'icon' : './Icons/water.png'
         };
         ui.addPersonalFile(somefile1);
+
+
+
+        members.create_node('#',{
+            'id': 'members',
+            'parent': '#',
+            'type': 'other',
+            'text': 'Members',
+            'icon': false,
+            'state' : {
+                'opened' : true,
+            },
+            'a_attr': membersA
+        }, 
+        'last',
+        function(){
+            members.create_node('members',{
+                'id': 'members-me',
+                'parent': 'members',
+                'type': 'other',
+                'text': 'Me',
+                'icon': false,
+                'state' : {
+                    'opened' : true,
+                },
+                'a_attr': membersA
+            },
+            'last', 
+            function(){
+                members.create_node('members-me',{
+                    'id': 'me-Manos',
+                    'parent': 'members-me',
+                    'type': 'other',
+                    'text': 'Manos',
+                    'icon': './Icons/man0.png',
+                    'a_attr': membersA
+                });
+            });
+    
+            members.create_node('members', {
+                'id': 'members-collaborators',
+                'parent': 'members',
+                'type': 'other',
+                'text': 'Collaborators',
+                'icon': false,
+                'state' : {
+                    'opened' : true,
+                },
+                'a_attr': membersA
+            },
+            'last',
+            function(){
+                ui.addMember('Mary', './Icons/woman0.png', function(){
+                    ui.addNoteAnnotation('Mary', 'Water Is Ready', 'blue', './Icons/water.png');
+                });
+                ui.addMember('James', './Icons/man0.png', function(){
+                    ui.addSuggestionAnnotation('James', 'Water Is Ready', 'blue', './Icons/water.png');
+                    ui.addNoteAnnotation('James','Alarm Clock Rings', 'red', './Icons/clock.png');
+                });
+            });
+        });
     }
 
 }
