@@ -53,10 +53,6 @@ function CollaborationUI_API(){
         };
 
         if (!members.get_node(node.id)){
-            // members.create_node(MEMBER_PREFIX + member, node, 'last', cb);
-            // members.get_node(node.id)['bubble_color'] = bubble_color;
-            // members.get_node(node.id)['color'] = color;
-            // members.redraw_node(node.id);
             node.bubble_color = bubble_color;
             node.color = color; 
             members.create_node(MEMBER_PREFIX + member, node, 'last', cb);
@@ -205,6 +201,7 @@ $(function () {
     $('#selected-member-files').jstree({
         "plugins": [
             "colorv",
+            "sort",
             "wholerow",
             "contextmenu",
             "unique",
@@ -296,6 +293,7 @@ $(function () {
         "plugins": [
             "wholerow",
             "contextmenu",
+            "sort",
             "unique",
             "types"
         ],
@@ -358,6 +356,7 @@ $(function () {
     $('#collaboration-shared-from-me').jstree({
         "plugins": [
             "colorv",
+            "sort",
             "wholerow",
             "contextmenu",
             "unique",
@@ -435,6 +434,7 @@ $(function () {
     $('#collaboration-shared-to-me').jstree({
         "plugins": [
             "colorv",
+            "sort",
             "wholerow",
             "contextmenu",
             "unique",
