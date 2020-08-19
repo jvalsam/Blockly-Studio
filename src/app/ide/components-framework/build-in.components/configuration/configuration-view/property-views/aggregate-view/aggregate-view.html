@@ -1,0 +1,11 @@
+<div class="row group-input aggregate-property
+            <%= indepedent ? 'aggregate-property-idepedent':'' %>
+            <%= renderName ? 'aggregate-property-has-title':'' %>">
+    <% if (renderName) { %>
+    <div class="col-md-12 aggregate-property-title">
+        <%= name %>
+    </div>
+    <% } %>
+    <div class="col-md-12 aggregate-property-elems" id="elems_<%= id %>">
+    </div>
+</div>

@@ -1,0 +1,35 @@
+
+.project-manager-treeview-area {
+    border: 2px solid black;
+    background-color: #dad9d9;
+    color: aliceblue;
+    font-size: 1.25rem;
+    font-weight: 600;
+        
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 3px;
+    padding-bottom: 0px;
+
+    margin-top:12px;
+}
+
+.project-manager-container {
+    height: 100%;
+}
+
+.project-manager-domain-title-label {
+    border: 2px solid rgb(65, 113, 156);
+    background-color: rgb(91, 155, 213);
+    color: black;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.project-manager-application-title-label {
+    border: 2px solid rgb(65, 113, 156);
+    background-color: rgb(182, 210, 236);
+    color: black;
+    font-size: 1.25rem;
+    font-weight: 600;
+}

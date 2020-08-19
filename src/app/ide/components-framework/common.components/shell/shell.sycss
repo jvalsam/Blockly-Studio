@@ -1,0 +1,10 @@
+.main-view-area {
+    /* margin-top: 80px; */
+}
+
+.top-view-area {
+    position: relative;
+    top: 0;
+    width: 100%;
+    z-index: 5;
+}

@@ -1,0 +1,18 @@
+<div class="row project-manager-menu-container">
+    <button class="btn dropdown-toggle" id="hidden_button_<%= id %>" type="button" id="rightClickMenu<%= id %>" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false" style="display: none;">
+        hidden_button
+    </button>
+    <div class="dropdown-menu" id="rcmenu_<%= id %>" aria-labelledby="rightClickMenu<%= id %>" x-placement="bottom-start" style="position: absolute; transform: translate3d(187px, 47px, 0px); top: 0px; left: 0px; will-change: transform;">
+        <% _.forEach(menuItems, (item) => { %>
+            <a class="dropdown-item" id="<%= item.title %>_<%= id %>" href="#" <%=( typeof(item.help)!=='undefined' ) ?
+                "data-toggle='tooltip' data-placement='left' title='" + item.help + "'" : '' %>
+                >
+                <% if(typeof(item.img)!== 'undefined') { %>
+                    <i class="fa <%= item.img %>"></i>
+                    <% } %>
+                        <%= item.title %>
+            </a>
+            <% }); %>
+    </div>
+</div>

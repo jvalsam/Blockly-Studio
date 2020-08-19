@@ -1,0 +1,16 @@
+
+.aggregate-property-idepedent {
+    background-color: rgb(245, 245, 245);
+    border-radius: 10px;
+}
+
+.aggregate-property-has-title {
+    border: 2px solid black;
+    border-radius: 12px;
+}
+
+.aggregate-property-title {
+    font-size: large;
+    font-weight: bold;
+    text-decoration: underline;
+}

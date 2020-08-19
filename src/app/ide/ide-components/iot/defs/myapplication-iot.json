@@ -1,0 +1,51 @@
+{
+    "_id": "324342",
+    "title": "MyApplication",
+    "author": {
+        "id": "author id in DB",
+        "username": "username"
+    },
+    "domainType": "iot",
+    "created": "2016-01-01",
+    "lastModified": "2016-01-01",
+    "categories": [
+        {
+            "type": "SmartObjects",
+            "elements": [
+                {
+                    "type": "SOEnvironment",
+                    "title": "Home",
+                    "img": "fa-home",
+                    "children": [
+                        {
+                            "type": "SmartOject",
+                            "title": "Alarm-clock",
+                            "img": "fa-alarm-clock",
+                            "id": "alarm-clock1",
+                            "innerdata": []
+                        }
+                    ]
+                },
+                {
+                    "type": "SmartOject",
+                    "title": "Mobile Phone",
+                    "img": "fa-mobile",
+                    "id": "mobile-phone1",
+                    "innerdata": []
+                }
+            ]
+        },
+        {
+            "type": "IoTEvents",
+            "elements": [
+                {
+                    "type": "ConditionEVT",
+                    "title": "On alarm clock rings",
+                    "img": "fa-alarm-clock",
+                    "id": "cond-ev-alarm-rings",
+                    "innerdata": []
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+<% if (type==="leaf") { %>
+    <li class="<%= root===true ? 'nav-item' : 'dropdown-item dark-s-item' %>" <%= (typeof(style)!=='undefined') ? 'style=\"'+style+'\"' : ''%>" >
+        <a class="nav-link ts-menu-item-btn" <%= (typeof(help)!=='undefined') ? "data-toggle='tooltip' data-placement='left' title='"+help+"'":''%> href="#">
+            <%= title %>
+        </a>
+    </li>
+<% } else { %>
+    <div class="dropdown-divider"></div>
+<% } %>

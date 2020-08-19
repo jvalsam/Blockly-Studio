@@ -1,0 +1,14 @@
+{
+    "data": {
+        "title": "InternetOfThings",
+        "help": "Configuration of the run-time manager for IoT Automations",
+        "type": "leaf",
+        "events": [
+            {
+                "type": "click",
+                "handler": "onConfig",
+                "args": [ "IoT" ]
+            }
+        ]
+    }
+}

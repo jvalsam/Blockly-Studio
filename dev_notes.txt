@@ -1,0 +1,6 @@
+
+- On start edit first bubble, 
+    > info for stop button...
+
+- define Blocks for scanf and printf of the system
+

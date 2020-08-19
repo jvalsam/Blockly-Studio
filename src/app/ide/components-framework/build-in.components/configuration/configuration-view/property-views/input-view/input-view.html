@@ -1,0 +1,25 @@
+<% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
+<div class="form-group row property-form-group">
+<% } %>
+    <% if(typeof(renderName)==='undefined' || renderName) { %>
+        <label for="input_<%= id %>" id="title_<%= id %>" class="col-4 col-form-label">
+            <%= name %>
+        </label>
+    <% } %>
+    <div class="col">
+        <input id="input_<%= id %>" type="<%= type==='percentage' ? 'number' : type %>" style="margin-left:<%= typeof(isExtra)!=='undefined' && isExtra?'5':' 10' %>px; <%= type==='color'?'margin-top:6px;':'' %>"
+                class="<%= type!=='color'?'form-control':'' %> ts-change-input"
+                <%= (type === 'file' || type === 'image') ? 'name="files"' : '' %> 
+                <%= typeof(step)!=='undefined' ? 'step="'+step+'"':'' %>
+                <%= typeof(min)!=='undefined' ? 'min="'+min+'"' : (type==='percentage' ? 'min="0"' : '') %>
+                <%= typeof(max)!=='undefined' ? 'max="'+max+'"' : (type==='percentage' ? 'max="100"' : '') %>
+                <%= typeof(placeholder)!=='undefined' ? 'placeholder="'+placeholder+'"':'' %>
+                aria-describedby="title_<%= id %>"
+                <%= typeof(ftype)!=='undefined' && ftype ==='image' ? 'accept="image/*"' : '' %>
+                <%= typeof(required)!=='undefined' && required===true ? 'required':'' %>
+                <%= (type !== 'file' ? ( typeof(value) !== 'undefined' ? 'value="' + value + '"' : ( typeof(defaultValue) !== 'undefined' ? 'value="' + defaultValue + '"' : '' ) ) : '') %>
+        />
+    </div>
+<% if(typeof(indepedent) ==='undefined' || indepedent===true) { %>
+</div>
+<% } %>

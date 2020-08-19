@@ -1,0 +1,42 @@
+{
+    "componentName": "RuntimeManager",
+    "properties": [
+        {
+            "name": "Backgound Colour",
+            "type": "color",
+            "default": "#FFFFFF"
+        },
+        {
+            "name": "Bubble System Message Chat",
+            "type": "aggregate",
+            "properties": [
+                {
+                    "name": "Backgound Colour",
+                    "type": "color",
+                    "default": "#FFFFFF"
+                },
+                {
+                    "name": "Message Chat Font",
+                    "type": "font",
+                    "value": {
+                        "Family": "Helvetica",
+                        "Text Colour": "#212529",
+                        "Size": {
+                            "main": "rem",
+                            "extra": "1.25"
+                        },
+                        "Weight": {
+                            "main": "number",
+                            "extra": 400
+                        },
+                        "Ηeight": {
+                            "main": "number",
+                            "extra": 1.5
+                        },
+                        "Style": "normal"
+                    }
+                }
+            ]
+        }
+    ]
+}

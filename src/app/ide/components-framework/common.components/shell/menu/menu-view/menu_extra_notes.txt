@@ -1,0 +1,33 @@
+//  {
+//     path: "/",
+//     data: {
+//         title: "Home",
+//         help: "Go at home page",
+//         imagePath: "../../../../../../../images/puppy.png",
+//         callback: function () { alert("Go at home page is not implemented yet!"); }
+//     }
+// },
+// {
+//     path: "/Home|",
+//     data: {
+//         title: "Settings",
+//         children: []
+//     }
+// },
+// {
+//     path: "./",
+//     data: {
+//         title: "Help",
+//         imagePath: "../../../../.././../../images/glyphicons/glyphicons-195-question-sign.png",
+//         children: [
+//             {
+//                 path: ".",
+//                 data: {
+//                     title: "About",
+//                     imagePath: "../../../../../../../images/glyphicons/glyphicons-196-info-sign.png",
+//                     callback: function () { alert("About Platform is not implemented yet!"); }
+//                 }
+//             }
+//         ]
+//     }
+// }

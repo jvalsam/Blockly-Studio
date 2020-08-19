@@ -1,0 +1,33 @@
+
+.runtime-manager-console-input-container-form {
+    display: flex;
+    padding: 5px;
+    border-top: var(--border);
+    background: #eee;
+  }
+
+.runtime-manager-console-input-container-form * {
+    padding: 5px;
+    border: none;
+    border-radius: 3px;
+    font-size: 1em;
+}
+
+.runtime-manager-console-input-text {
+    flex: 1;
+    background: #EBEBE4;
+    cursor: not-allowed;
+}
+
+.runtime-manager-console-input-btn {
+    margin-left: 10px;
+    background: #EBEBE4;
+    color: #fff;
+    font-weight: bold;
+    cursor: not-allowed;
+    transition: background 0.23s;
+}
+
+.runtime-manager-console-input-btn:hover {
+    background: #EBEBE4;
+}
