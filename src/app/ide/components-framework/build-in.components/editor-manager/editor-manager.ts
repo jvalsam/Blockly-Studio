@@ -44,9 +44,8 @@ enum EditorsViewState {
 export class EditorManager extends IDEUIComponent {
     private readonly pitemEditorsSel = ".pitem-editors-area-";
     private projectItemsMap: {[systemId:string]: PItemView};
-    private focusPItemArea: number;
 
-    // private pitemOnFocusId: string;
+    // two enties: index is the location and value is the pitemID
     private pitemOnFocusIds: Array<string>;
     private onFocusLocation: number;
 
@@ -69,6 +68,14 @@ export class EditorManager extends IDEUIComponent {
         this.onFocusLocation = 0;
     }
 
+    private focusPItemArea(): number {
+        return this.onFocusLocation + 1;
+    }
+
+    private locationOfPItemArea (pitemArea: number): number {
+        return pitemArea - 1;
+    }
+
     private swapPItemEditorsArea(): void {
         $(this.pitemEditorsSel+"1").eq(0)
             .before($(this.pitemEditorsSel+"2").eq(0));
@@ -89,7 +96,7 @@ export class EditorManager extends IDEUIComponent {
         $(this.pitemEditorsSel + "2").removeClass(removeClassName + "2");
         // check if new style will be no-split, to regulate the view
         if (newViewState === EditorsViewState.NO_SPLIT) {
-            if (this.focusPItemArea === 2) {
+            if (this.focusPItemArea() === 2) {
                 this.swapPItemEditorsArea();
             }
         }
@@ -130,8 +137,8 @@ export class EditorManager extends IDEUIComponent {
                 [pitemId]
             ).value;
 
-            this.focusPItemArea = index + 1;
-            this.open(pitem, this.focusPItemArea);
+            this.onFocusLocation = index;
+            this.open(pitem, this.focusPItemArea());
         });
     }
 
@@ -146,7 +153,9 @@ export class EditorManager extends IDEUIComponent {
     @ExportedFunction
     public OnFocusEditorId(location: number=0): string {
         return this.projectItemsMap[
-            this.pitemOnFocusIds[location]
+            this.pitemOnFocusIds[
+                location
+            ]
         ].id;
     }
 
@@ -245,13 +254,18 @@ export class EditorManager extends IDEUIComponent {
         args,
         systemID: string,
         projectID: string,
-        restriction?:Array<string>
+        restriction?: Array<string>
     ) {
-        let editorConfigs = ComponentsCommunication.functionRequest(
+        let pitem = ComponentsCommunication.functionRequest(
             this.name,
             "DomainsManager",
             "getProjectItem",
-            [name]).value.editorConfigs;
+            [name]).value;
+        let editorConfigs = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItemEditorsConfig",
+            [name]).value;
 
         let projectItem = {
             systemID: systemID,
@@ -259,21 +273,29 @@ export class EditorManager extends IDEUIComponent {
             items: {}
         };
 
-        for (const ec_name of Object.keys(editorConfigs)) {
+        for (const ec of editorConfigs) {
             // assume only one editor is defined per mission
-            let editorConfig = editorConfigs[ec_name][0];
+            // in case there are more than one
+            // TODO: has to extend inner of the configData:
+            // instances: { describe the elements }
+            // in case of dynamically change of the user
+            // factory is not responsible -> this action
+            // happens during the development...
+            let editorId = projectItem.systemID + '_' + ec.selector;
+            let editorConfig = pitem.editorConfigs[ec.config][0];
             let response = ComponentsCommunication.functionRequest(
                 this.name,
                 editorConfig.name,
                 "factoryNewItem",
                 [
                     name,
-                    this.convertEconf(ec_name),
+                    ec.config,
                     args,
                     editorConfig
                 ]
             );
-            projectItem.items[ec_name] = _.assign(
+            
+            projectItem.items[editorId] = _.assign(
                 {},
                 response.value,
                 Editor.createJSONArgs(
@@ -282,6 +304,10 @@ export class EditorManager extends IDEUIComponent {
                     projectID,
                     args
                 ));
+            // pin mission
+            projectItem.items[editorId].tmplSel = ec.selector;
+            projectItem.items[editorId].editorId = editorId;
+            projectItem.items[editorId].confName = ec.config;
         }
 
         return projectItem;
@@ -294,7 +320,10 @@ export class EditorManager extends IDEUIComponent {
 
     @ExportedFunction
     public closePItem(pitemArea: number) {
-        
+        let pitem = this.projectItemsMap[this.pitemOnFocusIds[this.locationOfPItemArea(pitemArea)]];
+        if (pitem) {
+            pitem.destroy();
+        }
     }
 
     @ExportedSignal("editor-manager-open-pitem-completed")
@@ -306,69 +335,74 @@ export class EditorManager extends IDEUIComponent {
             "getProjectItem",
             [pi.jstreeNode.type]
         ).value;
-        
+        let editorConfigs = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItemEditorsConfig",
+            [name]).value;
+
+        // TODO: for dynamic templates add load pitem-view from the DB.
+        // Save the tmpl on dynamicTmpl property of the project item
+
         this.closePItem(pitemArea);
         
-        // if (!this.projectItemsMap[pi.systemID]) {
-            let econfigs = pitemData.editorConfigs;
-            let editorsSel = Object.keys(econfigs);
+        let selector = ".pitem-editors-area-" + pitemArea;
 
-            let selector = ".pitem-editors-area-" + pitemArea;
+        const pitemView: PItemView = <PItemView>ViewRegistry
+            .getEntry("PItemView")
+            .create(
+                this,
+                selector,
+                pi,
+                pitemData.view
+            );
+        pitemView.render();
 
-            const pitemView: PItemView = <PItemView>ViewRegistry
-                .getEntry("PItemView")
-                .create(
-                    this,
-                    selector,
-                    pi,
-                    editorsSel,
-                    pitemData.view
-                );
-            pitemView.render();
+        let tools = ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "pitemTools",
+            [ pi.systemID ]
+        ).value;
+        tools.push("separator");
 
-            let tools = ComponentsCommunication.functionRequest(
+        for (const key in pi.editorsData.items) {
+            let item = pi.editorsData.items[key];
+
+            // only one editor is supported
+            // if domain author give more
+            // TODO: selection by the end-user... now we just choose the 1st
+            let confName = item.confName;
+            let econfig = pitemData.editorConfigs[confName][0];
+
+            ComponentsCommunication.functionRequest(
                 this.name,
-                "CollaborationManager",
-                "pitemTools",
-                [ pi.systemID ]
-            ).value;
-            tools.push("separator");
+                econfig.name,
+                "open",
+                [
+                    item.editorId,
+                    pitemView,
+                    this.convertEconf(confName)
+                ]
+            );
+            pitemView.addEditor(item.editorId, econfig.name);
+        }
 
-            for (let mission of editorsSel) {
-                let sel = "pi_" + pi.systemID + "_" + mission;
-                // only one editor is supported
-                // if domain author give more
-                // TODO: selection by the end-user... now we just choose the 1st
-                let econfig = econfigs[mission][0];
+        let editorTools = ComponentsCommunication.functionRequest(
+            this.name,
+            pitemView.getOnFocusEditor(),
+            "tools",
+            [pitemView.getFocusEditorId()]
+        ).value;
 
-                ComponentsCommunication.functionRequest(
-                    this.name,
-                    econfig.name,
-                    "open",
-                    [
-                        sel,
-                        pitemView,
-                        this.convertEconf(mission)
-                    ]
-                );
-                pitemView.addEditor(sel, econfig.name);
-            }
-
-            let editorTools = ComponentsCommunication.functionRequest(
-                this.name,
-                pitemView.getOnFocusEditor(),
-                "tools",
-                [pitemView.getFocusEditorId()]
-            ).value;
-
-            let toolsView = (<EditorManagerToolbarView>this._view
-                .toolElems["EditorManagerToolbarView"]);
-            toolsView.setPItemTools(tools.concat(editorTools));
-            // request from the collaboration
-            // collect from the vpl editors
-            // identify which is on focus...
-            this.projectItemsMap[pi.systemID] = pitemView;
-        // }
+        let toolsView = (<EditorManagerToolbarView>this._view
+            .toolElems["EditorManagerToolbarView"]);
+        toolsView.setPItemTools(tools.concat(editorTools));
+        // request from the collaboration
+        // collect from the vpl editors
+        // identify which is on focus...
+        this.projectItemsMap[pi.systemID] = pitemView;
+        this.pitemOnFocusIds[this.locationOfPItemArea(pitemArea)] = pi.systemID;
 
         ComponentsCommunication.postSignal(
             this.name,
@@ -418,5 +452,15 @@ export class EditorManager extends IDEUIComponent {
         else {
             reqAction (pi);
         }
+    }
+
+    @ExportedFunction
+    public closeEditorInstance (editorId: string, editorName: string): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            editorName,
+            "closeSRC",
+            [ editorId ]
+        );
     }
 }

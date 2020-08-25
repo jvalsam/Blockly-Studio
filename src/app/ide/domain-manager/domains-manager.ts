@@ -118,6 +118,11 @@ export class DomainsManager extends IDEComponent {
     }
 
     @ExportedFunction
+    public getProjectItemEditorsConfig(name): any {
+        return VPLDomainElementsManager.getProjectItemEditorsConfig(name);
+    }
+
+    @ExportedFunction
     public getEditorConfigs(editor: string) {
         return VPLDomainElementsManager.getEditorConfigs(editor);
     }

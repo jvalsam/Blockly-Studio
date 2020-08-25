@@ -30,7 +30,6 @@ export class PItemView extends View {
         style: Array<IViewUserStyleData>,
         hookSelector: string,
         private _pi: ProjectItem,
-        private editorsSel: Array<string>,
         private view: any
     ) {
         super(
@@ -52,13 +51,14 @@ export class PItemView extends View {
 
     public render(callback?: Function): void {
         let $local = $($.parseHTML(this.pitemTmpl(this._pi.itemData())));
-        let pitemId = this._pi.systemID;
-        this.editorsSel.forEach(
-            sel => $local.find("." + sel).attr("id", "pi_"+pitemId + "_" + sel)
-        );
-        this.template = "<div class=\"project-item-container\" style=\"height: 100%\">"
+        for (const key in this._pi.editorsData.items) {
+            let item = this._pi.editorsData.items[key];
+            
+            $local.find("." + item.tmplSel).attr("id", item.editorId);
+            this.template = "<div class=\"project-item-container\" style=\"height: 100%\">"
             + $local[0].outerHTML
             + "</div>";
+        }
         this.renderTmplEl();
     }
 
@@ -99,5 +99,12 @@ export class PItemView extends View {
 
     public get pi(): ProjectItem {
         return this._pi;
+    }
+
+    public destroy(): void {
+        for (let editorId of Object.keys(this.editorsMap)) {
+            this.parent["closeEditorInstance"](editorId, this.editorsMap[editorId]);
+        }
+        super.destroy();
     }
 }

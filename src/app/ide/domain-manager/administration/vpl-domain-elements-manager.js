@@ -106,6 +106,10 @@ class _VPLDomainElementsManager {
         return this._currVPLDomainElements.getProjectItemInfo(name);
     }
 
+    getProjectItemEditorsConfig(name) {
+        return this._currVPLDomainElements.getProjectItemEditorsConfig(name);
+    }
+
     getEditorConfigs(name) {
         return this._currVPLDomainElements.getEditorConfigs(name);
     }

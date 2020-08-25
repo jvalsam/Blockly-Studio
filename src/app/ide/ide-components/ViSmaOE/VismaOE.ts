@@ -45,6 +45,9 @@ export class ViSmaOE extends Editor {
     public onOpen(): void {
         alert("on open");
     }
+    public closeSRC(srcId: string): void {
+        //
+    }
 
     @ExportedSignal('create-smart-object')
     @ExportedSignal('delete-smart-object')

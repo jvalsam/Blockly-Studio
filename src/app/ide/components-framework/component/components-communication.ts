@@ -274,7 +274,14 @@ class _ComponentsCommunication {
     args: Array<any>=[],
     dstComponentId ?: string
   ): ResponseValue {
-    BlackboardComponentRegistry.getBlackboard(dstComponentName).callFunction("open", args, srcComponentName, dstComponentId);
+    BlackboardComponentRegistry
+      .getBlackboard(dstComponentName)
+      .callFunction(
+        "open",
+        args,
+        srcComponentName,
+        dstComponentId
+      );
     let comp: IDEUIComponent = <IDEUIComponent>ComponentRegistry.getEntry(dstComponentName).getInstances()[0];
     var shell: Shell = <Shell>ComponentRegistry.getEntry("Shell").getInstances()[0];
     shell.openComponent(comp);
@@ -287,7 +294,14 @@ class _ComponentsCommunication {
       args: Array<any>=[],
       dstComponentId ?: string
   ): ResponseValue {
-      return new ResponseValue(dstComponentName, "close", true);
+      return BlackboardComponentRegistry
+        .getBlackboard(dstComponentName)
+        .callFunction(
+          "close",
+          args,
+          srcComponentName,
+          dstComponentId
+        );
   }
 
   public functionRequest(
