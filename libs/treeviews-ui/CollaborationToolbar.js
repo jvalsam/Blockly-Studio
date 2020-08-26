@@ -59,6 +59,34 @@ function CollaborationUI_API(){
         }
     }
 
+    /**
+     * 
+     * @param {Object} member Should contain name, icon
+     * @param {Object} file Should contain name, icon
+     * @param {String} type
+     * @param {String} time
+     */
+    this._addAction = function _addAction(member, file, type, time){
+        let html = `                                                                                                \
+            <div class = "collaboration-recent-action">                                                             \
+                <div class = "recent-action-row vcenter font-size16px">                                             \
+                    <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
+                    <div> ${member.name} </div>                                                                     \
+                    <div class = "middle-right vcenter">                                                            \
+                        <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \                                                  \
+                        ${file.name}                                                                                \
+                    </div>                                                                                          \
+                </div>                                                                                              \
+                <div class = "recent-action-last-row vcenter">                                                      \
+                    <div>Type: ${type}</div>                                                                       \
+                    <div class = "middle-right">${time}</div>                                                          \
+                </div>                                                                                              \
+            </div> 
+        `;
+        
+        $("#collaboration-recent-actions-ui").append(html);
+    }
+
     /* API */
 
     this.addMember = function (name, icon = "./Icons/man0.png", cb = undefined ){
@@ -93,7 +121,7 @@ function CollaborationUI_API(){
      * @param {Object} file The file, should contain path, name, icon, color. 
      *                      Path: is of the form folder1/folder2 and DOES NOT end up with the file's name
      *                      Name: the name of the file
-     *                      Icon: the path to the icon: e.g. ./Icons/alarm.png
+     *                      Icon: the path to the icon: e.g. ./Icons/clock.png
      *                      Color: the color of the file
      */
     function addPersonalFile(file, cb = undefined){
@@ -141,7 +169,7 @@ function CollaborationUI_API(){
      * @param {Array} files Each file, should contain path, name, icon, color.
      *                      Path: is of the form folder1/folder2 and DOES NOT end up with the file's name
      *                      Name: the name of the file
-     *                      Icon: the path to the icon: e.g. ./Icons/alarm.png
+     *                      Icon: the path to the icon: e.g. ./Icons/clock.png
      *                      Color: the color of the file
      * @param {function} cb Callback
      */
@@ -317,7 +345,7 @@ $(function () {
     jstree.create_node (
         '#',
         {
-            'id': 'dummy-js-tree1-root',
+            'id': 'dummy-js-tree-1-root',
             'parent': '#',
             'type': 'other',
             'text': 'Shared Files',
@@ -328,22 +356,19 @@ $(function () {
         0,
         function cb(){
             jstree.create_node (   
-                'dummy-js-tree1-root', 
+                'dummy-js-tree-1-root', 
                 {
-                    'parent': 'dummy-js-tree1-root',
+                    'parent': 'dummy-js-tree-1-root',
                     'id' : 'dummy-js-tree-1-node'
                 }, 
                 0, 
                 function cb(){
-                    $('#dummy-js-tree1 jstree-children').remove();
                     $('#dummy-js-tree-1-node').remove();
                     
                     $("#dummy-js-tree-1").off("dblclick").dblclick(function(){
-                        jstree.is_open('dummy-js-tree1-root') ? jstree.close_node('dummy-js-tree1-root') : jstree.open_node('dummy-js-tree1-root');
-                        $.when($('#dummy-js-tree1 jstree-children').remove()).then( function(){
-                            $.when($('#dummy-js-tree-1-node').remove()).then( function(){
-                                $('#collaboration-shared-files-ui').toggle(200);
-                            });
+                        jstree.is_open('dummy-js-tree-1-root') ? jstree.close_node('dummy-js-tree-1-root') : jstree.open_node('dummy-js-tree-1-root');
+                        $.when($('#dummy-js-tree-1-node').remove()).then( function(){
+                            $('#collaboration-shared-files-ui').toggle(200);
                         });
                     });
                 },
@@ -506,6 +531,67 @@ $(function () {
         $('#collaboration-shared-to-me-tab-ui').removeClass('collaboration-shared-tab-active').addClass('collaboration-shared-tab-active');
     });
 
+    $('#dummy-js-tree-2').jstree({
+        "plugins": [
+            "wholerow",
+            "contextmenu",
+            "sort",
+            "unique",
+            "types"
+        ],
+        'types': {
+            'smart_object': {},
+            'other': {}
+        },
+        'core': {
+            'check_callback': true,
+        }
+    });
+
+    let dummyTree2 = $.jstree.reference('#dummy-js-tree-2');
+    
+    /* 
+    programmaticaly create the root node and a dummy node (so that the root has the > symbol on its left)
+    and overide the double click event so that it toggles the "To me" and "From me" tabs that are out of the tree
+    */
+   
+
+    dummyTree2.create_node (
+        '#',
+        {
+            'id': 'dummy-js-tree-2-root',
+            'parent': '#',
+            'type': 'other',
+            'text': 'Recent Actions',
+            'icon': false,
+            'state' : { 'opened' : true },
+            'a_attr': membersA
+        },
+        0,
+        function cb(){
+            dummyTree2.create_node (   
+                'dummy-js-tree-2-root', 
+                {
+                    'parent': 'dummy-js-tree-2-root',
+                    'id' : 'dummy-js-tree-2-node'
+                }, 
+                0, 
+                function cb(){
+                    $('#dummy-js-tree-2-node').remove();
+                    
+                    $("#dummy-js-tree-2").off("dblclick").dblclick(function(){
+                        dummyTree2.is_open('dummy-js-tree-2-root') ? dummyTree2.close_node('dummy-js-tree-2-root') : dummyTree2.open_node('dummy-js-tree-2-root');
+                        $.when($('#dummy-js-tree-2-node').remove()).then( function(){
+                            $('#collaboration-recent-actions-ui').toggle(200);
+                        });
+                    });
+                },
+                true
+            );
+        },
+        true
+    );
+
     ui = new CollaborationUI_API();
     examples = new CollaborationUI_API_Examples();
 
@@ -603,67 +689,18 @@ function CollaborationUI_API_Examples(){
             'icon' : './Icons/water.png'
         };
         ui.addPersonalFile(somefile1);
+    }
 
-
-
-        members.create_node('#',{
-            'id': 'members',
-            'parent': '#',
-            'type': 'other',
-            'text': 'Members',
-            'icon': false,
-            'state' : {
-                'opened' : true,
-            },
-            'a_attr': membersA
-        }, 
-        'last',
-        function(){
-            members.create_node('members',{
-                'id': 'members-me',
-                'parent': 'members',
-                'type': 'other',
-                'text': 'Me',
-                'icon': false,
-                'state' : {
-                    'opened' : true,
-                },
-                'a_attr': membersA
-            },
-            'last', 
-            function(){
-                members.create_node('members-me',{
-                    'id': 'me-Manos',
-                    'parent': 'members-me',
-                    'type': 'other',
-                    'text': 'Manos',
-                    'icon': './Icons/man0.png',
-                    'a_attr': membersA
-                });
-            });
-    
-            members.create_node('members', {
-                'id': 'members-collaborators',
-                'parent': 'members',
-                'type': 'other',
-                'text': 'Collaborators',
-                'icon': false,
-                'state' : {
-                    'opened' : true,
-                },
-                'a_attr': membersA
-            },
-            'last',
-            function(){
-                ui.addMember('Mary', './Icons/woman0.png', function(){
-                    ui.addNoteAnnotation('Mary', 'Water Is Ready', 'blue', './Icons/water.png');
-                });
-                ui.addMember('James', './Icons/man0.png', function(){
-                    ui.addSuggestionAnnotation('James', 'Water Is Ready', 'blue', './Icons/water.png');
-                    ui.addNoteAnnotation('James','Alarm Clock Rings', 'red', './Icons/clock.png');
-                });
-            });
-        });
+    this.addAction = function(){
+        let member = {
+            'name' : 'Manos',
+            'icon' : './Icons/man0.png'
+        };
+        let file = {
+            'name' : 'Alarm Clock Rings',
+            'icon' : './Icons/clock.png'
+        }
+        ui._addAction(member, file, 'Creation', '01:05');
     }
 
 }
