@@ -27,10 +27,32 @@ export class EditorManagerToolbarView extends ComponentViewElement {
     }
 
     private pitemToolSelectors = [];
+    private lastChildBetweenSplits($pitem) {
+        return $pitem.prev().prop("tagName") === "SPAN"
+            && $pitem.next().prop("tagName") === "SPAN";
+    }
+    private firstChildFollowsSplit($pitem) {
+        return $pitem.index() === 0
+            && $pitem.next().prop("tagName") === "SPAN";
+    }
+    private lastChildWithPreviousSplit($pitem) {
+        return $pitem.index() === $pitem.siblings().length
+            && $pitem.prev().prop("tagName") === "SPAN";
+    }
     private removeToolItem(selector: any): void {
         let $pitem = $(selector);
         if ($pitem["nodeName"] === "A") {
             $pitem.unbind("click");
+        }
+        // handle deletion of split
+        if (this.lastChildBetweenSplits($pitem)) {
+            $pitem.prev().remove();
+        }
+        else if (this.firstChildFollowsSplit($pitem)) {
+            $pitem.next().remove();
+        }
+        else if (this.lastChildWithPreviousSplit($pitem)) {
+            $pitem.prev().remove();
         }
         $pitem.remove();
     }
@@ -66,6 +88,8 @@ export class EditorManagerToolbarView extends ComponentViewElement {
         if (this.pitemToolSelectors.length>0) {
             this.pitemToolSelectors.forEach(sel => this.removeToolItem(sel));
             this.pitemToolSelectors.splice(0, this.pitemToolSelectors.length);
+            // add first separator
+            this.addSeparator();
         }
         // add new items
         tools.forEach(tool => (typeof tool === "object")

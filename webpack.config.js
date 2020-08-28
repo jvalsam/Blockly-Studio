@@ -84,7 +84,8 @@ module.exports = {
             // In case you imported plugins individually, you must also require them here:
             // Util: "exports-loader?Util!bootstrap/js/dist/util",
             // Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown",
-        }),
+        })
+        ,
         new BrowserSyncPlugin({
             host: 'localhost',
             port: 8080,
@@ -92,6 +93,18 @@ module.exports = {
                 baseDir: ['./'],
                 directory: true
             }
+        },
+        // plugin options
+        {
+            // prevent BrowserSync from reloading the page
+            // and let Webpack Dev Server take care of this
+            reload: false
         })
-    ]
+    ],
+    devServer: {
+        contentBase: [path.join(__dirname, '/'), path.join(__dirname, 'dist')],
+        compress: true,
+        index: 'index.html',
+        port: 8080
+    }
 }
