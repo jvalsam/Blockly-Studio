@@ -94,43 +94,39 @@ export class BlocklyVPL extends Editor {
   @RequiredFunction("Shell", "addTools")
   @ExportedFunction
   public open(
-    selector: string,
+    id: string,
     pitem: PItemView,
     config: string
   ): void {
-    let src = pitem.pi.editorsData.find(e => e.id === selector);
-    let text = src ? src.data.text : null;
-    this.instancesMap[selector] = new BlocklyInstance(
-      pitem.pi,
-      selector,
-      config,
-      pitem.pi.getPrivilleges(),
-      this.configsMap[config],
-      (config) => this.getToolbox(config),
-      (jsonEvent) => this.save(
-          selector,
-          pitem.pi,
-          (mode) => mode === "SHARED"
-            ? jsonEvent
-            : this.getEditorData(selector)),
-      text
-    );
-    this.instancesMap[selector].open();
-    // this.changed = false;
-    // this.toolbox = (toolbox === undefined)
-    //   ? /*require("./toolbox.xml")*/document.getElementById("toolbox")
-    //   : toolbox;
-    // this.src = src;
-    // if (isFirstInst) {
-    //   ComponentsCommunication.functionRequest(
-    //     this.name,
-    //     "Shell",
-    //     "addTools",
-    //     [
-    //       this.view.toolElems
-    //     ]
-    //   );
-    // }
+    let editorData = pitem.pi.editorsData.items[id];
+    assert(editorData, "Source with id not found in Blockly editor.");
+
+    if (!this.instancesMap.hasOwnProperty(editorData.editorId)) {
+      let text = editorData ? editorData.src : null;
+      this.instancesMap[editorData.editorId] = new BlocklyInstance(
+        pitem.pi,
+        editorData.editorId,
+        id,
+        config,
+        pitem.pi.getPrivilleges(),
+        this.configsMap[config],
+        (config) => this.getToolbox(config),
+        (jsonEvent) => this.save(
+            id,
+            pitem.pi,
+            (mode) => mode === "SHARED"
+              ? jsonEvent
+              : this.getEditorData(id)),
+        text
+      );
+    }
+    this.instancesMap[editorData.editorId].open();
+  }
+
+  @ExportedFunction
+  public closeSRC(srcId: string): void {
+    assert(this.instancesMap[srcId], "Request to close not existing source ID in Blockly Editor!");
+    this.instancesMap[srcId].close();
   }
 
   public update_src(data: any, pitem: any, focus: boolean =false): void {
@@ -162,8 +158,8 @@ export class BlocklyVPL extends Editor {
 
   public getEditorData(editorId: string): any {
     return {
-      name: this.name,
-      text: this.instancesMap[editorId].getText()
+      editor: this.name,
+      src: this.instancesMap[editorId].getText()
     };
   }
 

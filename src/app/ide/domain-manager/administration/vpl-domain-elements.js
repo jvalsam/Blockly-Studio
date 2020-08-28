@@ -127,10 +127,18 @@ export class VPLDomainElements {
             };
 
             this.vplProjectItems[name].editorsConfig.forEach(
-                ec => info.editorConfigs[ec] = this.vplMissions[ec].editors
+                ec => info.editorConfigs[ec.config] = this.vplMissions[ec.config].editors
             );
 
             return info;
+        }
+
+        return null;
+    }
+
+    getProjectItemEditorsConfig(name) {
+        if (name in this.vplProjectItems) {
+            return this.vplProjectItems[name]._editorsConfig;
         }
 
         return null;

@@ -19,10 +19,8 @@ ElementSchema.add({
     orderNO: { type: Number, required: [true, 'project element type not exist'] },
     path: { type: String, required: [true, 'project element systemID not exist'] },
     parent: { type: String, required: [true, 'project element systemID not exist'] },
-    editorsData: [{
-        id: { type: String, required: [true, 'editor id is required'] },
-        data: {}
-    }],
+    editorsData: { type: mongoose.Schema.Types.Mixed, required: [true, 'project element editorsData not exist']},
+    dynamicTmpl: { type: String , required: false },
     renderParts: [
         {
             type: { type: String, required: [true, 'project renderParts type not exist'] },

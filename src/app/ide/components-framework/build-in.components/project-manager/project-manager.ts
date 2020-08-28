@@ -545,15 +545,18 @@ export class ProjectManager extends IDEUIComponent {
         concerned.project.addNewElement(
             {
                 renderParts: renderParts,
-                editorData: src,
+                editorsData: src,
                 systemID: src.systemID,
                 type: this.currModalData.itemData.type
             },
             concerned,
             (elem) => {
                 this.onClickProjectElement(elem);
-                this.loadedProjects[concerned.project.dbID].projectItems
-                    .push(elem.itemData());
+                let pitem = elem.itemData();
+                pitem.editorsData = elem.editorsData;
+                this.loadedProjects[concerned.project.dbID]
+                    .projectItems
+                    .push(pitem);
                 this.saveProject(concerned.project.dbID);
                 elem.trigger("click");
             }
@@ -596,15 +599,16 @@ export class ProjectManager extends IDEUIComponent {
         if (!projectItem.editorsData) {
             projectItem.editorsData = [];
         }
-        let index = projectItem.editorsData.map(x => x.id).indexOf(editorId);
-        if (index < 0) {
-            projectItem.editorsData.push({
-                id: editorId,
-                data: data
-            });
+        let edata = projectItem.editorsData.items[editorId];
+        let uedata = JSON.parse(JSON.stringify(data));
+        if (!edata) {
+            projectItem.editorsData.items[editorId] = uedata;
+            projectItem.editorsData.items[editorId].editorId = editorId;
         }
         else {
-            projectItem.editorsData[index].data = data;
+            for (let key in uedata) {
+                edata[key] = uedata[key];   
+            }
         }
 
         this.saveProject(project._id);
@@ -663,12 +667,6 @@ export class ProjectManager extends IDEUIComponent {
             );
             this.currModalData.itemData = itemsData[index];
         }
-        // data.files =
-        
-        // const formData  = new FormData();
-        // for(const name in data.json) {
-        //     formData.append(name, data[name]);
-        // }
 
         upload_files(
             data.form,
@@ -856,6 +854,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private onDeleteElement(concerned) {
+        let projectID = concerned.project.projectID;
         let currFocusSystemID = ComponentsCommunication.functionRequest(
             this.name,
             "EditorManager",
@@ -863,17 +862,17 @@ export class ProjectManager extends IDEUIComponent {
             [(<ProjectManagerItemView>concerned).itemData().systemID]
         ).value;
         (<ProjectManagerJSTreeView>this._view)
-            .removeElement(concerned.projectID, concerned.systemID);
+            .removeElement(projectID, concerned.systemID);
 
-        let index = this.loadedProjects[concerned.projectID]
+        let index = this.loadedProjects[projectID]
             .projectItems
             .map(x => x.systemID)
             .indexOf(concerned.systemID);
 
         assert(index > -1, "not found element in project data to remove");
         // fixing rendering order
-        let element = this.loadedProjects[concerned.projectID].projectItems[index];
-        this.loadedProjects[concerned.projectID]
+        let element = this.loadedProjects[projectID].projectItems[index];
+        this.loadedProjects[projectID]
             .projectItems
             .filter(
                 x => {
@@ -883,8 +882,8 @@ export class ProjectManager extends IDEUIComponent {
                 (elementInPath) => --elementInPath.orderNO
             );
         // remove from project data
-        this.loadedProjects[concerned.projectID].projectItems.splice(index, 1);
-        this.saveProject(concerned.projectID);
+        this.loadedProjects[projectID].projectItems.splice(index, 1);
+        this.saveProject(projectID);
     }
 
     @ExportedFunction

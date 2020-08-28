@@ -22,6 +22,8 @@ app.use(allowCrossDomain);
 
 app.use('/smart-object-images', express.static(__dirname + '/smart-object-images'));
 
+app.use('/uploaded_files', express.static(__dirname + '/uploaded_files'));
+
 var ApplicationController = require('./applications/ApplicationController');
 app.use('/applications', authentication.check, ApplicationController);
 

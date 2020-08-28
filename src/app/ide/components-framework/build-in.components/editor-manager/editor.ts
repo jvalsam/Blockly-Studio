@@ -67,6 +67,8 @@ export abstract class Editor extends IDEUIComponent {
     public abstract copy(): void;
     public abstract paste(): void;
 
+    public abstract closeSRC(srcId: string): void;
+
     public abstract tools(editorId: string): Array<ITool>;
 
     public save (id: string, pitem: ProjectItem, event: any): void {

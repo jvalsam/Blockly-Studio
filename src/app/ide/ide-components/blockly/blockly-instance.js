@@ -29,6 +29,7 @@ const Privillege = Object.freeze({
 export class BlocklyInstance {
     constructor(
         pitem,
+        id,
         selector,
         type,
         privillege,
@@ -39,6 +40,7 @@ export class BlocklyInstance {
     ) {
         this.pitem = pitem;
         this.selector = selector;
+        this.id = id;
         this.type = type;
         this.privillege = privillege;
         this.config = config;
@@ -72,6 +74,10 @@ export class BlocklyInstance {
         event.run(true);
     }
 
+    calcPItemBlocklyArea() {
+        this._blocklyArea = document.getElementById(this.id);
+    }
+
     open() {
         if (this.state === InstStateEnum.OPEN) {
             return;
@@ -79,13 +85,13 @@ export class BlocklyInstance {
 
         if (this.state === InstStateEnum.INIT) {
             // create new div with absolute position in the IDE
-            let blocklySel = "blockly_" + this.selector;
+            let blocklySel = "blockly_" + this.id;
             $(".blockly-editors-area")
                 .append(
                     "<div id=\""
                     + blocklySel
                     + "\" style=\"position: absolute\"></div>");
-            this._blocklyArea = document.getElementById(this.selector);
+            this.calcPItemBlocklyArea();
             this._blocklyDiv = document.getElementById(blocklySel);
             
             this["initWSP_" + this.privillege]();
@@ -104,8 +110,11 @@ export class BlocklyInstance {
             this.onResize();
         }
         else {
-            // just activate display
+            this._blocklyDiv.style.visibility = 'visible';
+            this.calcPItemBlocklyArea();
+            this.onResize();
         }
+
         this.state = InstStateEnum.OPEN;
     }
 
@@ -151,7 +160,13 @@ export class BlocklyInstance {
     }
 
     close() {
-        // just edit in display none
+        this.state = InstStateEnum.CLOSE;
+        this._blocklyDiv.style.visibility = 'hidden';
+
+        this._blocklyDiv.style.left = '0px';
+        this._blocklyDiv.style.top = '0px';
+        this._blocklyDiv.style.width = '0px';
+        this._blocklyDiv.style.height = '0px';
     }
 
     syncWSP(json) {

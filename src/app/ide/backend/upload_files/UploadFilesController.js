@@ -20,9 +20,11 @@ router.post("/upload", (...args) => {
 }, function(req, res) {
     const paths = [];
     for(const file of req.files) {
-        paths.push(req.protocol + "://" + req.hostname + '/' + file.path);
+        paths.push(req.protocol + "://" + req.headers.host + '/' + file.destination + file.filename);
     }
     res.status(200).send(paths);
 });
+
+
 
 module.exports = router;

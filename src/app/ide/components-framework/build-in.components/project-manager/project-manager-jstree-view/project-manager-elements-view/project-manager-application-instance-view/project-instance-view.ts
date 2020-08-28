@@ -208,7 +208,6 @@ export class ProjectInstanceView extends View {
         this.treeview.create_node(
                 parentId,
                 pi.jstreeNode,
-                pi.jstreeNode,
                 "last",
                 () => {
                     this.registerItemClick(pi);
@@ -668,7 +667,7 @@ export class ProjectInstanceView extends View {
     }
 
     public trigger(evt: string, elem :ProjectElement): void {
-        this.treeview.jstree().select_node(elem.jstreeNode.id);
+        this.treeview/*.jstree()*/.select_node(elem.jstreeNode.id);
         $("#"+elem.jstreeNode.id).trigger(evt, elem);
     }
 }
