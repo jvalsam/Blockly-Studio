@@ -22,6 +22,10 @@
     transform: translate(0,-50%);
 }
 
+.float-left {
+    float : left;
+}
+
 .size22x22{
     width: 22px;
     height:22px;
@@ -41,6 +45,10 @@
     height:30px;
     -webkit-mask-size: 30px 30px;
     mask-size: 30px 30px;
+}
+
+.font-size16px{
+    font-size:16px;
 }
 
 /*****************************************************************************/
@@ -107,12 +115,13 @@
     font-weight: normal;
 }
 
-#members a i {
+#members a i, .member-icon {
     background-position: center center !important;
     background-size: 22px 22px !important;
     size: 33px 33px !important;
     width: 33px !important;
     height: 33px !important;
+    background-repeat: no-repeat !important;
     background-color: lightblue !important;
     border-radius: 50%;
     margin-top: 0px;
@@ -242,12 +251,12 @@
 }
 
 /****************************************************************************
----> shared files
+---> shared files, recent actions
 ****************************************************************************/
 
-#collaboration-shared-files-ui{
+#collaboration-shared-files-ui, #collaboration-recent-actions-ui{
     overflow: hidden;
-    margin: 4px 0px 4px 24px;
+    margin: 4px 4px 4px 24px;
 }
 
 .collaboration-shared-tab-ui{
@@ -273,16 +282,16 @@
     border-bottom-width: 0px;
 }
 
-#dummy-js-tree1-root{
+#dummy-js-tree-1-root, #dummy-js-tree-2-root{
     font-weight: 600;
     color: #2e2e2e;
     font-size: 18px;
 }
 
-#dummy-js-tree1-root > .jstree-wholerow {
+#dummy-js-tree-1-root > .jstree-wholerow, #dummy-js-tree-2-root > .jstree-wholerow{
     height: 33px;
 }
-#dummy-js-tree1-root .jstree-ocl {
+#dummy-js-tree-1-root .jstree-ocl, #dummy-js-tree-2-root .jstree-ocl{
     float: left;
     margin-top: 7px;
 }
@@ -328,6 +337,42 @@
 
 #collaboration-shared-to-me {
     display: none;
+}
+
+/****************************************************************************
+---> recent action
+****************************************************************************/
+
+.collaboration-recent-action {
+    padding: 10px;
+    background-color: #D4FFDE;
+    border-radius: 15px;
+    margin-bottom: 4px;
+}
+
+.recent-action-row, .recent-action-last-row{
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.recent-action-last-row{
+    margin-bottom: 0px;
+}
+
+.file-icon{
+    background-position: center center !important;
+    background-size: 16px 16px !important;
+    size: 16px 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent !important;
+    background-repeat: no-repeat !important;
+    border-radius: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+    border: 0px;
+    background-image: url(./Icons/clock.png);
 }
 
 /****************************************************************************
