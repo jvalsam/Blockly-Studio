@@ -414,13 +414,14 @@ export class ProjectInstanceView extends View {
     private addProjectItems(parentId: string, items: Array<any>): void {
         let pitems = items.filter(x => x.parent === parentId);
 
-        for (let i=1, j=pitems.length; i<=j; i++) {
-            let item = pitems.find(x => x.orderNO === i);
-
+        // for (let i=1, j=pitems.length; i<=j; i++) {
+        //     let item = pitems.find(x => x.orderNO === i);
+        pitems.forEach( item => {
             this.addProjectItem(parentId, item);
             // add children
             this.addProjectItems(item.systemID, items);
-        }
+        });
+        //}
     }
 
     private initActions(data) {

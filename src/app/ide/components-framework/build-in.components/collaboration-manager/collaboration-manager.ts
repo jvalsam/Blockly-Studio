@@ -169,6 +169,7 @@ export class CollaborationManager extends IDEUIComponent {
     }
 
     public pitemRemoved(pitemId: string): boolean {
+        // TODO: notify members for the actions
         return true;
     }
 

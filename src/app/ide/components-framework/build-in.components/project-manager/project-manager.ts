@@ -389,9 +389,17 @@ export class ProjectManager extends IDEUIComponent {
 
     }
 
+    private retrievePitem (pitemId: string): any {
+        let projectIds = Object.keys(this.loadedProjects);
+        assert(projectIds.length===1, "shared projects: more than one is loaded");
+        return (<ProjectManagerJSTreeView>this._view).getPItem(projectIds[0], pitemId);
+    }
+
     @ExportedFunction
     public pitemRemoved(pitemId: string): void {
-        
+        let concerned = this.retrievePitem(pitemId);
+        concerned.remoteRequest = true;
+        this.onDeleteElement(concerned);
     }
 
     private newSystemID (projectID): string {
@@ -854,6 +862,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private onDeleteElement(concerned) {
+        let pitemID = concerned.systemID;
         let projectID = concerned.project.projectID;
         let currFocusSystemID = ComponentsCommunication.functionRequest(
             this.name,
@@ -861,19 +870,21 @@ export class ProjectManager extends IDEUIComponent {
             "onRemoveProjectElement",
             [(<ProjectManagerItemView>concerned).itemData().systemID]
         ).value;
+        let remoteRequest = concerned.remoteRequest;
         (<ProjectManagerJSTreeView>this._view)
-            .removeElement(projectID, concerned.systemID);
+            .removeElement(projectID, pitemID);
 
-        let index = this.loadedProjects[projectID]
-            .projectItems
+        let project = this.loadedProjects[projectID];
+        let index = project.projectItems
             .map(x => x.systemID)
-            .indexOf(concerned.systemID);
+            .indexOf(pitemID);
 
         assert(index > -1, "not found element in project data to remove");
+        
         // fixing rendering order
-        let element = this.loadedProjects[projectID].projectItems[index];
-        this.loadedProjects[projectID]
-            .projectItems
+        let element = project.projectItems[index];
+
+        project.projectItems
             .filter(
                 x => {
                     return x.path === element.path && x.orderNO > element.orderNO;
@@ -882,8 +893,20 @@ export class ProjectManager extends IDEUIComponent {
                 (elementInPath) => --elementInPath.orderNO
             );
         // remove from project data
-        this.loadedProjects[projectID].projectItems.splice(index, 1);
-        this.saveProject(projectID);
+        project.projectItems.splice(index, 1);
+        
+        if (!remoteRequest) {
+            this.saveProject(projectID);
+
+            if (project.saveMode === "SHARED") {
+                ComponentsCommunication.functionRequest(
+                    this.name,
+                    "CollaborationManager",
+                    "pitemRemoved",
+                    [ pitemID ]
+                );
+            }
+        }
     }
 
     @ExportedFunction

@@ -181,6 +181,11 @@ export class ProjectManagerJSTreeView extends ComponentView {
         return project ? project : null;
     }
 
+    public getPItem(projectID: string, pitemID: string) {
+        let project = this.getProject(projectID);
+        return project.getProjectElement(pitemID);
+    }
+
     public loadProjects(data: any): void {
         _.forEach(data.projects, (project) => {
             this.loadProject(project);
