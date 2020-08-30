@@ -385,8 +385,18 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public pitemAdded(pitem: any): void {
+    public pitemAdded(pitem: any, callback): void {
+        let concerned = (<ProjectManagerJSTreeView>this._view)
+            .getProjectCategory(
+                pitem.itemData.editorsData.projectID,
+                pitem.projCateg._jstreeNode.id
+            ); // retrieve concerned obj
 
+        concerned.project.addNewElement(
+            pitem.itemData,
+            concerned, // parent - category of project item
+            (elem) => callback(elem)
+        );
     }
 
     private retrievePitem (pitemId: string): any {
@@ -396,10 +406,10 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public pitemRemoved(pitemId: string): void {
+    public pitemRemoved(pitemId: string, callback): void {
         let concerned = this.retrievePitem(pitemId);
         concerned.remoteRequest = true;
-        this.onDeleteElement(concerned);
+        this.onDeleteElementRemote(concerned, callback);
     }
 
     private newSystemID (projectID): string {
@@ -546,27 +556,39 @@ export class ProjectManager extends IDEUIComponent {
         newItem: any,
         src: any
     ): void {
+        let project = this.loadedProjects[concerned.project.dbID];
         let renderParts = CreateRenderPartsWithData(
             this.currModalData.itemData.renderParts,
             newItem);
+        let itemData = {
+            renderParts: renderParts,
+            editorsData: src,
+            systemID: src.systemID,
+            type: this.currModalData.itemData.type
+        };
 
         concerned.project.addNewElement(
-            {
-                renderParts: renderParts,
-                editorsData: src,
-                systemID: src.systemID,
-                type: this.currModalData.itemData.type
-            },
-            concerned,
+            itemData,
+            concerned, // parent - category of project item
             (elem) => {
                 this.onClickProjectElement(elem);
                 let pitem = elem.itemData();
                 pitem.editorsData = elem.editorsData;
-                this.loadedProjects[concerned.project.dbID]
-                    .projectItems
-                    .push(pitem);
+                project.projectItems.push(pitem);
                 this.saveProject(concerned.project.dbID);
                 elem.trigger("click");
+
+                if (project.saveMode === "SHARED") {
+                    ComponentsCommunication.functionRequest(
+                        this.name,
+                        "CollaborationManager",
+                        "pitemAdded",
+                        [{
+                            itemData: itemData,
+                            projCateg: concerned
+                        }]
+                    );
+                }
             }
         );
     }
@@ -870,7 +892,6 @@ export class ProjectManager extends IDEUIComponent {
             "onRemoveProjectElement",
             [(<ProjectManagerItemView>concerned).itemData().systemID]
         ).value;
-        let remoteRequest = concerned.remoteRequest;
         (<ProjectManagerJSTreeView>this._view)
             .removeElement(projectID, pitemID);
 
@@ -894,19 +915,28 @@ export class ProjectManager extends IDEUIComponent {
             );
         // remove from project data
         project.projectItems.splice(index, 1);
-        
-        if (!remoteRequest) {
-            this.saveProject(projectID);
+    }
 
-            if (project.saveMode === "SHARED") {
-                ComponentsCommunication.functionRequest(
-                    this.name,
-                    "CollaborationManager",
-                    "pitemRemoved",
-                    [ pitemID ]
-                );
-            }
-        }
+    private onDeleteElementRemote(concerned, callback) {
+        let pitemID = concerned.systemID;
+        this.onDeleteElement(concerned);
+        callback("remove: pitem -> " + pitemID);
+    }
+
+    private onDeleteElementLocal(concerned) {
+        let pitemID = concerned.systemID;
+        let projectID = concerned.project.projectID;
+        
+        this.onDeleteElement(concerned);
+
+        this.saveProject(projectID);
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "pitemRemoved",
+            [ pitemID ]
+        );
     }
 
     @ExportedFunction
@@ -936,7 +966,7 @@ export class ProjectManager extends IDEUIComponent {
                         choice: "Yes",
                         type: "submit",
                         providedBy: "creator",
-                        callback: () => this.onDeleteElement(concerned)
+                        callback: () => this.onDeleteElementLocal(concerned)
                     }
                 ]
             )]

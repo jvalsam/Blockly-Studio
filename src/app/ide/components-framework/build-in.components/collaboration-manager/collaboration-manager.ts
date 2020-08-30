@@ -226,7 +226,11 @@ export class CollaborationManager extends IDEUIComponent {
             "ProjectManager",
             "pitemAdded",
             [
-                pitem
+                pitem,
+                // callback to notify the member for action
+                (msg) => {
+                    
+                }
             ]
         );
     }
@@ -238,7 +242,11 @@ export class CollaborationManager extends IDEUIComponent {
             "ProjectManager",
             "pitemRemoved",
             [
-                pitemId
+                pitemId,
+                // callback to notify the member for action
+                (msg) => {
+
+                }
             ]
         );
     }
