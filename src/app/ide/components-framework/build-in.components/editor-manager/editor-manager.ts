@@ -22,6 +22,7 @@ import { PItemView } from "./project-item/pitem-view";
 import { ProjectItem } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 import { assert } from "../../../shared/ide-error/ide-error";
 import { EditorManagerToolbarView } from "./editor-manager-toolbar-view/editor-manager-toolbar-view";
+import { pItemAdd } from './../collaboration-manager/collaboration-component/collaboration-core/giannis';
 
 enum EditorsViewState {
     NO_SPLIT = "normal",
@@ -232,11 +233,23 @@ export class EditorManager extends IDEUIComponent {
         }
     }
 
+    private pitemOnFocus(pitemID: string): boolean {
+        return this.pitemOnFocusIds[0] === pitemID
+            || this.pitemOnFocusIds[1] === pitemID;
+    }
+    private areaOfPItem(pitemID: string): number {
+        return this.pitemOnFocusIds[0] === pitemID
+            ? 1
+            : this.pitemOnFocusIds[1] === pitemID
+                ? 2
+                : -1;
+    }
+
     @ExportedFunction
-    public onRenameProjectElement(data: any, systemID: string, callback: Function) {
-        alert( "Editor Manager is notified for rename action...\n" + JSON.stringify(data) );
-        // TODO: editor if is open instance has to be notified...
-        // Maybe open tabs if exist has to be renamed...
+    public onRenameProjectElement(pi: ProjectItem, callback: Function) {
+        if (this.pitemOnFocus(pi.systemID)) {
+            this.open(pi, this.areaOfPItem(pi.systemID));
+        }
 
         callback (true);
     }
@@ -348,6 +361,7 @@ export class EditorManager extends IDEUIComponent {
         
         let selector = ".pitem-editors-area-" + pitemArea;
 
+        // TODO: reuse map{this.projectItemsMap}, not create instance again...
         const pitemView: PItemView = <PItemView>ViewRegistry
             .getEntry("PItemView")
             .create(

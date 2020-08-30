@@ -163,6 +163,7 @@ export class CollaborationManager extends IDEUIComponent {
         return this.shProject;
     }
 
+    @ExportedFunction
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
 
         return true;

@@ -345,7 +345,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public pitemUpdated(pitemId: any, type: any, data: any): boolean {
+    public pitemUpdated(pitemId: any, type: any, data: any, callback): boolean {
         let pitem = this.getPItem(pitemId);
         let projectId = pitemId.split("_")[0];
 
@@ -361,21 +361,8 @@ export class ProjectManager extends IDEUIComponent {
                     ]
                 ).value;
             case "rename":
-                (<ProjectManagerJSTreeView>this._view).pitemRename(
-                    pitem,
-                    projectId,
-                    data
-                );
-                ComponentsCommunication.functionRequest(
-                    this.name,
-                    "EditorManager",
-                    "pitemRename",
-                    [
-                        pitem,
-                        projectId,
-                        data
-                    ]
-                );
+                this.renameElementRemote(pitemId, data, callback);
+                break;
             case "ownership":
                 break;
             case "privileges":
@@ -408,7 +395,6 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public pitemRemoved(pitemId: string, callback): void {
         let concerned = this.retrievePitem(pitemId);
-        concerned.remoteRequest = true;
         this.onDeleteElementRemote(concerned, callback);
     }
 
@@ -1018,6 +1004,58 @@ export class ProjectManager extends IDEUIComponent {
         return rdfd;
     }
 
+    private renameElement(concerned, data) {
+        let loadedProject = this.loadedProjects[concerned["project"].projectID];
+        // edit name in title
+        let index = loadedProject.projectItems.map(x=>x.systemID).indexOf(concerned.systemID);
+        assert(index>-1, "Not found element in project to rename!");
+        let element = loadedProject.projectItems[index];
+        let viewData = {};
+        Object.keys(data.json[0]).forEach((type) => {
+            let value = data.json[0][type];
+            // map defined id with the type: id == label + '_' + type
+            let mtype = type.split('_')[1];
+            let index = element.renderParts.map(x=>x.type).indexOf(mtype);
+            
+            let renderPart = element.renderParts[ index ];
+            viewData[renderPart.type] = this.assignRenderPartValue(renderPart, value);
+        });
+        concerned.rename(viewData);
+
+        ComponentsCommunication.functionRequest(
+            "ProjectManager",
+            "EditorManager",
+            "onRenameProjectElement",
+            [
+                concerned,
+                (resp) => {
+                    this.saveProject(concerned["project"].projectID);
+                }
+            ]
+        );
+    }
+
+    private renameElementLocal(concerned, data: any) {
+        this.renameElement(concerned, data);
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "pitemUpdated",
+            [
+                concerned.systemID,
+                "rename",
+                data
+            ]
+        );
+    }
+
+    private renameElementRemote(pitemID, data, callback) {
+        let pitem = this.retrievePitem(pitemID);
+        this.renameElement(pitem, data);
+        callback("rename: pitem -> " + pitemID);
+    }
+
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
         let projInstView = (<ProjectManagerJSTreeView>this._view).getProject(concerned["project"].projectID);
@@ -1052,36 +1090,7 @@ export class ProjectManager extends IDEUIComponent {
                             event.validation,
                             callback
                         ),
-                        callback: (data) => {
-                            ComponentsCommunication.functionRequest(
-                                "ProjectManager",
-                                "EditorManager",
-                                "onRenameProjectElement",
-                                [
-                                    data,
-                                    concerned.systemID,
-                                    (resp) => {
-                                        let loadedProject = this.loadedProjects[concerned["project"].projectID];
-                                        // edit name in title
-                                        let index = loadedProject.projectItems.map(x=>x.systemID).indexOf(concerned.systemID);
-                                        assert(index>-1, "Not found element in project to rename!");
-                                        let element = loadedProject.projectItems[index];
-                                        let viewData = {};
-                                        Object.keys(data.json[0]).forEach((type) => {
-                                            let value = data.json[0][type];
-                                            // map defined id with the type: id == label + '_' + type
-                                            let mtype = type.split('_')[1];
-                                            let index = element.renderParts.map(x=>x.type).indexOf(mtype);
-                                            
-                                            let renderPart = element.renderParts[ index ];
-                                            viewData[renderPart.type] = this.assignRenderPartValue(renderPart, value);
-                                        });
-                                        concerned.rename(viewData);
-                                        this.saveProject(concerned["project"].projectID);
-                                    }
-                                ]
-                            );
-                        }
+                        callback: (data) => this.renameElementLocal(concerned, data)
                     }
                 ]
             )]
