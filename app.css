@@ -8,7 +8,7 @@
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/font-view/font-view.css";
 @import "./src/app/ide/components-framework/build-in.components/configuration/configuration-view/property-views/property-view.css";
 
-@import "./libs/SUIM/suim.css";
+/* @import "./libs/SUIM/suim.css"; */
 
 .ide-platform-container {
     /* margin-bottom: 100px; */

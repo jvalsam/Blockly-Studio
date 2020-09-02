@@ -385,6 +385,9 @@
     width: 350px;
     height: 295px;
     box-sizing: border-box;
+
+    position: absolute;
+    z-index: 1;
 }
 
 .collaboration-popup-header-bar{

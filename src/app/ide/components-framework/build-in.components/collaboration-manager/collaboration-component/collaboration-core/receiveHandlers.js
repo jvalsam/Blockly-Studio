@@ -24,8 +24,8 @@ import {
 //Receive functions
 export function receiveRegisterUser(data,conn){
     let DB = collabInfo.plugin.getProject();
-    var info = data.info;
-	for(var item in DB.collaborationData.members){
+    let info = data.info;
+	for(let item in DB.collaborationData.members){
 		item = DB.collaborationData.members[item];
 		if(item.name === info.name){
 			console.log("THIS USERNAME ALREADY EXIST") //TODO: this
@@ -53,7 +53,9 @@ export function receiveRemoveUser(data,conn){
 }
 
 export function receivePItemAdded(data,conn){
-    pItemAdd(filterProjectItem(data.info));
+    // ADD THE PITEM TO DATABASE
+    let DB = collabInfo.plugin.getProject();
+    DB.projectItems.push(filterProjectItem(data.info));
     collabInfo.connected_users.forEach(user => {
         if(user.id !== conn.id){
             sendPItemAdded(data.info,user);

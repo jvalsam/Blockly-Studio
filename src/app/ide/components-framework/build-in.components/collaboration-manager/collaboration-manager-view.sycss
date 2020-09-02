@@ -1,0 +1,470 @@
+.clear {
+    clear: both;
+}
+
+.vcenter {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.middle-right {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(0,-50%);
+}
+
+.float-left {
+    float : left;
+}
+
+.size22x22{
+    width: 22px;
+    height:22px;
+    -webkit-mask-size: 22px 22px;
+    mask-size: 22px 22px;
+}
+
+.size18x18{
+    width:18px;
+    height:18px;
+    -webkit-mask-size: 18px;
+    mask-size: 18px
+}
+
+.size30x30{
+    width: 30px;
+    height:30px;
+    -webkit-mask-size: 30px 30px;
+    mask-size: 30px 30px;
+}
+
+.font-size16px{
+    font-size:16px;
+}
+
+/*****************************************************************************/
+
+#collaboration-toolbar{
+    font-family: "Roboto";
+    height: 100vh;
+    width: 350px;
+}
+
+/****************************************************************************
+---> collaboration-header
+****************************************************************************/
+
+
+#collaboration-header-container{
+    position: relative;
+    height: 55px;
+    width: 100%;
+    color: #eeeeee;
+    background-color: #4A81B1;
+    margin-bottom: 10px;
+}
+
+#collaboration-icon {
+    float: left;
+    margin:0px 15px;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-color: #eeeeee;
+    -webkit-mask-image: url(https://image.flaticon.com/icons/svg/2427/2427463.svg);
+    mask-image: url(https://image.flaticon.com/icons/svg/2427/2427463.svg);
+}
+
+#collaboration-title{
+    font-size: 22px;
+}
+
+#collaboration-burger {
+    margin-right: 10px;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-color: #eeeeee;
+    -webkit-mask-image: url(https://image.flaticon.com/icons/svg/545/545705.svg);
+    mask-image: url(https://image.flaticon.com/icons/svg/545/545705.svg);
+}
+
+/****************************************************************************
+---> members
+****************************************************************************/
+
+#collaboration-members{
+    font-weight: 600;
+    color: #2e2e2e;
+    font-size: 18px;
+}
+
+#members-me, #members-collaborators{
+    color: rgba(0,0, 0, 0.81);
+    font-weight: normal;
+}
+
+#members a i, .member-icon {
+    background-position: center center !important;
+    background-size: 22px 22px !important;
+    size: 33px 33px !important;
+    width: 33px !important;
+    height: 33px !important;
+    background-repeat: no-repeat !important;
+    background-color: lightblue !important;
+    border-radius: 50%;
+    margin-top: 0px;
+    margin-right: 10px;
+    box-sizing: border-box;
+    border: solid 1px #24537E;
+}
+
+#members > .jstree-wholerow, #members-collaborators > .jstree-wholerow, #membes-me > .jstree-wholerow {
+    height: 33px;
+}
+
+#members > * > * > .jstree-wholerow, #members-collaborators > * > * > .jstree-wholerow, #members-me > * > * > .jstree-wholerow {
+    height: 33px;
+}
+
+#collaboration-members > i, #members-me > i, #members-collaborators > i{
+    float: left;
+    margin-top: 7px;
+}
+
+#collaboration-members > .jstree-children > .jstree-node > i {
+    float: left;
+    margin-top: 7px;
+}
+
+#members-me > .jstree-children > .jstree-node > i {
+    float: left;
+    margin-top: 7px;
+}
+
+#members-collaborators > .jstree-children > .jstree-node > i {
+    float: left;
+    margin-top: 7px;
+}
+
+#members span {
+    height: 19px !important;
+    margin-right: 10px !important;
+}
+
+/****************************************************************************
+---> members files
+****************************************************************************/
+
+#members-collaborators > .jstree-children > .jstree-node > .jstree-children a i {
+    background-position: center center !important;
+    background-size: 16px 16px !important;
+    size: 16px 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent !important;
+    border-radius: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+    border: 0px;
+}
+
+#members-collaborators > .jstree-children > .jstree-node > .jstree-children > .jstree-node > i {
+    float: left;
+}
+
+#members-me > .jstree-children > .jstree-node > .jstree-children > .jstree-node > i {
+    float: left;
+}
+
+#members-collaborators > .jstree-children > .jstree-node > .jstree-children > .jstree-node > .jstree-ocl {
+    width: 10px;
+}
+
+#members-me > .jstree-children > .jstree-node > .jstree-children > .jstree-node > .jstree-ocl {
+    width: 10px;
+}
+
+/****************************************************************************
+---> selected member personal files
+****************************************************************************/
+
+#personal-files{
+    font-weight: 600;
+    color: #2e2e2e;
+    font-size: 18px;
+}
+
+#personal-files > .jstree-children {
+    font-size: 16px;
+    color: rgba(0,0, 0, 0.81);
+    font-weight: normal;
+}
+
+#personal-files > .jstree-children a i {
+    background-position: center center !important;
+    background-size: 16px 16px !important;
+    size: 16px 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent !important;
+    border-radius: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+    border: 0px;
+}
+
+#personal-files .jstree-ocl {
+    float: left;
+    margin-top: 7px;
+}
+
+#personal-files .jstree-children .jstree-ocl {
+    float: left;
+    margin-top: 0;
+}
+
+#personal-files > .jstree-wholerow {
+    height: 33px;
+}
+
+#personal-files > .jstree-children > .jstree-wholerow {
+    height: 19px;
+}
+
+#personal-files span {
+    height: 19px !important;
+    margin-right: 10px !important;
+}
+
+/****************************************************************************
+---> shared files, recent actions
+****************************************************************************/
+
+#collaboration-shared-files-ui, #collaboration-recent-actions-ui{
+    overflow: hidden;
+    margin: 4px 4px 4px 24px;
+}
+
+.collaboration-shared-tab-ui{
+    float: left;
+    height: 30px;
+    width: 90px;
+    background-color: #e5e5e5;
+    font-size: 16px;
+    color: rgba(0,0, 0, 0.81);
+    font-weight: normal;
+    text-align: center;
+    box-sizing: border-box;
+    border: solid 1px #b1b1b1;
+    margin-bottom: -1px;
+}
+
+#collaboration-shared-to-me-tab-ui{
+    border-left-width: 0px;;
+}
+
+.collaboration-shared-tab-active{
+    background-color: #ffffff;
+    border-bottom-width: 0px;
+}
+
+#dummy-js-tree-1-root, #dummy-js-tree-2-root{
+    font-weight: 600;
+    color: #2e2e2e;
+    font-size: 18px;
+}
+
+#dummy-js-tree-1-root > .jstree-wholerow, #dummy-js-tree-2-root > .jstree-wholerow{
+    height: 33px;
+}
+#dummy-js-tree-1-root .jstree-ocl, #dummy-js-tree-2-root .jstree-ocl{
+    float: left;
+    margin-top: 7px;
+}
+
+#collaboration-shared-files-content{
+    padding: 10px;
+    box-sizing: border-box;
+    border: solid 1px #b1b1b1;
+    width: 300px;
+
+    font-size: 16px;
+    color: rgba(0,0, 0, 0.81);
+    font-weight: normal;
+}
+
+
+#collaboration-shared-files-content span {
+    height: 19px !important;
+    margin-right: 10px !important;
+}
+
+#collaboration-shared-from-me > .jstree-children .jstree-wholerow, #collaboration-shared-to-me > .jstree-children .jstree-wholerow{
+    height: 24px;
+}
+
+#collaboration-shared-from-me .jstree-children .jstree-ocl, #collaboration-shared-to-me .jstree-children .jstree-ocl{
+    float: left;
+}
+
+#collaboration-shared-from-me > .jstree-children a i, #collaboration-shared-to-me > .jstree-children a i{
+    background-position: center center !important;
+    background-size: 16px 16px !important;
+    size: 16px 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent !important;
+    border-radius: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+    border: 0px;
+}
+
+#collaboration-shared-to-me {
+    display: none;
+}
+
+/****************************************************************************
+---> recent action
+****************************************************************************/
+
+.collaboration-recent-action {
+    padding: 10px;
+    background-color: #D4FFDE;
+    border-radius: 15px;
+    margin-bottom: 4px;
+}
+
+.recent-action-row, .recent-action-last-row{
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.recent-action-last-row{
+    margin-bottom: 0px;
+}
+
+.file-icon{
+    background-position: center center !important;
+    background-size: 16px 16px !important;
+    size: 16px 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent !important;
+    background-repeat: no-repeat !important;
+    border-radius: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+    border: 0px;
+    background-image: url(./Icons/clock.png);
+}
+
+/****************************************************************************
+---> popups
+****************************************************************************/
+
+.collaboration-popup {
+    font-family: "Roboto" !important;
+    font-size: 14px !important;
+    width: 350px;
+    height: 295px;
+    box-sizing: border-box;
+
+    position: absolute;
+    z-index: 1;
+    background-color: #e5e5e5;
+} 
+
+.collaboration-popup-header-bar{
+    position: relative;
+    height: 15%;
+    width: 100%;
+    
+    background-color: #4A81B1;
+    color: #eeeeee;
+    font-size: 18px;
+    
+    padding: 0px 20px;
+    box-sizing: border-box;
+}
+
+.collaboration-popup-header-x{
+    margin-right: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-color: #eeeeee;
+    -webkit-mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+    mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+}
+
+.collaboration-popup-content-container {
+    border: 1px solid #b1b1b1;
+    height: 85%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.collaboration-popup-row {
+    display: block;
+    margin: 20px 0px;
+    width: 100%;
+    position: relative;
+}
+
+.collaboration-popup input[type=text] {
+    width: 175px;
+    height: 25px;
+    text-align: center;
+    border: 1px solid #5B9BD5;
+}
+
+.collaboration-popup input[type=button]{
+    height: 29px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    color: #eeeeee;
+    background-color: #4A81B1;
+    -webkit-box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+    box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+}
+
+.collaboration-popup-user-icon{
+    background-position: center center !important;
+    background-size: 35px 35px !important;
+    size: 55px 55px !important;
+    width: 55px !important;
+    height: 55px !important;
+    background-color: #4A81B1 !important;
+    background-image: url(./Icons/man0.png);
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    margin-top: 0px;
+    margin-right: 10px;
+    box-sizing: border-box;
+    border: solid 2px #24537E;
+    display: inline-flex;
+}
+
+.collaboration-popup-edit {
+    text-decoration: underline;
+    color: #787D82;
+}

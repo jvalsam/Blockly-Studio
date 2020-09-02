@@ -16,7 +16,7 @@ import {
 } from "./receiveHandlers.js"
 
 export function communicationInitialize(myInfo, settings, CollabManager) {
-  var receivedHandler = {
+  let receivedHandler = {
     "registerUser": receiveRegisterUser ,
     "removeUser": receiveRemoveUser ,
     "addPItem": receivePItemAdded ,
@@ -24,25 +24,26 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
     "updatePItem": receivePItemUpdated ,
     "addUser": receiveAddUser
   };
-
+  console.log("myInfo:",myInfo);
   collabInfo.plugin = CollabManager;
-
-  var randomId = generateRandom(20);
-  var peer = new Peer(randomId);
-  peer.on('open', function (id) {
+  // console.log(collabInfo.plugin.shProject);
+  let randomId = generateRandom(20);
+  let peer = new Peer(randomId);
+  peer.on('open', (id) => {
     console.log('My peer ID is: ' + id);
   });
 
-  peer.on('connection', function (conn) {
+  peer.on('connection', (conn) => {
     console.log('connected ' + conn);
 
-    conn.on('open', function () {
-        conn.on('data', function (data) { 
+    conn.on('open', () => {
+        conn.on('data', (data) => { 
+          console.log(data);
           receivedHandler[data.type](data,conn);
         });
     });
-
-    conn.on('close', function () {
+    
+    conn.on('close', () => {
         //receiveRemoveUser(conn,DB);
     });
   });
@@ -54,7 +55,7 @@ function acceptedUser(DB){
 }
 
 export function startCommunicationUser(myInfo, externalLink) {
-  var receivedHandler = {
+  let receivedHandler = {
     "addPItem": receivePItemAdded ,
     "removePItem": receivePItemRemoved ,
     "updatePItem": receivePItemUpdated ,
@@ -62,21 +63,21 @@ export function startCommunicationUser(myInfo, externalLink) {
     "acceptedUser": acceptedUser
   };
   collabInfo.myInfo = myInfo;
-  var peer = new Peer({key: 'lwjd5qra8257b9'});
-  console.log(myInfo,"tring to connect to "+externalLink);
-  var conn = peer.connect(externalLink);
-  conn.on('open', function () {
+  let peer = new Peer({key: 'lwjd5qra8257d0'});
+  console.log(myInfo,"trying to connect to "+ externalLink);
+  let conn = peer.connect(externalLink);
+  conn.on('open', () => {
     console.log('connected');
-    conn.on('data', function (data) {
+    conn.on('data', (data) => {
         if(data === "print"){
-          console.log(data);
-          receivedHandler[data.type](data,conn);
         }
+        console.log(data);
+        receivedHandler[data.type](data,conn);
     });
 
 
     //sendRegister
-    var arg = {
+    let arg = {
       type: "registerUser",
       info: myInfo
     };

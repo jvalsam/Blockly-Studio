@@ -35,6 +35,7 @@ export function pItemRemove(pItemId){
 		}
 		position++;
     }
+    return false;
 }
 
 export function updateProject(newDB){
