@@ -372,13 +372,15 @@ export class EditorManager extends IDEUIComponent {
             );
         pitemView.render();
 
-        let tools = ComponentsCommunication.functionRequest(
-            this.name,
-            "CollaborationManager",
-            "pitemTools",
-            [ pi.systemID ]
-        ).value;
-        tools.push("separator");
+        // if (pi.project.) {
+            let tools = ComponentsCommunication.functionRequest(
+                this.name,
+                "CollaborationManager",
+                "pitemTools",
+                [ pi.systemID ]
+            ).value;
+            tools.push("separator");
+        // }
 
         for (const key in pi.editorsData.items) {
             let item = pi.editorsData.items[key];
