@@ -302,8 +302,14 @@ export class ProjectInstanceView extends View {
         let icon = this.getValue(infoC.find(x => x.type === "img"));
         let color = this.getValue(infoC.find(x => x.type === "colour"));
         let connection_state = this.getValue(infoC.find(x => x.type === "state"));
-        let shared_state = item.privileges ? item.privileges.shared.type : null;
+        let shared_state = null;
+        if (   item.componentsData
+            && item.componentsData.collaborationData
+            && item.componentsData.collaborationData.privileges) {
+            shared_state = item.componentsData.collaborationData.privileges.shared.type;
+        }
         let editorsData = item.editorsData ? item.editorsData : {};
+        let componentsData = item.componentsData ? item.componentsData : {};
 
         item.id = item.systemID
             ? item.systemID
@@ -344,7 +350,8 @@ export class ProjectInstanceView extends View {
             meta,
             item.systemID,
             editorsData,
-            orderNO
+            orderNO,
+            componentsData
         );
 
         if (this._firstPItemId === null) {

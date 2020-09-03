@@ -30,15 +30,17 @@ export function collaborationFilter(projectObj, myInfo, settings){
     
     // pin privileges per pitem
     projectObj.projectItems.forEach(pitem => {
-        pitem.privileges = {};
-        pitem.privileges.author = collabInfo.myInfo.name;
-        pitem.privileges.owner = collabInfo.myInfo.name;
-        pitem.privileges.shared = {};
+        pitem.componentsData = pitem.coponentsData ? pitem.coponentsData : {};
+        pitem.componentsData.collaborationData = {};
+        pitem.componentsData.collaborationData.privileges = {};
+        pitem.componentsData.collaborationData.privileges.author = collabInfo.myInfo.name;
+        pitem.componentsData.collaborationData.privileges.owner = collabInfo.myInfo.name;
+        pitem.componentsData.collaborationData.privileges.shared = {};
         // TODO: add info for settings hidden field
-        pitem.privileges.shared.type = settings.sharedPItems.indexOf(pitem.systemID) > -1
+        pitem.componentsData.collaborationData.privileges.shared.type = settings.sharedPItems.indexOf(pitem.systemID) > -1
             ? "SHARED_PROJECT"
             : "NOT_SHARED";
-        pitem.privileges.shared.readOnly = false;
+        pitem.componentsData.collaborationData.privileges.shared.readOnly = false;
     });
 
     collabInfo.plugin.setProject (projectObj);
