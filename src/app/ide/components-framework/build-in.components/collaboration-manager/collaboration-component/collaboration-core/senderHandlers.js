@@ -2,11 +2,6 @@ import {
     collabInfo
 }from "./utilities.js"
 
-import {
-    pItemAdd
-} from "./giannis.js"
-
-
 function fillPItemInfo(pItem){
     delete pItem.privileges;
     pItem.privileges = {};
@@ -23,13 +18,9 @@ function fillPItemInfo(pItem){
     return pItem;
 }
 
-export function pItemAdded(pItem){
-    //@if(pItemExists(data.info.systemID))console.log("THIS PROJECT ITEM ALREADY EXIST"); //TODO: this
+export function sendPItemAdded(pItem){
+    // pItem = fillPItemInfo(pItem);
     
-    
-    pItem = fillPItemInfo(pItem);
-    
-    pItemAdd(pItem); //@ Shouldn't be here since he shared it
     var arg = {
         type: "addPItem",
         info: pItem
@@ -37,7 +28,7 @@ export function pItemAdded(pItem){
     sendToAll(arg);
 }
 
-export function pItemRemoved(pItem){
+export function sendPItemRemoved(pItem){
     //@ Shouldn't be here since he shared it
     // if(pItem.owner !== collabInfo.myInfo.name && pItem.author !== collabInfo.myInfo.name){
     //     console.log("YOU DONT HAVE PERMITION TO DELETE THAT ITEM");

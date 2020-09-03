@@ -477,7 +477,7 @@ export class ProjectInstanceView extends View {
         /* call the collaboration manager in case project is shared*/
         if (this.data.project.collaborationData && this.data.project.collaborationData.members) {
             let index = Object.keys(menuItems).length;
-            let collabMenuItems = [];
+            let collabMenuItems = this.parent["itemsMenuCollaboration"](node.id);
             if (collabMenuItems.length > 0) {
                 menuItems[index] = {
                     separator_before: true

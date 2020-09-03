@@ -1,4 +1,8 @@
-
+import {
+        CollaborationSharePopup,
+        CollaborationJoinPopup
+    }
+    from './CollaborationPopups'
 
 export function openStartSessionDialogue(
     $dialog,   // jquery selector
@@ -6,6 +10,7 @@ export function openStartSessionDialogue(
     onSuccess, // cb
     onFailure   // cb
     ) {
+        // let sharePopup = new CollaborationSharePopup($dialog);
         onSuccess({
             name: "alex",
             icon: "myIcon"
@@ -23,5 +28,5 @@ export function openJoinSessionDialogue(
         onSuccess({
             name: "a",
             icon: "myIcon"
-        },document.getElementById("toparathiraki").value);
+        },"test");
 }

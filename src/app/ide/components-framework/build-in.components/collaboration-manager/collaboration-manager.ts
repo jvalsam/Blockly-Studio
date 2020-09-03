@@ -20,9 +20,15 @@ import {
 import {
     ProjectItem
 } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
+
 import {
     collaborationFilter
 } from "./collaboration-component/collaboration-core/utilities";
+
+import {
+    sendPItemAdded,
+    sendPItemRemoved
+} from "./collaboration-component/collaboration-core/senderHandlers";
 
 var menuJson;
 var configJson;
@@ -127,6 +133,16 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemOptions(pitemId: string): Array<IOption> {
+        console.log(this.getPItem(pitemId));
+        if(this.getPItem(pitemId)){
+            return [
+                {
+                    label: "Share",
+                    icon: "../../../../../../images/collaboration/send.png",
+                    action: () => alert(this.getPItem(pitemId)["renderParts"][1].value.text)
+                }
+            ];
+        }
         return [];
     }
 
@@ -137,6 +153,11 @@ export class CollaborationManager extends IDEUIComponent {
                 tooltip: "Change project item floor.",
                 icon: "../../../../../../images/collaboration/send.png",
                 action: () => alert("test")
+            },
+            {
+                tooltip: "Get Name",
+                icon: "../../../../../../images/collaboration/send.png",
+                action: () => alert(this.getPItem(pitemId)["renderParts"][1].value.text)
             }
         ];
     }
@@ -165,16 +186,21 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
-
         return true;
     }
 
+    @ExportedFunction
     public pitemRemoved(pitemId: string): boolean {
-        // TODO: notify members for the actions
+        
+        sendPItemRemoved(pitemId);
         return true;
     }
 
+
+    @ExportedFunction
     public pitemAdded(pitem: any): boolean {
+        sendPItemAdded(pitem);
+        console.log(this.shProject);
         return true;
     }
 
@@ -230,7 +256,7 @@ export class CollaborationManager extends IDEUIComponent {
                 pitem,
                 // callback to notify the member for action
                 (msg) => {
-                    
+                   console.log("PITEMADDED"); 
                 }
             ]
         );

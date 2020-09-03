@@ -376,7 +376,7 @@ export class ProjectManager extends IDEUIComponent {
         let concerned = (<ProjectManagerJSTreeView>this._view)
             .getProjectCategory(
                 pitem.itemData.editorsData.projectID,
-                pitem.projCateg._jstreeNode.id
+                pitem.id
             ); // retrieve concerned obj
 
         concerned.project.addNewElement(
@@ -571,7 +571,7 @@ export class ProjectManager extends IDEUIComponent {
                         "pitemAdded",
                         [{
                             itemData: itemData,
-                            projCateg: concerned
+                            projCateg: concerned["_jstreeNode"].id
                         }]
                     );
                 }
@@ -1095,6 +1095,24 @@ export class ProjectManager extends IDEUIComponent {
                 ]
             )]
         )).open();
+    }
+
+    public itemsMenuCollaboration(pitemId: string) {
+        return ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "pitemOptions",
+            [pitemId]
+        ).value;
+    }
+
+    public itemToolsCollaboration(pitemId: string) {
+        return ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborationManager",
+            "pitemTools",
+            [pitemId]
+        ).value;
     }
 
     public onClickProjectElement(element: any): void {

@@ -117,14 +117,3 @@ def downloadFile(URL, dstPath):
     file_ = open(dstPath, 'w')
     file_.write(data)
     file_.close()
-
-def downloadSUIM():
-    path = 'https://www.csd.uoc.gr/~ntoulasm/suim/'
-    if not os.path.exists("libs"):
-        os.mkdir("libs")
-    if not os.path.exists("./libs/SUIM"):
-        os.mkdir("./libs/SUIM")
-    downloadFile(path+'suim.js', "./libs/SUIM/suim.js")
-    downloadFile(path+'suim.css', "./libs/SUIM/suim.css")
-
-downloadSUIM()
