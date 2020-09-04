@@ -372,13 +372,16 @@ export class EditorManager extends IDEUIComponent {
             );
         pitemView.render();
 
-        let tools = ComponentsCommunication.functionRequest(
-            this.name,
-            "CollaborationManager",
-            "pitemTools",
-            [ pi.systemID ]
-        ).value;
-        tools.push("separator");
+        let tools = [];
+        if (pi.componentsData.collaborationData) {
+            tools = ComponentsCommunication.functionRequest(
+                this.name,
+                "CollaborationManager",
+                "pitemTools",
+                [ pi.systemID ]
+            ).value;
+            tools.push("separator");
+        }
 
         for (const key in pi.editorsData.items) {
             let item = pi.editorsData.items[key];
@@ -423,6 +426,24 @@ export class EditorManager extends IDEUIComponent {
             "editor-manager-open-pitem-completed",
             [pi]
         );
+    }
+
+    @ExportedFunction
+    public refresh(project) {
+        let pitem1 = project.getProjectElement(this.pitemOnFocusIds[0]);
+        this.open(pitem1, this.areaOfPItem(pitem1.systemID));
+
+        if (this.pitemOnFocusIds[1]) {
+            let pitem2 = project.getProjectElement(this.pitemOnFocusIds[1]);
+            this.open(pitem2, this.areaOfPItem(pitem2.systemID));
+        }
+    }
+
+    @ExportedFunction
+    public refreshPItem(pitem) {
+        if (this.projectItemsMap[pitem.systemID]) {
+            this.open(pitem, this.areaOfPItem(pitem.systemID));
+        }
     }
 
     public isOnFocus(id: string, type: string = "pitem"): boolean {

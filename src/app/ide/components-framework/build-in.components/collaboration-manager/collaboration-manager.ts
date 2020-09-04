@@ -100,7 +100,8 @@ export class CollaborationManager extends IDEUIComponent {
         $popupContainer: any,
         projectObj: any,
         $toolbarContainer: any,
-        callback: (sharedProjectObj:any) => void
+        success: (sharedProjectObj:any) => void,
+        failure: () => void
     ) {
         openStartSessionDialogue(
             $popupContainer,
@@ -114,9 +115,11 @@ export class CollaborationManager extends IDEUIComponent {
                     settings
                 );
                 
-                callback(sharedProject);
+                // TODO: fail connection
+
+                success(sharedProject);
             },
-            () => { }//callback(null); }
+            () => { failure(); }
         );
     }
 
@@ -199,6 +202,7 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
+        
         return true;
     }
 

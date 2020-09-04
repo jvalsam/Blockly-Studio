@@ -364,6 +364,7 @@ export class ProjectManager extends IDEUIComponent {
                 this.renameElementRemote(pitemId, data, callback);
                 break;
             case "ownership":
+                this.editElementOwnership(pitemId, data, callback);
                 break;
             case "privileges":
                 break;
@@ -507,6 +508,18 @@ export class ProjectManager extends IDEUIComponent {
                     collabProject.saveMode = "SHARED";
                     this.loadedProjects[collabProject._id] = collabProject;
                     (<ProjectManagerJSTreeView>this.view).updateProject(collabProject);
+                    let projView = (<ProjectManagerJSTreeView>this.view).getProject(collabProject._id);
+                    ComponentsCommunication.functionRequest(
+                        this.name,
+                        "EditorManager",
+                        "refresh",
+                        [
+                            projView
+                        ]
+                    )
+                },
+                () => {
+                    console.log("Shared action canceled by user.");
                 }
             ]
         );
@@ -1054,6 +1067,20 @@ export class ProjectManager extends IDEUIComponent {
         let pitem = this.retrievePitem(pitemID);
         this.renameElement(pitem, data);
         callback("rename: pitem -> " + pitemID);
+    }
+
+    private editElementOwnership(pitemID, data, callback) {
+        let pitem = this.retrievePitem(pitemID);
+        //
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "refreshPItem",
+            [
+                pitem
+            ]
+        );
     }
 
     @ExportedFunction

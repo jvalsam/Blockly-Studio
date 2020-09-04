@@ -12,13 +12,18 @@ export class ProjectItem extends ProjectElement {
         _meta: any,
         private systemId: string,
         private _editorsData: {[editorId: string]: any},
-        private orderNO: number
+        private orderNO: number,
+        private _componentsData: any
     ) {
         super(_jstreeNode, _meta);
     }
 
     public get project(): ProjectInstanceView {
         return this._category.project;
+    }
+
+    public get componentsData() {
+        return this._componentsData;
     }
 
     private getRender_img(rimg) {
