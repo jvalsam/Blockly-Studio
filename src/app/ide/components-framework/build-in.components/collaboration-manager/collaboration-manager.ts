@@ -29,6 +29,7 @@ import {
     sendPItemAdded,
     sendPItemRemoved
 } from "./collaboration-component/collaboration-core/senderHandlers";
+import { CollaborationSharePopup } from './collaboration-component/collaboration-gui/CollaborationPopups';
 
 var menuJson;
 var configJson;
@@ -96,14 +97,14 @@ export class CollaborationManager extends IDEUIComponent {
      */
     @ExportedFunction
     public startSession(
-        $dialog: any,
+        $popupContainer: any,
         projectObj: any,
-        $container: any,
+        $toolbarContainer: any,
         callback: (sharedProjectObj:any) => void
     ) {
         openStartSessionDialogue(
-            $dialog,
-            $container,
+            $popupContainer,
+            $toolbarContainer,
             (memberInfo, settings) => {
                 communicationInitialize(memberInfo, settings, this);
                 
@@ -115,7 +116,7 @@ export class CollaborationManager extends IDEUIComponent {
                 
                 callback(sharedProject);
             },
-            () => { callback(null); }
+            () => { }//callback(null); }
         );
     }
 
@@ -124,11 +125,21 @@ export class CollaborationManager extends IDEUIComponent {
         openJoinSessionDialogue(
             selDialog,
             (memberInfo, externalLink) => {
-                console.log("Will try to connect to "+externalLink);
+                externalLink = "akatsarakistest123123";
                 startCommunicationUser(memberInfo, externalLink);
             },
             () => { callback(null); }
         );
+    }
+
+    private reservedOptions = {
+        jstree_BlocklyTasks: [
+            {
+                label: "A button",
+                icon: "../../../../../../images/collaboration/send.png",
+                action: () => alert(1)
+            }
+        ]
     }
 
     @ExportedFunction
@@ -142,6 +153,8 @@ export class CollaborationManager extends IDEUIComponent {
                     action: () => alert(this.getPItem(pitemId)["renderParts"][1].value.text)
                 }
             ];
+        }else if(this.reservedOptions.hasOwnProperty(pitemId)){
+            return this.reservedOptions[pitemId];
         }
         return [];
     }
@@ -244,6 +257,19 @@ export class CollaborationManager extends IDEUIComponent {
                 data
             ]
         );
+    }
+
+    private pItemUpdateLocally(pitemId: string, type: string, data: any){
+        // ComponentsCommunication.functionRequest(
+        //     this.name,
+        //     "ProjectManager",
+        //     "pItemUpdatedLocally",
+        //     [
+        //         pitemId,
+        //         type,
+        //         data
+        //     ]
+        // );
     }
 
     @RequiredFunction("ProjectManager", "pitemAdded")

@@ -4,20 +4,33 @@ import {
     }
     from './CollaborationPopups'
 
+import {
+        CollaborationUI
+    }
+    from './CollaborationToolbar'
+
 export function openStartSessionDialogue(
-    $dialog,   // jquery selector
-    $container,
+    $popupContainer,   // jquery selector
+    $toolbarContainer,
     onSuccess, // cb
     onFailure   // cb
     ) {
-        // let sharePopup = new CollaborationSharePopup($dialog);
-        onSuccess({
-            name: "alex",
-            icon: "myIcon"
-        },
-        {
-            //TODO: return array of shared pitem ids
-        });
+        let boundOnSuccess = function(name){
+            onSuccess(name, {});
+            // let collaborationUI = new CollaborationUI($toolbarContainer); // todo
+        }
+
+        let sharePopup = new CollaborationSharePopup($popupContainer);
+        sharePopup.setOnCloseCb(onFailure);
+        sharePopup.setOnShareCb(boundOnSuccess);
+        
+        // onSuccess({
+        //     name: sharePopup.getName(),
+        //     icon: "myIcon"
+        // },
+        // {
+        //     //TODO: return array of shared pitem ids
+        // });
 }
 
 export function openJoinSessionDialogue(

@@ -1,8 +1,5 @@
 export function CollaborationUI(container){
     
-    _injectHtml(container);
-    _initTrees();
-
     let membersA = {
         'style' :   "                               \
                         display: flex;              \
@@ -24,6 +21,9 @@ export function CollaborationUI(container){
                         font-size: 16px;            \
                     "
     };
+
+    _injectHtml(container);
+    _initTrees();
 
     /*
         Trees
@@ -483,12 +483,12 @@ export function CollaborationUI(container){
             },
             'last',
             function(){
-                ui.addMember('Mary', './Icons/woman0.png', function(){
-                    ui.addNoteAnnotation('Mary', 'Water Is Ready', 'blue', './Icons/water.png');
+                addMember('Mary', './Icons/woman0.png', function(){
+                    addNoteAnnotation('Mary', 'Water Is Ready', 'blue', './Icons/water.png');
                 });
-                ui.addMember('James', './Icons/man0.png', function(){
-                    ui.addSuggestionAnnotation('James', 'Water Is Ready', 'blue', './Icons/water.png');
-                    ui.addNoteAnnotation('James','Alarm Clock Rings', 'red', './Icons/clock.png');
+                addMember('James', './Icons/man0.png', function(){
+                    addSuggestionAnnotation('James', 'Water Is Ready', 'blue', './Icons/water.png');
+                    addNoteAnnotation('James','Alarm Clock Rings', 'red', './Icons/clock.png');
                 });
             });
         });
@@ -593,7 +593,7 @@ export function CollaborationUI(container){
 
     /* API */
 
-    this.addMember = function (name, icon = "./Icons/man0.png", cb = undefined ){
+    function addMember(name, icon = "./Icons/man0.png", cb = undefined ){
         var node = {
             'id': MEMBER_PREFIX + name,
             'text': name,
@@ -603,23 +603,22 @@ export function CollaborationUI(container){
 
         members.create_node(COLLABORATORS, node, "last", cb);
     }
-    
-    this.removeMember = function (name){
+
+    function removeMember(name){
         members.delete_node(MEMBER_PREFIX + name);
     }
 
-    this.addSuggestionAnnotation = function(member, file, color = 'red', icon = './Icons/clock.png', cb = undefined){
+    function addSuggestionAnnotation(member, file, color = 'red', icon = './Icons/clock.png', cb = undefined){
         _addMemberFileAnotation(member, file, icon, color, 'purple', cb);
     }
 
-    this.addNoteAnnotation = function(member, file, color = 'red', icon = './Icons/clock.png', cb = undefined){
+    function addNoteAnnotation(member, file, color = 'red', icon = './Icons/clock.png', cb = undefined){
         _addMemberFileAnotation(member, file, icon, color, 'orange', cb);
     }
 
-    this.removeMemberFileAnotation = function (name, fileName){
+    function removeMemberFileAnotation(name, fileName){
         members.delete_node(MEMBER_PREFIX + name + ANNOTATION_FILE_PREFIX + fileName);
     }
-
 
     /**
      * @param {Object} file The file, should contain path, name, icon, color. 
@@ -712,19 +711,21 @@ export function CollaborationUI(container){
         _addAction(member, file, type, time, add);
     }
 
+    this.addMember = addMember;
+    this.removeMember = removeMember;
+    this.addSuggestionAnnotation = addSuggestionAnnotation;
+    this.addNoteAnnotation = addNoteAnnotation;
+    this.removeMemberFileAnotation = removeMemberFileAnotation; 
     this.addPersonalFile = addPersonalFile;
     this.clearAndAddMemberPersonalFiles = clearAndAddMemberPersonalFiles;
 }
 
-var ui;
-var examples;
+// $(function () {
 
-$(function () {
+//     ui = new CollaborationUI("container");
+//     examples = new CollaborationUI_API_Examples();
 
-    ui = new CollaborationUI("container");
-    examples = new CollaborationUI_API_Examples();
-
-});
+// });
 
 /* Examples */
 

@@ -372,7 +372,7 @@
     margin-right: 10px;
     margin-left: 0px;
     border: 0px;
-    background-image: url(./Icons/clock.png);
+    background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/clock.png);
 }
 
 /****************************************************************************
@@ -385,11 +385,25 @@
     width: 350px;
     height: 295px;
     box-sizing: border-box;
+    background-color: #e5e5e5;
 
     position: absolute;
-    z-index: 1;
-    background-color: #e5e5e5;
-} 
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 72; /* toolbox has index 70, popup-opacity 71 */ 
+}
+
+.popup-opacity{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: .75;
+    z-index: 71; /* toolbox has opacity 70... */
+    background-color: black;
+}
 
 .collaboration-popup-header-bar{
     position: relative;
@@ -412,6 +426,7 @@
     background-color: #eeeeee;
     -webkit-mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
     mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+    cursor: pointer;
 }
 
 .collaboration-popup-content-container {
@@ -454,7 +469,7 @@
     width: 55px !important;
     height: 55px !important;
     background-color: #4A81B1 !important;
-    background-image: url(./Icons/man0.png);
+    background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/man0.png);
     background-repeat: no-repeat;
     border-radius: 50%;
     margin-top: 0px;

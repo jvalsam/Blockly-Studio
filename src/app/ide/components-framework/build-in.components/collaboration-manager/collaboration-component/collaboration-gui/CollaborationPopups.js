@@ -1,5 +1,6 @@
 export function CollaborationSharePopup(container){
     let html = '\
+    <div class = "popup-opacity"> </div>\
     <div class = "collaboration-popup">\
         <div class = "collaboration-popup-header-bar vcenter">\
             <div class = "collaboration-popup-header-text"> Collaboration </div>\
@@ -28,12 +29,61 @@ export function CollaborationSharePopup(container){
         $('#' + container).append(html);
     else
         container.append(html);
+    
+    let onnCloseCb = undefined, onShareCb = undefined;
+
+    this.setOnCloseCb = function(cb){
+        onnCloseCb = cb;
+    }
+
+    this.setOnShareCb = function(cb){
+        onShareCb = cb;
+    }
+
+    function getName(){
+        return $("#" + "collaboration-share-name").val();
+    }
+
+    function getIcon(){
+        let imageUrl = $(".collaboration-popup-user-icon").css("background-image");
+        return imageUrl.slice(5 /* url(" */,imageUrl.length -  2);
+    }
+
+    function closePopup(){
+        $(".collaboration-popup").remove();
+        $(".popup-opacity").remove();
+        if (onnCloseCb)
+            onnCloseCb();
+    }
+
+    this.getName = getName;
+    this.closePopup = closePopup;
+
+    $("#collaboration-share-button").click(function(){
+        let name = getName();
+        let icon = getIcon();
+        $(".collaboration-popup").remove();
+        $(".popup-opacity").remove();
+        if (onShareCb)
+            onShareCb({
+                name: name, 
+                icon: icon
+            });
+    });
+
+    $(".popup-opacity").click(function(){
+        closePopup();
+    });
+
+    $(".collaboration-popup-header-x").click(function() {
+        closePopup();
+    });
 }
 
-$(function () {
-    CollaborationSharePopup("sharePopup");
-    CollaborationJoinPopup("joinPopup");
-});
+// $(function () {
+//     let csp = new CollaborationSharePopup("sharePopup");
+//     let cjp = new CollaborationJoinPopup("joinPopup");
+// });
 
 export function CollaborationJoinPopup(container){
     let html = '\
