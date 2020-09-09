@@ -54,6 +54,7 @@ export function receiveRemoveUser(data,conn){
 
 export function receivePItemAdded(data,conn){
     // ADD THE PITEM TO DATABASE
+    console.log(data.info);
     let DB = collabInfo.plugin.getProject();
     DB.projectItems.push(filterProjectItem(data.info));
     collabInfo.connected_users.forEach(user => {

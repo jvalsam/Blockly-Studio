@@ -27,7 +27,7 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   console.log("myInfo:",myInfo);
   collabInfo.plugin = CollabManager;
   // console.log(collabInfo.plugin.shProject);
-  let randomId = "akatsarakistest123123";//generateRandom(20);
+  let randomId = generateRandom(20);
   let peer = new Peer(randomId);
   peer.on('open', (id) => {
     console.log('My peer ID is: ' + id);
@@ -65,24 +65,24 @@ export function startCommunicationUser(myInfo, externalLink) {
     "acceptedUser": acceptedUser
   };
   collabInfo.myInfo = myInfo;
-  let peer = new Peer();//({key: 'lwjd5qra8257b9'});
+  externalLink = "akatsarakis12341";
   console.log(myInfo,"trying to connect to "+ externalLink);
-  
-  // let conn = peer;  
+  let peer = new Peer();//({key: 'lwjd5qra8257b9'});
   peer.on('error', (err) => console.log(err));
-  peer.on('open', () => {
-    console.log('connected');
-    peer.on('data', (data) => {
+  let conn = peer.connect(externalLink);
+  console.log(peer);
+  conn.on('open', (id) => {
+    console.log('connected',id);
+    conn.on('data', (data) => {
       console.log(data);
       receivedHandler[data.type](data,peer);
     });
+    //sendRegister
+    let arg = {
+      type: "registerUser",
+      info: myInfo
+    };
+    conn.send(arg);
   });
   
-  let conn = peer.connect(externalLink);
-  //sendRegister
-  let arg = {
-    type: "registerUser",
-    info: myInfo
-  };
-  conn.send(arg);
 }

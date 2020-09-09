@@ -24,9 +24,20 @@ export function collaborationFilter(projectObj, myInfo, settings){
 
     collabInfo.myInfo = myInfo;
     var tempCollabData = {
-        members: [myInfo]
+        members: [myInfo],
+        //
+        projectInfo: {
+            createPItem: true,
+            makeNotes: true,
+            reqOwnership: true,
+            createPersonalPItem: true,
+            sharePersonalProjectItem: true
+        }
+        //
     }
-    projectObj.collaborationData = tempCollabData;
+
+    projectObj.componentsData = projectObj.coponentsData ? projectObj.coponentsData : {};
+    projectObj.componentsData.collaborationData = tempCollabData;
     
     // pin privileges per pitem
     projectObj.projectItems.forEach(pitem => {
