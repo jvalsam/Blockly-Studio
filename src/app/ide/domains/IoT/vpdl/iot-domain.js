@@ -6,13 +6,13 @@ import {
     defineGeneralCategories
 } from '../../../domain-manager/common/general-blockly-toolbox';
 
-import { SmartObject } from './elems/smart-object';
+import { SmartObject } from './domain-elems/smart-object';
 import {
     SmartObjectsTask as SmartObjectsTaskElem
-} from './elems/smart-objects-task';
+} from './domain-elems/smart-objects-task';
 
 import { SmartObjectsTask } from './missions/smart-objects-task';
-
+import { SmartObjectTask } from './project-items/smart-object/smart-object';
 
 let predefinedCategories = getPredefinedCategories();
 // domain author is able to edit them...
@@ -22,14 +22,17 @@ export function InitializeVPDL() {
     DefineVPLDomainElements(
         'IoT',
         () => ({
-            elements: [
+            domainElements: [
                 SmartObject,
                 SmartObjectsTaskElem,
             ],
-            missions: [
+            editorConfigs: [
                 SmartObjectsTask
                 //SmartObjectConditionEvent,
                 //SmartObjectCalendarEvent
+            ],
+            projectItems: [
+                SmartObjectTask
             ]
         })
     );

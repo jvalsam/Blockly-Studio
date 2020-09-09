@@ -525,6 +525,44 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
+    // dispatch functions for resize container area
+    private resizeCollaborationManager(
+        $container,
+        componentName,
+        width,
+        callback) {
+        let prv = (<ProjectManagerJSTreeView>this._view)
+            .getProject(this.mainProject);
+
+        let parent = $container.parent();
+        let editors = parent.children()[0];
+        
+        editors.style.width = parent.width() - width;
+        $container.style.width = width;
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "refresh",
+            [
+                prv
+            ]
+        );
+    }
+
+    @ExportedFunction
+    public resizeContainerArea(componentName, $container, width, callback): void {
+        let resizeFunc = this["resize"+componentName];
+        if (resizeFunc) {
+            resizeFunc($container, width, callback);
+        }
+        assert(
+            false,
+            "resizeContainerArea function is not supported for "
+            + componentName
+        );
+    }
+
     @ExportedFunction
     public onClickProjectProperties(event: IEventData, concerned: any): void {
         alert("onClickProjectProperties not developed yet!");
