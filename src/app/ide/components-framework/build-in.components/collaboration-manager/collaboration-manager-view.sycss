@@ -55,8 +55,8 @@
 
 #collaboration-toolbar{
     font-family: "Roboto";
-    height: 100vh;
     width: 350px;
+    height: 91vh;
 }
 
 /****************************************************************************

@@ -5,11 +5,13 @@ import {
     from './CollaborationPopups'
 
 import {
-        CollaborationUI
+        CollaborationUI,
+        CollaborationUI_API_Examples
     }
     from './CollaborationToolbar'
 
 export function openStartSessionDialogue(
+    collabPlugin,
     $popupContainer,   // jquery selector
     $toolbarContainer,
     onSuccess, // cb
@@ -17,7 +19,10 @@ export function openStartSessionDialogue(
     ) {
         let boundOnSuccess = function(name){
             onSuccess(name, {});
-            // let collaborationUI = new CollaborationUI($toolbarContainer); // todo
+            collabPlugin.resizeToolbar($toolbarContainer, 350, function (){
+                $(".project-manager-runtime-console-area").hide(); //fixme
+                let collaborationUI = new CollaborationUI($toolbarContainer);
+            });
         }
 
         let sharePopup = new CollaborationSharePopup($popupContainer);

@@ -104,6 +104,7 @@ export class CollaborationManager extends IDEUIComponent {
         failure: () => void
     ) {
         openStartSessionDialogue(
+            this,
             $popupContainer,
             $toolbarContainer,
             (memberInfo, settings) => {
@@ -139,6 +140,7 @@ export class CollaborationManager extends IDEUIComponent {
             "ProjectManager",
             "resizeContainerArea",
             [
+                this.name,
                 $toolbarContainer,
                 width,
                 callback
