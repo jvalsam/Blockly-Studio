@@ -20,7 +20,7 @@ Domain authors are able to design the application domain in the context of:
 - Build and run the project:
 
 1. Install MongoDB, python 2.7, latest npm and node
-2. Start DB: .\mongod.exe --dbpath="path of the DB/data" #default port is 27017
+2. Start DB: mongod --port=3032 --dbpath="path of the DB/data" #default port is 27017
 3. npm install #in the folder includes webpack
 4. Run server: cd ./src/app/ide/backend/ & node --inspect server.js # default port is 3031
 5. webpack --watch # deafult port is 8080
