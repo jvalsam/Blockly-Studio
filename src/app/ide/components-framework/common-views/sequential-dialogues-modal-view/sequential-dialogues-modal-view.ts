@@ -160,13 +160,11 @@ export class SequentialDialoguesModalView extends ModalView {
             case 'Cancel':
                 return () => this.onClose();
             case 'Next':
-                return () => {
-                    this.handleValidation(action.validation, () => {
+                return () => this.handleValidation(action.validation, () => {
                         ++this._state;
                         this.justRender();
                         this.fixFocus();
                     });
-                };
             case 'Back':
                 return () => {
                     this.destroyCurrentDialogue();

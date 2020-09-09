@@ -132,6 +132,20 @@ export class CollaborationManager extends IDEUIComponent {
         );
     }
 
+    @RequiredFunction("ProjectManager", "resizeContainerArea")
+    private resizeToolbar($toolbarContainer, width, callback) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "resizeContainerArea",
+            [
+                $toolbarContainer,
+                width,
+                callback
+            ]
+        )
+    }
+
     private reservedOptions = {
         jstree_BlocklyTasks: [
             {
@@ -321,16 +335,16 @@ export class CollaborationManager extends IDEUIComponent {
     }
 
     private pItemUpdateLocally(pitemId: string, type: string, data: any){
-        // ComponentsCommunication.functionRequest(
-        //     this.name,
-        //     "ProjectManager",
-        //     "pItemUpdatedLocally",
-        //     [
-        //         pitemId,
-        //         type,
-        //         data
-        //     ]
-        // );
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "pItemUpdatedLocally",
+            [
+                pitemId,
+                type,
+                data
+            ]
+        );
     }
 
     @RequiredFunction("ProjectManager", "pitemAdded")
