@@ -114,9 +114,6 @@ export class CollaborationManager extends IDEUIComponent {
                     memberInfo,
                     settings
                 );
-                
-                // TODO: fail connection
-
                 success(sharedProject);
             },
             () => { failure(); }
@@ -159,17 +156,31 @@ export class CollaborationManager extends IDEUIComponent {
         ]
     }
 
+    private myName(){
+        return "21";
+    }
+
+    private optionsFiltering(pitem){
+        console.log(pitem);
+
+        let opts = [];
+        
+        if(pitem.componentsData.collaborationData.privileges.author === this.myName()){
+            opts.push(
+                {
+                label: "Share",
+                icon: "../../../../../../images/collaboration/send.png",
+                action: () => alert(pitem["renderParts"][1].value.text)
+            })
+        }
+
+        return opts;
+    }
+
     @ExportedFunction
     public pitemOptions(pitemId: string): Array<IOption> {
-        console.log(this.getPItem(pitemId));
         if(this.getPItem(pitemId)){
-            return [
-                {
-                    label: "Share",
-                    icon: "../../../../../../images/collaboration/send.png",
-                    action: () => alert(this.getPItem(pitemId)["renderParts"][1].value.text)
-                }
-            ];
+            return this.optionsFiltering(this.getPItem(pitemId));
         }else if(this.reservedOptions.hasOwnProperty(pitemId)){
             return this.reservedOptions[pitemId];
         }
