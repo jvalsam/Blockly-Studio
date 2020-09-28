@@ -377,7 +377,7 @@ export class ProjectManager extends IDEUIComponent {
         let concerned = (<ProjectManagerJSTreeView>this._view)
             .getProjectCategory(
                 pitem.itemData.editorsData.projectID,
-                pitem.id
+                pitem.projCateg
             ); // retrieve concerned obj
 
         concerned.project.addNewElement(

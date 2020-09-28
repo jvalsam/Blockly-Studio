@@ -1,3 +1,4 @@
+import { pick } from "lodash";
 import {
     collabInfo
 }from "./utilities.js"
@@ -20,7 +21,7 @@ function fillPItemInfo(pItem){
 
 export function sendPItemAdded(pItem){
     // pItem = fillPItemInfo(pItem);
-    
+    console.log("Sending:",pItem);
     var arg = {
         type: "addPItem",
         info: pItem

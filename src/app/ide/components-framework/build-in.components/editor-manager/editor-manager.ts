@@ -22,7 +22,6 @@ import { PItemView } from "./project-item/pitem-view";
 import { ProjectItem } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 import { assert } from "../../../shared/ide-error/ide-error";
 import { EditorManagerToolbarView } from "./editor-manager-toolbar-view/editor-manager-toolbar-view";
-import { pItemAdd } from './../collaboration-manager/collaboration-component/collaboration-core/giannis';
 
 enum EditorsViewState {
     NO_SPLIT = "normal",

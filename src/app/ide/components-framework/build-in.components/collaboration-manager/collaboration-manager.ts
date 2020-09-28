@@ -22,7 +22,8 @@ import {
 } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 
 import {
-    collaborationFilter
+    collaborationFilter,
+    collabInfo
 } from "./collaboration-component/collaboration-core/utilities";
 
 import {
@@ -126,10 +127,8 @@ export class CollaborationManager extends IDEUIComponent {
         openJoinSessionDialogue(
             selDialog,
             (memberInfo, externalLink) => {
-                externalLink = "akatsarakistest123123";
-                startCommunicationUser(memberInfo, externalLink);
-            },
-            () => { callback(null); }
+                startCommunicationUser(memberInfo, externalLink, this, callback);
+            }
         );
     }
 
@@ -184,7 +183,7 @@ export class CollaborationManager extends IDEUIComponent {
         });
 
         let settings = this.shProject.componentsData.collaborationData.projectInfo;
-
+        let collabData = pitem.componentsData.collaborationData;
         if(settings.createPItem){ // Add Logic if "Allow members to create project item" was enabled
             opts.push(
                 {
@@ -201,12 +200,20 @@ export class CollaborationManager extends IDEUIComponent {
                 action: () => alert('Make a note on the current project item')
             })
         }
-        if(settings.reqOwnership){ // Add Logic if "Allow members request for ownership" was enabled
+        if(settings.reqOwnership && collabData.privileges.owner !== collabInfo.myInfo.name){ // Add Logic if "Allow members request for ownership" was enabled
             opts.push(
                 {
                 tooltip: "Request Ownership of Project Item",
                 icon: "../../../../../../images/collaboration/send.png",
                 action: () => alert('Request ownership for the current project item')
+            })
+        }
+        if(collabData.privileges.owner === collabInfo.myInfo.name){
+            opts.push(
+                {
+                tooltip: "Give Floor",
+                icon: "../../../../../../images/collaboration/send.png",
+                action: () => {console.log('Give floor');collabData.privileges.owner = "whatevernew";}
             })
         }
         if(settings.createPersonalPItem){ // Add Logic if "Allow members to create personal project items" was enabled
@@ -222,7 +229,7 @@ export class CollaborationManager extends IDEUIComponent {
                 {
                 tooltip: "Share Personal Project Item",
                 icon: "../../../../../../images/collaboration/send.png",
-                action: () => alert("Create Personal Project Item")
+                action: () => alert("Share Personal Project Item")
             })
         }
         // console.log(this.shProject);
@@ -258,6 +265,7 @@ export class CollaborationManager extends IDEUIComponent {
             "ProjectManager",
             "function",
             []
+            // [collabInfo.connected_users]
         );
     }
 
@@ -275,13 +283,12 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
-        
+        console.log("pitemUpdated",pitemId,type);
         return true;
     }
 
     @ExportedFunction
     public pitemRemoved(pitemId: string): boolean {
-        
         sendPItemRemoved(pitemId);
         return true;
     }
@@ -290,7 +297,6 @@ export class CollaborationManager extends IDEUIComponent {
     @ExportedFunction
     public pitemAdded(pitem: any): boolean {
         sendPItemAdded(pitem);
-        console.log(this.shProject);
         return true;
     }
 
