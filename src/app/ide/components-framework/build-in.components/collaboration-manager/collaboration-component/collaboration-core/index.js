@@ -26,8 +26,9 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   };
   console.log("myInfo:",myInfo);
   collabInfo.plugin = CollabManager;
+  collabInfo.myInfo = myInfo;
   // console.log(collabInfo.plugin.shProject);
-  let randomId = "akatsarakistest123123";//generateRandom(20);
+  let randomId = "akatsarakis1234123p";generateRandom(20);
   let peer = new Peer(randomId);
   peer.on('open', (id) => {
     console.log('My peer ID is: ' + id);
@@ -51,12 +52,15 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   });
 }
 
-function acceptedUser(DB){
-  collabInfo.connected_users.push(conn);
-  updateProject(DB.info);
-}
 
-export function startCommunicationUser(myInfo, externalLink) {
+export function startCommunicationUser(myInfo, externalLink, CollabManager, callback) {
+  function acceptedUser(DB){
+    collabInfo.connected_users.push(conn);
+    console.log(DB.info);
+    collabInfo.plugin.setProject(DB.info);
+    callback(DB.info);
+  }
+  
   let receivedHandler = {
     "addPItem": receivePItemAdded ,
     "removePItem": receivePItemRemoved ,
@@ -64,25 +68,29 @@ export function startCommunicationUser(myInfo, externalLink) {
     "addUser": receiveAddUser,
     "acceptedUser": acceptedUser
   };
+  collabInfo.plugin = CollabManager;
   collabInfo.myInfo = myInfo;
-  let peer = new Peer();//({key: 'lwjd5qra8257b9'});
-  console.log(myInfo,"trying to connect to "+ externalLink);
-  
-  // let conn = peer;  
-  peer.on('error', (err) => console.log(err));
-  peer.on('open', () => {
+  externalLink = "akatsarakis1234123p";
+  var peer = new Peer();
+  console.log(myInfo,"trying to connect to "+externalLink);
+  var conn = peer.connect(externalLink);
+  conn.on('open', function () {
     console.log('connected');
-    peer.on('data', (data) => {
+    conn.on('data', function (data) {
       console.log(data);
-      receivedHandler[data.type](data,peer);
+      receivedHandler[data.type](data,conn);
     });
+
+
+    //sendRegister
+    var arg = {
+      type: "registerUser",
+      info: myInfo
+    };
+    conn.send(arg);
+    console.log("Sent register");
   });
   
-  let conn = peer.connect(externalLink);
-  //sendRegister
-  let arg = {
-    type: "registerUser",
-    info: myInfo
-  };
-  conn.send(arg);
+  return conn;
+  
 }

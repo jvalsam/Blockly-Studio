@@ -377,7 +377,7 @@ export class ProjectManager extends IDEUIComponent {
         let concerned = (<ProjectManagerJSTreeView>this._view)
             .getProjectCategory(
                 pitem.itemData.editorsData.projectID,
-                pitem.id
+                pitem.projCateg
             ); // retrieve concerned obj
 
         concerned.project.addNewElement(
@@ -528,7 +528,6 @@ export class ProjectManager extends IDEUIComponent {
     // dispatch functions for resize container area
     private resizeCollaborationManager(
         $container,
-        componentName,
         width,
         callback) {
         let prv = (<ProjectManagerJSTreeView>this._view)
@@ -537,8 +536,10 @@ export class ProjectManager extends IDEUIComponent {
         let parent = $container.parent();
         let editors = parent.children()[0];
         
-        editors.style.width = parent.width() - width;
-        $container.style.width = width;
+        editors.style.width = (parent.width() - width) + 'px';
+        editors.style.float = "left";
+        $container[0].style.width = width + 'px';
+        $container[0].style.float = "right";
 
         ComponentsCommunication.functionRequest(
             this.name,
@@ -548,19 +549,23 @@ export class ProjectManager extends IDEUIComponent {
                 prv
             ]
         );
+
+        if(callback)
+            callback();
     }
 
     @ExportedFunction
     public resizeContainerArea(componentName, $container, width, callback): void {
         let resizeFunc = this["resize"+componentName];
         if (resizeFunc) {
-            resizeFunc($container, width, callback);
+            resizeFunc.call(this, $container, width, callback);
+        }else{
+            assert(
+                false,
+                "resizeContainerArea function is not supported for "
+                + componentName
+            );
         }
-        assert(
-            false,
-            "resizeContainerArea function is not supported for "
-            + componentName
-        );
     }
 
     @ExportedFunction

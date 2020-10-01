@@ -1,12 +1,4 @@
 import {
-    getPItem,
-    updateProject,
-    pItemExists,
-    pItemAdd,
-    pItemRemove
-}from "./giannis.js"
-
-import {
     collabInfo,
     printDB
 }from "./utilities.js"
@@ -25,8 +17,9 @@ import {
 export function receiveRegisterUser(data,conn){
     let DB = collabInfo.plugin.getProject();
     let info = data.info;
-	for(let item in DB.collaborationData.members){
-		item = DB.collaborationData.members[item];
+    let members = DB.componentsData.collaborationData.members;
+	for(let item in members){
+		item = members[item];
 		if(item.name === info.name){
 			console.log("THIS USERNAME ALREADY EXIST") //TODO: this
 			return;
@@ -40,10 +33,10 @@ export function receiveRemoveUser(data,conn){
     let DB = collabInfo.plugin.getProject();
 	var info = data.info;
 	var position = 0;
-	for(var item in DB.collaborationData.members){
-		item = DB.collaborationData.members[item];
+	for(var item in DB.componentsData.collaborationData.members){
+		item = DB.componentsData.collaborationData.members[item];
 		if(item.name === info.name){
-            DB.collaborationData.members.splice(position, 1);
+            DB.componentsData.collaborationData.members.splice(position, 1);
 			printDB();
 			return;
 		}
@@ -53,9 +46,7 @@ export function receiveRemoveUser(data,conn){
 }
 
 export function receivePItemAdded(data,conn){
-    // ADD THE PITEM TO DATABASE
-    let DB = collabInfo.plugin.getProject();
-    DB.projectItems.push(filterProjectItem(data.info));
+    collabInfo.plugin.onPitemAdded(data.info);//(filterProjectItem(data.info));
     collabInfo.connected_users.forEach(user => {
         if(user.id !== conn.id){
             sendPItemAdded(data.info,user);
@@ -65,14 +56,11 @@ export function receivePItemAdded(data,conn){
 }
 
 export function receivePItemRemoved(data,conn){
-    if(!pItemExists(data.info.systemID)){
-        console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
-        return;
-    }
-    if(!pItemRemove(data.info.systemID)){
-        console.log("THIS PROJECT ITEM WASN'T REMOVED SUCCESSFULLY"); //TODO: this
-        return;
-    }
+    // if(!pItemExists(data.info.systemID)){
+    //     console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
+    //     return;
+    // }
+    collabInfo.plugin.onPitemRemoved(data.info);
     collabInfo.connected_users.forEach(user => {
         if(user.id !== conn.id){
             sendPItemRemoved(data.info,user);
@@ -82,10 +70,10 @@ export function receivePItemRemoved(data,conn){
 }
 
 export function receivePItemUpdated(data,conn){
-    if(!pItemExists(data.pItemId)){
-        console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
-        return;
-    }
+    // if(!pItemExists(data.pItemId)){
+    //     console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
+    //     return;
+    // }
 	var info = data.info;
 	var updateType = data.updateType;
     var pItemId = data.pItemId;
@@ -109,7 +97,7 @@ export function receivePItemUpdated(data,conn){
 
 export function receiveAddUser(data,conn){
     let DB = collabInfo.plugin.getProject();
-    DB.collaborationData.members.push(data.info);
+    DB.componentsData.collaborationData.members.push(data.info);
     printDB();
 }
 
@@ -129,7 +117,7 @@ function acceptUser(conn,infom){
 
     conn.name = infom.name;
     collabInfo.connected_users.push(conn);
-	DB.collaborationData.members.push({
+	DB.componentsData.collaborationData.members.push({
         name: infom.name,
         icon: infom.icon
     });

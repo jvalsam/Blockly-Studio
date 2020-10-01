@@ -504,38 +504,40 @@ export function CollaborationUI(container){
                 <div class = "clear"></div> \
             </div> \
         \
-            <div id = "collaboration-members"> </div> \
-            <div id = "selected-member-files"> </div> \
-        \
-            <div> \
-                <!-- Header node for the collaboration-shared-files-ui --> \
-                <div id = "dummy-js-tree-1"></div> \
-        \
-                <div id = "collaboration-shared-files-ui"> \
-                    <div id = "collaboration-shared-from-me-tab-ui" class = "center collaboration-shared-tab-ui collaboration-shared-tab-active"> From me </div> \
-                    <div id = "collaboration-shared-to-me-tab-ui"class = "center collaboration-shared-tab-ui"> To me </div> \
-                    <div id = "collaboration-shared-files-content" class = "clear"> \
-                        <div id = "collaboration-shared-from-me"></div> \
-                        <div id = "collaboration-shared-to-me"></div> \
+            <div id = "collaboration-content"> \
+                <div id = "collaboration-members"> </div> \
+                <div id = "selected-member-files"> </div> \
+            \
+                <div> \
+                    <!-- Header node for the collaboration-shared-files-ui --> \
+                    <div id = "dummy-js-tree-1"></div> \
+            \
+                    <div id = "collaboration-shared-files-ui"> \
+                        <div id = "collaboration-shared-from-me-tab-ui" class = "center collaboration-shared-tab-ui collaboration-shared-tab-active"> From me </div> \
+                        <div id = "collaboration-shared-to-me-tab-ui"class = "center collaboration-shared-tab-ui"> To me </div> \
+                        <div id = "collaboration-shared-files-content" class = "clear"> \
+                            <div id = "collaboration-shared-from-me"></div> \
+                            <div id = "collaboration-shared-to-me"></div> \
+                        </div> \
                     </div> \
                 </div> \
-            </div> \
-        \
-            <div> \
-                <div id = "dummy-js-tree-2"> </div> \
-                <div id = "collaboration-recent-actions-ui"> \
-                    <div class = "collaboration-recent-action"> \
-                        <div class = "recent-action-row vcenter font-size16px"> \
-                            <div class = "member-icon float-left"> </div> \
-                            <div> Name </div> \
-                            <div class = "middle-right vcenter"> \
-                                <div class = "file-icon float-left"></div> \
-                                Alarm Clock Rings \
+            \
+                <div> \
+                    <div id = "dummy-js-tree-2"> </div> \
+                    <div id = "collaboration-recent-actions-ui"> \
+                        <div class = "collaboration-recent-action"> \
+                            <div class = "recent-action-row vcenter font-size16px"> \
+                                <div class = "member-icon float-left"> </div> \
+                                <div> Name </div> \
+                                <div class = "middle-right vcenter"> \
+                                    <div class = "file-icon float-left"></div> \
+                                    Alarm Clock Rings \
+                                </div> \
                             </div> \
-                        </div> \
-                        <div class = "recent-action-last-row vcenter"> \
-                            <div>Type: Creation</div> \
-                            <div class = "middle-right">Time</div> \
+                            <div class = "recent-action-last-row vcenter"> \
+                                <div>Type: Creation</div> \
+                                <div class = "middle-right">Time</div> \
+                            </div> \
                         </div> \
                     </div> \
                 </div> \
@@ -720,16 +722,9 @@ export function CollaborationUI(container){
     this.clearAndAddMemberPersonalFiles = clearAndAddMemberPersonalFiles;
 }
 
-// $(function () {
-
-//     ui = new CollaborationUI("container");
-//     examples = new CollaborationUI_API_Examples();
-
-// });
-
 /* Examples */
 
-function CollaborationUI_API_Examples(){
+export function CollaborationUI_API_Examples(){
 
     this.clearAndAddMemberPersonalFiles = function(){
         var somefile1 = {
