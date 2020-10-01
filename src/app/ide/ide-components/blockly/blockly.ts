@@ -25,7 +25,9 @@ import { assert } from "../../shared/ide-error/ide-error";
 import {
   PItemView
 } from "../../components-framework/build-in.components/editor-manager/project-item/pitem-view";
-import { ITool } from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
+import {
+  ITool
+} from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -132,12 +134,17 @@ export class BlocklyVPL extends Editor {
   public update_src(data: any, pitem: any, focus: boolean =false): void {
     let id = data.editorId;
     let event = data.event;
-    if (focus) {
+    if (this.instancesMap[id] && focus) {
       this.instancesMap[id].syncWSP(event);
     }
     else {
 
     }
+  }
+
+  @ExportedFunction
+  public updatePItemData(editorId: string, pitem) {
+      // TODO:
   }
 
   @ExportedFunction

@@ -23,7 +23,7 @@ import { IDECore } from "./src/app/ide/components-framework/ide-core";
 // debug changed command is: node --inspect=0.0.0.0:9229 --inspect-brk server.js
 
 $(document).ready(function() {
-    RunPlatformData.initialize("debug_localhost");
+    RunPlatformData.initialize("release");
     IDECore.initialize();
     IDECore.start();
 });

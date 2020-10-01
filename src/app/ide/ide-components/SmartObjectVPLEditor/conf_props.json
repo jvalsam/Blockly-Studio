@@ -1,0 +1,18 @@
+{
+    "componentName": "SmartObjectEditor",
+    "properties": [
+        {
+            "name": "Backgound Colour",
+            "type": "color",
+            "default": "black"
+        },
+        {
+            "name": "Config Elements Font",
+            "type": "font"
+        },
+        {
+            "name": "Config Elements Font",
+            "type": "font"
+        }
+    ]
+}

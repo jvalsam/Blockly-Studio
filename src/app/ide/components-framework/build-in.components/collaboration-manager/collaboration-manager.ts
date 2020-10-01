@@ -57,9 +57,19 @@ enum PItemEditType {
     description: "Collaboration Manager of the IDE",
     authors: [
         {
-            date: "",
-            name: "",
-            email: ""
+            name: "Alex Katsarakis",
+            email: "akatsarakis@csd.uoc.gr",
+            date: "June 2020"
+        },
+        {
+            name: "Emmanuel Agapakis",
+            email: "agapakis@csd.uoc.gr",
+            date: "June 2020"
+        },
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "June 2020"
         }
     ],
     componentView: "CollaborationManagerView",

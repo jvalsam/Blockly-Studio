@@ -247,6 +247,30 @@ export class EditorManager extends IDEUIComponent {
 
     @ExportedFunction
     public onRenameProjectElement(pi: ProjectItem, callback: Function) {
+        let pitemData = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [pi.jstreeNode.type]
+        ).value;
+
+        for (const key in pi.editorsData.items) {
+            let item = pi.editorsData.items[key];
+
+            let confName = item.confName;
+            let econfig = pitemData.editorConfigs[confName][0];
+
+            ComponentsCommunication.functionRequest(
+                this.name,
+                econfig.name,
+                "updatePItemData",
+                [
+                    item.editorId,
+                    pi
+                ]
+            );
+        }
+
         if (this.pitemOnFocus(pi.systemID)) {
             this.open(pi, this.areaOfPItem(pi.systemID));
         }

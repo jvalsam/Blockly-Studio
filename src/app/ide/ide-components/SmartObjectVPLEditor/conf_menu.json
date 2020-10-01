@@ -1,0 +1,27 @@
+{
+    "ComponentName": "SmartObjectEditor",
+    "MenuElements": [
+        {
+            "path": "/Home|Configure|Blockly|ViSmaOE|",
+            "data": {
+                "title": "SmartObjectEditor",
+                "type": "sub-menu",
+                "help": "Edit Smart Object Editor Properties"
+            }
+        },
+        {
+            "path": "/Configure/Configuration|DividerConfiguration|Menu|Blockly|ProjectManager|ViSmaOE|RuntimeManager|",
+            "data": {
+                "title": "SmartObjectEditor",
+                "help": "Configuration of SmartObjectEditor",
+                "type": "leaf",
+                "events": [
+                    {
+                        "type": "click",
+                        "handler": "onConfig"
+                    }
+                ]
+            }
+        }
+    ]
+}
