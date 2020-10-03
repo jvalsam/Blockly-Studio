@@ -131,16 +131,18 @@ export class BlocklyVPL extends Editor {
     this.instancesMap[srcId].close();
   }
 
+  @ExportedFunction
   public update_src(data: any, pitem: any, focus: boolean =false): void {
     let id = data.editorId;
     let event = data.event;
-    if (this.instancesMap[id] && focus) {
+    if (focus) {
       this.instancesMap[id].syncWSP(event);
     }
     else {
-
+      console.warn("Blockly instance not implement. Has to mark that visual src is not updated");
     }
   }
+
 
   @ExportedFunction
   public updatePItemData(editorId: string, pitem) {

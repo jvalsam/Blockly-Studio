@@ -92,6 +92,7 @@ export class ApplicationWSPManager extends IDEComponent {
                         "",
                         [".main-area-platform-container"]
                     );
+                    sharedApp.saveMode = "SHARED";
                 }
             ]
         );

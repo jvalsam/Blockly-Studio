@@ -648,7 +648,7 @@ export class ProjectManager extends IDEUIComponent {
             "pitemUpdated",
             [
                 pitem.systemID,
-                "EDITOR_SRC",
+                "src",
                 {
                     editorId: editorId,
                     editor: editor,

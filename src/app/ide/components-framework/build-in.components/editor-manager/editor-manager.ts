@@ -470,13 +470,14 @@ export class EditorManager extends IDEUIComponent {
     }
 
     public isOnFocus(id: string, type: string = "pitem"): boolean {
+        console.warn("Editor Manager: isOnFocus has to be implemented!")
         if (type === "pitem") {
             // this
         }
         else {
 
         }
-        return false;
+        return true;
     }
 
     @ExportedFunction

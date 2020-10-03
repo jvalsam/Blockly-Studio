@@ -7,9 +7,11 @@ import {
     filterProjectItem
 }from "./projectItemFilters"
 
-//Communication between users on collab level
-
-
+import {
+    sendPItemAdded,
+    sendPItemRemoved,
+    sendPItemUpdated
+}from './senderHandlers'
 
 
 
@@ -27,6 +29,12 @@ export function receiveRegisterUser(data,conn){
     }
     acceptUser(conn,info);
 	printDB();
+}
+
+export function receiveAddUser(data,conn){
+    let DB = collabInfo.plugin.getProject();
+    DB.componentsData.collaborationData.members.push(data.info);
+    printDB();
 }
 
 export function receiveRemoveUser(data,conn){
@@ -74,18 +82,21 @@ export function receivePItemUpdated(data,conn){
     //     console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
     //     return;
     // }
-	var info = data.info;
-	var updateType = data.updateType;
-    var pItemId = data.pItemId;
-    console.log(data);
+
+	let info = JSON.parse(data.info);
+	let updateType = data.updateType;
+    let pItemId = data.pItemId;
+    
     let DB = collabInfo.plugin.getProject();
+    // DB.projectItems.filter(item => item.systemID === pItemID)
 	for(var item in DB.projectItems){
         item = DB.projectItems[item];
 		if(item.systemID === pItemId){
-            pItemUpdateHandler[updateType](item,info);
+            if(pItemUpdateHandler[updateType])pItemUpdateHandler[updateType](item,info); // If it has a specific handler
+            else collabInfo.plugin.onPItemUpdate(pItemId,updateType,info,()=>{}); // Else let the IDE handle the event
             collabInfo.connected_users.forEach(user => {
                 if(user.id !== conn.id){
-                    sendPItemUpdated(info,updateType,pItemId, user);
+                    sendPItemUpdated(pItemId, updateType, info, user.id);
                 }
             });
 			printDB();
@@ -94,12 +105,6 @@ export function receivePItemUpdated(data,conn){
 	}
 }
 
-
-export function receiveAddUser(data,conn){
-    let DB = collabInfo.plugin.getProject();
-    DB.componentsData.collaborationData.members.push(data.info);
-    printDB();
-}
 
 function acceptUser(conn,infom){
     let DB = collabInfo.plugin.getProject();
@@ -129,53 +134,30 @@ function acceptUser(conn,infom){
     
 }
 
-
-
-
 var pItemUpdateHandler = {
+    "rename" : pItemRename,
 	"passOwnership": pItemPassOwnership,
 	"changeSharedStatus": pItemChangeSharedStatus,
 	"changeRenderParts": pItemChangeRenderParts
 }
 
+function pItemRename(pItem,info){
+    console.log("Rename ",pItem);
+    console.log(info);
+    collabInfo.plugin.onPItemUpdate(pItem.systemID,"rename",info,()=>{});
+}
+
 function pItemPassOwnership(pItem,info){
-	//TODO: checks if he can invoke this
+    
 	pItem.privileges.owner = info;
 }
 
 function pItemChangeSharedStatus(pItem,info){
-	//TODO: checks if he can invoke this
+    
 	pItem.privileges.shared = info;
 }
 
 function pItemChangeRenderParts(pItem,info){
-	//TODO: checks if he can invoke this
+    
 	pItem.renderParts = info;
-}
-
-//Sender functions
-function sendPItemAdded(data,conn){
-    let arg = {
-        type: "addPItem",
-        info: data
-    };
-    conn.send(arg);
-}
-
-function sendPItemRemoved(data,conn){
-    let arg = {
-        type: "removePItem",
-        info: data
-    };
-    conn.send(arg);
-}
-
-function sendPItemUpdated(data,updateType, pItemId, conn){
-    let arg = {
-        type: "updatePItem",
-        updateType: updateType,
-        pItemId: pItemId,
-        info: data
-    };
-    conn.send(arg);
 }

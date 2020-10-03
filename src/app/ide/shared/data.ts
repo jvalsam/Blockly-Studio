@@ -11,7 +11,8 @@ export const iotivity_url: string = "http://147.52.17.129:3030/smart-objects/sca
 export const smart_objects_backend_url: string = "http://localhost:3031/smart-objects";
 
 // export const upload_files_url = _URL + "/files/upload";
-export const upload_files_url: string = "http://localhost:3031/files/upload";
+// export const upload_files_url: string = "http://localhost:3031/files/upload";
+export const upload_files_url: string = "http://147.52.17.129:3031/files/upload";
 
 export const MODAL_SELECTOR: string = ".modal-view-area";
 
