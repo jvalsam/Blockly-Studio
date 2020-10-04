@@ -1,6 +1,6 @@
 export const SmartObjectsTask =
 {
-    name: 'smart-objects-task',
+    name: 'ec-smart-object-task',
     items: [
         {
             type: 'Predefined',
