@@ -275,7 +275,7 @@
     text-align: center;
     box-sizing: border-box;
     border: solid 1px #b1b1b1;
-    margin-bottom: -1px;
+    margin-bottom: -2px;
 }
 
 #collaboration-shared-to-me-tab-ui{
@@ -388,7 +388,7 @@
     font-family: "Roboto" !important;
     font-size: 14px !important;
     width: 350px;
-    height: 295px;
+    height: fit-content;
     box-sizing: border-box;
     background-color: #ffffff;
 
@@ -412,7 +412,7 @@
 
 .collaboration-popup-header-bar{
     position: relative;
-    height: 15%;
+    height: 40px;
     width: 100%;
     
     background-color: #4A81B1;
@@ -439,11 +439,12 @@
     height: 85%;
     box-sizing: border-box;
     position: relative;
+    padding: 10px;
 }
 
 .collaboration-popup-row {
     display: block;
-    margin: 20px 0px;
+    margin: 10px 0px;
     width: 100%;
     position: relative;
 }
@@ -467,6 +468,14 @@
     box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
 }
 
+.collaboration-popup input[type=search] {
+    border: 1px solid #bebebe;
+    margin-bottom:5px;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+}
+
 .collaboration-popup-user-icon{
     background-position: center center !important;
     background-size: 35px 35px !important;
@@ -487,4 +496,15 @@
 .collaboration-popup-edit {
     text-decoration: underline;
     color: #787D82;
+}
+
+.collaboration-popup-tick-icon {
+    margin:0px 10px;
+    margin-left:auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-color: green;
+    -webkit-mask-image: url(https://www.flaticon.com/svg/static/icons/svg/2107/2107593.svg);
+    mask-image: url(https://www.flaticon.com/svg/static/icons/svg/2107/2107593.svg);
 }
