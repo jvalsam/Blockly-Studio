@@ -25,6 +25,12 @@ export function CollaborationUI(container){
     _injectHtml(container);
     _initTrees();
 
+    /* 
+        Types
+    */
+
+
+
     /*
         Trees
     */
@@ -189,7 +195,7 @@ export function CollaborationUI(container){
                 'id': 'dummy-js-tree-1-root',
                 'parent': '#',
                 'type': 'other',
-                'text': 'Shared Files',
+                'text': 'Shared Personal Files',
                 'icon': false,
                 'state' : { 'opened' : true },
                 'a_attr': membersA
