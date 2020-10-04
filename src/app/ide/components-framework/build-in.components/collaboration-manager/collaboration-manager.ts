@@ -32,7 +32,10 @@ import {
     sendPItemUpdated
 } from "./collaboration-component/collaboration-core/senderHandlers";
 
-import { CollaborationSharePopup } from './collaboration-component/collaboration-gui/CollaborationPopups';
+import { 
+    PassFloorPopup,
+    SharePersonalFilePopup 
+} from './collaboration-component/collaboration-gui/CollaborationPopups';
 
 var menuJson;
 var configJson;
@@ -226,6 +229,10 @@ export class CollaborationManager extends IDEUIComponent {
                 tooltip: "Give Floor",
                 icon: "../../../../../../images/collaboration/send.png",
                 action: () => {
+                    let html = $("html"); // TODO ask for the real container
+                    let popup = new PassFloorPopup(html);
+                    // console.log(this.shProject.componentsData.collaborationData.members);
+                    popup.setMembers(this.shProject.componentsData.collaborationData.members);
                     console.log('Give floor');
                     let newOwner = 'whatever';
                     collabData.privileges.owner = newOwner;

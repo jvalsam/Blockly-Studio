@@ -344,7 +344,7 @@ class SharePopup extends CollaborationPopup{
 
 class JoinPopup extends CollaborationPopup{
     constructor(container){
-        super(container);
+        super(container, "Join to a shared project");
         let html = '\
             <div>\
                 <div class="collaboration-popup-row center">\

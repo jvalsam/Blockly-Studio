@@ -1,6 +1,6 @@
 import {
-        CollaborationSharePopup,
-        CollaborationJoinPopup
+        SharePopup,
+        JoinPopup
     }
     from './CollaborationPopups'
 
@@ -25,7 +25,7 @@ export function openStartSessionDialogue(
             });
         }
 
-        let sharePopup = new CollaborationSharePopup($popupContainer);
+        let sharePopup = new SharePopup($popupContainer);
         sharePopup.setOnCloseCb(onFailure);
         sharePopup.setOnShareCb(boundOnSuccess);
         
@@ -43,8 +43,6 @@ export function openJoinSessionDialogue(
     onSuccess, // cb
     onFailure   // cb
     ) {
-        onSuccess({
-            name: "a",
-            icon: "myIcon"
-        },"test");
+        let popup = new JoinPopup($dialog);
+        popup.setOnJoinCb(onSuccess);
 }
