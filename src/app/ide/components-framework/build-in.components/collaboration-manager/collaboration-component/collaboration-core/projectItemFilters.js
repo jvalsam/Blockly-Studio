@@ -29,3 +29,19 @@ export function filterProjectItem(pItem){
     
     return pItem;
 }
+
+function fillPItemInfo(pItem){
+    delete pItem.privileges;
+    pItem.privileges = {};
+    var tmpItem = {
+        author: collabInfo.myInfo.name,
+        owner: collabInfo.myInfo.name,
+        shared: {
+            type: "SHARED_PROJECT"
+        },
+        hidden: "false",
+        readOnly: false
+    }
+    pItem.privileges = tmpItem;
+    return pItem;
+}

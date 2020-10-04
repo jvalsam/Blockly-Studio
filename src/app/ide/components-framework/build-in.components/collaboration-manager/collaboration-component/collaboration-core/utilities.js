@@ -4,7 +4,8 @@ export let collabInfo = {
     /*myInfo = {
         name: "myName",
         icon: "myIcon"
-    }*/
+    },
+    plugin:,*/
     connected_users: [],
 }
 
@@ -85,8 +86,4 @@ function pItemTools(pItemId){
 export function printDB(){
     let DB = collabInfo.plugin.getProject();
 	console.log(DB);
-}
-
-function broadcastChange(info){
-	//TODO:
 }

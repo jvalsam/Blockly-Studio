@@ -25,7 +25,9 @@ import { assert } from "../../shared/ide-error/ide-error";
 import {
   PItemView
 } from "../../components-framework/build-in.components/editor-manager/project-item/pitem-view";
-import { ITool } from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
+import {
+  ITool
+} from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -129,6 +131,7 @@ export class BlocklyVPL extends Editor {
     this.instancesMap[srcId].close();
   }
 
+  @ExportedFunction
   public update_src(data: any, pitem: any, focus: boolean =false): void {
     let id = data.editorId;
     let event = data.event;
@@ -136,8 +139,14 @@ export class BlocklyVPL extends Editor {
       this.instancesMap[id].syncWSP(event);
     }
     else {
-
+      console.warn("Blockly instance not implement. Has to mark that visual src is not updated");
     }
+  }
+
+
+  @ExportedFunction
+  public updatePItemData(editorId: string, pitem) {
+      // TODO:
   }
 
   @ExportedFunction

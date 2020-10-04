@@ -71,7 +71,7 @@ export abstract class Editor extends IDEUIComponent {
 
     public abstract tools(editorId: string): Array<ITool>;
 
-    public save (id: string, pitem: ProjectItem, event: any): void {
+    public save (id: string, pitem: ProjectItem, data: any): void {
         ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
@@ -80,7 +80,7 @@ export abstract class Editor extends IDEUIComponent {
                 id,
                 pitem,
                 this.name,
-                event
+                data
             ]
         );
     }
@@ -113,6 +113,8 @@ export abstract class Editor extends IDEUIComponent {
         });
         return json;
     }
+
+    public abstract updatePItemData(editorId: string, pitem: ProjectItem);
 
     public abstract getDomainElementData(projectId: string, domainElemId: string): IDomainElementData;
 

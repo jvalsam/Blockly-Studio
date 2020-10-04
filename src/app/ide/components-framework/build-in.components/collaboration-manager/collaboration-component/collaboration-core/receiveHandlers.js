@@ -1,12 +1,4 @@
 import {
-    getPItem,
-    updateProject,
-    pItemExists,
-    pItemAdd,
-    pItemRemove
-}from "./giannis.js"
-
-import {
     collabInfo,
     printDB
 }from "./utilities.js"
@@ -15,9 +7,11 @@ import {
     filterProjectItem
 }from "./projectItemFilters"
 
-//Communication between users on collab level
-
-
+import {
+    sendPItemAdded,
+    sendPItemRemoved,
+    sendPItemUpdated
+}from './senderHandlers'
 
 
 
@@ -25,8 +19,9 @@ import {
 export function receiveRegisterUser(data,conn){
     let DB = collabInfo.plugin.getProject();
     let info = data.info;
-	for(let item in DB.collaborationData.members){
-		item = DB.collaborationData.members[item];
+    let members = DB.componentsData.collaborationData.members;
+	for(let item in members){
+		item = members[item];
 		if(item.name === info.name){
 			console.log("THIS USERNAME ALREADY EXIST") //TODO: this
 			return;
@@ -36,14 +31,20 @@ export function receiveRegisterUser(data,conn){
 	printDB();
 }
 
+export function receiveAddUser(data,conn){
+    let DB = collabInfo.plugin.getProject();
+    DB.componentsData.collaborationData.members.push(data.info);
+    printDB();
+}
+
 export function receiveRemoveUser(data,conn){
     let DB = collabInfo.plugin.getProject();
 	var info = data.info;
 	var position = 0;
-	for(var item in DB.collaborationData.members){
-		item = DB.collaborationData.members[item];
+	for(var item in DB.componentsData.collaborationData.members){
+		item = DB.componentsData.collaborationData.members[item];
 		if(item.name === info.name){
-            DB.collaborationData.members.splice(position, 1);
+            DB.componentsData.collaborationData.members.splice(position, 1);
 			printDB();
 			return;
 		}
@@ -53,10 +54,7 @@ export function receiveRemoveUser(data,conn){
 }
 
 export function receivePItemAdded(data,conn){
-    // ADD THE PITEM TO DATABASE
-    console.log(data.info);
-    let DB = collabInfo.plugin.getProject();
-    DB.projectItems.push(filterProjectItem(data.info));
+    collabInfo.plugin.onPitemAdded(data.info);//(filterProjectItem(data.info));
     collabInfo.connected_users.forEach(user => {
         if(user.id !== conn.id){
             sendPItemAdded(data.info,user);
@@ -66,14 +64,11 @@ export function receivePItemAdded(data,conn){
 }
 
 export function receivePItemRemoved(data,conn){
-    if(!pItemExists(data.info.systemID)){
-        console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
-        return;
-    }
-    if(!pItemRemove(data.info.systemID)){
-        console.log("THIS PROJECT ITEM WASN'T REMOVED SUCCESSFULLY"); //TODO: this
-        return;
-    }
+    // if(!pItemExists(data.info.systemID)){
+    //     console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
+    //     return;
+    // }
+    collabInfo.plugin.onPitemRemoved(data.info);
     collabInfo.connected_users.forEach(user => {
         if(user.id !== conn.id){
             sendPItemRemoved(data.info,user);
@@ -83,22 +78,25 @@ export function receivePItemRemoved(data,conn){
 }
 
 export function receivePItemUpdated(data,conn){
-    if(!pItemExists(data.pItemId)){
-        console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
-        return;
-    }
-	var info = data.info;
-	var updateType = data.updateType;
-    var pItemId = data.pItemId;
-    console.log(data);
+    // if(!pItemExists(data.pItemId)){
+    //     console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
+    //     return;
+    // }
+
+	let info = JSON.parse(data.info);
+	let updateType = data.updateType;
+    let pItemId = data.pItemId;
+    
     let DB = collabInfo.plugin.getProject();
+    // DB.projectItems.filter(item => item.systemID === pItemID)
 	for(var item in DB.projectItems){
         item = DB.projectItems[item];
 		if(item.systemID === pItemId){
-            pItemUpdateHandler[updateType](item,info);
+            if(pItemUpdateHandler[updateType])pItemUpdateHandler[updateType](item,info); // If it has a specific handler
+            else collabInfo.plugin.onPItemUpdate(pItemId,updateType,info,()=>{}); // Else let the IDE handle the event
             collabInfo.connected_users.forEach(user => {
                 if(user.id !== conn.id){
-                    sendPItemUpdated(info,updateType,pItemId, user);
+                    sendPItemUpdated(pItemId, updateType, info, user.id);
                 }
             });
 			printDB();
@@ -107,12 +105,6 @@ export function receivePItemUpdated(data,conn){
 	}
 }
 
-
-export function receiveAddUser(data,conn){
-    let DB = collabInfo.plugin.getProject();
-    DB.collaborationData.members.push(data.info);
-    printDB();
-}
 
 function acceptUser(conn,infom){
     let DB = collabInfo.plugin.getProject();
@@ -130,7 +122,7 @@ function acceptUser(conn,infom){
 
     conn.name = infom.name;
     collabInfo.connected_users.push(conn);
-	DB.collaborationData.members.push({
+	DB.componentsData.collaborationData.members.push({
         name: infom.name,
         icon: infom.icon
     });
@@ -142,53 +134,30 @@ function acceptUser(conn,infom){
     
 }
 
-
-
-
 var pItemUpdateHandler = {
+    "rename" : pItemRename,
 	"passOwnership": pItemPassOwnership,
 	"changeSharedStatus": pItemChangeSharedStatus,
 	"changeRenderParts": pItemChangeRenderParts
 }
 
+function pItemRename(pItem,info){
+    console.log("Rename ",pItem);
+    console.log(info);
+    collabInfo.plugin.onPItemUpdate(pItem.systemID,"rename",info,()=>{});
+}
+
 function pItemPassOwnership(pItem,info){
-	//TODO: checks if he can invoke this
+    
 	pItem.privileges.owner = info;
 }
 
 function pItemChangeSharedStatus(pItem,info){
-	//TODO: checks if he can invoke this
+    
 	pItem.privileges.shared = info;
 }
 
 function pItemChangeRenderParts(pItem,info){
-	//TODO: checks if he can invoke this
+    
 	pItem.renderParts = info;
-}
-
-//Sender functions
-function sendPItemAdded(data,conn){
-    let arg = {
-        type: "addPItem",
-        info: data
-    };
-    conn.send(arg);
-}
-
-function sendPItemRemoved(data,conn){
-    let arg = {
-        type: "removePItem",
-        info: data
-    };
-    conn.send(arg);
-}
-
-function sendPItemUpdated(data,updateType, pItemId, conn){
-    let arg = {
-        type: "updatePItem",
-        updateType: updateType,
-        pItemId: pItemId,
-        info: data
-    };
-    conn.send(arg);
 }

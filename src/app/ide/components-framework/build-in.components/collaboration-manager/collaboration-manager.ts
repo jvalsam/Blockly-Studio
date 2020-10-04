@@ -22,13 +22,16 @@ import {
 } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 
 import {
-    collaborationFilter
+    collaborationFilter,
+    collabInfo
 } from "./collaboration-component/collaboration-core/utilities";
 
 import {
     sendPItemAdded,
-    sendPItemRemoved
+    sendPItemRemoved,
+    sendPItemUpdated
 } from "./collaboration-component/collaboration-core/senderHandlers";
+
 import { CollaborationSharePopup } from './collaboration-component/collaboration-gui/CollaborationPopups';
 
 var menuJson;
@@ -57,9 +60,19 @@ enum PItemEditType {
     description: "Collaboration Manager of the IDE",
     authors: [
         {
-            date: "",
-            name: "",
-            email: ""
+            name: "Alex Katsarakis",
+            email: "akatsarakis@csd.uoc.gr",
+            date: "June 2020"
+        },
+        {
+            name: "Emmanuel Agapakis",
+            email: "agapakis@csd.uoc.gr",
+            date: "June 2020"
+        },
+        {
+            name: "Yannis Valsamakis",
+            email: "jvalsam@ics.forth.gr",
+            date: "June 2020"
         }
     ],
     componentView: "CollaborationManagerView",
@@ -122,14 +135,12 @@ export class CollaborationManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public joinSession(selDialog: any, callback: Function) {
+    public joinSession(selDialog: any, success: Function) {
         openJoinSessionDialogue(
             selDialog,
             (memberInfo, externalLink) => {
-                externalLink = "akatsarakistest123123";
-                startCommunicationUser(memberInfo, externalLink);
-            },
-            () => { callback(null); }
+                startCommunicationUser(memberInfo, externalLink, this, success);
+            }
         );
     }
 
@@ -184,7 +195,7 @@ export class CollaborationManager extends IDEUIComponent {
         });
 
         let settings = this.shProject.componentsData.collaborationData.projectInfo;
-
+        let collabData = pitem.componentsData.collaborationData;
         if(settings.createPItem){ // Add Logic if "Allow members to create project item" was enabled
             opts.push(
                 {
@@ -201,12 +212,27 @@ export class CollaborationManager extends IDEUIComponent {
                 action: () => alert('Make a note on the current project item')
             })
         }
-        if(settings.reqOwnership){ // Add Logic if "Allow members request for ownership" was enabled
+        if(settings.reqOwnership && collabData.privileges.owner !== collabInfo.myInfo.name){ // Add Logic if "Allow members request for ownership" was enabled
             opts.push(
                 {
                 tooltip: "Request Ownership of Project Item",
                 icon: "../../../../../../images/collaboration/send.png",
                 action: () => alert('Request ownership for the current project item')
+            })
+        }
+        if(collabData.privileges.owner === collabInfo.myInfo.name){
+            opts.push(
+                {
+                tooltip: "Give Floor",
+                icon: "../../../../../../images/collaboration/send.png",
+                action: () => {
+                    console.log('Give floor');
+                    let newOwner = 'whatever';
+                    collabData.privileges.owner = newOwner;
+                    // console.log(pitem);
+                    this.pitemUpdated(pitem.id, PItemEditType.OWNERSHIP ,newOwner);
+                    // this.pitemFocus(pitem.id); // ASK GIANNI
+                }
             })
         }
         if(settings.createPersonalPItem){ // Add Logic if "Allow members to create personal project items" was enabled
@@ -222,7 +248,7 @@ export class CollaborationManager extends IDEUIComponent {
                 {
                 tooltip: "Share Personal Project Item",
                 icon: "../../../../../../images/collaboration/send.png",
-                action: () => alert("Create Personal Project Item")
+                action: () => alert("Share Personal Project Item")
             })
         }
         // console.log(this.shProject);
@@ -258,9 +284,11 @@ export class CollaborationManager extends IDEUIComponent {
             "ProjectManager",
             "function",
             []
+            // [collabInfo.connected_users]
         );
     }
 
+    @ExportedFunction
     public getPItem(pitemId: string): ProjectItem {
         return this.shProject.projectItems.find(pi => pi.systemID === pitemId);
     }
@@ -275,13 +303,14 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
-        
+        if(type === "src" && this.getPItem(pitemId).componentsData.collaborationData.privileges.owner !== collabInfo.myInfo.name)return;
+        console.log("pitemUpdated",pitemId,type,data);
+        sendPItemUpdated(pitemId, type, data);
         return true;
     }
 
     @ExportedFunction
     public pitemRemoved(pitemId: string): boolean {
-        
         sendPItemRemoved(pitemId);
         return true;
     }
@@ -290,13 +319,12 @@ export class CollaborationManager extends IDEUIComponent {
     @ExportedFunction
     public pitemAdded(pitem: any): boolean {
         sendPItemAdded(pitem);
-        console.log(this.shProject);
         return true;
     }
 
 
     /** Blockly Studio provided functionality */
-
+    @RequiredFunction("EditorManager", "open")
     public pitemFocus(pitemId: string, location: number =2): void {
         ComponentsCommunication.functionRequest(
             this.name,
@@ -323,7 +351,7 @@ export class CollaborationManager extends IDEUIComponent {
     }
 
     @RequiredFunction("ProjectManager", "pitemUpdated")
-    public onPItemUpdate(pitemId: string, type: string, data: any) {
+    public onPItemUpdate(pitemId: string, type: string, data: any, onsuccess: Function) {
         ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
@@ -331,7 +359,8 @@ export class CollaborationManager extends IDEUIComponent {
             [
                 pitemId,
                 type,
-                data
+                data,
+                onsuccess
             ]
         );
     }

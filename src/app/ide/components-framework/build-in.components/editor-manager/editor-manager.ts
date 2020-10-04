@@ -22,7 +22,6 @@ import { PItemView } from "./project-item/pitem-view";
 import { ProjectItem } from "../project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 import { assert } from "../../../shared/ide-error/ide-error";
 import { EditorManagerToolbarView } from "./editor-manager-toolbar-view/editor-manager-toolbar-view";
-import { pItemAdd } from './../collaboration-manager/collaboration-component/collaboration-core/giannis';
 
 enum EditorsViewState {
     NO_SPLIT = "normal",
@@ -247,6 +246,30 @@ export class EditorManager extends IDEUIComponent {
 
     @ExportedFunction
     public onRenameProjectElement(pi: ProjectItem, callback: Function) {
+        let pitemData = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [pi.jstreeNode.type]
+        ).value;
+
+        for (const key in pi.editorsData.items) {
+            let item = pi.editorsData.items[key];
+
+            let confName = item.confName;
+            let econfig = pitemData.editorConfigs[confName][0];
+
+            ComponentsCommunication.functionRequest(
+                this.name,
+                econfig.name,
+                "updatePItemData",
+                [
+                    item.editorId,
+                    pi
+                ]
+            );
+        }
+
         if (this.pitemOnFocus(pi.systemID)) {
             this.open(pi, this.areaOfPItem(pi.systemID));
         }
@@ -447,13 +470,14 @@ export class EditorManager extends IDEUIComponent {
     }
 
     public isOnFocus(id: string, type: string = "pitem"): boolean {
+        console.warn("Editor Manager: isOnFocus has to be implemented!")
         if (type === "pitem") {
             // this
         }
         else {
 
         }
-        return false;
+        return true;
     }
 
     @ExportedFunction

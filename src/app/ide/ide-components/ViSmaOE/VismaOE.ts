@@ -110,6 +110,8 @@ export class ViSmaOE extends Editor {
         };
     }
 
+    public updatePItemData(id, pitem) {}
+
     // @ExportedSignal('delete-smart-object')
     // @ExportedStaticFunction
     // public static DeleteSmartObject(): void {
