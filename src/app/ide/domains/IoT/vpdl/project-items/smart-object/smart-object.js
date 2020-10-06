@@ -2,14 +2,14 @@
 import SmartObjectTaskTmpl from "./smart-object.tmpl";
 import SmartObjectTaskSYCSS from "./smart-object.sycss";
 
-export const SmartObjectTask = {
+export const SmartObject = {
     name: 'pi-smart-object',
     // refers to the editor instances will be injected on the template
     editorsConfig: [
         // refactoring may cause crashes on daomin data, TODO: check
         {
-            selector: 'ec-smart-object-task', // area editor will be hosted
-            config: 'ec-smart-object-task'    // config name
+            selector: 'ec-smart-object', // area editor will be hosted
+            config: 'ec-smart-object'    // config name
         }
                           // in case this mission exist more than once
                           // use '__' and the order number in the end

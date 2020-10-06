@@ -162,17 +162,17 @@ export const SmartObject = {
         {
             action: 'onCreate',
             name: 'create-smart-object',
-            provider: 'ViSmaOE'
+            provider: 'SmartObjectVPLEditor'
         },
         {
             action: 'onDelete',
             name: 'delete-smart-object',
-            provider: 'ViSmaOE'
+            provider: 'SmartObjectVPLEditor'
         },
         {
             action: 'onEdit',
             name: 'rename-smart-object',
-            provider: 'ViSmaOE'
+            provider: 'SmartObjectVPLEditor'
         }
     ]
 };

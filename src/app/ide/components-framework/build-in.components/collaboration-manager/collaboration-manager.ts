@@ -361,7 +361,7 @@ export class CollaborationManager extends IDEUIComponent {
     }
 
     @RequiredFunction("ProjectManager", "pitemUpdated")
-    public onPItemUpdate(pitemId: string, type: string, data: any, onsuccess: Function) {
+    public onPItemUpdate(pitemId: string, type: string, data: any) {
         ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
@@ -369,8 +369,7 @@ export class CollaborationManager extends IDEUIComponent {
             [
                 pitemId,
                 type,
-                data,
-                onsuccess
+                data
             ]
         );
     }

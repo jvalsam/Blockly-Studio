@@ -1,0 +1,155 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  min-width: min-content;
+}
+
+a {
+  color: #00B7FF;
+}
+
+:disabled{
+  cursor: default;
+}
+
+.scan-row{
+  margin-top: 4rem;
+}
+
+.cards{
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f1f1f1;
+}
+
+.card{
+  /* margin: 2rem; */
+  margin-top: 1rem!important;
+  margin-bottom: 1rem!important;
+  width: 25rem;
+  max-height: 32rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card-header{
+  display: inline-flex;
+}
+
+.resource-img{
+  margin-left: 1rem;
+}
+
+.resource-menu{
+  cursor: pointer;
+}
+
+.dropdown-item{
+  cursor: pointer;
+}
+
+.card-body{
+  padding-top:0.85rem;
+  overflow: auto;
+}
+
+.resource-property{
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.property-title{
+  font-size: medium;
+  /* min-width: auto!important;
+  max-width: 10rem!important;  */
+}
+
+.fake-link {
+  color: blue!important;
+  text-decoration: underline!important;
+  cursor: pointer!important;
+}
+
+.property-value-string,
+.property-value-number{
+  max-width: 7rem;
+  height: min-content;
+}
+
+.property-value-array{
+  min-width: max-content;
+  max-width: min-content;
+  height: min-content;
+}
+
+.property-undo,.property-update{
+  cursor: pointer;
+  display: none;
+}
+
+.toggle.ios, .toggle-on.ios, .toggle-off.ios { 
+  border-radius: 20rem; 
+}
+
+.toggle.ios .toggle-handle { 
+  border-radius: 20rem; 
+}
+
+.get-state-button{
+  float: right;
+  /* display: none; */
+}
+
+.update-all-properties-button{
+  float: right;
+  display: none;
+}
+
+
+/* Details of resource */
+.my-hr{
+  border-top: 1px solid #545b62;
+  opacity: 0.1;
+  width: 91%;
+  margin-top: .5rem!important;
+  margin-left: 1.5rem;
+  margin-bottom: .5rem!important;
+}
+
+/* Scan CSS */
+
+.scan-list{
+  margin-top: 2rem;
+  padding-bottom: 4rem;
+  max-width: 21rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.list-group-item{
+  margin-top: 1.5rem;
+}
+
+
+/* Loader */
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 30px;
+  height: 30px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
