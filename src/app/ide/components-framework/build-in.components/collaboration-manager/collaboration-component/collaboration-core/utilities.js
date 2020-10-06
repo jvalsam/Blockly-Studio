@@ -17,6 +17,25 @@ export function generateRandom(length) {
   return text;
 }
 
+export function filterPItem(pitem,itsMine){
+    pitem.componentsData = pitem.componentsData ? pitem.componentsData : {};
+    if(itsMine){
+        pitem.componentsData.collaborationData = {};
+        pitem.componentsData.collaborationData.privileges = {};
+        pitem.componentsData.collaborationData.privileges.author = collabInfo.myInfo.name;
+        pitem.componentsData.collaborationData.privileges.owner = collabInfo.myInfo.name;
+        pitem.componentsData.collaborationData.privileges.shared = {};
+        pitem.privileges = "EDITING";
+    }else{
+        pitem.privileges = "READ_ONLY";
+    }
+    // TODO: add info for settings hidden field
+    // pitem.componentsData.collaborationData.privileges.shared.type = settings.sharedPItems.indexOf(pitem.systemID) > -1
+    //     ? "SHARED_PROJECT"
+    //     : "NOT_SHARED";
+    // pitem.componentsData.collaborationData.privileges.shared.readOnly = false;
+    // pitem.privileges = "READ_ONLY";
+}
 
 export function collaborationFilter(projectObj, myInfo, settings){
     if (!settings.sharedPItems) {
@@ -37,12 +56,12 @@ export function collaborationFilter(projectObj, myInfo, settings){
         //
     }
 
-    projectObj.componentsData = projectObj.coponentsData ? projectObj.coponentsData : {};
+    projectObj.componentsData = projectObj.componentsData ? projectObj.componentsData : {};
     projectObj.componentsData.collaborationData = tempCollabData;
     
     // pin privileges per pitem
     projectObj.projectItems.forEach(pitem => {
-        pitem.componentsData = pitem.coponentsData ? pitem.coponentsData : {};
+        pitem.componentsData = pitem.componentsData ? pitem.componentsData : {};
         pitem.componentsData.collaborationData = {};
         pitem.componentsData.collaborationData.privileges = {};
         pitem.componentsData.collaborationData.privileges.author = collabInfo.myInfo.name;
@@ -53,6 +72,7 @@ export function collaborationFilter(projectObj, myInfo, settings){
             ? "SHARED_PROJECT"
             : "NOT_SHARED";
         pitem.componentsData.collaborationData.privileges.shared.readOnly = false;
+        pitem.privileges = "EDITING";
     });
 
     collabInfo.plugin.setProject (projectObj);

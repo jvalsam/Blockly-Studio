@@ -12,7 +12,7 @@ var ApplicationModel = require('../../shared/models/ApplicationModel');
 
 // CREATES A NEW APPLICATION
 router.post('/new', function (req, res) {
-    let schema = Object.assign({}, req.body.data);
+    let schema = Object.assign({}, JSON.parse(req.body.data));
 
     Application.fixFilesData(schema, req.files);
     

@@ -149,6 +149,16 @@ export class ProjectInstanceView extends View {
         return this["projectID"];
     }
 
+    public getProjectDB () {
+        return this.parent["getProject"](this.dbID);
+    }
+
+    public getProjectItemDB (pitemId) {
+        let projectDB = this.getProjectDB();
+        let index = projectDB.projectItems.map(x=>x.systemID).indexOf(pitemId);
+        return projectDB.projectItems[index];
+    }
+
     public get firstPItemID (): string {
         return this._firstPItemId;
     }

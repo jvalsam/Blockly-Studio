@@ -2,7 +2,8 @@ import Peer from "peerjs"
 
 import {
   collabInfo,
-  generateRandom
+  generateRandom,
+  filterPItem
 }
 from './utilities.js';
 
@@ -28,14 +29,18 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   collabInfo.plugin = CollabManager;
   collabInfo.myInfo = myInfo;
   // console.log(collabInfo.plugin.shProject);
-  let randomId = generateRandom(20);//"akatsarakis1234";//generateRandom(20);
-  let peer = new Peer(randomId);
+  let randomId = generateRandom(20);
+  // let peer = new Peer(randomId, {
+  //   host: '147.52.17.129',
+  //   port: 9000,
+  //   path: '/myapp'
+  // });
+  var peer = new Peer(randomId);
   peer.on('open', (id) => {
     console.log('My peer ID is: ' + id);
+
   });
-
-  peer.on('error', function(err) { console.log(err); });
-
+  
   peer.on('connection', (conn) => {
     console.log('connected ' + conn);
 
@@ -50,12 +55,17 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
         //receiveRemoveUser(conn,DB);
     });
   });
+
+  peer.on('error', function(err) { console.log(err); });
+
 }
 
 
 export function startCommunicationUser(myInfo, externalLink, CollabManager, callback) {
   function acceptedUser(DB){
     collabInfo.connected_users.push(conn);
+    console.log(DB.info);
+    DB.info.projectItems.forEach(item => filterPItem(item,false));
     console.log(DB.info);
     collabInfo.plugin.setProject(DB.info);
     callback(DB.info);
@@ -69,11 +79,17 @@ export function startCommunicationUser(myInfo, externalLink, CollabManager, call
     "acceptedUser": acceptedUser
   };
   collabInfo.plugin = CollabManager;
-  myInfo.name = generateRandom(5);
-  myInfo.icon = generateRandom(5);
+  // myInfo.name = generateRandom(5);
+  // myInfo.icon = generateRandom(5);
   collabInfo.myInfo = myInfo;
-  externalLink = "akatsarakis1234";
+  // externalLink = "akatsarakis1234a";
+  // var peer = new Peer({
+  //   host: '147.52.17.129',
+  //   port: 9000,
+  //   path: '/myapp'
+  // });
   var peer = new Peer();
+  peer.on('error', function(err) { console.log(err); });
   console.log(myInfo,"trying to connect to "+externalLink);
   var conn = peer.connect(externalLink);
   conn.on('open', function () {

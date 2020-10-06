@@ -77,7 +77,7 @@ export class SmartObjectVPLEditor extends Editor {
                 },
                 pitem,
                 selector,
-                pitem.pi.getPrivilleges(),
+                pitem.pi.getPrivileges(),
                 this.config
             );
         }

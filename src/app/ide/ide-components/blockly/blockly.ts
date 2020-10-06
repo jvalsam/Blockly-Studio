@@ -110,7 +110,6 @@ export class BlocklyVPL extends Editor {
         editorData.editorId,
         id,
         config,
-        pitem.pi.getPrivilleges(),
         this.configsMap[config],
         (config) => this.getToolbox(config),
         (jsonEvent) => this.save(

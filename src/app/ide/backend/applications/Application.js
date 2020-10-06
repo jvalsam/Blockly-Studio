@@ -27,14 +27,7 @@ ElementSchema.add({
             value: {}
         }
     ],
-    privileges: {
-        author: { type: String, required: [true, 'author name is missing in project item'] },
-        owner: { type: String, required: [true, 'owner name is missing in project item'] },
-        shared: {
-            type: { type: String, required: [true, 'privileges shared type is missing.'] },
-            members: [String]
-        }
-    }
+    componentsData: { type: mongoose.Schema.Types.Mixed, required: [true, 'pin data do not exist']}
 });
 
 var ApplicationSchema = new mongoose.Schema({
@@ -50,7 +43,8 @@ var ApplicationSchema = new mongoose.Schema({
     created: { type: Date, required: [true, 'created not exist'] },
     lastModified: { type: Date, required: [true, 'lastModified not exist'] },
     projectItems: [ ElementSchema ],
-    domainElements: []
+    domainElements: [],
+    componentsData: { type: mongoose.Schema.Types.Mixed, required: [true, 'pin data of components in project do not exist'] }
 });
 
 function checkImgContent (img) {

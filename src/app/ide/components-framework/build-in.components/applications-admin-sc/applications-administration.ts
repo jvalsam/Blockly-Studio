@@ -77,7 +77,7 @@ export class ApplicationsAdministration {
             url: RunPlatformData.URL + "applications/new",
             type: "POST",
             data: {
-                data: application
+                data: JSON.stringify(application)
             },
             success: function (data) {
                 callback(data);

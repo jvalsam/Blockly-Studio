@@ -32,7 +32,6 @@ export class BlocklyInstance {
         id,
         selector,
         type,
-        privillege,
         config,
         _toolbox,
         _syncWSP,
@@ -42,13 +41,16 @@ export class BlocklyInstance {
         this.selector = selector;
         this.id = id;
         this.type = type;
-        this.privillege = privillege;
         this.config = config;
         this.text = text;
         this.wsp = null;
         this.state = InstStateEnum.INIT;
         this.toolbox = () => _toolbox(type);
         this._syncWSP = (event) => _syncWSP(event);
+    }
+
+    get privilleges() {
+        return this.pitem.getPrivileges();
     }
 
     static update_src(data, pitem) {
@@ -94,7 +96,7 @@ export class BlocklyInstance {
             this.calcPItemBlocklyArea();
             this._blocklyDiv = document.getElementById(blocklySel);
             
-            this["initWSP_" + this.privillege]();
+            this["initWSP_" + this.privilleges]();
             
             // load text
             if (this.text) {
@@ -154,7 +156,7 @@ export class BlocklyInstance {
         this.wsp = Blockly.inject(
             this._blocklyDiv, {
                 // "media": "../../../../.././media/",
-                toolbox: toolboxXml,
+                // toolbox: toolboxXml,
                 readOnly: true
             });
     }
@@ -175,23 +177,23 @@ export class BlocklyInstance {
     }
 
     onChangeWSP(event) {
-        if (event instanceof Blockly.Events.Ui) {
+        let priv = this.privilleges;
+        let resp = (event instanceof Blockly.Events.Ui);
+        if (resp || priv === Privillege.READ_ONLY) {
             return; // Don't mirror UI events.
         }
-
+        
         this._syncWSP(event.toJson());
     }
 
     editPrivilege() {
-        if (this.privillege === Privillege.READ_ONLY) {
+        if (this.privilleges === Privillege.READ_ONLY) {
             this.wsp.dispose();
-            this.privillege = Privillege.EDITING;
         }
         else {
             this.wsp.removeChangeListener(this.changeWSPCB);
-            this.privillege = Privillege.READ_ONLY;
         }
-        this["initWSP_"+this.privillege]();
+        this["initWSP_"+this.privilleges]();
     }
 
     getText() {

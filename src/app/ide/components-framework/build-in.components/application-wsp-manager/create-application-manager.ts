@@ -77,6 +77,7 @@ export function NewApplication(
         "domainElements": [],
         "title": name,
         "description": description,
-        "domainType": domainType
+        "domainType": domainType,
+        "componentsData": {}
     };
 }

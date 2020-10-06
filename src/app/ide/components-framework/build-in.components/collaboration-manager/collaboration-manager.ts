@@ -23,7 +23,8 @@ import {
 
 import {
     collaborationFilter,
-    collabInfo
+    collabInfo,
+    filterPItem
 } from "./collaboration-component/collaboration-core/utilities";
 
 import {
@@ -126,12 +127,13 @@ export class CollaborationManager extends IDEUIComponent {
             (memberInfo, settings) => {
                 communicationInitialize(memberInfo, settings, this);
                 
-                let sharedProject = collaborationFilter(
-                    projectObj,
-                    memberInfo,
-                    settings
+                success(
+                    collaborationFilter(
+                        projectObj,
+                        memberInfo,
+                        settings
+                    )
                 );
-                success(sharedProject);
             },
             () => { failure(); }
         );
@@ -310,7 +312,6 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
-        if(type === "src" && this.getPItem(pitemId).componentsData.collaborationData.privileges.owner !== collabInfo.myInfo.name)return;
         console.log("pitemUpdated",pitemId,type,data);
         sendPItemUpdated(pitemId, type, data);
         return true;
@@ -325,6 +326,8 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemAdded(pitem: any): boolean {
+        filterPItem(this.getPItem(pitem.itemData.systemID),true);
+        // if(this.shProject.componentsData.collaborationData) TODO: ADD ON DB
         sendPItemAdded(pitem);
         return true;
     }
@@ -394,8 +397,9 @@ export class CollaborationManager extends IDEUIComponent {
             [
                 pitem,
                 // callback to notify the member for action
-                (msg) => {
-                   console.log("PITEMADDED"); 
+                (pitem2) => {
+                    filterPItem(pitem2,false);
+                    console.log("PITEMADDED"); 
                 }
             ]
         );
