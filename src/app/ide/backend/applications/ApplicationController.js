@@ -9,6 +9,13 @@ var multipartMiddleware = multipart();
 var fs = require('fs');
 var ApplicationModel = require('../../shared/models/ApplicationModel');
 
+function flatten(obj) {
+    var result = Object.create({});
+    for(var key in obj) {
+        result[key] = obj[key];
+    }
+    return result;
+}
 
 // CREATES A NEW APPLICATION
 router.post('/new', function (req, res) {
@@ -22,7 +29,8 @@ router.post('/new', function (req, res) {
             res.status(500).send(err);
         }
         else {
-            res.status(200).send(app);
+            let data = JSON.stringify(flatten(app));
+            res.status(200).send(data);
         }
     });
 });

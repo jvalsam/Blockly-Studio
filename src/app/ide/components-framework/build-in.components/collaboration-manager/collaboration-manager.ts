@@ -112,6 +112,9 @@ export class CollaborationManager extends IDEUIComponent {
      * @param dialogSel JQUERY div
      * 
      */
+
+
+
     @ExportedFunction
     public startSession(
         $popupContainer: any,
@@ -120,6 +123,9 @@ export class CollaborationManager extends IDEUIComponent {
         success: (sharedProjectObj:any) => void,
         failure: () => void
     ) {
+        // if(projectObj.componentsData.collaborationData){
+        //     return; // Reopen already shared project
+        // }
         openStartSessionDialogue(
             this,
             $popupContainer,
@@ -140,7 +146,12 @@ export class CollaborationManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public joinSession(selDialog: any, success: Function) {
+    public joinSession(
+        selDialog: any,
+        $toolbarContainer: any,
+        success: Function
+    ) {
+        console.log($toolbarContainer);
         openJoinSessionDialogue(
             selDialog,
             (memberInfo, externalLink) => {
@@ -309,9 +320,15 @@ export class CollaborationManager extends IDEUIComponent {
     public getProject(): any {
         return this.shProject;
     }
+    
+    private iAmMaster(myName): Boolean {
+        console.log(myName, this.shProject.author.username);
+        return this.shProject.author.username === myName;
+    }
 
     @ExportedFunction
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
+        // if(this.iAmMaster(collabInfo.myInfo.name))this.saveProject(this.shProject,()=>{});
         console.log("pitemUpdated",pitemId,type,data);
         sendPItemUpdated(pitemId, type, data);
         return true;
@@ -369,7 +386,10 @@ export class CollaborationManager extends IDEUIComponent {
             [
                 pitemId,
                 type,
-                data
+                data,
+                ()=>{
+                    // if(this.iAmMaster(collabInfo.myInfo.name))this.saveProject(this.shProject,()=>{});
+                }
             ]
         );
     }
