@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>JStree - Example</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+        <link rel="stylesheet" href="./../../../../../../../../libs/treeviews-ui/jstree/dist/themes/default/style.css" />
+        <link rel="stylesheet" type="text/css" href="../../collaboration-manager-view.css">
+        <script type="text/javascript" src="./CollaborationToolbar.js"></script>
+        <script type="text/javascript" src="../../../../../../../../libs/treeviews-ui/jstree/dist/jstree.js"> </script>
+    </head>
+
+    <body>
+        
+       <div id = "testDiv"> 
+
+       </div>
+
+    </body>
+
+    <script>
+        $( document ).ready(function() {
+            ui = new CollaborationUI("testDiv");
+            examples = new CollaborationUI_API_Examples(ui)
+        });
+    </script>
+</html>
