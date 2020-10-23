@@ -372,18 +372,30 @@ export class ProjectManager extends IDEUIComponent {
         return true;
     }
 
+    private pitemviewtoData(piView) {
+        let pitem = piView.itemData();
+        pitem.editorsData = piView.editorsData;
+        return pitem;
+    }
+
     @ExportedFunction
     public pitemAdded(pitem: any, callback): void {
+        let projectId = pitem.itemData.editorsData.projectID;
         let concerned = (<ProjectManagerJSTreeView>this._view)
             .getProjectCategory(
-                pitem.itemData.editorsData.projectID,
+                projectId,
                 pitem.projCateg
             ); // retrieve concerned obj
 
         concerned.project.addNewElement(
             pitem.itemData,
             concerned, // parent - category of project item
-            (elem) => callback(elem)
+            (elem) => {
+                let project = this.loadedProjects[projectId];
+                let pitem = this.pitemviewtoData(elem);
+                project.projectItems.push(pitem);
+                callback(pitem);
+            }
         );
     }
 
@@ -614,10 +626,7 @@ export class ProjectManager extends IDEUIComponent {
             concerned, // parent - category of project item
             (elem) => {
                 this.onClickProjectElement(elem);
-                let pitem = elem.itemData();
-                pitem.editorsData = elem.editorsData;
-                project.projectItems.push(pitem);
-                this.saveProject(concerned.project.dbID);
+                project.projectItems.push(this.pitemviewtoData(elem));
                 elem.trigger("click");
 
                 if (project.saveMode === "SHARED") {
@@ -630,6 +639,9 @@ export class ProjectManager extends IDEUIComponent {
                             projCateg: concerned["_jstreeNode"].id
                         }]
                     );
+                }
+                else {
+                    this.saveProject(concerned.project.dbID);
                 }
             }
         );

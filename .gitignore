@@ -9,6 +9,7 @@ package.json
 /templates
 /src/app/ide/components-framework/component/components-bridge.ts
 /libs/SUIM
+/libs/Automatic-SO-UI-Generator
 
 # git repos
 /src/app/ide/ide-components/blockly/google_blockly

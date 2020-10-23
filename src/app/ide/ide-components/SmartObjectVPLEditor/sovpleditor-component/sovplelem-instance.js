@@ -5,14 +5,14 @@ import {
 
 
 export const VPLElemNames = Object.freeze({
-    SMART_OBJECT: 'SmartObject',
-    SMART_GROUP: 'SmartGroup'
+    SMART_OBJECT: 'smart-object',
+    SMART_GROUP: 'smart-group'
 });
 
 export const SignalsPrefix = Object.freeze({
-    CREATE: 'Create-',
-    DELETE: 'Delete-',
-    RENAME: 'Rename-'
+    CREATE: 'create-',
+    DELETE: 'delete-',
+    RENAME: 'rename-'
 });
 
 export const SmartObjectState = Object.freeze({
@@ -36,7 +36,7 @@ const Privillege = Object.freeze({
 export class SOVPLElemInstance {
     constructor(
         parent,
-        elemData, // { name, color, img, editorData: { id, type, details } }
+        elemData, // { name, color, img, editorData: { editorId, type, details } }
         pitem,
         selector,
         privillege,
@@ -45,7 +45,7 @@ export class SOVPLElemInstance {
         this.parent = parent;
         this.pitem = pitem;
         this.selector = selector;
-        this.id = elemData.id;
+        this.id = elemData.editorData.editorId;
         this.elemData = elemData;
         this.privillege = privillege;
         this.config = config;
@@ -59,20 +59,12 @@ export class SOVPLElemInstance {
     
     // open instance view of the element
 
-    openSmartObject() {
-        this.render(selector, this.elemData);
-    }
-
-    openSmartGroup() {
-        this.render(selector, this.elemData);
-    }
-
     open() {
         if (this.state === InstStateEnum.OPEN) {
             return;
         }
 
-        this["open"+this.elemData.editorData.type] ();
+        this.render();
         this.state = InstStateEnum.OPEN;
     }
 
@@ -81,7 +73,7 @@ export class SOVPLElemInstance {
     // --- Start SmartObject Actions ---
     onSORegister(props) {
         this.elemData.editorData.details.state = SmartObjectState.REGISTERED;
-        this.elemData.editorData.details.props = props;
+        this.elemData.editorData.details.properties = props;
         
         this.elemData.editorData.details.mapPropsAlias = {};
         this.elemData.editorData.details.mapPropsProgrammingActive = {};
@@ -113,11 +105,11 @@ export class SOVPLElemInstance {
         this.parent.updateSmartObjectPropProgrammingActive(this);
     }
 
-    // group: { name, img, color, props, mapPropsInfo, smartObject }
+    // group: { name, img, color, properties, mapPropsInfo, smartObject }
     onSOCreateSmartGroup(group) {
         // init map data of group props
         group.details = {};
-        group.details.props = props;
+        group.details.properties = properties;
         group.details.mapPropsAlias = {};
         group.details.mapPropsActive = {};
         for (let propName of Object.keys(group.mapPropsInfo)) {
@@ -131,7 +123,7 @@ export class SOVPLElemInstance {
     }
 
     onSODeleteGroup(groupName) {
-        let index = this.elemData.groups.indexOf(groupName);
+        let index = this.elemData.details.groups.indexOf(groupName);
         if (index<0) {
             throw new Error("Not found group name")
         }
@@ -172,37 +164,38 @@ export class SOVPLElemInstance {
     }
     // --- End SmartGroup Actions ---
 
-    render(selector, data) {
-        switch(data.editorData.type) {
+    render() {
+        let domSel = document.getElementById(this.selector);
+        switch(this.elemData.editorData.type) {
             case VPLElemNames.SMART_OBJECT:
                 RenderSmartObject(
-                    selector,
-                    data,
+                    domSel,
+                    this.elemData,
                     {
                         onRegister: (props) => this.onSORegister(props),
                         onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
                         onEditPropertyProgrammingActive: (prop) => this.onSOEditPropProgrammingActive(prop),
                         onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
                         onDeleteGroup: (groupName) => this.onSODeleteGroup(groupName),
-                        options: [
-                            { "Edit": () => { alert("not connected yet."); }   },
-                            { "Delete": () => { alert("not connected yet."); } }
-                        ]
+                        options: {
+                            "Edit": () => { alert("not connected yet."); },
+                            "Delete": () => { alert("not connected yet."); }
+                        }
                     });
                 break;
             case VPLElemNames.SMART_GROUP:
                 RenderSmartGroup(
-                    selector,
-                    data,
+                    domSel,
+                    this.elemData,
                     {
                         onEditPropertyAlias: (prop) => this.onSGEditPropAlias(prop),
                         onEditPropertyActive: (prop) => this.onSGEditPropActive(prop),
                         onReset: (props) => this.onSGReset(props),
                         onDeleteSmartObject: (smartObject) => this.onSGDeleteSmartObject(smartObject),
-                        options: [
-                            { "Edit": () => { alert("not connected yet."); }   },
-                            { "Delete": () => { alert("not connected yet."); } }
-                        ]
+                        options: {
+                            "Edit": () => { alert("not connected yet."); },
+                            "Delete": () => { alert("not connected yet."); }
+                        }
                     });
                 break;
             default:

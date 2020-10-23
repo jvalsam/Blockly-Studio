@@ -55,6 +55,7 @@ export class SmartObjectVPLEditor extends Editor {
             compViewName,
             hookSelector
           );
+          this.instancesMap = {};
     }
 
     @ExportedFunction
@@ -77,10 +78,11 @@ export class SmartObjectVPLEditor extends Editor {
                 },
                 pitem,
                 selector,
-                pitem.pi.getPrivilleges(),
+                pitem.pi.getPrivileges(),
                 this.config
             );
         }
+        this.instancesMap[editorData.editorId].open();
     }
 
     @ExportedFunction
@@ -108,7 +110,7 @@ export class SmartObjectVPLEditor extends Editor {
         eConfName: string,
         pitemInfo: any,
         editorConfig: any): any {
-            let type = eConfName.split(SignalsPrefix.CREATE)[1];
+            let type = eConfName.split("ec-")[1];
             switch (type) {
                 case VPLElemNames.SMART_OBJECT:
                     return {
@@ -172,39 +174,39 @@ export class SmartObjectVPLEditor extends Editor {
 
     }
 
-    private registerSmartObject (data) {
+    private registerSmartObject (data, groupSelection, type) {
         this.saveElement(data);
         // responsible to save SO and look up for the groups that match with
         // API of this smart object
     }
 
-    private createSmartGroup(group) {
+    private createSmartGroup(group, type) {
         // call project manager -> request new project item with data
         alert("not implemented yet createSmartGRoup");
     }
 
-    private deleteSmartGroupFromObject(smartObject, smartGroup) {
+    private deleteSmartGroupFromObject(smartObject, smartGroup, type) {
         // retrieve smart group to edit innner data of the list with the smart objects
         alert("not implemented yet deleteSmartGroupFromObject");
     }
 
-    private updateSmartObjectPropAlias(smartObject) {
+    private updateSmartObjectPropAlias(smartObject, type) {
         alert("not implemented yet updateSmartObjectPropAlias");
     }
 
-    private updateSmartObjectPropProgrammingActive(smartObject) {
+    private updateSmartObjectPropProgrammingActive(smartObject, type) {
         alert("not implemented yet updateSmartObjectPropProgrammingActive");
     }
 
-    private updateSmartGroupPropAlias(smartGroup) {
+    private updateSmartGroupPropAlias(smartGroup, type) {
         alert("not implemented yet updateSmartGroupPropAlias");
     }
 
-    private updateSmartGroupPropActive(smartGroup) {
+    private updateSmartGroupPropActive(smartGroup, type) {
         alert("not implemented yet updateSmartGroupPropActive");
     }
 
-    private deleteSmartObjectFromGroup(smartGroup, smartObject) {
+    private deleteSmartObjectFromGroup(smartGroup, smartObject, type) {
         // retrieve smart group to edit innner data of the list with the smart objects
         alert("not implemented yet deleteSmartObjectFromGroup");
     }
