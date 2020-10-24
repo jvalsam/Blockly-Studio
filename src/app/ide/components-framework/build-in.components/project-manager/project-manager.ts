@@ -262,6 +262,12 @@ export class ProjectManager extends IDEUIComponent {
             project.editorsState.onFocusPItems
         ]);
         editorManager.initializeEditorsView();
+
+
+        // ComponentsData doesn't exist!!!
+        if (project.componentsData.collaborationData) {
+            this.shareProject(project);
+        }
     }
 
     @ExportedFunction
@@ -506,15 +512,14 @@ export class ProjectManager extends IDEUIComponent {
         alert("onRenameProject not developed yet!");
     }
 
-    @ExportedFunction
-    public onShareProject(event: IEventData, concerned: any): void {
+    private shareProject(project) {
         ComponentsCommunication.functionRequest(
             this.name,
             "CollaborationManager",
             "startSession",
             [
                 $(".modal-platform-container"),
-                concerned.data.project,
+                project,
                 $(".collaboration-manager-container"),
                 (collabProject) => {
                     collabProject.saveMode = "SHARED";
@@ -535,6 +540,11 @@ export class ProjectManager extends IDEUIComponent {
                 }
             ]
         );
+    }
+
+    @ExportedFunction
+    public onShareProject(event: IEventData, concerned: any): void {
+        this.shareProject(concerned.data.project);
     }
 
     // dispatch functions for resize container area

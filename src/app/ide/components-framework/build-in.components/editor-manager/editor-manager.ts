@@ -396,6 +396,9 @@ export class EditorManager extends IDEUIComponent {
         pitemView.render();
 
         let tools = [];
+
+        // GIANNI: pos apo pi pairno oti einai collab kai oxi apo to item to idio giati
+        // exo idi apothikevmena pragmata sto componentsData.collaborationData
         if (pi.componentsData.collaborationData) {
             tools = ComponentsCommunication.functionRequest(
                 this.name,

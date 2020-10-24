@@ -25,16 +25,12 @@ export function filterPItem(pitem,itsMine){
         pitem.componentsData.collaborationData.privileges.author = collabInfo.myInfo.name;
         pitem.componentsData.collaborationData.privileges.owner = collabInfo.myInfo.name;
         pitem.componentsData.collaborationData.privileges.shared = {};
+        pitem.componentsData.collaborationData.privileges.shared.type = "SHARED_PROJECT";
+        pitem.componentsData.collaborationData.privileges.shared.readOnly = false;
         pitem.privileges = "EDITING";
     }else{
         pitem.privileges = "READ_ONLY";
     }
-    // TODO: add info for settings hidden field
-    // pitem.componentsData.collaborationData.privileges.shared.type = settings.sharedPItems.indexOf(pitem.systemID) > -1
-    //     ? "SHARED_PROJECT"
-    //     : "NOT_SHARED";
-    // pitem.componentsData.collaborationData.privileges.shared.readOnly = false;
-    // pitem.privileges = "READ_ONLY";
 }
 
 export function collaborationFilter(projectObj, myInfo, settings){
