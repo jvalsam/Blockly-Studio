@@ -1,9 +1,5 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# packages
-package-lock.json
-package.json
-
 # compiled output
 /dist
 /templates
@@ -13,7 +9,6 @@ package.json
 
 # git repos
 /src/app/ide/ide-components/blockly/google_blockly
-app.ts
 
 # dependencies
 /node_modules
@@ -45,4 +40,3 @@ Thumbs.db
 /src/app/ide/backend/uploaded_files
 
 /src/app/ide/domains/node_modules
-index_ns.html
