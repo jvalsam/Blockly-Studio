@@ -1,4 +1,4 @@
-class CollaborationUI{
+export class CollaborationUI{
     
     constructor(container){
         this._membersA = {

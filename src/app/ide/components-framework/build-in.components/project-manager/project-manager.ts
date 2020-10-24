@@ -263,9 +263,7 @@ export class ProjectManager extends IDEUIComponent {
         ]);
         editorManager.initializeEditorsView();
 
-
-        // ComponentsData doesn't exist!!!
-        if (project.componentsData.collaborationData) {
+        if (project.componentsData && project.componentsData.collaborationData) {
             this.shareProject(project);
         }
     }

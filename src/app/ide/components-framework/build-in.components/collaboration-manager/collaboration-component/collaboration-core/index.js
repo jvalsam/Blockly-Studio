@@ -29,6 +29,7 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   collabInfo.plugin = CollabManager;
   collabInfo.myInfo = myInfo;
   // console.log(collabInfo.plugin.shProject);
+  console.log(collabInfo.plugin.getCollabUI());
   let randomId = generateRandom(20);
   // let peer = new Peer(randomId, {
   //   host: '147.52.17.129',
@@ -79,8 +80,6 @@ export function startCommunicationUser(myInfo, externalLink, CollabManager, call
     "acceptedUser": acceptedUser
   };
   collabInfo.plugin = CollabManager;
-  // myInfo.name = generateRandom(5);
-  // myInfo.icon = generateRandom(5);
   collabInfo.myInfo = myInfo;
   // externalLink = "akatsarakis1234a";
   // var peer = new Peer({

@@ -17,12 +17,13 @@ export function openStartSessionDialogue(
     onSuccess, // cb
     onFailure   // cb
     ) {
+        let collaborationUI = {};
         let boundOnSuccess = function(name){
-            onSuccess(name, {});
             collabPlugin.resizeToolbar($toolbarContainer, 350, function (){
                 $(".project-manager-runtime-console-area").hide(); //fixme
-                let collaborationUI = new CollaborationUI($toolbarContainer);
+                collaborationUI["ui"] = (new CollaborationUI($toolbarContainer));
             });
+            onSuccess(name, {});
         }
 
         let sharePopup = new SharePopup($popupContainer);
@@ -36,6 +37,7 @@ export function openStartSessionDialogue(
         // {
         //     //TODO: return array of shared pitem ids
         // });
+        return collaborationUI;
 }
 
 export function openJoinSessionDialogue(

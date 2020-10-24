@@ -86,6 +86,7 @@ enum PItemEditType {
 })
 export class CollaborationManager extends IDEUIComponent {
     private shProject: any;
+    private collabUI: any;
 
     public registerEvents(): void {
         throw new Error("Method not implemented.");
@@ -126,7 +127,7 @@ export class CollaborationManager extends IDEUIComponent {
         // if(projectObj.componentsData.collaborationData){
         //     return; // Reopen already shared project
         // }
-        openStartSessionDialogue(
+        this.collabUI = openStartSessionDialogue(
             this,
             $popupContainer,
             $toolbarContainer,
@@ -158,6 +159,10 @@ export class CollaborationManager extends IDEUIComponent {
                 startCommunicationUser(memberInfo, externalLink, this, success);
             }
         );
+    }
+
+    public getCollabUI(){
+        return this.collabUI["ui"];
     }
 
     @RequiredFunction("ProjectManager", "resizeContainerArea")
