@@ -41,9 +41,11 @@ export class CollaborationUI{
         //tree root ids
         this._COLLABORATORS = 'members-collaborators';
         this._PERSONAL_FILES = 'personal-files';
+        this._COLLABORATOR_ME = 'members-me'
 
         //prefixes for adding new nodes
         this._MEMBER_PREFIX = 'collaborators-';
+        this._MEMBER_ME_PREFIX = 'collaborators-me-';
         this._ANNOTATION_FILE_PREFIX = '-file-';
         this._PERSONAL_FILE_PREFIX = 'personal-file-';
         this._SHARED_FROM_ME_FILE_PREFIX = 'shared-from-me-';
@@ -443,6 +445,17 @@ export class CollaborationUI{
         });
     }
 
+    _addMember(member, me, cb = undefined){
+        var node = {
+            'id': (me ? this._MEMBER_ME_PREFIX : this._MEMBER_PREFIX) + member.name,
+            'text': member.name,
+            'icon': member.icon,
+            'a_attr': this._membersA
+        };
+
+        this._members.create_node(me ? this._COLLABORATOR_ME : this._COLLABORATORS, node, "last", cb);
+    }
+
     /* API */
 
     /**
@@ -450,15 +463,17 @@ export class CollaborationUI{
      * @param {Object} member Should contain name and icon
      * @param {Function} cb 
      */
-    addMember(member, cb = undefined ){
-        var node = {
-            'id': this._MEMBER_PREFIX + member.name,
-            'text': member.name,
-            'icon': member.icon,
-            'a_attr': this._membersA
-        };
+    addMemberMe(member, cb = undefined ){
+        this._addMember(member, true, cb);
+    }
 
-        this._members.create_node(this._COLLABORATORS, node, "last", cb);
+    /**
+     * 
+     * @param {Object} member Should contain name and icon
+     * @param {Function} cb 
+     */
+    addMember(member, cb = undefined ){
+        this._addMember(member, false, cb);
     }
 
     removeMember(memberName){
@@ -606,6 +621,14 @@ export class CollaborationUI{
 
 function CollaborationUI_API_Examples(ui){
 
+    function addMemberMe(){
+        let member = {
+            'name': 'Some Guy',
+            'icon': './Icons/man0.png'
+        }
+        ui.addMemberMe(member);
+    }
+
     function addMember(){
         let member = {
             'name': 'Some Guy',
@@ -745,6 +768,7 @@ function CollaborationUI_API_Examples(ui){
         ui.addSharedPersonalFileFromMe(file, members);
     }
 
+    this.addMemberMe = addMemberMe;
     this.addMember = addMember;
     this.removeMember = removeMember;
     this.addSuggestionAnnotation = addSuggestionAnnotation;
