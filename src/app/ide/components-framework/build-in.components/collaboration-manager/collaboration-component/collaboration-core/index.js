@@ -28,8 +28,9 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   console.log("myInfo:",myInfo);
   collabInfo.plugin = CollabManager;
   collabInfo.myInfo = myInfo;
+  collabInfo.UI = CollabManager.getCollabUI();
   // console.log(collabInfo.plugin.shProject);
-  console.log(collabInfo.plugin.getCollabUI());
+  console.log(collabInfo.UI);
   let randomId = generateRandom(20);
   // let peer = new Peer(randomId, {
   //   host: '147.52.17.129',
@@ -39,7 +40,7 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   var peer = new Peer(randomId);
   peer.on('open', (id) => {
     console.log('My peer ID is: ' + id);
-
+    collabInfo.UI.addMemberMe(myInfo);
   });
   
   peer.on('connection', (conn) => {
@@ -62,14 +63,22 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
 }
 
 
-export function startCommunicationUser(myInfo, externalLink, CollabManager, callback) {
+export function startCommunicationUser(myInfo, externalLink, CollabManager, loadProject, cbUI) {
   function acceptedUser(DB){
     collabInfo.connected_users.push(conn);
     console.log(DB.info);
     DB.info.projectItems.forEach(item => filterPItem(item,false));
     console.log(DB.info);
     collabInfo.plugin.setProject(DB.info);
-    callback(DB.info);
+    loadProject(DB.info);
+    collabInfo.UI = cbUI();
+    // collabInfo.UI = CollabManager.getCollabUI();
+    // collabInfo.UI.addMemberMe({
+    //   name:myInfo.name,
+    //   icon:myInfo.icon
+    // });
+    // console.log(collabInfo.plugin.shProject);
+    console.log(collabInfo.UI);
   }
   
   let receivedHandler = {

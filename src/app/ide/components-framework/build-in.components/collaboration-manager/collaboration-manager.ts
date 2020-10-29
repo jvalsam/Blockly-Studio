@@ -149,15 +149,17 @@ export class CollaborationManager extends IDEUIComponent {
     @ExportedFunction
     public joinSession(
         selDialog: any,
-        $toolbarContainer: any,
+        $toolbarSel: any,
         success: Function
     ) {
-        console.log($toolbarContainer);
-        openJoinSessionDialogue(
+        this.collabUI = openJoinSessionDialogue(
+            this,
             selDialog,
-            (memberInfo, externalLink) => {
-                startCommunicationUser(memberInfo, externalLink, this, success);
-            }
+            $toolbarSel,
+            (memberInfo, externalLink, cbUI) => {
+                startCommunicationUser(memberInfo, externalLink, this, success, cbUI);
+            },
+            ()=>{console.log('closed join session');}
         );
     }
 

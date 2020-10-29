@@ -34,6 +34,8 @@ export function receiveRegisterUser(data,conn){
 export function receiveAddUser(data,conn){
     let DB = collabInfo.plugin.getProject();
     DB.componentsData.collaborationData.members.push(data.info);
+    debugger;
+    collabInfo.UI.addMember(data.info);
     printDB();
 }
 
@@ -130,6 +132,10 @@ function acceptUser(conn,infom){
         type: "acceptedUser",
         info: DB
     };
+    collabInfo.UI.addMember({
+        name: infom.name,
+        icon: infom.icon
+    });
     conn.send(arg);
     
 }

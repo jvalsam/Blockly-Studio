@@ -41,10 +41,27 @@ export function openStartSessionDialogue(
 }
 
 export function openJoinSessionDialogue(
+    collabPlugin,
     $dialog,   // jquery selector
+    $toolbarContainer,
     onSuccess, // cb
     onFailure   // cb
     ) {
+        let collaborationUI = {};
+        let boundOnSuccess = function(name, link){
+            onSuccess(name, link, ()=>{
+                collabPlugin.resizeToolbar($toolbarContainer, 350, function (){
+                    $(".project-manager-runtime-console-area").hide(); // fix me
+                    $toolbarContainer = $($toolbarContainer);
+                    collaborationUI["ui"] = new CollaborationUI($toolbarContainer);
+                    return collaborationUI["ui"];
+                });
+            });
+        }
+
         let popup = new JoinPopup($dialog);
-        popup.setOnJoinCb(onSuccess);
+        popup.setOnJoinCb(boundOnSuccess);
+        popup.setOnCloseCb(onFailure);
+
+        return collaborationUI;
 }

@@ -82,9 +82,8 @@ export class ApplicationWSPManager extends IDEComponent {
             "joinSession",
             [
                 $(".modal-platform-container"),
-                $(".collaboration-manager-container"),
+                ".collaboration-manager-container",
                 (sharedApp) => {
-                    sharedApp.saveMode = "SHARED";
                     ComponentsCommunication.functionRequest(
                         this.name,
                         "ProjectManager",

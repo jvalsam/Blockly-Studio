@@ -553,6 +553,8 @@ export class ProjectManager extends IDEUIComponent {
         let prv = (<ProjectManagerJSTreeView>this._view)
             .getProject(this.mainProject);
 
+        $container = $(".collaboration-manager-container");
+
         let parent = $container.parent();
         let editors = parent.children()[0];
         
