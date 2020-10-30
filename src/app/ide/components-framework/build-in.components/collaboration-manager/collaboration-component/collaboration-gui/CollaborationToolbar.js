@@ -23,6 +23,7 @@ export class CollaborationUI{
                         "
         };
 
+        this._memberRequests = {};
         this._injectHtml(container);
         this._initTrees();
 
@@ -316,22 +317,29 @@ export class CollaborationUI{
                     'opened' : true,
                 },
                 'a_attr': this._membersA
-            }
-            );
-    
-            members.create_node('members', {
-                'id': 'members-collaborators',
-                'parent': 'members',
-                'type': 'other',
-                'text': 'Collaborators',
-                'icon': false,
-                'state' : {
-                    'opened' : true,
+            },
+            'last',
+            () => {
+                members.create_node('members', {
+                    'id': 'members-collaborators',
+                    'parent': 'members',
+                    'type': 'other',
+                    'text': 'Collaborators',
+                    'icon': false,
+                    'state' : {
+                        'opened' : true,
+                    },
+                    'a_attr': this._membersA
                 },
-                'a_attr': this._membersA
+                'last',
+                () => {
+                    this._serveMemberRequests();
+                }
+                );
             }
             );
-        });
+        }
+        );
     }
 
     _injectHtml(container) {
@@ -445,6 +453,15 @@ export class CollaborationUI{
         });
     }
 
+    _serveMemberRequests(){
+        for (let dest in this._memberRequests){
+            for (let node of this._memberRequests[dest])
+                this._members.create_node(dest, node, "last");
+        }
+        
+        this._memberRequests = {};
+    }
+
     _addMember(member, me, cb = undefined){
         var node = {
             'id': (me ? this._MEMBER_ME_PREFIX : this._MEMBER_PREFIX) + member.name,
@@ -453,7 +470,16 @@ export class CollaborationUI{
             'a_attr': this._membersA
         };
 
-        this._members.create_node(me ? this._COLLABORATOR_ME : this._COLLABORATORS, node, "last", cb);
+        let dest = me ? this._COLLABORATOR_ME : this._COLLABORATORS; 
+
+        if (!this._members.get_node(dest)){
+
+            if (!this._memberRequests[dest])
+                this._memberRequests[dest] = [];
+            
+            this._memberRequests[dest].push(node);
+        }else
+            this._members.create_node(dest, node, "last", cb);
     }
 
     /* API */

@@ -71,14 +71,21 @@ export function startCommunicationUser(myInfo, externalLink, CollabManager, load
     console.log(DB.info);
     collabInfo.plugin.setProject(DB.info);
     loadProject(DB.info);
-    collabInfo.UI = cbUI();
-    // collabInfo.UI = CollabManager.getCollabUI();
-    // collabInfo.UI.addMemberMe({
-    //   name:myInfo.name,
-    //   icon:myInfo.icon
-    // });
+    collabInfo.UI = cbUI()["ui"];
     // console.log(collabInfo.plugin.shProject);
-    console.log(collabInfo.UI);
+    console.log(collabInfo.plugin.shProject.componentsData.collaborationData.members);
+    collabInfo.UI.addMemberMe({
+      name:myInfo.name,
+      icon:myInfo.icon
+    });
+
+    collabInfo.plugin.shProject.componentsData.collaborationData.members.forEach((item)=>{
+      collabInfo.UI.addMember({
+        name: item.name,
+        icon: item.icon
+      });
+    });
+
   }
   
   let receivedHandler = {

@@ -54,10 +54,10 @@ export function openJoinSessionDialogue(
                     $(".project-manager-runtime-console-area").hide(); // fix me
                     $toolbarContainer = $($toolbarContainer);
                     collaborationUI["ui"] = new CollaborationUI($toolbarContainer);
-                    return collaborationUI["ui"];
                 });
+                return collaborationUI;
             });
-        }
+        };
 
         let popup = new JoinPopup($dialog);
         popup.setOnJoinCb(boundOnSuccess);
