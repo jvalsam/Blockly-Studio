@@ -32,6 +32,9 @@ export interface IPropertyData {
     updateParent?: (data:any) => void;
     parent?: any;
     value?: any;
+    step?: string | number;
+    min?: string | number;
+    max?: string | number;
 }
 
 export abstract class PropertyView extends View {
