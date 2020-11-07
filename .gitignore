@@ -39,5 +39,7 @@ Thumbs.db
 # BackendFiles
 /src/app/ide/backend/uploaded_files
 
-/src/app/ide/domains/node_modules
 package-lock.json
+
+# Automatic UI Gen for IoT
+/src/domains-libs/IoT/AutoIoTGen
