@@ -1,3 +1,4 @@
+import "../../../../../../domains-libs/IoT/AutoIoTGen/Automatic_Interfaces_IoT/server/app/public/dist/bundle";
 // functionality
 import { RenderSmartObject } from './sovplelem-view';
 let CreateDOMElement = function(type, options){
@@ -411,30 +412,6 @@ let CreateNewSmartGroupModal = function(selector){
 
 // functions for rendering parts
 
-// Scan renderer
-let RenderScanButton = function(selector, onClick){
-    let rowDiv = CreateDOMElement('div', {classList: ['row', 'scan-row']});
-    selector.appendChild(rowDiv);
-
-    let colDiv = CreateDOMElement('div', {classList: ['col', 'text-center']});
-    rowDiv.appendChild(colDiv);
-
-    let div = CreateDOMElement('div');
-    div.style.margin = 'auto';
-    div.style.display = 'inline-flex';
-    colDiv.appendChild(div);
-
-    let button = CreateDOMElement('button', {classList: ['btn', 'btn-primary', 'btn-lg'], innerHtml: 'Scan'});
-    // button.setAttribute('onclick', 'RequestScanResources();');
-    // button.addEventListener('click', RequestScanResources)
-    div.appendChild(button);
-
-    let loader = CreateDOMElement('div', {classList: ["loader"], id: 'scan-loader'});
-    loader.style.marginLeft = '2rem';
-    loader.style.display = 'none';
-    div.appendChild(loader);
-};
-
 let CreateResourceDetails = function(selector, resourceData){
 
     // Name in details
@@ -572,7 +549,7 @@ let RenderSOInScanList = function(selector, soData, onRegister){
 export function RenderScanList(selector, arraySOData, onRegister){
 
     // Render Scan Button
-    RenderScanButton();
+    soUIGenerator.RenderScanButton(selector);
     
     // Create row
     let rowDiv = CreateDOMElement('div', {classList: ['row', 'justify-content-center']});
@@ -858,7 +835,7 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
 
 let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
     // render message for unregistered smart object
-    RenderScanButton(selector);
+    soUIGenerator.RenderScanButton(selector);
 }
 
 let RenderSmartObjectInvalid = function (selector, soData, callbacksMap) {
