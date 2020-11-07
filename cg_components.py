@@ -110,6 +110,23 @@ file.close()
 
 print('Ends Components Bridge Codegeneration')
 
+def loadAutomaticUILib():
+    if len(os.listdir('.\domains-libs\IoT\AutoIoTGen')) == 0:
+        print("Automatic UI generator for Smart Objects does not exists in your local workspace.")
+        print("Download the library from the repository")
+        os.chdir('.\domains-libs\IoT\AutoIoTGen')
+        os.system('git clone https://github.com/dimilin/Automatic_Interfaces_IoT.git')
+        os.chdir('.\Automatic_Interfaces_IoT\server\\app')
+        os.system('npm i')
+        os.system('npm run webpack_remote')
+    else:
+        print("Automatic UI generator for Smart Objects is already cloned.")
+        print("Checking for updates of this library:")
+        os.chdir('.\domains-libs\IoT\AutoIoTGen')
+        os.system('git pull')
+        os.system('cd ..\..\..\..\\')
+
+loadAutomaticUILib()
 
 def downloadFile(URL, dstPath):
     response = urllib2.urlopen(URL)
