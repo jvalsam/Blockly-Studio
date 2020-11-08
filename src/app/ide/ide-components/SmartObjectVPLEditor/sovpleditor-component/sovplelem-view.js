@@ -580,9 +580,14 @@ let RenderSOInScanList = function (selector, soData, onRegister) {
   CreateResourceDetails(detailsBody, soData.editorData.details);
 };
 
-export function RenderScanList(selector, arraySOData, onRegister) {
+export function RenderSOScanList(selector, resources, onRegister) {
   // Render Scan Button
-  soUIGenerator.RenderScanButton(selector);
+  soUIGenerator.RenderScanButton(selector, (resources) => {
+    selector.innerHTML = "";
+    RenderSOScanList(selector, resources, (resource) => {
+      selector.innerHTML = "";
+    });
+  });
 
   // Create row
   let rowDiv = CreateDOMElement("div", {
@@ -601,9 +606,11 @@ export function RenderScanList(selector, arraySOData, onRegister) {
   colDiv.appendChild(listDiv);
 
   // Create List Element
-  _.forIn(arraySOData, (soData) => {
-    RenderSOInScanList(listDiv, soData, onRegister);
-  });
+  for (const resource of resources.scannedResources) {
+    soUIGenerator.RenderScannedResourceInScanList(listDiv, resource, () => {
+      onRegister(resource);
+    });
+  }
 }
 
 // Smart Object Renderer
@@ -701,9 +708,11 @@ let RenderSmartGroupofObject = function (selector, group, onDeleteGroup) {
 };
 
 let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
+  console.log(soData);
+
   let cardDiv = CreateDOMElement("div", {
     classList: ["card", "text-left"],
-    id: soData.editorData.id,
+    id: soData.editorData.editorId,
   });
   cardDiv.style.width = "33rem";
   cardDiv.style.maxHeight = "45rem";
@@ -891,7 +900,22 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
 
 let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
   // render message for unregistered smart object
-  soUIGenerator.RenderScanButton(selector);
+  soUIGenerator.RenderScanButton(selector, (resources) => {
+    // Clear save button
+    selector.innerHTML = "";
+    RenderSOScanList(selector, resources, (resource) => {
+      // Save data
+      callbacksMap.onRegister(resource.properties);
+      // Update UI
+      selector.innerHTML = "";
+      RenderSmartObject(selector, soData, callbacksMap);
+    });
+  });
+  let message = document.createElement("div");
+  message.innerHTML =
+    "Unregistered Smart Object. Press Scan to register a Smart Object";
+  message.style.fontSize = "large";
+  selector.appendChild(message);
 };
 
 let RenderSmartObjectInvalid = function (selector, soData, callbacksMap) {
