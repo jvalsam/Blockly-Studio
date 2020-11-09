@@ -1,3 +1,4 @@
-#smartobjectvpleditorDiv {
-  text-align: center;
+.so-card {
+  width: 38rem !important;
+  max-height: 43rem !important;
 }

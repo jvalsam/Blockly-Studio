@@ -483,103 +483,6 @@ let CreateResourceDetails = function (selector, resourceData) {
   });
 };
 
-let RenderSOInScanList = function (selector, soData, onRegister) {
-  let resourceDiv = CreateDOMElement("div", {
-    classList: ["ml-auto", "mr-auto"],
-    id: soData.editorData.id + "-accordion",
-  });
-  listDiv.appendChild(resourceDiv);
-
-  // Card
-  let card = CreateDOMElement("div", {
-    classList: ["card", "list-group-item"],
-  });
-  resourceDiv.appendChild(card);
-
-  let rowDiv = CreateDOMElement("div", { classList: ["row", "h-100"] });
-  card.appendChild(rowDiv);
-
-  // Name in card-header
-  let nameCol = CreateDOMElement("div", {
-    classList: ["col-sm-7", "my-auto", "h6", "text-truncate"],
-    innerHtml: soData.name,
-  });
-  //tooltip for name
-  nameCol.setAttribute("data-toggle", "tooltip");
-  nameCol.setAttribute("data-placement", "bottom");
-  nameCol.setAttribute("title", soData.name);
-  rowDiv.appendChild(nameCol);
-
-  // if (soData.editorData.details.state === SmartObjectState.UNR)
-
-  // Register button in card-header
-  let buttonCol = CreateDOMElement("div", {
-    classList: ["col-sm-5", "my-auto"],
-  });
-  rowDiv.appendChild(buttonCol);
-
-  let button = CreateDOMElement("button", {
-    classList: ["btn", "btn-success", "float-right", "my-auto"],
-    id: soData.editorData.id + "-register",
-    innerHtml: "Register",
-  });
-  // button.setAttribute('onclick', 'RegisterResource(\'' + resource.id + '\');');
-  button.addEventListener("click", () => {
-    onRegister(soData.editorData.details.properties);
-  });
-  buttonCol.appendChild(button);
-
-  // else
-  // button disabled
-
-  // Details
-  let detailsRow = CreateDOMElement("div", {
-    classList: ["row", "h-100", "d-flex", "justify-content-center"],
-  });
-  card.appendChild(detailsRow);
-
-  let resourceDetails = CreateDOMElement("div", {
-    classList: ["fas", "fa-lg", "fa-angle-down", "collapsed"],
-  });
-  resourceDetails.setAttribute("type", "button");
-  resourceDetails.setAttribute("data-toggle", "collapse");
-  resourceDetails.setAttribute(
-    "data-target",
-    soData.editorData.details.id + "-collapse"
-  );
-  resourceDetails.setAttribute("aria-expanded", "false");
-  resourceDetails.setAttribute(
-    "aria-controls",
-    soData.editorData.details.id + "-collapse"
-  );
-  detailsRow.appendChild(resourceDetails);
-
-  // Collapse for card
-  let detailsCollapse = CreateDOMElement("div", {
-    classList: ["collapse", "mt-2"],
-    id: soData.editorData.id + "-collapse",
-  });
-  detailsCollapse.setAttribute("aria-labelledby", soData.editorData.id);
-  detailsCollapse.setAttribute(
-    "data-parent",
-    soData.editorData.id + "-accordion"
-  );
-  card.appendChild(detailsCollapse);
-
-  let detailsBody = CreateDOMElement("div", {
-    classList: [
-      "card-body",
-      "d-flex",
-      "flex-column",
-      "bd-highlight",
-      "bg-light",
-    ],
-  });
-  detailsCollapse.appendChild(detailsBody);
-
-  CreateResourceDetails(detailsBody, soData.editorData.details);
-};
-
 export function RenderSOScanList(selector, resources, onRegister) {
   // Render Scan Button
   soUIGenerator.RenderScanButton(selector, (resources) => {
@@ -607,80 +510,33 @@ export function RenderSOScanList(selector, resources, onRegister) {
 
   // Create List Element
   for (const resource of resources.scannedResources) {
-    soUIGenerator.RenderScannedResourceInScanList(listDiv, resource, () => {
-      onRegister(resource);
-    });
+    soUIGenerator.RenderScannedResourceInScanList(
+      listDiv,
+      resource,
+      () => {
+        onRegister(resource);
+      },
+      true
+    );
   }
 }
 
 // Smart Object Renderer
 let RenderSmartObjectProperty = function (
   selector,
+  id,
   property,
   alias,
   callbacks
 ) {
-  let propertyRow = CreateDOMElement("div", {
-    classList: ["row", "align-items-center", "resource-property"],
-  });
-  selector.appendChild(propertyRow);
-
-  let propertyNameCol = CreateDOMElement("div", {
-    classList: ["col-sm-6", "property-title", "text-truncate"],
-    innerHtml: property.name,
-  });
-  propertyRow.appendChild(propertyNameCol);
-
-  let propertyName = CreateDOMElement("div", { classList: ["text-truncate"] });
-  propertyName.setAttribute("data-toggle", "tooltip");
-  propertyName.setAttribute("data-placement", "bottom");
-  propertyName.setAttribute("title", property.name);
-  propertyNameCol.appendChild(propertyName);
-
-  let propertyAliasOuterDiv = CreateDOMElement("div");
-  propertyAliasOuterDiv.style.fontSize = "small";
-  propertyNameCol.appendChild(propertyAliasOuterDiv);
-
-  let propertyAliasHeader = CreateDOMElement("span", { innerHtml: "alias: " });
-  propertyAliasOuterDiv.appendChild(propertyAliasHeader);
-
-  let propertyAliasValue = CreateDOMElement("span", { innerHtml: alias });
-  propertyAliasValue.style.fontStyle = "italic";
-  propertyAliasOuterDiv.appendChild(propertyAliasValue);
-
-  let propertyValueCol = CreateDOMElement("div", { classList: ["col-sm-3"] });
-  propertyRow.appendChild(propertyValueCol);
-
-  let propertyValue = CreateDOMElement("input", {
-    classList: ["form-control", "property-value-string"],
-  });
-  propertyValue.setAttribute("type", "text");
-  propertyValue.setAttribute("value", property.value);
-  propertyValue.setAttribute("readonly", property.read_only);
-  propertyValueCol.appendChild(propertyValue);
-
-  let propertyHideCol = CreateDOMElement("div", { classList: ["col-sm-1"] });
-  propertyRow.appendChild(propertyHideCol);
-
-  let propertyHideIcon = CreateDOMElement("i", {
-    classList: ["far", "fa-eye", "fa-lg"],
-  });
-  propertyHideIcon.addEventListener("click", () => {
-    callbacks.onEditPropertyProgrammingActive(property);
-  });
-  propertyHideCol.appendChild(propertyHideIcon);
-
-  let propertyEditCol = CreateDOMElement("div", { classList: ["col-sm-1"] });
-  propertyEditCol.style.paddingRight = ".5rem";
-  propertyRow.appendChild(propertyEditCol);
-
-  let propertyEditIcon = CreateDOMElement("i", {
-    classList: ["fas", "fa-edit", "fa-lg"],
-  });
-  propertyEditIcon.addEventListener("click", () => {
-    callbacks.onEditPropertyAlias(property);
-  });
-  propertyEditCol.appendChild(propertyEditIcon);
+  soUIGenerator.RenderReadOnlyProperty(
+    selector,
+    id,
+    property,
+    true,
+    alias,
+    callbacks
+  );
 };
 
 let RenderSmartGroupofObject = function (selector, group, onDeleteGroup) {
@@ -701,83 +557,29 @@ let RenderSmartGroupofObject = function (selector, group, onDeleteGroup) {
   let groupIcon = CreateDOMElement("i", {
     classList: ["fas", "fa-times-circle"],
   });
-  groupIcon.addEventListener("click", () => {
+  groupIcon.onclick = () => {
     onDeleteGroup(group.elemData.name);
-  });
+  };
   groupIconSpan.appendChild(groupIcon);
 };
 
 let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
   console.log(soData);
 
-  let cardDiv = CreateDOMElement("div", {
-    classList: ["card", "text-left"],
+  let cardDiv = soUIGenerator.RenderCard({
+    selector: selector,
     id: soData.editorData.editorId,
   });
-  cardDiv.style.width = "33rem";
-  cardDiv.style.maxHeight = "45rem";
-  selector.appendChild(cardDiv);
 
   // Card Header
-  let cardHeaderDiv = CreateDOMElement("div", { classList: ["card-header"] });
-  cardDiv.appendChild(cardHeaderDiv);
-
-  let colHeaderDiv = CreateDOMElement("div", { classList: ["col"] });
-  colHeaderDiv.style.display = "inline-flex";
-  cardHeaderDiv.appendChild(colHeaderDiv);
-
-  let resourceHeader = CreateDOMElement("div", { innerHtml: soData.name });
-  resourceHeader.style.fontSize = "large";
-  colHeaderDiv.appendChild(resourceHeader);
-
-  // Render image
-  if (soData.img) {
-    let resourceImg = CreateDOMElement("img", { classList: ["resource-img"] });
-    resourceImg.setAttribute("src", soData.img);
-    resourceImg.style.width = "24px";
-    resourceImg.style.height = "24px";
-    colHeaderDiv.appendChild(resourceImg);
-  }
-
-  // DropDown Menu
-  let colMenuDiv = CreateDOMElement("div", { classList: ["col"] });
-  colMenuDiv.style.marginLeft = "2rem";
-  cardHeaderDiv.appendChild(colMenuDiv);
-
-  let dropDownImg = CreateDOMElement("i", {
-    classList: [
-      "dropdown-toggle",
-      "float-right",
-      "resource-menu",
-      "fas",
-      "fa-ellipsis-v",
-    ],
-    id: soData.editorData.id + "-menu",
+  soUIGenerator.RenderCardHeader({
+    selector: cardDiv,
+    name: soData.name,
+    id: soData.editorData.editorId,
+    image: soData.img,
+    onEdit: callbacksMap.options.Edit,
+    onDelete: callbacksMap.options.Delete,
   });
-  dropDownImg.setAttribute("data-toggle", "dropdown");
-  dropDownImg.setAttribute("aria-haspopup", "true");
-  dropDownImg.setAttribute("aria-expanded", "false");
-  colMenuDiv.appendChild(dropDownImg);
-
-  let dropDownMenu = CreateDOMElement("div", { classList: ["dropdown-menu"] });
-  dropDownMenu.setAttribute("aria-labelledby", soData.editorData.id + "-menu");
-  colMenuDiv.appendChild(dropDownMenu);
-
-  let editSelect = CreateDOMElement("a", {
-    classList: ["dropdown-item"],
-    id: soData.editorData.id + "-edit",
-    innerHtml: "Edit",
-  });
-  editSelect.addEventListener("click", callbacksMap.options.Edit);
-  dropDownMenu.appendChild(editSelect);
-
-  let deleteSelect = CreateDOMElement("a", {
-    classList: ["dropdown-item"],
-    id: soData.editorData.id + "-delete",
-    innerHtml: "Delete",
-  });
-  deleteSelect.addEventListener("click", callbacksMap.options.Delete);
-  dropDownMenu.appendChild(deleteSelect);
 
   // Card Body
   let cardBodyDiv = CreateDOMElement("div", {
@@ -836,14 +638,16 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
   let propertiesContainer = CreateDOMElement("div", {
     classList: ["container-fluid", "overflow-auto"],
   });
+  propertiesContainer.style.paddingTop = ".5rem";
   propertiesContainer.style.maxHeight = "21rem";
   propertiesContainer.style.marginTop = ".5rem";
   propertiesContainer.style.backgroundColor = "#f7f7f7";
   cardBodyDiv.appendChild(propertiesContainer);
 
-  _.forEach(soData.editorData.details.properties, (property) => {
+  for (const property of soData.editorData.details.properties) {
     RenderSmartObjectProperty(
       propertiesContainer,
+      soData.editorData.editorId,
       property,
       soData.editorData.details.mapPropsAlias[property.name],
       {
@@ -852,7 +656,7 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
           callbacksMap.onEditPropertyProgrammingActive,
       }
     );
-  });
+  }
 
   let hrPropGroups = CreateDOMElement("hr");
   cardBodyDiv.appendChild(hrPropGroups);
@@ -881,9 +685,9 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
     innerHtml: "Export Group",
   });
   // group: { name, img, color, properties, mapPropsInfo, smartObject }
-  exportGroupsButtonCol.addEventListener("click", () => {
+  exportGroupsButtonCol.onclick = () => {
     callbacksMap.onCreateSmartGroup();
-  });
+  };
   exportGroupsButtonCol.appendChild(exportGroupsButton);
 
   let groupsRow = CreateDOMElement("div", { classList: ["row"] });
@@ -893,9 +697,9 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
   let groupsCol = CreateDOMElement("div", { classList: ["col-sm"] });
   groupsRow.appendChild(groupsCol);
 
-  _.forEach(soData.editorData.details.groups, (group) => {
+  for (const group of soData.editorData.details.groups) {
     RenderSmartGroupofObject(groupsCol, group, callbacksMap.onDeleteGroup);
-  });
+  }
 };
 
 let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
@@ -974,9 +778,9 @@ let RenderSmartGroupProperty = function (selector, property, alias, callbacks) {
   let propertyActiveIcon = CreateDOMElement("i", {
     classList: ["fas", "fa-power-off", "fa-lg"],
   });
-  propertyActiveIcon.addEventListener("click", () => {
+  propertyActiveIcon.onclick = () => {
     callbacks.onEditPropertyActive(property);
-  });
+  };
   propertyActiveIcon.style.color = "lightgreen";
   propertyActiveCol.appendChild(propertyActiveIcon);
 
@@ -987,9 +791,9 @@ let RenderSmartGroupProperty = function (selector, property, alias, callbacks) {
   let propertyEditIcon = CreateDOMElement("i", {
     classList: ["fas", "fa-edit", "fa-lg"],
   });
-  propertyEditIcon.addEventListener("click", () => {
+  propertyEditIcon.onclick = () => {
     callbacks.onEditPropertyAlias(property);
-  });
+  };
   propertyEditCol.appendChild(propertyEditIcon);
 };
 
@@ -1015,9 +819,9 @@ let RenderSmartObjectofGroup = function (
   let smartObjectIcon = CreateDOMElement("i", {
     classList: ["fas", "fa-times-circle"],
   });
-  smartObjectIcon.addEventListener("click", () => {
+  smartObjectIcon.onclick = () => {
     onDeleteSmartObject(smartObject);
-  });
+  };
   smartObjectIconSpan.appendChild(smartObjectIcon);
 };
 
@@ -1090,7 +894,7 @@ export function RenderSmartGroup(selector, soData, callbacksMap) {
     id: soData.editorData.id + "-edit",
     innerHtml: "Edit",
   });
-  editSelect.addEventListener("click", callbacksMap.options.Edit);
+  editSelect.onclick = callbacksMap.options.Edit;
   dropDownMenu.appendChild(editSelect);
 
   let deleteSelect = CreateDOMElement("a", {
@@ -1098,7 +902,7 @@ export function RenderSmartGroup(selector, soData, callbacksMap) {
     id: soData.editorData.id + "-delete",
     innerHtml: "Delete",
   });
-  deleteSelect.addEventListener("click", callbacksMap.options.Delete);
+  deleteSelect.onclick = callbacksMap.options.Delete;
   dropDownMenu.appendChild(deleteSelect);
 
   // Card Body
@@ -1155,9 +959,9 @@ export function RenderSmartGroup(selector, soData, callbacksMap) {
     classList: ["btn", "btn-outline-secondary"],
     innerHtml: "Reset",
   });
-  resetButton.addEventListener("click", () => {
+  resetButton.onclick = () => {
     callbacksMap.onReset(soData.editorData.details.properties);
-  });
+  };
   resetButton.style.cssFloat = "right";
   resetButton.style.marginRight = "2rem";
   resetRow.appendChild(resetButton);
@@ -1202,7 +1006,7 @@ export function RenderSmartGroup(selector, soData, callbacksMap) {
     classList: ["btn", "btn-danger"],
     innerHtml: "Delete Group",
   });
-  deleteGroupButton.addEventListener("click", callbacksMap.options.Delete);
+  deleteGroupButton.onclick = callbacksMap.options.Delete;
   deleteGroupButton.style.cssFloat = "right";
   deleteGroupCol.appendChild(deleteGroupButton);
 }

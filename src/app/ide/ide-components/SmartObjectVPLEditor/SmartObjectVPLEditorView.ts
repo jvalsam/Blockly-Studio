@@ -2,6 +2,7 @@
 
 /// <reference path="../../../../../node.d.ts"/>
 import SmartObjectVPLEditorTmpl from "./smartobjectvpleditor.tmpl";
+import SmartObjectVPLEditorSYCSS from "./smartobjectvpleditor.sycss";
 
 import {
     ComponentView,
@@ -11,7 +12,10 @@ import {
 
 @ComponentViewMetadata({
     name: "SmartObjectVPLEditorView",
-    templateHTML: SmartObjectVPLEditorTmpl
+    templateHTML: SmartObjectVPLEditorTmpl,
+    style: {
+        system: SmartObjectVPLEditorSYCSS
+    }
 })
 export class SmartObjectVPLEditorView extends ComponentView {
 
