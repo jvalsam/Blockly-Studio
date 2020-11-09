@@ -126,7 +126,7 @@ def loadAutomaticUILib():
         os.system('git pull')
         os.system('cd ..\..\..\..\\')
 
-loadAutomaticUILib()
+# loadAutomaticUILib()
 
 def downloadFile(URL, dstPath):
     response = urllib2.urlopen(URL)
