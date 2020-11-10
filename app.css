@@ -1,4 +1,4 @@
-@import "./node_modules/bootstrap/dist/css/bootstrap.css";
+@import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 /* @import "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"; */
 @import "https://use.fontawesome.com/releases/v5.5.0/css/all.css";
@@ -11,22 +11,22 @@
 /* @import "./libs/SUIM/suim.css"; */
 
 .ide-platform-container {
-    /* margin-bottom: 100px; */
+  /* margin-bottom: 100px; */
 }
 
 .centered {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    /* bring your own prefixes */
-    transform: translate(-50%, -50%);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
 }
 
 .application-card-header {
-    padding: 0rem 1.25rem;
-    margin-bottom: 0;
-    background-color: rgba(0, 0, 0, 0.03);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 0rem 1.25rem;
+  margin-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 /* .container .text-muted {
@@ -43,7 +43,7 @@
 } */
 
 .bs-modal-dialog {
-    min-width: 40rem;
+  min-width: 40rem;
 }
 
 .bs-modal-content {
