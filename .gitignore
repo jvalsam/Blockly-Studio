@@ -42,4 +42,4 @@ Thumbs.db
 package-lock.json
 
 # Automatic UI Gen for IoT
-/src/domains-libs/IoT/AutoIoTGen
+# /src/domains-libs/IoT/AutoIoTGen
