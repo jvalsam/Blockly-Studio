@@ -3,4 +3,7 @@ git clone --recurse-submodules https://github.com/jvalsam/Blockly-Studio.git
 
 # pull all changes in the repo including changes in the submodules
 git pull --recurse-submodules
+# update submodules
 git submodule update --remote
+# push to take the changes the origin
+git push (from main module)
