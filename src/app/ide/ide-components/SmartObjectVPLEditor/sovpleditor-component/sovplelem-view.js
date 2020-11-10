@@ -1,4 +1,4 @@
-import * as soUIGenerator from "../../../../../../domains-libs/IoT/AutoIoTGen/Automatic_Interfaces_IoT/server/app/public/dist/bundle";
+import * as soUIGenerator from "../../../../../../domains-libs/IoT/AutoIoTGen/iot-interfaces/dist/iot-ui";
 
 // functionality
 import { RenderSmartObject } from "./sovplelem-view";
