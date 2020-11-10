@@ -2,6 +2,7 @@ import * as soUIGenerator from "../../../../../../domains-libs/IoT/AutoIoTGen/io
 
 // functionality
 import { RenderSmartObject } from "./sovplelem-view";
+
 let CreateDOMElement = function (type, options) {
   let element = document.createElement(type);
 
@@ -24,6 +25,10 @@ let CreateDOMElement = function (type, options) {
 // export function DialogueSelectGroups(groups, onSucess, onFail) {
 
 // }
+
+// window.onload = () => {
+//   soUIGenerator.InitializeModals(document.getElementById("so-modals-area"));
+// };
 
 let CreateEditModal = function (selector) {
   let modal = CreateDOMElement("div", {
@@ -319,10 +324,45 @@ let CreateEditPropertyAliasModal = function (selector) {
   modalFooter.appendChild(confirmButton);
 };
 
+let CreateInputForModal = function (
+  selector,
+  inputName,
+  inputType,
+  inputId,
+  inputWidth
+) {
+  let inputGroup = CreateDOMElement("div", {
+    classList: ["input-group", "mb-3"],
+  });
+  inputGroup.style.width = inputWidth;
+  selector.appendChild(inputGroup);
+
+  let inputGroupPrepend = CreateDOMElement("div", {
+    classList: ["input-group-prepend"],
+  });
+  inputGroup.appendChild(inputGroupPrepend);
+
+  let span = CreateDOMElement("span", {
+    classList: ["input-group-text"],
+    id: "inputGroup-sizing-default",
+    innerHtml: inputName,
+  });
+  inputGroupPrepend.appendChild(span);
+
+  let input = CreateDOMElement("input", {
+    classList: ["form-control"],
+    id: inputId,
+  });
+  input.setAttribute("type", inputType);
+  input.setAttribute("aria-label", inputName);
+  input.setAttribute("aria-describedby", "inputGroup-sizing-default");
+  inputGroup.appendChild(input);
+};
+
 let CreateNewSmartGroupModal = function (selector) {
   let modal = CreateDOMElement("div", {
     classList: ["modal", "fade"],
-    id: "newGroup-modal",
+    id: "new-sg-modal",
   });
   modal.setAttribute("tabindex", "-1");
   modal.setAttribute("role", "dialog");
@@ -341,7 +381,8 @@ let CreateNewSmartGroupModal = function (selector) {
 
   let modalTitle = CreateDOMElement("h5", {
     classList: ["modal-title"],
-    id: "newGroup-modal-title",
+    id: "new-sg-modal-title",
+    innerHtml: "Create new group: ",
   });
   modalHeader.appendChild(modalTitle);
 
@@ -358,9 +399,30 @@ let CreateNewSmartGroupModal = function (selector) {
 
   let modalBody = CreateDOMElement("div", {
     classList: ["modal-body"],
-    id: "newGroup-modal-body",
+    id: "new-sg-modal-body",
   });
   modalContent.appendChild(modalBody);
+
+  CreateInputForModal(modalBody, "Name", "text", "sg-name", "29rem");
+  CreateInputForModal(modalBody, "Image", "file", "sg-image", "29rem");
+  CreateInputForModal(modalBody, "Color", "color", "sg-color", "8rem");
+
+  let propertiesHeader = CreateDOMElement("span", {
+    classList: ["font-weight-bold"],
+    innerHtml: "Properties",
+  });
+  propertiesHeader.style.fontSize = "large";
+  modalBody.appendChild(propertiesHeader);
+
+  let propertiesContainer = CreateDOMElement("div", {
+    classList: ["container-fluid", "overflow-auto"],
+    id: "new-sg-modal-properties-container",
+  });
+  propertiesContainer.style.paddingTop = ".5rem";
+  propertiesContainer.style.maxHeight = "21rem";
+  propertiesContainer.style.marginTop = ".5rem";
+  propertiesContainer.style.backgroundColor = "#f7f7f7";
+  modalBody.appendChild(propertiesContainer);
 
   let modalFooter = CreateDOMElement("div", { classList: ["modal-footer"] });
   modalContent.appendChild(modalFooter);
@@ -376,7 +438,7 @@ let CreateNewSmartGroupModal = function (selector) {
 
   let confirmButton = CreateDOMElement("div", {
     classList: ["btn", "btn-primary"],
-    id: "newGroup-modal-confirm-button",
+    id: "new-sg-modal-confirm-button",
     innerHtml: "Confirm",
   });
   confirmButton.setAttribute("type", "button");
@@ -392,104 +454,24 @@ let CreateNewSmartGroupModal = function (selector) {
   modalFooter.appendChild(confirmButton);
 };
 
-// functions for rendering parts
-
-let CreateResourceDetails = function (selector, resourceData) {
-  // Name in details
-  let detailsNameRow = CreateElement("div", {
-    classList: ["row", "mt-1", "ml-2", "bd-highlight"],
-  });
-  outterDiv.appendChild(detailsNameRow);
-
-  let detailsNameTag = CreateElement("div", {
-    classList: ["col-sm-4", "font-weight-bold"],
-    innerHtml: "Name:",
-  });
-  detailsNameRow.appendChild(detailsNameTag);
-
-  let detailsName = CreateElement("div", {
-    classList: ["col", "text-truncate"],
-    innerHtml: resourceData.name,
-  });
-  //tooltip for name
-  detailsName.setAttribute("data-toggle", "tooltip");
-  detailsName.setAttribute("data-placement", "bottom");
-  detailsName.setAttribute("title", resourceData.name);
-  detailsNameRow.appendChild(detailsName);
-
-  outterDiv.appendChild(CreateElement("hr", { classList: ["my-hr"] }));
-
-  // ID in details
-  let detailsIdRow = CreateElement("div", {
-    classList: ["row", "ml-2", "bd-highlight"],
-  });
-  outterDiv.appendChild(detailsIdRow);
-
-  let detailsIdTag = CreateElement("div", {
-    classList: ["col-sm-4", "font-weight-bold"],
-    innerHtml: "ID:",
-  });
-  detailsIdRow.appendChild(detailsIdTag);
-
-  let detailsId = CreateElement("div", {
-    classList: ["col", "text-truncate"],
-    innerHtml: resourceData.id,
-  });
-  //tooltip for id
-  detailsId.setAttribute("data-toggle", "tooltip");
-  detailsId.setAttribute("data-placement", "bottom");
-  detailsId.setAttribute("title", resourceData.id);
-  detailsIdRow.appendChild(detailsId);
-
-  outterDiv.appendChild(CreateElement("hr", { classList: ["my-hr"] }));
-
-  // Properties in details
-  let propertiesRow = CreateElement("div", {
-    classList: ["row", "mt-1", "ml-2", "bd-highlight"],
-  });
-  outterDiv.appendChild(propertiesRow);
-
-  let propertiesTag = CreateElement("div", {
-    classList: ["col-sm-5", "font-weight-bold"],
-    innerHtml: "Properties: ",
-  });
-  propertiesRow.appendChild(propertiesTag);
-
-  // Table of Properties
-  let propertiesTable = CreateElement("table", {
-    classList: ["table-responsive-sm", "table-striped", "ml-4", "mt-3"],
-  });
-  outterDiv.appendChild(propertiesTable);
-
-  let tableBody = CreateElement("tbody");
-  propertiesTable.appendChild(tableBody);
-
-  // Create properties of resource
-  _.forIn(resourceData.properties, (prop) => {
-    let propertyRow = CreateElement("tr");
-    tableBody.appendChild(propertyRow);
-
-    let propertyName = CreateElement("td", {
-      classList: ["pt-2", "pb-2"],
-      innerHtml: prop.name,
-    });
-    propertyRow.appendChild(propertyName);
-
-    let propertyValue = CreateElement("td", {
-      classList: ["pt-2", "pb-2"],
-      innerHtml: prop.value,
-    });
-    propertyRow.appendChild(propertyValue);
-  });
+let RenderNewGroupModal = function (properties, aliases) {
+  for (const property of properties) {
+    soUIGenerator.RenderReadOnlyPropertyforSmartGroup(
+      document.getElementById("new-sg-modal-properties-container"),
+      property,
+      aliases[property.name]
+    );
+  }
+  $("#new-sg-modal").modal("show");
 };
+
+// functions for rendering parts
 
 export function RenderSOScanList(selector, resources, onRegister) {
   // Render Scan Button
   soUIGenerator.RenderScanButton(selector, (resources) => {
     selector.innerHTML = "";
-    RenderSOScanList(selector, resources, (resource) => {
-      selector.innerHTML = "";
-    });
+    RenderSOScanList(selector, resources, onRegister);
   });
 
   // Create row
@@ -564,8 +546,6 @@ let RenderSmartGroupofObject = function (selector, group, onDeleteGroup) {
 };
 
 let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
-  console.log(soData);
-
   let cardDiv = soUIGenerator.RenderCard({
     selector: selector,
     id: soData.editorData.editorId,
@@ -584,7 +564,7 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
   // Card Body
   let cardBodyDiv = CreateDOMElement("div", {
     classList: ["card-body"],
-    id: soData.editorData.id + "-resource-body",
+    id: soData.editorData.editorId + "-resource-body",
   });
   cardDiv.appendChild(cardBodyDiv);
 
@@ -678,6 +658,7 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
   let exportGroupsButtonCol = CreateDOMElement("div", {
     classList: ["col-sm"],
   });
+  exportGroupsButtonCol.style.textAlign = "right";
   groupsHeaderRow.appendChild(exportGroupsButtonCol);
 
   let exportGroupsButton = CreateDOMElement("button", {
@@ -686,7 +667,21 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
   });
   // group: { name, img, color, properties, mapPropsInfo, smartObject }
   exportGroupsButtonCol.onclick = () => {
-    callbacksMap.onCreateSmartGroup();
+    // Create Modal
+    CreateNewSmartGroupModal(
+      document.getElementsByClassName("modal-platform-container")[0]
+    );
+    // Destroy on close
+    $("#new-sg-modal").on("hidden.bs.modal", function () {
+      document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+        "";
+    });
+    // Render new group modal
+    RenderNewGroupModal(
+      soData.editorData.details.properties,
+      soData.editorData.details.mapPropsAlias
+    );
+    // callbacksMap.onCreateSmartGroup();
   };
   exportGroupsButtonCol.appendChild(exportGroupsButton);
 
@@ -703,11 +698,26 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
 };
 
 let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
+  let scanContainer = document.createElement("div");
+  scanContainer.classList.add("container");
+  scanContainer.style.overflowY = "auto";
+  scanContainer.style.maxHeight = "50rem";
+  selector.appendChild(scanContainer);
+
+  let row = document.createElement("div");
+  row.classList.add("row");
+  scanContainer.appendChild(row);
+
+  let col = document.createElement("div");
+  col.classList.add("col");
+  row.appendChild(col);
+
+  console.log(selector);
   // render message for unregistered smart object
-  soUIGenerator.RenderScanButton(selector, (resources) => {
-    // Clear save button
-    selector.innerHTML = "";
-    RenderSOScanList(selector, resources, (resource) => {
+  soUIGenerator.RenderScanButton(col, (resources) => {
+    // Clear col
+    col.innerHTML = "";
+    RenderSOScanList(col, resources, (resource) => {
       // Save data
       callbacksMap.onRegister(resource.properties);
       // Update UI
@@ -715,11 +725,27 @@ let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
       RenderSmartObject(selector, soData, callbacksMap);
     });
   });
-  let message = document.createElement("div");
-  message.innerHTML =
-    "Unregistered Smart Object. Press Scan to register a Smart Object";
-  message.style.fontSize = "large";
-  selector.appendChild(message);
+
+  let messageRow = document.createElement("div");
+  messageRow.classList.add("row");
+  col.appendChild(messageRow);
+
+  let messageDiv = document.createElement("div");
+  messageDiv.style.marginLeft = "auto";
+  messageDiv.style.marginRight = "auto";
+  messageDiv.style.marginTop = "2rem";
+  messageRow.appendChild(messageDiv);
+
+  let unregisterSpan = document.createElement("span");
+  unregisterSpan.innerHTML = "Unregistered Smart Object.";
+  unregisterSpan.style.color = "red";
+  unregisterSpan.style.fontSize = "large";
+  messageDiv.appendChild(unregisterSpan);
+
+  let pressScanSpan = document.createElement("span");
+  pressScanSpan.innerHTML = "  Press Scan Button";
+  pressScanSpan.style.fontSize = "large";
+  messageDiv.appendChild(pressScanSpan);
 };
 
 let RenderSmartObjectInvalid = function (selector, soData, callbacksMap) {

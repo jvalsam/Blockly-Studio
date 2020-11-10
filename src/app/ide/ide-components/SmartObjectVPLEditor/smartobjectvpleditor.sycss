@@ -1,4 +1,4 @@
-.so-card {
-  width: 38rem !important;
+.resource-card {
+  width: 31rem !important;
   max-height: 43rem !important;
 }
