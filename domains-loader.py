@@ -36,15 +36,18 @@ for domain in Domains:
     file.write("    InitializeVPDL as Initialize" + domain + "VPDL\n")
     file.write("} from \"" + DomainsConfVPL + domain + "/vpdl/domain\";\n")
 
-file.write("\nvar ProjectManagerMetaData = { };\n")
-for domain in Domains:
-    file.write("ProjectManagerMetaData['" + domain + "'] = require('" + DomainsConfVPL + domain + "/project-manager/application-structure" + ".json')\n")
+file.write("\nvar ProjectManagerMetaData;\n")
 
 file.write("\nexport function InitializeVPDLs() {\n")
-
+file.write("    ProjectManagerMetaData = { };\n")
 for domain in Domains:    
     file.write("    Initialize" + domain + "VPDL();\n")
+    file.write("    ProjectManagerMetaData['" + domain + "'] = require('" + DomainsConfVPL + domain + "/project-manager/application-structure" + ".json')\n")
 
+file.write("}\n\n")
+
+file.write("\nexport function GetProjectManagerMetaData(domain) {\n")
+file.write("    return ProjectManagerMetaData[domain];\n")
 file.write("}\n\n")
 
 print('Domains Bridge Code Generation Completed.')
