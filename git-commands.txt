@@ -1,0 +1,11 @@
+# Clone with submodule
+git clone --recurse-submodules https://github.com/jvalsam/Blockly-Studio.git
+
+#If you already have cloned a repository and now want to load it’s submodules
+git submodule update --init --recursive
+
+# pull all changes in the repo including changes in the submodules
+git pull --recurse-submodules
+
+#pull submodule changes and update the submodule to last commit
+git pull && git submodule update --init --recursive
