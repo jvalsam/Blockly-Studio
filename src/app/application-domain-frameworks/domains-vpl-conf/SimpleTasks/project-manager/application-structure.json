@@ -1,0 +1,457 @@
+{
+    "domain" : "SimpleTasks",
+    "title" : "Simple Tasks",
+    "img" : "./images/iot/iot-app-domain.png",
+    "defaultInstImg" : "./images/IoT/iot-app-inst-domain.png",
+    "style" : "BlueStyle",
+    "actions" : [ 
+        {
+            "title" : "Open",
+            "img" : "fab fa-codepen",
+            "help" : "Open application",
+            "events" : [ 
+                {
+                    "type" : "click",
+                    "action" : "onOpenProject",
+                    "providedBy" : "Platform",
+                    "data" : {
+                        "mission" : "ProjectManagementHandling"
+                    }
+                }
+            ]
+        }, 
+        {
+            "title" : "New",
+            "img" : "fa fa-plus",
+            "help" : "Create new application",
+            "events" : [ 
+                {
+                    "type" : "click",
+                    "action" : "onCreateNewProject",
+                    "providedBy" : "Platform",
+                    "data" : {
+                        "mission" : "ProjectManagementHandling"
+                    }
+                }
+            ]
+        }, 
+        {
+            "title" : "Close All",
+            "img" : "fa fa-trash",
+            "help" : "Close loaded applications",
+            "events" : [ 
+                {
+                    "type" : "click",
+                    "action" : "onCloseAllProjects",
+                    "providedBy" : "Platform",
+                    "data" : {
+                        "mission" : "ProjectManagementHandling"
+                    }
+                }
+            ]
+        }, 
+        {
+            "title" : "Delete All",
+            "img" : "fa fa-trash",
+            "help" : "Delete current application",
+            "events" : [ 
+                {
+                    "type" : "click",
+                    "action" : "onDeleteAllProjects",
+                    "providedBy" : "Platform",
+                    "data" : {
+                        "mission" : "ProjectManagementHandling"
+                    }
+                }
+            ]
+        }
+    ],
+    "project" : {
+        "actions" : [ 
+            {
+                "title" : "Rename",
+                "img" : "fa fa-edit",
+                "help" : "Rename",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onRenameProject",
+                        "providedBy" : "Platform",
+                        "data" : {
+                            "mission" : "ProjectManagementHandling"
+                        }
+                    }
+                ]
+            }, 
+            {
+                "title" : "Properties",
+                "img" : "fa fa-file-alt",
+                "help" : "Properties",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onClickProjectProperties",
+                        "providedBy" : "Platform",
+                        "data" : {
+                            "mission" : "ProjectManagementHandling"
+                        }
+                    }
+                ]
+            }, 
+            {
+                "title" : "Share",
+                "img" : "fa fa-share-alt-square",
+                "help" : "Share",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onShareProject",
+                        "providedBy" : "Platform",
+                        "data" : {
+                            "mission" : "ProjectManagementHandling"
+                        }
+                    }
+                ]
+            }, 
+            {
+                "title" : "Close",
+                "img" : "fa fa-window-close",
+                "help" : "Close application",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onCloseProject",
+                        "providedBy" : "Platform",
+                        "data" : {
+                            "mission" : "ProjectManagementHandling"
+                        }
+                    }
+                ]
+            }, 
+            {
+                "title" : "Delete",
+                "img" : "fa fa-trash",
+                "help" : "Delete application",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onDeleteProject",
+                        "providedBy" : "Platform",
+                        "data" : {
+                            "mission" : "ProjectManagementHandling"
+                        }
+                    }
+                ]
+            }
+        ],
+        "categories" : [ 
+            {
+                "type" : "BlocklyTasks",
+                "renderParts" : [ 
+                    {
+                        "type" : "img",
+                        "value" : {
+                            "fa" : "fa-industry-alt"
+                        },
+                        "selectedBy" : "domain"
+                    }, 
+                    {
+                        "type" : "title",
+                        "value" : {
+                            "text" : "Tasks"
+                        },
+                        "selectedBy" : "domain"
+                    }
+                ],
+                "actions" : [ 
+                    {
+                        "title" : "New Task",
+                        "img" : "fa fa-plus",
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onAddProjectElement",
+                                "providedBy" : "Platform",
+                                "data" : {
+                                    "choices" : [ 
+                                        {
+                                            "type" : "pi-blockly-task",
+                                            "mission" : "ec-blockly-task"
+                                        }
+                                    ]
+                                },
+                                "validation" : [ 
+                                    {
+                                        "type" : "system",
+                                        "rules" : [ 
+                                            {
+                                                "action" : "duplicate",
+                                                "items" : [ 
+                                                    "blocklytask_title"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }, 
+                    {
+                        "title" : "New Source",
+                        "img" : "fa fa-plus",
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onAddProjectElement",
+                                "providedBy" : "Platform",
+                                "data" : {
+                                    "choices" : [ 
+                                        {
+                                            "type" : "pi-blockly-simple",
+                                            "mission" : "ec-blockly-simple"
+                                        }
+                                    ]
+                                },
+                                "validation" : [ 
+                                    {
+                                        "type" : "system",
+                                        "rules" : [ 
+                                            {
+                                                "action" : "duplicate",
+                                                "items" : [ 
+                                                    "blocklysimple_title"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }, 
+                    {
+                        "title" : "Delete All",
+                        "img" : "fa fa-trash",
+                        "help" : "Remove all smart objects and environments",
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onDeleteAllElements",
+                                "providedBy" : "Platform",
+                                "data" : {
+                                    "mission" : "ProjectManagementHandling"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "validChildren" : [ 
+                    "pi-blockly-task", 
+                    "pi-blockly-simple"
+                ],
+                "children" : [],
+                "items" : [ 
+                    {
+                        "VisualProgrammingSource" : "BlocklyTaskHandling",
+                        "type" : "pi-blockly-task",
+                        "renderParts" : [ 
+                            {
+                                "type" : "img",
+                                "id" : "blocklytask_img",
+                                "value" : {
+                                    "property" : "Image",
+                                    "default" : "fa fa-tablet"
+                                },
+                                "formElemItemRenderNO" : 2,
+                                "selectedBy" : "user"
+                            }, 
+                            {
+                                "type" : "title",
+                                "id" : "blocklytask_title",
+                                "value" : {
+                                    "property" : "Name",
+                                    "default" : "Blockly Task"
+                                },
+                                "formElemItemRenderNO" : 1,
+                                "selectedBy" : "user"
+                            }, 
+                            {
+                                "type" : "colour",
+                                "id" : "blocklytask_colour",
+                                "value" : {
+                                    "property" : "Background-colour",
+                                    "default" : "#DAD9D9"
+                                },
+                                "selectedBy" : "user",
+                                "formElemItemRenderNO" : 3
+                            }
+                        ],
+                        "actions" : [ 
+                            {
+                                "title" : "Open",
+                                "img" : "fab fa-codepen",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "open",
+                                        "providedBy" : "EditorManager",
+                                        "data" : {
+                                            "mission" : "EditBlocklyTask"
+                                        }
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Delete",
+                                "img" : "fa fa-trash",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onRemoveElement",
+                                        "providedBy" : "Platform",
+                                        "data" : {
+                                            "mission" : "ProjectManagementHandling"
+                                        }
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Rename",
+                                "img" : "fa fa-edit",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onRenameElement",
+                                        "providedBy" : "Platform",
+                                        "validation" : [ 
+                                            {
+                                                "type" : "system",
+                                                "rules" : [ 
+                                                    {
+                                                        "action" : "duplicate",
+                                                        "items" : [ 
+                                                            "blocklytask_title"
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "open",
+                                "providedBy" : "EditorManager",
+                                "data" : {
+                                    "mission" : "OpenBlocklyTask"
+                                }
+                            }
+                        ]
+                    }, 
+                    {
+                        "VisualProgrammingSource" : "BlocklySimpleHandling",
+                        "type" : "pi-blockly-simple",
+                        "renderParts" : [ 
+                            {
+                                "type" : "img",
+                                "id" : "blocklysimple_img",
+                                "value" : {
+                                    "property" : "Image",
+                                    "default" : "fa fa-tablet"
+                                },
+                                "formElemItemRenderNO" : 2,
+                                "selectedBy" : "user"
+                            }, 
+                            {
+                                "type" : "title",
+                                "id" : "blocklysimple_title",
+                                "value" : {
+                                    "property" : "Name",
+                                    "default" : "Blockly Source"
+                                },
+                                "formElemItemRenderNO" : 1,
+                                "selectedBy" : "user"
+                            }, 
+                            {
+                                "type" : "colour",
+                                "id" : "blocklysimple_colour",
+                                "value" : {
+                                    "property" : "Background-colour",
+                                    "default" : "#DAD9D9"
+                                },
+                                "selectedBy" : "user",
+                                "formElemItemRenderNO" : 3
+                            }
+                        ],
+                        "actions" : [ 
+                            {
+                                "title" : "Open",
+                                "img" : "fab fa-codepen",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "open",
+                                        "providedBy" : "EditorManager",
+                                        "data" : {
+                                            "mission" : "OpenBlocklySimple"
+                                        }
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Delete",
+                                "img" : "fa fa-trash",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onRemoveElement",
+                                        "providedBy" : "Platform",
+                                        "data" : {
+                                            "mission" : "ProjectManagementHandling"
+                                        }
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Rename",
+                                "img" : "fa fa-edit",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onRenameElement",
+                                        "providedBy" : "Platform",
+                                        "validation" : [ 
+                                            {
+                                                "type" : "system",
+                                                "rules" : [ 
+                                                    {
+                                                        "action" : "duplicate",
+                                                        "items" : [ 
+                                                            "blocklysimple_title"
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "open",
+                                "providedBy" : "EditorManager",
+                                "data" : {
+                                    "mission" : "OpenBlocklySimple"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
