@@ -11,8 +11,10 @@ print(sys.version)
 
 print('Starts Domains Bridge Code Generation.')
 
-DomainsPath = './src/app/ide/domains/'
+DomainsPath = './src/app/application-domain-frameworks/'
+DomainsConfVPL = "./domains-vpl-conf/"
 
+os.chdir(DomainsPath)
 
 # create domains.js file
 file = open("domains.ts","w")
@@ -25,23 +27,24 @@ file.write(" * Yannis Valsamakis <jvalsam@ics.forth.gr>\n")
 file.write(" * " + str(datetime.datetime.now()) + "\n")
 file.write(" */\n\n")
 
-file.write("import {\n")
-file.write("    InitializeVPDL as InitializeIoTVPDL\n")
-file.write("} from \"./src/app/ide/domains/IoT/vpdl/iot-domain\";\n")
-file.write("import {\n")
-file.write("    InitializeVPDL as InitializeSimpleDomainVPDL\n")
-file.write("} from \"./src/app/ide/domains/SimpleTasks/vpdl/simple-domain\";\n\n")
-
-file.write("export function InitializeVPDLs() {\n")
-file.write("    InitializeIoTVPDL();\n")
-file.write("    InitializeSimpleDomainVPDL();\n")
-file.write("}\n\n")
-
-os.chdir(DomainsPath)
+os.chdir(DomainsConfVPL)
 
 Domains = os.listdir("./")
 
 for domain in Domains:
-    print(domain)
+    file.write("import {\n")
+    file.write("    InitializeVPDL as Initialize" + domain + "VPDL\n")
+    file.write("} from \"" + DomainsConfVPL + domain + "/vpdl/domain\";\n")
+
+file.write("\nvar ProjectManagerMetaData = { };\n")
+for domain in Domains:
+    file.write("ProjectManagerMetaData['" + domain + "'] = require('" + DomainsConfVPL + domain + "/project-manager/application-structure" + ".json')\n")
+
+file.write("\nexport function InitializeVPDLs() {\n")
+
+for domain in Domains:    
+    file.write("    Initialize" + domain + "VPDL();\n")
+
+file.write("}\n\n")
 
 print('Domains Bridge Code Generation Completed.')
