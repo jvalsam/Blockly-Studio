@@ -1,10 +1,10 @@
 import {
     DefineVPLDomainElements
-} from '../../../domain-manager/administration/vpl-domain-elements';
+} from '../../../../ide/domain-manager/administration/vpl-domain-elements';
 import {
     getPredefinedCategories,
     defineGeneralCategories
-} from '../../../domain-manager/common/general-blockly-toolbox';
+} from '../../../../ide/domain-manager/common/general-blockly-toolbox';
 
 import {
     BlocklyTask as BlocklyTaskElem
