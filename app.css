@@ -22,22 +22,14 @@
     transform: translate(-50%, -50%);
 }
 
-.card-header {
+.application-card-header {
     padding: 0rem 1.25rem;
     margin-bottom: 0;
     background-color: rgba(0, 0, 0, 0.03);
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #343a40 !important;
-    height: 40px;
-}
-
-.container .text-muted {
+/* .container .text-muted {
     margin: 10px 0;
     padding: 8px;
     text-align: center;
@@ -48,18 +40,11 @@
     margin-top: 0px 0px;
     padding: 8px;
     text-align: center
+} */
+
+.bs-modal-dialog {
+    min-width: 40rem;
 }
 
-.modal-content {
-    position: relative;
-    display: flex;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-color: #f8d7da;
-    background-clip: padding-box;
-    border: 0px;
-    border-radius: 0.3rem;
-    outline: 0;
+.bs-modal-content {
 }

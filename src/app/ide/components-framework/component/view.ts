@@ -381,7 +381,7 @@ export abstract class ModalView extends View {
         protected readonly _templateHTML: string,
         styles: Array<IViewUserStyleData>
     ) {
-        super(parent, name, _templateHTML, styles, ".modal-content");
+        super(parent, name, _templateHTML, styles, ".bs-modal-content");
         this._firstRender = true;
     }
 
