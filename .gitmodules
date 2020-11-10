@@ -1,0 +1,3 @@
+[submodule "domains-libs/IoT/AutoIoTGen/iot-interfaces"]
+	path = domains-libs/IoT/AutoIoTGen/iot-interfaces
+	url = https://github.com/dimilin/iot-interfaces.git
