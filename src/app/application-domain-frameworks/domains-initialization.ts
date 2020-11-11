@@ -3,7 +3,7 @@
  * Domains Initialization for the Application Domains of IDE
  *
  * Yannis Valsamakis <jvalsam@ics.forth.gr>
- * 2020-11-11 17:34:47.461000
+ * 2020-11-12 01:32:52.874000
  */
 
 import {

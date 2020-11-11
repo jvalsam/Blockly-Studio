@@ -158,49 +158,12 @@
                     {
                         "type" : "title",
                         "value" : {
-                            "text" : "Smart Objects"
+                            "text" : "Smart Devices"
                         },
                         "selectedBy" : "domain"
                     }
                 ],
-                "actions" : [ 
-                    {
-                        "title" : "New Smart Element",
-                        "img" : "fa fa-plus",
-                        "events" : [ 
-                            {
-                                "type" : "click",
-                                "action" : "onAddProjectElement",
-                                "providedBy" : "Platform",
-                                "data" : {
-                                    "choices" : [ 
-                                        {
-                                            "type" : "pi-smart-object",
-                                            "mission" : "ec-smart-object"
-                                        }, 
-                                        {
-                                            "type" : "pi-smart-environment",
-                                            "mission" : "ec-smart-environment"
-                                        }
-                                    ]
-                                },
-                                "validation" : [ 
-                                    {
-                                        "type" : "system",
-                                        "rules" : [ 
-                                            {
-                                                "action" : "duplicate",
-                                                "items" : [ 
-                                                    "smartobject_title", 
-                                                    "smartenvironment_title"
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }, 
+                "actions" : [
                     {
                         "title" : "New Smart Object",
                         "img" : "fa fa-plus",
@@ -286,11 +249,11 @@
                     "pi-smart-environment"
                 ],
                 "children" : [],
-                "items" : [ 
+                "items" : [
                     {
                         "VisualProgrammingSource" : "SmartObjectHandling",
                         "type" : "pi-smart-object",
-                        "renderParts" : [ 
+                        "renderParts" : [
                             {
                                 "type" : "img",
                                 "id" : "smartobject_img",
@@ -322,7 +285,7 @@
                                 "formElemItemRenderNO" : 3
                             }
                         ],
-                        "actions" : [ 
+                        "actions" : [
                             {
                                 "title" : "Open",
                                 "img" : "fab fa-codepen",
@@ -575,6 +538,148 @@
                                 "providedBy" : "EditorManager",
                                 "data" : {
                                     "mission" : "ViewSmartEnvironment"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type" : "SmartCategories",
+                "renderParts" : [
+                    {
+                        "type" : "img",
+                        "value" : {
+                            "fa" : "fa-industry-alt"
+                        },
+                        "selectedBy" : "domain"
+                    }, 
+                    {
+                        "type" : "title",
+                        "value" : {
+                            "text" : "Smart Groups"
+                        },
+                        "selectedBy" : "domain"
+                    }
+                ],
+                "actions" : [
+                    {
+                        "title" : "Delete All",
+                        "img" : "fa fa-trash",
+                        "help" : "Remove all smart groups",
+                        "events" : [
+                            {
+                                "type" : "click",
+                                "action" : "onDeleteAllElements",
+                                "providedBy" : "Platform",
+                                "data" : {
+                                    "mission" : "ProjectManagementHandling"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "validChildren" : [ 
+                    "pi-smart-group"
+                ],
+                "children" : [],
+                "items" : [
+                    {
+                        "VisualProgrammingSource" : "SmartObjectHandling",
+                        "type" : "pi-smart-group",
+                        "renderParts" : [
+                            {
+                                "type" : "img",
+                                "id" : "smartgroup_img",
+                                "value" : {
+                                    "property" : "Image",
+                                    "default" : "fa fa-tablet"
+                                },
+                                "formElemItemRenderNO" : 2,
+                                "selectedBy" : "user"
+                            },
+                            {
+                                "type" : "title",
+                                "id" : "smartgroup_title",
+                                "value" : {
+                                    "property" : "Name",
+                                    "default" : "Smart Group"
+                                },
+                                "formElemItemRenderNO" : 1,
+                                "selectedBy" : "user"
+                            },
+                            {
+                                "type" : "colour",
+                                "id" : "smartgroup_colour",
+                                "value" : {
+                                    "property" : "Background-colour",
+                                    "default" : "#DAD9D9"
+                                },
+                                "selectedBy" : "user",
+                                "formElemItemRenderNO" : 3
+                            }
+                        ],
+                        "actions" : [
+                            {
+                                "title" : "Open",
+                                "img" : "fab fa-codepen",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "open",
+                                        "providedBy" : "EditorManager",
+                                        "data" : {
+                                            "mission" : "EditSmartGroup"
+                                        }
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Delete",
+                                "img" : "fa fa-trash",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onRemoveElement",
+                                        "providedBy" : "Platform",
+                                        "data" : {
+                                            "mission" : "ProjectManagementHandling"
+                                        }
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Rename",
+                                "img" : "fa fa-edit",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onRenameElement",
+                                        "providedBy" : "Platform",
+                                        "validation" : [ 
+                                            {
+                                                "type" : "system",
+                                                "rules" : [ 
+                                                    {
+                                                        "action" : "duplicate",
+                                                        "items" : [ 
+                                                            "smartgroup_title"
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "events" : [
+                            {
+                                "type" : "click",
+                                "action" : "open",
+                                "providedBy" : "EditorManager",
+                                "data" : {
+                                    "mission" : "EditSmartGroup"
                                 }
                             }
                         ]
