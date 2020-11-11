@@ -106,9 +106,10 @@ export class SOVPLElemInstance {
 
   // group: { name, img, color, properties, mapPropsInfo, smartObject }
   onSOCreateSmartGroup(group) {
+    console.log(group);
     // init map data of group props
     group.details = {};
-    group.details.properties = properties;
+    group.details.properties = group.properties;
     group.details.mapPropsAlias = {};
     group.details.mapPropsActive = {};
     for (let propName of Object.keys(group.mapPropsInfo)) {
@@ -167,25 +168,22 @@ export class SOVPLElemInstance {
     let domSel = document.getElementById(this.selector);
     switch (this.elemData.editorData.type) {
       case VPLElemNames.SMART_OBJECT:
-        RenderSmartObject(
-          domSel,
-          this.elemData,
-          {
-            onRegister: (props) => this.onSORegister(props),
-            onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
-            onEditPropertyProgrammingActive: (prop) =>
-              this.onSOEditPropProgrammingActive(prop),
-            onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
-            onDeleteGroup: (groupName) => this.onSODeleteGroup(groupName),
-            options: {
-              Edit: () => {
-                alert("not connected yet.");
-              },
-              Delete: () => {
-                alert("not connected yet.");
-              },
+        RenderSmartObject(domSel, this.elemData, {
+          onRegister: (props) => this.onSORegister(props),
+          onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
+          onEditPropertyProgrammingActive: (prop) =>
+            this.onSOEditPropProgrammingActive(prop),
+          onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
+          onDeleteGroup: (groupName) => this.onSODeleteGroup(groupName),
+          options: {
+            Edit: () => {
+              alert("not connected yet.");
             },
-          });
+            Delete: () => {
+              alert("not connected yet.");
+            },
+          },
+        });
         break;
       case VPLElemNames.SMART_GROUP:
         RenderSmartGroup(domSel, this.elemData, {

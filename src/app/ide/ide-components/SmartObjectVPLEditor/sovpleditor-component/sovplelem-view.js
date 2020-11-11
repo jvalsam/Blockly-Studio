@@ -442,26 +442,56 @@ let CreateNewSmartGroupModal = function (selector) {
     innerHtml: "Confirm",
   });
   confirmButton.setAttribute("type", "button");
-  // confirmButton.addEventListener('click', () => {
-  //     onSucess(
-  //         {
-  //             vplElement: elem,
-  //             name: document.getElementById('resource-name').value,
-  //             image: document.getElementById('resource-image').value,
-  //             color: document.getElementById('resource-color').value
-  //         });
-  // });
   modalFooter.appendChild(confirmButton);
 };
 
-let RenderNewGroupModal = function (properties, aliases) {
-  for (const property of properties) {
-    soUIGenerator.RenderReadOnlyPropertyforSmartGroup(
+let RenderNewGroupModal = function (soData, onCreateSmartGroup) {
+  let mapPropsInfo = [];
+  // pass the soData to smart group
+  for (const property of soData.editorData.details.properties) {
+    soUIGenerator.RenderReadOnlyProperty(
       document.getElementById("new-sg-modal-properties-container"),
+      "new-sg",
       property,
-      aliases[property.name]
+      "createSmartGroup",
+      soData.editorData.details.mapPropsAlias[property.name],
+      {
+        onEditPropertyActive: (elem) => {
+          elem.classList.toggle("text-danger");
+          elem.value = !elem.classList.contains("text-danger");
+        },
+      }
     );
   }
+  // Confirm button click
+  document.getElementById("new-sg-modal-confirm-button").onclick = () => {
+    if (document.getElementById("sg-name").value.replace(/\s+/g, "") === "") {
+      alert("Invalid name. Type a group name");
+      return;
+    }
+    // create mapPropsInfo
+    for (const property of soData.editorData.details.properties) {
+      mapPropsInfo[property.name] = {
+        alias: document.getElementById("new-sg-" + property.name + "-alias")
+          .value,
+        active: document.getElementById("new-sg-" + property.name + "-active")
+          .value,
+      };
+    }
+
+    onCreateSmartGroup({
+      name: document.getElementById("sg-name").value,
+      img: document.getElementById("sg-image").value,
+      color: document.getElementById("sg-color").value,
+      properties: soData.editorData.details.properties,
+      mapPropsInfo: mapPropsInfo,
+      smartObject: soData,
+    });
+    // Clear listener
+    document.getElementById("new-sg-modal-confirm-button").onclick = null;
+    // Hide modal
+    $("#new-sg-modal").modal("hide");
+  };
   $("#new-sg-modal").modal("show");
 };
 
@@ -515,7 +545,7 @@ let RenderSmartObjectProperty = function (
     selector,
     id,
     property,
-    true,
+    "smartObject",
     alias,
     callbacks
   );
@@ -546,6 +576,7 @@ let RenderSmartGroupofObject = function (selector, group, onDeleteGroup) {
 };
 
 let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
+  console.log(soData);
   let cardDiv = soUIGenerator.RenderCard({
     selector: selector,
     id: soData.editorData.editorId,
@@ -677,10 +708,7 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
         "";
     });
     // Render new group modal
-    RenderNewGroupModal(
-      soData.editorData.details.properties,
-      soData.editorData.details.mapPropsAlias
-    );
+    RenderNewGroupModal(soData, callbacksMap.onCreateSmartGroup);
     // callbacksMap.onCreateSmartGroup();
   };
   exportGroupsButtonCol.appendChild(exportGroupsButton);
@@ -712,7 +740,6 @@ let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
   col.classList.add("col");
   row.appendChild(col);
 
-  console.log(selector);
   // render message for unregistered smart object
   soUIGenerator.RenderScanButton(col, (resources) => {
     // Clear col
@@ -769,58 +796,49 @@ export function RenderSmartObject(selector, soData, callbacksMap) {
 }
 
 // Smart Group Renderer
-let RenderSmartGroupProperty = function (selector, property, alias, callbacks) {
-  let propertyRow = CreateDOMElement("div", {
+let RenderReadOnlyPropertyforSmartGroup = function (
+  selector,
+  property,
+  alias,
+  callbacks
+) {
+  let rowDiv = CreateDOMElement("div", {
     classList: ["row", "align-items-center", "resource-property"],
   });
-  selector.appendChild(propertyRow);
+  selector.appendChild(rowDiv);
 
-  let propertyNameCol = CreateDOMElement("div", {
-    classList: ["col-sm-9", "property-title", "text-truncate"],
+  let colDiv = CreateDOMElement("div", {
+    classList: ["col", "property-title", "text-truncate"],
     innerHtml: property.name,
   });
-  propertyRow.appendChild(propertyNameCol);
+  //tooltip for name
+  colDiv.setAttribute("data-toggle", "tooltip");
+  colDiv.setAttribute("data-placement", "bottom");
+  colDiv.setAttribute("title", property.name);
+  rowDiv.appendChild(colDiv);
 
-  let propertyName = CreateDOMElement("div", { classList: ["text-truncate"] });
-  propertyName.setAttribute("data-toggle", "tooltip");
-  propertyName.setAttribute("data-placement", "bottom");
-  propertyName.setAttribute("title", property.name);
-  propertyNameCol.appendChild(propertyName);
-
-  let propertyAliasOuterDiv = CreateDOMElement("div");
+  let propertyAliasOuterDiv = CreateDOMElement("div", {
+    classList: ["text-truncate"],
+  });
   propertyAliasOuterDiv.style.fontSize = "small";
-  propertyNameCol.appendChild(propertyAliasOuterDiv);
+  colDiv.appendChild(propertyAliasOuterDiv);
 
-  let propertyAliasHeader = CreateDOMElement("span", { innerHtml: "alias: " });
+  let propertyAliasHeader = CreateDOMElement("span", {
+    innerHtml: "alias: ",
+  });
   propertyAliasOuterDiv.appendChild(propertyAliasHeader);
 
-  let propertyAliasValue = CreateDOMElement("span", { innerHtml: alias });
+  let propertyAliasValue = CreateDOMElement("span", {
+    innerHtml: alias,
+  });
+  propertyAliasValue.setAttribute("data-toggle", "tooltip");
+  propertyAliasValue.setAttribute("data-placement", "bottom");
+  propertyAliasValue.setAttribute("title", alias);
   propertyAliasValue.style.fontStyle = "italic";
   propertyAliasOuterDiv.appendChild(propertyAliasValue);
 
-  let propertyActiveCol = CreateDOMElement("div", { classList: ["col-sm-1"] });
-  propertyRow.appendChild(propertyActiveCol);
-
-  let propertyActiveIcon = CreateDOMElement("i", {
-    classList: ["fas", "fa-power-off", "fa-lg"],
-  });
-  propertyActiveIcon.onclick = () => {
-    callbacks.onEditPropertyActive(property);
-  };
-  propertyActiveIcon.style.color = "lightgreen";
-  propertyActiveCol.appendChild(propertyActiveIcon);
-
-  let propertyEditCol = CreateDOMElement("div", { classList: ["col-sm-1"] });
-  propertyEditCol.style.paddingRight = ".5rem";
-  propertyRow.appendChild(propertyEditCol);
-
-  let propertyEditIcon = CreateDOMElement("i", {
-    classList: ["fas", "fa-edit", "fa-lg"],
-  });
-  propertyEditIcon.onclick = () => {
-    callbacks.onEditPropertyAlias(property);
-  };
-  propertyEditCol.appendChild(propertyEditIcon);
+  let hr = CreateDOMElement("hr");
+  selector.appendChild(hr);
 };
 
 let RenderSmartObjectofGroup = function (
