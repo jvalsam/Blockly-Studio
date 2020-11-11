@@ -1,0 +1,20 @@
+{
+    "img" : {
+        "fa" : "fas fa-charging-station"
+    },
+    "author" : {
+        "id" : "5ad5d7d90ccbad25bc637600",
+        "name" : "Valsamakis Yannis"
+    },
+    "actions" : [ 
+        "open", 
+        "delete", 
+        "share", 
+        "details"
+    ],
+    "name" : "SimpleTasks",
+    "title" : "Testing Platform",
+    "help" : "Testing...",
+    "description" : "This domain is designed to help us testing and develop all the features of the platform and the adaptable approach using only the Blockly editor...",
+    "type" : "programming"
+}

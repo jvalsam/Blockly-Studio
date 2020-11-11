@@ -1,0 +1,15 @@
+{
+    "img" : {
+        "fa" : "fa-mobile"
+    },
+    "author" : {
+        "id" : "5ad5d7d90ccbad25bc637600",
+        "name" : "Valsamakis Yannis"
+    },
+    "actions" : [],
+    "name" : "LoGo",
+    "title" : "LoGo",
+    "help" : "Learn programming activities",
+    "description" : "This domain is designed to help end-users learn programming via activities such as pley game with challenges and drawing with special defined instructions.",
+    "type" : "learning"
+}

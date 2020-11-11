@@ -52,11 +52,16 @@ export class DomainView extends ComponentViewElement {
     private renderApps(selectedDomain): void {
         if (selectedDomain.type === "programming") {
             if (this.domainsAppsView === null) {
-                this.domainsAppsView = <ApplicationListSP>ViewRegistry.getEntry("ApplicationsListStartPage").create(
-                    this.parent,
-                    ".domain-applications",
-                    { domain: selectedDomain, filters: { domainType: selectedDomain.name } }
-                );
+                this.domainsAppsView = <ApplicationListSP>ViewRegistry
+                    .getEntry("ApplicationsListStartPage").create(
+                        this.parent,
+                        ".domain-applications",
+                        {
+                            domain: selectedDomain,
+                            filters: {
+                                domainType: selectedDomain.name
+                            }
+                        });
                 this.domainsAppsView.render();
             }
             else {

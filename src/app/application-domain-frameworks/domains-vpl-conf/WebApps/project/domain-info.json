@@ -1,0 +1,20 @@
+{
+    "img" : {
+        "fa" : "fa-tablet-alt"
+    },
+    "author" : {
+        "id" : "5ad5d7d90ccbad25bc637600",
+        "name" : "Valsamakis Yannis"
+    },
+    "actions" : [ 
+        "open", 
+        "delete", 
+        "share", 
+        "details"
+    ],
+    "name" : "Web Apps",
+    "title" : "Visual End-User Programming for Web Applications",
+    "help" : "Develop single web pages",
+    "description" : "This domain is designed to help end-users develop their web pages",
+    "type" : "programming"
+}

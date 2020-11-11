@@ -71,7 +71,10 @@ module.exports = {
     performance: { hints: false },
     plugins: [
         new WebpackShellPlugin({
-            onBuildStart: ['python cg_components.py']
+            onBuildStart: [
+                'python cg_components.py',
+                'python domains-loader.py'
+            ]
         }),
         new webpack.ProvidePlugin({
             '$': "jquery",

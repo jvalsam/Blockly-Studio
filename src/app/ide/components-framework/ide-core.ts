@@ -18,6 +18,7 @@ import {
 } from "./holders";
 
 import { DomainLibsHolder } from "../domain-manager/domain-libs-holder";
+import { InitializeDomainsHolder } from "../../application-domain-frameworks/domains-holder";
 import { ComponentRegistry } from "./component/component-entry";
 
 import { ComponentsBridge } from "./component/components-bridge";
@@ -37,6 +38,7 @@ export class IDECore {
     RequiredFunctionsHolder.initialize();
     ComponentLoader.initialize();
     DomainLibsHolder.initialize();
+    InitializeDomainsHolder();
     IDEError.initialize();
 
     ComponentRegistry.initialize();

@@ -15,7 +15,7 @@ import { Domain } from "./domain";
 import {
     VPLDomainElementsManager
 } from "./administration/vpl-domain-elements-manager";
-import { InitializeVPDLs } from "../../application-domain-frameworks/domains";
+import { InitializeVPDLs } from "../../application-domain-frameworks/domains-initialization";
 
 
 export interface IDomainElementDB {

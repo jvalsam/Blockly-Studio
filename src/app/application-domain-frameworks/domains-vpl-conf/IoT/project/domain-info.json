@@ -1,0 +1,20 @@
+{
+    "img" : {
+        "fa" : "fa-tablet-alt"
+    },
+    "author" : {
+        "name" : "Valsamakis Yannis",
+        "email": "jvalsam@ics.forth.gr"
+    },
+    "actions" : [
+        "open", 
+        "delete", 
+        "share", 
+        "details"
+    ],
+    "name" : "IoT",
+    "title" : "Visual Programming in the Internet of Things",
+    "help" : "Develop automations for your smart devices",
+    "description" : "This domain is designed to help end-users develop automations for their daily activities using their smart objects such as smart phone, smart watch, air-conditioning etc.",
+    "type" : "programming"
+}

@@ -1,0 +1,590 @@
+{
+    "domain" : "Web Apps",
+    "title" : "Web Applicatios",
+    "img" : "./images/iot/iot-app-domain.png",
+    "defaultInstImg" : "./images/IoT/iot-app-inst-domain.png",
+    "style" : "BlueStyle",
+    "actions" : [ 
+        {
+            "title" : "Open",
+            "img" : "fa-codepen",
+            "help" : "Open application",
+            "events" : [ 
+                {
+                    "type" : "click",
+                    "action" : "onOpenProject",
+                    "mission" : "ProjectManagementHandling"
+                }
+            ]
+        }, 
+        {
+            "title" : "New",
+            "img" : "fa-plus",
+            "help" : "Create new application",
+            "events" : [ 
+                {
+                    "type" : "click",
+                    "action" : "onCreateNewProject",
+                    "mission" : "ProjectManagementHandling"
+                }
+            ]
+        }, 
+        {
+            "title" : "Close All",
+            "img" : "fa-trash",
+            "help" : "Close loaded applications",
+            "events" : [ 
+                {
+                    "type" : "click",
+                    "action" : "onCloseAllProjects",
+                    "mission" : "ProjectManagementHandling"
+                }
+            ]
+        }, 
+        {
+            "title" : "Delete All",
+            "img" : "fa-trash",
+            "help" : "Delete current application",
+            "events" : [ 
+                {
+                    "type" : "click",
+                    "action" : "onDeleteAllProjects",
+                    "mission" : "ProjectManagementHandling"
+                }
+            ]
+        }
+    ],
+    "project" : {
+        "actions" : [ 
+            {
+                "title" : "Rename",
+                "img" : "fa-edit",
+                "help" : "Rename",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onRenameProject",
+                        "mission" : "ProjectManagementHandling"
+                    }
+                ]
+            }, 
+            {
+                "title" : "Properties",
+                "img" : "fa-file-alt",
+                "help" : "Properties",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onClickProjectProperties",
+                        "mission" : "ProjectManagementHandling"
+                    }
+                ]
+            }, 
+            {
+                "title" : "Share",
+                "img" : "fa-share-alt-square",
+                "help" : "Share",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onShareProject",
+                        "mission" : "ProjectManagementHandling"
+                    }
+                ]
+            }, 
+            {
+                "title" : "Close",
+                "img" : "fa-window-close",
+                "help" : "Close application",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onCloseProject",
+                        "mission" : "ProjectManagementHandling"
+                    }
+                ]
+            }, 
+            {
+                "title" : "Delete",
+                "img" : "fa-trash",
+                "help" : "Close application",
+                "events" : [ 
+                    {
+                        "type" : "click",
+                        "action" : "onDeleteProject",
+                        "mission" : "ProjectManagementHandling"
+                    }
+                ]
+            }
+        ],
+        "categories" : [ 
+            {
+                "type" : "SmartObjects",
+                "renderParts" : [ 
+                    {
+                        "type" : "img",
+                        "value" : "fa-industry-alt",
+                        "style" : {}
+                    }, 
+                    {
+                        "type" : "title",
+                        "value" : "Smart Objects",
+                        "style" : {}
+                    }
+                ],
+                "actions" : [ 
+                    {
+                        "title" : "Add",
+                        "img" : "fa-plus",
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onAddSmartObject",
+                                "mission" : "VisualSmartObjectsHandling"
+                            }
+                        ]
+                    }, 
+                    {
+                        "title" : "View All",
+                        "img" : "fa-eye",
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onViewAllSmartObjects",
+                                "mission" : "VisualSmartObjectsHandling"
+                            }
+                        ]
+                    }, 
+                    {
+                        "title" : "Delete All",
+                        "img" : "fa-trash",
+                        "help" : "Remove all smart objects and environments",
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onDeleteAllElements",
+                                "mission" : "ProjectManagementHandling"
+                            }
+                        ]
+                    }
+                ],
+                "validChildren" : [ 
+                    "SmartOject", 
+                    "SOEnvironment"
+                ],
+                "children" : [],
+                "items" : [ 
+                    {
+                        "type" : "SOEnvironment",
+                        "renderParts" : [ 
+                            {
+                                "type" : "img",
+                                "default" : "fa-list-alt"
+                            }, 
+                            {
+                                "type" : "title",
+                                "default" : "Environment"
+                            }
+                        ],
+                        "menu" : [ 
+                            {
+                                "title" : "Add",
+                                "img" : "fa-plus",
+                                "event" : {
+                                    "type" : "click",
+                                    "action" : "onAddSmartObject",
+                                    "mission" : "VisualSmartObjectsHandling"
+                                }
+                            }, 
+                            {
+                                "title" : "Delete",
+                                "img" : "fa-trash",
+                                "event" : {
+                                    "type" : "click",
+                                    "action" : "onDeleteElement",
+                                    "mission" : "ProjectManagementHandling"
+                                }
+                            }, 
+                            {
+                                "title" : "View",
+                                "img" : "fa-eye",
+                                "event" : {
+                                    "type" : "click",
+                                    "action" : "onViewEnvironment",
+                                    "mission" : "VisualSmartObjectsHandling"
+                                }
+                            }, 
+                            {
+                                "title" : "Edit",
+                                "img" : "fa-edit",
+                                "event" : {
+                                    "type" : "click",
+                                    "action" : "onEditEnvironment",
+                                    "mission" : "VisualSmartObjectsHandling"
+                                }
+                            }
+                        ],
+                        "validChildren" : [ 
+                            "SmartObject", 
+                            "SOEnvironment"
+                        ],
+                        "events" : []
+                    }, 
+                    {
+                        "type" : "SmartOject",
+                        "renderParts" : [ 
+                            {
+                                "type" : "img",
+                                "default" : "fa-tablet"
+                            }, 
+                            {
+                                "type" : "title",
+                                "default" : "Smart Object"
+                            }, 
+                            {
+                                "type" : "state",
+                                "default" : {
+                                    "type" : "img",
+                                    "default" : {
+                                        "src" : "fa-circle",
+                                        "style" : {
+                                            "color" : "black"
+                                        }
+                                    }
+                                },
+                                "retrieve" : {
+                                    "library" : "IoTivity",
+                                    "function" : "stateWSPView"
+                                }
+                            }
+                        ],
+                        "menu" : [ 
+                            {
+                                "title" : "Delete",
+                                "img" : "fa-trash",
+                                "event" : {
+                                    "type" : "click",
+                                    "action" : "onRemoveElement",
+                                    "mission" : "ProjectManagementHandling"
+                                }
+                            }, 
+                            {
+                                "title" : "View",
+                                "img" : "fa-eye",
+                                "event" : {
+                                    "type" : "click",
+                                    "action" : "onViewSmartObject",
+                                    "mission" : "VisualSmartObjectsHandling"
+                                }
+                            }, 
+                            {
+                                "title" : "Edit",
+                                "img" : "fa-edit",
+                                "event" : {
+                                    "type" : "click",
+                                    "action" : "onEditSmartObject",
+                                    "mission" : "VisualSmartObjectsHandling"
+                                }
+                            }
+                        ],
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onViewSmartObject",
+                                "mission" : "VisualSmartObjectsHandling"
+                            }
+                        ]
+                    }
+                ]
+            }, 
+            {
+                "type" : "IoTEvents",
+                "renderParts" : [ 
+                    {
+                        "type" : "img",
+                        "value" : "./images/iot/iot-events.png",
+                        "style" : {}
+                    }, 
+                    {
+                        "type" : "title",
+                        "value" : "Environment Events",
+                        "style" : {}
+                    }
+                ],
+                "actions" : [],
+                "events" : [],
+                "categories" : [ 
+                    {
+                        "type" : "ConditionEVTs",
+                        "renderParts" : [ 
+                            {
+                                "type" : "img",
+                                "value" : "./images/iot/condition-events.png"
+                            }, 
+                            {
+                                "type" : "title",
+                                "value" : "Condition Events"
+                            }
+                        ],
+                        "actions" : [ 
+                            {
+                                "title" : "New",
+                                "img" : "fa-plus",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onAddNewProjectElement",
+                                        "mission" : "ConditionIoTEventsHandling"
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Delete All",
+                                "img" : "fa-trash",
+                                "help" : "Remove all condition IoT events are defined",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onDeleteAllElements",
+                                        "mission" : "ProjectManagementHandling"
+                                    }
+                                ]
+                            }
+                        ],
+                        "validChildren" : [ 
+                            "ConditionEVT"
+                        ],
+                        "items" : [ 
+                            {
+                                "type" : "ConditionEVT",
+                                "renderParts" : [ 
+                                    {
+                                        "type" : "img",
+                                        "default" : "./images/iot/condition-events.png"
+                                    }, 
+                                    {
+                                        "type" : "title",
+                                        "default" : "Condition Events"
+                                    }
+                                ],
+                                "actions" : [ 
+                                    {
+                                        "title" : "Open",
+                                        "events" : [ 
+                                            {
+                                                "type" : "click",
+                                                "action" : "onOpenProjectItem",
+                                                "mission" : "ConditionIoTEventsHandling"
+                                            }
+                                        ]
+                                    }, 
+                                    {
+                                        "title" : "Delete",
+                                        "img" : "fa-trash",
+                                        "help" : "Delete condition event",
+                                        "events" : [ 
+                                            {
+                                                "type" : "click",
+                                                "action" : "onDeleteProjectItem",
+                                                "mission" : "ProjectManagementHandling"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onOpenProjectItem",
+                                        "mission" : "ConditionIoTEventsHandling"
+                                    }
+                                ]
+                            }
+                        ]
+                    }, 
+                    {
+                        "type" : "CalendarEVTs",
+                        "renderParts" : [ 
+                            {
+                                "type" : "img",
+                                "default" : "./images/iot/calendar-events.png"
+                            }, 
+                            {
+                                "type" : "title",
+                                "default" : "Calendar Event"
+                            }
+                        ],
+                        "validChildren" : [ 
+                            "CalendarEVT"
+                        ],
+                        "items" : [ 
+                            {
+                                "type" : "CalendarEVT",
+                                "renderParts" : [ 
+                                    {
+                                        "type" : "img",
+                                        "default" : "./images/iot/calendar-events.png"
+                                    }, 
+                                    {
+                                        "type" : "title",
+                                        "default" : "Calendar Event"
+                                    }
+                                ],
+                                "actions" : [ 
+                                    {
+                                        "title" : "Open",
+                                        "events" : [ 
+                                            {
+                                                "type" : "click",
+                                                "action" : "onOpenProjectItem",
+                                                "mission" : "CalendarIoTEventsHandling"
+                                            }
+                                        ]
+                                    }, 
+                                    {
+                                        "title" : "Delete",
+                                        "img" : "fa-trash",
+                                        "help" : "Delete calendar event",
+                                        "events" : [ 
+                                            {
+                                                "type" : "click",
+                                                "action" : "onDeleteProjectItem",
+                                                "mission" : "ProjectManagementHandling"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onOpenProjectItem",
+                                        "mission" : "CalendarIoTEventsHandling"
+                                    }
+                                ]
+                            }
+                        ],
+                        "actions" : [ 
+                            {
+                                "title" : "New",
+                                "img" : "fa-plus",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onAddNewProjectElement",
+                                        "mission" : "CalendarIoTEventsHandling"
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Delete All",
+                                "img" : "fa-trash",
+                                "help" : "Remove all calendar IoT events are defined",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onDeleteAllElements",
+                                        "mission" : "ProjectManagementHandling"
+                                    }
+                                ]
+                            }
+                        ],
+                        "events" : []
+                    }, 
+                    {
+                        "type" : "TimeEVTs",
+                        "renderParts" : [ 
+                            {
+                                "type" : "img",
+                                "value" : "./images/iot/time-events.png"
+                            }, 
+                            {
+                                "type" : "title",
+                                "value" : "Time Events"
+                            }
+                        ],
+                        "validChildren" : [ 
+                            "TimeEVT"
+                        ],
+                        "items" : [ 
+                            {
+                                "type" : "TimeEVT",
+                                "renderParts" : [ 
+                                    {
+                                        "type" : "img",
+                                        "default" : "./images/iot/time-events.png"
+                                    }, 
+                                    {
+                                        "type" : "title",
+                                        "default" : "Time Event"
+                                    }
+                                ],
+                                "actions" : [ 
+                                    {
+                                        "title" : "Open",
+                                        "events" : [ 
+                                            {
+                                                "type" : "click",
+                                                "action" : "onOpenProjectItem",
+                                                "mission" : "TimeIoTEventsHandling"
+                                            }
+                                        ]
+                                    }, 
+                                    {
+                                        "title" : "Delete",
+                                        "img" : "fa-trash",
+                                        "help" : "Delete time event",
+                                        "events" : [ 
+                                            {
+                                                "type" : "click",
+                                                "action" : "onDeleteProjectItem",
+                                                "mission" : "ProjectManagementHandling"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onOpenProjectItem",
+                                        "mission" : "TimeIoTEventsHandling"
+                                    }
+                                ]
+                            }
+                        ],
+                        "actions" : [ 
+                            {
+                                "title" : "New",
+                                "img" : "fa-plus",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onAddNewProjectElement",
+                                        "mission" : "TimeIoTEventsHandling"
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Delete All",
+                                "img" : "fa-trash",
+                                "help" : "Remove all time IoT events are defined",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onDeleteAllElements",
+                                        "mission" : "ProjectManagementHandling"
+                                    }
+                                ]
+                            }
+                        ],
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onClickToFocusCategory",
+                                "mission" : "ProjectManagementHandling"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
