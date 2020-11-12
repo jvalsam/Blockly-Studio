@@ -20,6 +20,8 @@ import {
 } from "../../components-framework/build-in.components/editor-manager/project-item/pitem-view";
 import { assert } from "../../shared/ide-error/ide-error";
 import { ProjectItem } from '../../components-framework/build-in.components/project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item';
+import { ITool } from '../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view';
+import { ComponentsCommunication } from '../../components-framework/component/components-communication';
 
 
 var menuJson: any = require("./conf_menu.json");
@@ -146,9 +148,23 @@ export class SmartObjectVPLEditor extends Editor {
     public closeSRC(srcId: string): void {
         throw new Error("Method not implemented.");
     }
-    public tools(editorId: string): import("../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view").ITool[] {
-        throw new Error("Method not implemented.");
+
+    @ExportedFunction
+    public tools(editorId: string): Array<ITool> {
+      return [
+        // {
+        //   icon: "../../../../../images/blockly/undo.png",
+        //   tooltip: "undo",
+        //   action: () => this.instancesMap[editorId].undo()
+        // },
+        // {
+        //   icon: "../../../../../images/blockly/redo.png",
+        //   tooltip: "redo",
+        //   action: () => this.instancesMap[editorId].redo()
+        // }
+      ];
     }
+
     public getDomainElementData(projectId: string, domainElemId: string): IDomainElementData {
         throw new Error("Method not implemented.");
     }
@@ -168,16 +184,25 @@ export class SmartObjectVPLEditor extends Editor {
         throw new Error("Method not implemented.");
     }
 
-    private saveElement(element) {
-        // this.save(
-        //     element.data.id,
+    @ExportedFunction
+    public render(): void {
 
     }
 
-    private registerSmartObject (data, groupSelection, type) {
-        this.saveElement(data);
-        // responsible to save SO and look up for the groups that match with
-        // API of this smart object
+    @RequiredFunction("ProjectManager", "saveEditorData")
+    private saveElement(element) {
+        this.save(
+            element.id,
+            element.pitem.pi,
+            (mode) => mode === "SHARED"
+              ? element.data
+              : element.data
+            );
+    }
+
+    private registerSmartObject (data, handleGroups) {
+        let groups = this.retrievePItemGroups();
+        handleGroups(groups);
     }
 
     private createSmartGroup(group, type) {
@@ -209,6 +234,29 @@ export class SmartObjectVPLEditor extends Editor {
     private deleteSmartObjectFromGroup(smartGroup, smartObject, type) {
         // retrieve smart group to edit innner data of the list with the smart objects
         alert("not implemented yet deleteSmartObjectFromGroup");
+    }
+
+    @RequiredFunction("ProjectManager", "getProjectItems")
+    private retrievePItemGroups() {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getProjectItems",
+            [
+                "pi-smart-group"
+            ]
+        );
+    }
+
+    private retrievePItemDevices() {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getProjectItems",
+            [
+                "pi-smart-object"
+            ]
+        );
     }
 
     @ExportedFunction

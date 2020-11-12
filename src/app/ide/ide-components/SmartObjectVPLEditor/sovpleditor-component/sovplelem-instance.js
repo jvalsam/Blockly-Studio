@@ -1,4 +1,8 @@
-import { RenderSmartObject, RenderSmartGroup } from "./sovplelem-view";
+import {
+  RenderSmartObject,
+  RenderSmartGroup,
+  dialogueSelectGroups
+} from "./sovplelem-view";
 
 export const VPLElemNames = Object.freeze({
   SMART_OBJECT: "smart-object",
@@ -72,6 +76,7 @@ export class SOVPLElemInstance {
 
     this.elemData.editorData.details.mapPropsAlias = {};
     this.elemData.editorData.details.mapPropsProgrammingActive = {};
+    this.elemData.editorData.details.groups = [];
     props.forEach((prop) => {
       this.elemData.editorData.details.mapPropsAlias[prop.name] = prop.name;
       this.elemData.editorData.details.mapPropsProgrammingActive[
@@ -80,17 +85,24 @@ export class SOVPLElemInstance {
     });
 
     // post parent
-    this.parent.registerSmartObject(this, (groups) => {
-      // pop up to select groups
-      dialogueSelectGroups(
-        groups,
-        (selectedGroups) => {
-          this.data.groups = selectedGroups;
-          this.parent.saveElement(this);
-        },
-        () => console.log("action cancelled!")
-      );
-    });
+    this.parent.registerSmartObject(
+      this,
+      (groups) => {
+          // pop up to select groups
+          dialogueSelectGroups(
+            this,
+            groups,
+            (groups, listUpdatedAliases) => {
+              // TODO: to this.data
+              this.data.groups = groups;
+              listUpdatedAliases.forEach(aliasElem => {
+                this.elemData.editorData.details.mapPropsAlias[aliasElem.old] = prop.new;
+              });
+              this.parent.saveElement(this);
+            },
+            () => this.parent.saveElement(this)
+          );
+      });
   }
 
   onSOEditPropAlias(prop) {

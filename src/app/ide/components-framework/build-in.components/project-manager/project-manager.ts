@@ -279,6 +279,16 @@ export class ProjectManager extends IDEUIComponent {
         return null;
     }
 
+    @ExportedFunction
+    public getProjectItems(projectId: string, type: string): Array<ProjectItem> {
+        let projView = (<ProjectManagerJSTreeView>this.view)
+            .getProject(projectId);
+        if (projView) {
+            return <Array<ProjectItem>>projView.getProjectElements(type);
+        }
+        return null;
+    }
+
     public saveProjectResponse(resp) {
         // console.log("----------------------\n");
         // console.log(resp);

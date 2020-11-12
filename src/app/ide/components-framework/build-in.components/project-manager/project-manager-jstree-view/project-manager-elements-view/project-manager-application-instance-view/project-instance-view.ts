@@ -377,6 +377,14 @@ export class ProjectInstanceView extends View {
         return this.projectElems.find(elem => elem.jstreeNode.id === id);
     }
 
+    public getProjectElements(type: string): Array<ProjectElement> {
+        if (type === "ALL") {
+            return this.projectElems;    
+        }
+
+        return this.projectElems.filter(elem => elem.jstreeNode.type === type);
+    }
+
     private treevaluemap = {
         "colour": "color",
         "img": "icon",

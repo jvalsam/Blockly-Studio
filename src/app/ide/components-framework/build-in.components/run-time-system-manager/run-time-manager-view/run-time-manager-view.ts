@@ -7,6 +7,12 @@ import {
 import RuntimeManagerTmpl from "./run-time-manager.tmpl";
 import RuntimeManagerSYCSS from "./run-time-manager.sycss";
 
+enum ConsoleDisplayState {
+    OPENED,
+    CLOSED,
+    FOLDED
+}
+
 @ComponentViewMetadata({
     name: "RuntimeManagerView",
     templateHTML: RuntimeManagerTmpl,
@@ -31,4 +37,26 @@ import RuntimeManagerSYCSS from "./run-time-manager.sycss";
     }
 })
 export class RuntimeManagerView extends ComponentView {
+    private displayState: ConsoleDisplayState;
+
+    constructor(parent,
+        name,
+        templateHTML,
+        style,
+        selector,
+        renderData,
+        eventRegData,
+        styleData) {
+        super(
+            parent,
+            name,
+            templateHTML,
+            style,
+            selector,
+            renderData,
+            eventRegData,
+            styleData
+        );
+        this.displayState = ConsoleDisplayState.FOLDED;
+    }
 }

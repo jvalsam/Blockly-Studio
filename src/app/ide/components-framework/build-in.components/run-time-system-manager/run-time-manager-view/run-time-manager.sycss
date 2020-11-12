@@ -32,12 +32,31 @@
 }
 
 .output-console-header {
-    display: flex;
-    justify-content: space-between;
+    /* display: inline-flex; */
+    /* justify-content: space-between; */
     padding: 10px;
     border-bottom: var(--border);
     background: #eee;
     color: #666;
+}
+
+.output-console-header-text {
+    margin-left: 0.5rem;
+}
+
+.output-console-header-fold {
+    margin-right: 1rem;
+    float: right;
+}
+
+.output-console-header-options {
+    margin-right: 1rem;
+    float: right;
+}
+
+.output-console-header-close {
+    margin-right: 1.5rem;
+    float: right;
 }
 
 .output-console-header-title {

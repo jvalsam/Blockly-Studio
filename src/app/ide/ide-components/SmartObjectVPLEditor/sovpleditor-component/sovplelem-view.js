@@ -720,9 +720,9 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
   let groupsCol = CreateDOMElement("div", { classList: ["col-sm"] });
   groupsRow.appendChild(groupsCol);
 
-  for (const group of soData.editorData.details.groups) {
-    RenderSmartGroupofObject(groupsCol, group, callbacksMap.onDeleteGroup);
-  }
+  soData.editorData.details.groups.forEach(
+    group => RenderSmartGroupofObject(groupsCol, group, callbacksMap.onDeleteGroup)
+  );
 };
 
 let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
@@ -1053,4 +1053,12 @@ export function RenderSmartGroup(selector, soData, callbacksMap) {
   deleteGroupButton.onclick = callbacksMap.options.Delete;
   deleteGroupButton.style.cssFloat = "right";
   deleteGroupCol.appendChild(deleteGroupButton);
+}
+
+export function dialogueSelectGroups(
+  sovplelemInst,
+  groups,
+  onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+  onSkip) {
+
 }
