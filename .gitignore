@@ -44,3 +44,7 @@ package-lock.json
 # Automatic UI Gen for IoT
 # /src/domains-libs/IoT/AutoIoTGen
 package-lock.json
+
+# Domain loader scripts generated during build
+/src/app/application-domain-frameworks/domains-holder.ts
+/src/app/application-domain-frameworks/domains-initialization.ts
