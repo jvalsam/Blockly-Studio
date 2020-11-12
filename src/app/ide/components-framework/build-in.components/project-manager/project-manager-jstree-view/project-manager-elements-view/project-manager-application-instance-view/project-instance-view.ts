@@ -381,7 +381,7 @@ export class ProjectInstanceView extends View {
         if (type === "ALL") {
             return this.projectElems;    
         }
-
+        
         return this.projectElems.filter(elem => elem.jstreeNode.type === type);
     }
 

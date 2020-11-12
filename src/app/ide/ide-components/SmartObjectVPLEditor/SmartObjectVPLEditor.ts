@@ -201,7 +201,7 @@ export class SmartObjectVPLEditor extends Editor {
     }
 
     private registerSmartObject (data, handleGroups) {
-        let groups = this.retrievePItemGroups();
+        let groups = this.retrievePItemGroups(data.elemData.editorData.projectID);
         handleGroups(groups);
     }
 
@@ -237,26 +237,28 @@ export class SmartObjectVPLEditor extends Editor {
     }
 
     @RequiredFunction("ProjectManager", "getProjectItems")
-    private retrievePItemGroups() {
-        ComponentsCommunication.functionRequest(
+    private retrievePItemGroups(projectId) {
+        return ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
             "getProjectItems",
             [
+                projectId,
                 "pi-smart-group"
             ]
-        );
+        ).value;
     }
 
-    private retrievePItemDevices() {
-        ComponentsCommunication.functionRequest(
+    private retrievePItemDevices(projectId) {
+        return ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
             "getProjectItems",
             [
+                projectId,
                 "pi-smart-object"
             ]
-        );
+        ).value;
     }
 
     @ExportedFunction
