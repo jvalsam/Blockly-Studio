@@ -18,10 +18,10 @@ os.system('git submodule foreach git checkout master')
 os.system('git submodule foreach git pull origin master')
 
 print('\nAutomatic IoT User Interfaces:\n')
-AutomaticIoTInterfacesPath = './domain-libs/IoT/iot-interfaces/'
+AutomaticIoTInterfacesPath = './domains-libs/IoT/AutoIoTGen/iot-interfaces/'
 os.chdir(AutomaticIoTInterfacesPath)
 
-if (not os.path.isdir('./node_modules'):
+if (not os.path.isdir('./node_modules')):
     os.system('npm i')
 
 os.system('npm run remote_library')
