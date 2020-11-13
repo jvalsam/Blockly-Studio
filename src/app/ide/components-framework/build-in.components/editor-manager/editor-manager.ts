@@ -65,6 +65,8 @@ export class EditorManager extends IDEUIComponent {
 
         this.projectItemsMap = {};
         this.pitemOnFocusIds = [];
+        this.focusPrevStackEditorID = [];
+        this.focusNextStackEditorID = [];
         this.onFocusLocation = 0;
     }
 
@@ -167,7 +169,13 @@ export class EditorManager extends IDEUIComponent {
             delete this.projectItemsMap[delSystemID];
             if (this.isOnFocus(delSystemID)) {
                 let prevFocusEditorID = this.focusPrevStackEditorID.pop();
-                this.onChangePItemFocus(prevFocusEditorID);
+
+                if (prevFocusEditorID) {
+                    this.onChangePItemFocus(prevFocusEditorID);
+                }
+                else {
+                    
+                }
             }
             else {
                 _.remove(this.focusNextStackEditorID, id => id === delSystemID);
@@ -357,7 +365,9 @@ export class EditorManager extends IDEUIComponent {
     @ExportedFunction
     public closePItem(pitemArea: number) {
         let pitem = this.projectItemsMap[this.pitemOnFocusIds[this.locationOfPItemArea(pitemArea)]];
+        
         if (pitem) {
+            this.focusPrevStackEditorID.push(this.pitemOnFocusIds[this.locationOfPItemArea(pitemArea)]);
             pitem.destroy();
         }
     }
@@ -397,8 +407,6 @@ export class EditorManager extends IDEUIComponent {
 
         let tools = [];
 
-        // GIANNI: pos apo pi pairno oti einai collab kai oxi apo to item to idio giati
-        // exo idi apothikevmena pragmata sto componentsData.collaborationData
         if (pi.componentsData.collaborationData) {
             tools = ComponentsCommunication.functionRequest(
                 this.name,
@@ -473,14 +481,7 @@ export class EditorManager extends IDEUIComponent {
     }
 
     public isOnFocus(id: string, type: string = "pitem"): boolean {
-        console.warn("Editor Manager: isOnFocus has to be implemented!")
-        if (type === "pitem") {
-            // this
-        }
-        else {
-
-        }
-        return true;
+        return this.pitemOnFocusIds[this.onFocusLocation] === id;
     }
 
     @ExportedFunction

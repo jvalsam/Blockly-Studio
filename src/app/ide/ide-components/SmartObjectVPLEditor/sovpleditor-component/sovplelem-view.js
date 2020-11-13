@@ -575,7 +575,12 @@ let RenderSmartGroupofObject = function (selector, group, onDeleteGroup) {
   groupIconSpan.appendChild(groupIcon);
 };
 
-let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
+let RenderSmartObjectRegistered = function (
+  selector,
+  soData,
+  projectComponentsData,
+  callbacksMap
+) {
   console.log(soData);
   let cardDiv = soUIGenerator.RenderCard({
     selector: selector,
@@ -720,12 +725,17 @@ let RenderSmartObjectRegistered = function (selector, soData, callbacksMap) {
   let groupsCol = CreateDOMElement("div", { classList: ["col-sm"] });
   groupsRow.appendChild(groupsCol);
 
-  soData.editorData.details.groups.forEach(
-    group => RenderSmartGroupofObject(groupsCol, group, callbacksMap.onDeleteGroup)
+  soData.editorData.details.groups.forEach((group) =>
+    RenderSmartGroupofObject(groupsCol, group, callbacksMap.onDeleteGroup)
   );
 };
 
-let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
+let RenderSmartObjectUnregistered = function (
+  selector,
+  soData,
+  projectComponentsData,
+  callbacksMap
+) {
   let scanContainer = document.createElement("div");
   scanContainer.classList.add("container");
   scanContainer.style.overflowY = "auto";
@@ -775,7 +785,12 @@ let RenderSmartObjectUnregistered = function (selector, soData, callbacksMap) {
   messageDiv.appendChild(pressScanSpan);
 };
 
-let RenderSmartObjectInvalid = function (selector, soData, callbacksMap) {
+let RenderSmartObjectInvalid = function (
+  selector,
+  soData,
+  projectComponentsData,
+  callbacksMap
+) {
   // render message for invalid smart object
   // filtered scan
   // TODO
@@ -787,10 +802,16 @@ let RenderSmartObjectDispatchFunc = {
   Invalid: RenderSmartObjectInvalid,
 };
 
-export function RenderSmartObject(selector, soData, callbacksMap) {
+export function RenderSmartObject(
+  selector,
+  soData,
+  projectComponentsData,
+  callbacksMap
+) {
   RenderSmartObjectDispatchFunc[soData.editorData.details.state](
     selector,
     soData,
+    projectComponentsData,
     callbacksMap
   );
 }
@@ -869,7 +890,12 @@ let RenderSmartObjectofGroup = function (
   smartObjectIconSpan.appendChild(smartObjectIcon);
 };
 
-export function RenderSmartGroup(selector, soData, callbacksMap) {
+export function RenderSmartGroup(
+  selector,
+  soData,
+  projectComponentsData,
+  callbacksMap
+) {
   let cardDiv = CreateDOMElement("div", {
     classList: ["card", "text-left"],
     id: soData.editorData.id,
@@ -1059,6 +1085,7 @@ export function dialogueSelectGroups(
   sovplelemInst,
   groups,
   onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
-  onSkip) {
-
+  onSkip
+) {
+  onSuccess([], []);
 }

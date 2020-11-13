@@ -1,7 +1,7 @@
 import {
   RenderSmartObject,
   RenderSmartGroup,
-  dialogueSelectGroups
+  dialogueSelectGroups,
 } from "./sovplelem-view";
 
 export const VPLElemNames = Object.freeze({
@@ -67,6 +67,12 @@ export class SOVPLElemInstance {
     this.state = InstStateEnum.OPEN;
   }
 
+  close() {
+    this.state = InstStateEnum.CLOSE;
+  }
+
+  delete() {}
+
   // user functionality
 
   // --- Start SmartObject Actions ---
@@ -85,24 +91,22 @@ export class SOVPLElemInstance {
     });
 
     // post parent
-    this.parent.registerSmartObject(
-      this,
-      (groups) => {
-          // pop up to select groups
-          dialogueSelectGroups(
-            this,
-            groups,
-            (groups, listUpdatedAliases) => {
-              // TODO: to this.data
-              this.data.groups = groups;
-              listUpdatedAliases.forEach(aliasElem => {
-                this.elemData.editorData.details.mapPropsAlias[aliasElem.old] = prop.new;
-              });
-              this.parent.saveElement(this);
-            },
-            () => this.parent.saveElement(this)
-          );
-      });
+    this.parent.registerSmartObject(this, (groups) => {
+      // pop up to select groups
+      dialogueSelectGroups(
+        this,
+        groups,
+        (groups, listUpdatedAliases) => {
+          this.elemData.editorData.details.groups = groups;
+          listUpdatedAliases.forEach((aliasElem) => {
+            this.elemData.editorData.details.mapPropsAlias[aliasElem.old] =
+              aliasElem.new;
+          });
+          this.parent.saveElement(this);
+        },
+        () => this.parent.saveElement(this)
+      );
+    });
   }
 
   onSOEditPropAlias(prop) {
@@ -178,9 +182,12 @@ export class SOVPLElemInstance {
 
   render() {
     let domSel = document.getElementById(this.selector);
+    let componentData = this.parent.getProjectComponentData(
+      this.pitem.pi.projectID
+    );
     switch (this.elemData.editorData.type) {
       case VPLElemNames.SMART_OBJECT:
-        RenderSmartObject(domSel, this.elemData, {
+        RenderSmartObject(domSel, this.elemData, componentData, {
           onRegister: (props) => this.onSORegister(props),
           onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
           onEditPropertyProgrammingActive: (prop) =>
@@ -198,7 +205,7 @@ export class SOVPLElemInstance {
         });
         break;
       case VPLElemNames.SMART_GROUP:
-        RenderSmartGroup(domSel, this.elemData, {
+        RenderSmartGroup(domSel, this.elemData, componentData, {
           onEditPropertyAlias: (prop) => this.onSGEditPropAlias(prop),
           onEditPropertyActive: (prop) => this.onSGEditPropActive(prop),
           onReset: (props) => this.onSGReset(props),

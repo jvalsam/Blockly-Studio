@@ -280,7 +280,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public getProjectItems(projectId: string, type: string): Array<ProjectItem> {
+    public getProjectItems(projectId: string, type: string="ALL"): Array<ProjectItem> {
         let projView = (<ProjectManagerJSTreeView>this.view)
             .getProject(projectId);
         if (projView) {
@@ -735,6 +735,30 @@ export class ProjectManager extends IDEUIComponent {
             editor,
             data(project.saveMode)
         );
+    }
+
+    private saveComponentData_SHARED(projectId: string) {
+        
+    }
+
+    private saveComponentData_DB(projectId: any) {
+        this.saveProject(projectId);
+    }
+
+    @ExportedFunction
+    public saveComponentData(compName: string, projectId: string, data: any) {
+        let project = this.loadedProjects[projectId];
+        project.componentsData[compName] = data;
+        this["saveComponentData_" + project.saveMode](
+            compName,
+            projectId,
+            data);
+    }
+
+    @ExportedFunction
+    public getComponentData(compName: string, projectId: string) {
+        let project = this.loadedProjects[projectId];
+        return project.componentsData[compName];
     }
 
     private onSuccessUploadFiles(paths: Array<String>, data, event, concerned) {

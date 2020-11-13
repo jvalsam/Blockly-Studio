@@ -88,6 +88,12 @@ export class SmartObjectVPLEditor extends Editor {
     }
 
     @ExportedFunction
+    public closeSRC(srcId: string): void {
+        assert(this.instancesMap[srcId], "Request to close not existing source ID in Blockly Editor!");
+        this.instancesMap[srcId].close();
+    }
+
+    @ExportedFunction
     public update_src(data: any, pitem: any, focus: boolean =false): void {
         let id = data.editorId;
         if (this.instancesMap[id] && focus) {
@@ -136,16 +142,16 @@ export class SmartObjectVPLEditor extends Editor {
     public undo(): void {
         throw new Error("Method not implemented.");
     }
+
     public redo(): void {
         throw new Error("Method not implemented.");
     }
+
     public copy(): void {
         throw new Error("Method not implemented.");
     }
+
     public paste(): void {
-        throw new Error("Method not implemented.");
-    }
-    public closeSRC(srcId: string): void {
         throw new Error("Method not implemented.");
     }
 
@@ -198,6 +204,33 @@ export class SmartObjectVPLEditor extends Editor {
               ? element.data
               : element.data
             );
+    }
+
+    @RequiredFunction("ProjectManager", "saveComponentData")
+    private saveProjectComponentData(projectId: string, data: any) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "saveComponentData",
+            [
+                this.name,
+                projectId,
+                data
+            ]
+        );
+    }
+
+    @RequiredFunction("ProjectManager", "getComponentData")
+    private getProjectComponentData(projectId: string) {
+        return ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getComponentData",
+            [
+                this.name,
+                projectId
+            ]
+        ).value;
     }
 
     private registerSmartObject (data, handleGroups) {
