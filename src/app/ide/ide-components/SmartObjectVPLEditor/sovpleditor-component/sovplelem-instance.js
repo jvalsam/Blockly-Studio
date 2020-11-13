@@ -183,7 +183,7 @@ export class SOVPLElemInstance {
   render() {
     let domSel = document.getElementById(this.selector);
     let componentData = this.parent.getProjectComponentData(
-      this.pitem.pi.projectID
+      this.pitem.pi.project.projectID
     );
     switch (this.elemData.editorData.type) {
       case VPLElemNames.SMART_OBJECT:

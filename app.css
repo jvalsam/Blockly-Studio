@@ -11,7 +11,7 @@
 /* @import "./libs/SUIM/suim.css"; */
 
 .ide-platform-container {
-  /* margin-bottom: 100px; */
+  overflow: hidden;
 }
 
 .centered {

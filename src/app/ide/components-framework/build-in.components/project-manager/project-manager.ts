@@ -738,16 +738,26 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private saveComponentData_SHARED(projectId: string) {
-        
+
     }
 
     private saveComponentData_DB(projectId: any) {
         this.saveProject(projectId);
     }
 
+    private fixComponentData(project: any, compName: string) {
+        if (!project.componentsData) {
+            project.componentsData = {};
+        }
+        if (!project.componentsData[compName]) {
+            project.componentsData[compName] = {};
+        }
+    }
+
     @ExportedFunction
     public saveComponentData(compName: string, projectId: string, data: any) {
         let project = this.loadedProjects[projectId];
+        this.fixComponentData(project, compName);
         project.componentsData[compName] = data;
         this["saveComponentData_" + project.saveMode](
             compName,
@@ -758,6 +768,7 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public getComponentData(compName: string, projectId: string) {
         let project = this.loadedProjects[projectId];
+        this.fixComponentData(project, compName);
         return project.componentsData[compName];
     }
 
