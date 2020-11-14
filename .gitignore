@@ -48,3 +48,6 @@ package-lock.json
 # Domain loader scripts generated during build
 /src/app/application-domain-frameworks/domains-holder.ts
 /src/app/application-domain-frameworks/domains-initialization.ts
+
+# BlocklyStudioDB
+/BlocklyStudioDB
