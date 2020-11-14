@@ -46,6 +46,7 @@ export class SOVPLElemInstance {
     this.selector = selector;
     this.id = elemData.editorData.editorId;
     this.elemData = elemData;
+    this.fixInitMapPropsAndGroups();
     this.privillege = privillege;
     this.config = config;
 
@@ -75,14 +76,21 @@ export class SOVPLElemInstance {
 
   // user functionality
 
+  fixInitMapPropsAndGroups() {
+    this.elemData.editorData.details.mapPropsAlias =
+      this.elemData.editorData.details.mapPropsAlias || {};
+    this.elemData.editorData.details.mapPropsProgrammingActive =
+      this.elemData.editorData.details.mapPropsProgrammingActive || {};
+    this.elemData.editorData.details.groups =
+      this.elemData.editorData.details.groups || [];
+  }
+
   // --- Start SmartObject Actions ---
   onSORegister(props) {
     this.elemData.editorData.details.state = SmartObjectState.REGISTERED;
     this.elemData.editorData.details.properties = props;
 
-    this.elemData.editorData.details.mapPropsAlias = {};
-    this.elemData.editorData.details.mapPropsProgrammingActive = {};
-    this.elemData.editorData.details.groups = [];
+    this.fixInitMapPropsAndGroups();
     props.forEach((prop) => {
       this.elemData.editorData.details.mapPropsAlias[prop.name] = prop.name;
       this.elemData.editorData.details.mapPropsProgrammingActive[

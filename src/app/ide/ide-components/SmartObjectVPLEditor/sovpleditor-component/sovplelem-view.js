@@ -759,7 +759,7 @@ let RenderSmartObjectUnregistered = function (
       callbacksMap.onRegister(resource.properties);
       // Update UI
       selector.innerHTML = "";
-      RenderSmartObject(selector, soData, callbacksMap);
+      RenderSmartObject(selector, soData, projectComponentsData, callbacksMap);
     });
   });
 

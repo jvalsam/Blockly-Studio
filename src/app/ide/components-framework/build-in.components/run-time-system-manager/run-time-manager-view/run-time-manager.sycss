@@ -13,6 +13,7 @@
     /* height: 40vh; */
     background-image: var(--body-bg);
     font-family: Helvetica, sans-serif;
+    background-color: white;
   }
 
 .output-console {
