@@ -759,10 +759,7 @@ export class ProjectManager extends IDEUIComponent {
         let project = this.loadedProjects[projectId];
         this.fixComponentData(project, compName);
         project.componentsData[compName] = data;
-        this["saveComponentData_" + project.saveMode](
-            compName,
-            projectId,
-            data);
+        this["saveComponentData_" + project.saveMode](projectId);
     }
 
     @ExportedFunction

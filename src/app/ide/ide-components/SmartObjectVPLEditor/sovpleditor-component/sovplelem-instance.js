@@ -86,9 +86,10 @@ export class SOVPLElemInstance {
   }
 
   // --- Start SmartObject Actions ---
-  onSORegister(props) {
+  onSORegister(props, resourceID) {
     this.elemData.editorData.details.state = SmartObjectState.REGISTERED;
     this.elemData.editorData.details.properties = props;
+    this.elemData.editorData.details.resourceID = resourceID;
 
     this.fixInitMapPropsAndGroups();
     props.forEach((prop) => {
@@ -110,9 +111,27 @@ export class SOVPLElemInstance {
             this.elemData.editorData.details.mapPropsAlias[aliasElem.old] =
               aliasElem.new;
           });
+          this.parent.saveProjectComponentData(
+            this.elemData.editorData.projectID,
+            this.parent
+              .getProjectComponentData(this.elemData.editorData.projectID)
+              .registeredDevices.push({
+                id: this.elemData.editorData.resourceID,
+              })
+          );
           this.parent.saveElement(this);
         },
-        () => this.parent.saveElement(this)
+        () => {
+          this.parent.saveProjectComponentData(
+            this.elemData.editorData.projectID,
+            this.parent
+              .getProjectComponentData(this.elemData.editorData.projectID)
+              .registeredDevices.push({
+                id: this.elemData.editorData.resourceID,
+              })
+          );
+          this.parent.saveElement(this);
+        }
       );
     });
   }
@@ -196,7 +215,8 @@ export class SOVPLElemInstance {
     switch (this.elemData.editorData.type) {
       case VPLElemNames.SMART_OBJECT:
         RenderSmartObject(domSel, this.elemData, componentData, {
-          onRegister: (props) => this.onSORegister(props),
+          onRegister: (props, resourceID) =>
+            this.onSORegister(props, resourceID),
           onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),

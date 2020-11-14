@@ -495,13 +495,19 @@ let RenderNewGroupModal = function (soData, onCreateSmartGroup) {
   $("#new-sg-modal").modal("show");
 };
 
-// functions for rendering parts
+let FilterRegisteredDevicesForScan = function (
+  registeredDevices, // {id: "..."}
+  scannedDevices
+) {
+  return scannedDevices.filter((el) => !registeredDevices.includes(el.id));
+};
 
-export function RenderSOScanList(selector, resources, onRegister) {
+// functions for rendering parts
+export function RenderSOScanList(selector, filteredResources, onRegister) {
   // Render Scan Button
-  soUIGenerator.RenderScanButton(selector, (resources) => {
+  soUIGenerator.RenderScanButton(selector, (filteredResources) => {
     selector.innerHTML = "";
-    RenderSOScanList(selector, resources, onRegister);
+    RenderSOScanList(selector, filteredResources, onRegister);
   });
 
   // Create row
@@ -521,7 +527,7 @@ export function RenderSOScanList(selector, resources, onRegister) {
   colDiv.appendChild(listDiv);
 
   // Create List Element
-  for (const resource of resources.scannedResources) {
+  for (const resource of filteredResources) {
     soUIGenerator.RenderScannedResourceInScanList(
       listDiv,
       resource,
@@ -752,11 +758,18 @@ let RenderSmartObjectUnregistered = function (
 
   // render message for unregistered smart object
   soUIGenerator.RenderScanButton(col, (resources) => {
+    // if (!projectComponentsData.registeredDevices) {
+    //   projectComponentsData.registeredDevices = [];
+    // }
+    let filteredResources = FilterRegisteredDevicesForScan(
+      projectComponentsData.registeredDevices,
+      resources.scannedResources //{ scannedResources, registeredResources} from iotivity
+    );
     // Clear col
     col.innerHTML = "";
-    RenderSOScanList(col, resources, (resource) => {
+    RenderSOScanList(col, filteredResources, (resource) => {
       // Save data
-      callbacksMap.onRegister(resource.properties);
+      callbacksMap.onRegister(resource.properties, resource.id);
       // Update UI
       selector.innerHTML = "";
       RenderSmartObject(selector, soData, projectComponentsData, callbacksMap);

@@ -201,9 +201,16 @@ export class SmartObjectVPLEditor extends Editor {
             element.id,
             element.pitem.pi,
             (mode) => mode === "SHARED"
-              ? element.data
-              : element.data
+              ? this.filterToSave(element.data.editorData)
+              : this.filterToSave(element.data.editorData)
             );
+    }
+
+    private filterToSave(data) {
+        return {
+            type: data.type,
+            details: data.details
+        }
     }
 
     @RequiredFunction("ProjectManager", "saveComponentData")
