@@ -2,11 +2,33 @@
     "ComponentName": "RuntimeManager",
     "MenuElements": [
         {
+            "path": "/Home|Configure|Blockly|",
+            "data": {
+                "title": "Runtime",
+                "type": "sub-menu",
+                "help": "Edit Run-time Environment Properties"
+            }
+        },
+        {
             "path": "/Configure/Configuration|DividerConfiguration|Menu|Blockly|ProjectManager|ViSmaOE|",
             "data": {
                 "title": "RuntimeManager",
                 "help": "Configuration of the run-time console of the Platform",
                 "type": "sub-menu"
+            }
+        },
+        {
+            "path": "/Runtime/",
+            "data": {
+                "title": "Console",
+                "help": "Open Console",
+                "type": "leaf",
+                "events": [
+                    {
+                        "type": "click",
+                        "handler": "onOpenConsole"
+                    }
+                ]
             }
         }
     ]

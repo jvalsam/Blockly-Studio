@@ -94,9 +94,15 @@ export class RuntimeManagerView extends ComponentView {
     }
 
     private onOpen() {
-        $(this._selector).css({"display": "block"});
-        this.displayState = this.stateBeforeClose;
-        this.stateBeforeClose = null;
+        if (this.displayState && this.displayState === ConsoleDisplayState.CLOSED) {
+            $(this._selector).css({"display": "block"});
+            this.displayState = this.stateBeforeClose;
+            this.stateBeforeClose = null;
+            // open in case it was on fold state
+            if (this.displayState !== ConsoleDisplayState.FOLDED) {
+                this.onFold();
+            }
+        }
     }
 
     private onFold() {

@@ -2,14 +2,6 @@
     "ComponentName": "ViSmaOE",
     "MenuElements": [
         {
-            "path": "/Home|Configure|Blockly|",
-            "data": {
-                "title": "ViSmaOE",
-                "type": "sub-menu",
-                "help": "Edit ViSmaOE Editor Properties"
-            }
-        },
-        {
             "path": "/Configure/Configuration|DividerConfiguration|Menu|Blockly|ProjectManager|",
             "data": {
                 "title": "ViSmaOE",

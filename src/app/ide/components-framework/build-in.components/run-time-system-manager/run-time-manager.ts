@@ -64,6 +64,11 @@ export class RuntimeManager extends IDEUIComponent {
         alert("on change config data not developed yet in Menu Component");
     }
 
+    @ExportedFunction
+    public onOpenConsole(): void {
+        this._view["onOpen"]();
+    }
+
     private msgTime(): string {
         let date = new Date();
         let hours = date.getHours();
