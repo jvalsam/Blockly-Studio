@@ -91,12 +91,29 @@ export class SOVPLElemInstance {
     projectComponentData.registeredDevices.push({
       id: this.elemData.editorData.details.resourceID,
     });
-    
+
     this.parent.saveProjectComponentData(
       this.elemData.editorData.projectID,
       projectComponentData
     );
   }
+
+  onCompletingSORegistration(callback) {
+    this.updateRegisteredDevices();
+    this.parent.saveElement(this);
+    callback();
+  }
+
+  onApplySelectGroupsForRegistration(groups, listUpdatedAliases, callback) {
+    this.elemData.editorData.details.groups = groups;
+    listUpdatedAliases.forEach((aliasElem) => {
+      this.elemData.editorData.details.mapPropsAlias[aliasElem.old] =
+        aliasElem.new;
+    });
+    
+    this.onCompletingSORegistration(callback);
+  }
+
 
   // --- Start SmartObject Actions ---
   onSORegister(props, resourceID) {
@@ -113,24 +130,14 @@ export class SOVPLElemInstance {
     });
 
     // post parent
-    this.parent.registerSmartObject(this, (groups) => {
+    this.parent.registerSmartObject(this, (groups, onCompletion) => {
       // pop up to select groups
       dialogueSelectGroups(
         this,
         groups,
-        (groups, listUpdatedAliases) => {
-          this.elemData.editorData.details.groups = groups;
-          listUpdatedAliases.forEach((aliasElem) => {
-            this.elemData.editorData.details.mapPropsAlias[aliasElem.old] =
-              aliasElem.new;
-          });
-          this.updateRegisteredDevices();
-          this.parent.saveElement(this);
-        },
-        () => {
-          this.updateRegisteredDevices();
-          this.parent.saveElement(this);
-        }
+        (groups, listUpdatedAliases) => this.onApplySelectGroupsForRegistration(
+          groups, listUpdatedAliases, onCompletion),
+        () => this.onCompletingSORegistration(onCompletion)
       );
     });
   }

@@ -216,9 +216,13 @@ export class SmartObjectVPLEditor extends Editor {
         }
     }
 
+    @ExportedSignal("create-smart-object", ["so-data"])
     private registerSmartObject (data, handleGroups) {
-        let groups = this.retrievePItemGroups(data.elemData.editorData.projectID);
-        handleGroups(groups);
+        handleGroups(
+            this.retrievePItemGroups(data.elemData.editorData.projectID),
+            () => {
+                ComponentsCommunication.postSignal(this.name, "create-smart-object", [data]);
+            });
     }
 
     private createSmartGroup(group, type) {

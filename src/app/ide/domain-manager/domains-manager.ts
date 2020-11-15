@@ -76,7 +76,7 @@ export class DomainsManager extends IDEComponent {
             });
         }
         ListensSignals(
-            "DomainManager",
+            this.name,
             signalsArray
         );
     }
