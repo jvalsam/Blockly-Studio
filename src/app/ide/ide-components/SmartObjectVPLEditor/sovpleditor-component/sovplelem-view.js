@@ -758,9 +758,9 @@ let RenderSmartObjectUnregistered = function (
 
   // render message for unregistered smart object
   soUIGenerator.RenderScanButton(col, (resources) => {
-    // if (!projectComponentsData.registeredDevices) {
-    //   projectComponentsData.registeredDevices = [];
-    // }
+    if (!projectComponentsData.registeredDevices) {
+      projectComponentsData.registeredDevices = [];
+    }
     let filteredResources = FilterRegisteredDevicesForScan(
       projectComponentsData.registeredDevices,
       resources.scannedResources //{ scannedResources, registeredResources} from iotivity

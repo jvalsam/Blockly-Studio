@@ -111,25 +111,56 @@ export class SOVPLElemInstance {
             this.elemData.editorData.details.mapPropsAlias[aliasElem.old] =
               aliasElem.new;
           });
-          this.parent.saveProjectComponentData(
-            this.elemData.editorData.projectID,
-            this.parent
-              .getProjectComponentData(this.elemData.editorData.projectID)
-              .registeredDevices.push({
-                id: this.elemData.editorData.resourceID,
-              })
-          );
+
+          if (
+            !this.parent.getProjectComponentData(
+              this.elemData.editorData.projectID
+            ).registeredDevices
+          ) {
+            this.parent.saveProjectComponentData(
+              this.elemData.editorData.projectID,
+              {
+                registeredDevices: [
+                  { id: this.elemData.editorData.details.resourceID },
+                ],
+              }
+            );
+          } else {
+            this.parent.saveProjectComponentData(
+              this.elemData.editorData.projectID,
+              this.parent
+                .getProjectComponentData(this.elemData.editorData.projectID)
+                .registeredDevices.push({
+                  id: this.elemData.editorData.details.resourceID,
+                })
+            );
+          }
           this.parent.saveElement(this);
         },
         () => {
-          this.parent.saveProjectComponentData(
-            this.elemData.editorData.projectID,
-            this.parent
-              .getProjectComponentData(this.elemData.editorData.projectID)
-              .registeredDevices.push({
-                id: this.elemData.editorData.resourceID,
-              })
-          );
+          if (
+            !this.parent.getProjectComponentData(
+              this.elemData.editorData.projectID
+            ).registeredDevices
+          ) {
+            this.parent.saveProjectComponentData(
+              this.elemData.editorData.projectID,
+              {
+                registeredDevices: [
+                  { id: this.elemData.editorData.details.resourceID },
+                ],
+              }
+            );
+          } else {
+            this.parent.saveProjectComponentData(
+              this.elemData.editorData.projectID,
+              this.parent
+                .getProjectComponentData(this.elemData.editorData.projectID)
+                .registeredDevices.push({
+                  id: this.elemData.editorData.details.resourceID,
+                })
+            );
+          }
           this.parent.saveElement(this);
         }
       );
@@ -210,7 +241,7 @@ export class SOVPLElemInstance {
   render() {
     let domSel = document.getElementById(this.selector);
     let componentData = this.parent.getProjectComponentData(
-      this.pitem.pi.project.projectID
+      this.elemData.editorData.projectID
     );
     switch (this.elemData.editorData.type) {
       case VPLElemNames.SMART_OBJECT:
