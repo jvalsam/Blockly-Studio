@@ -107,8 +107,7 @@ export class RuntimeManagerView extends ComponentView {
             //
             $(this._selector).css({"height": "2.8rem"});
             
-            // $(".run-time-manager-container").css({"overflow": "hidden"});
-            // $(".editors-manager-container").css({"overflow": "hidden"});
+            $(".run-time-manager-container").css({"box-shadow": "0 0 black"});
             
             $(".output-view-area").css({"display": "none"});
             $(".input-view-area").css({"display": "none"});
@@ -117,6 +116,8 @@ export class RuntimeManagerView extends ComponentView {
             this.displayState = ConsoleDisplayState.FOLDED;
             $(this.foldingBtnSel).html('<i class="fas fa-chevron-down"></i>');
             //
+            $(".run-time-manager-container").css({"box-shadow": "0em 0 0.4em grey"});
+            
             $(".output-view-area").css({"display": "block"});
             $(".input-view-area").css({"display": "block"});
             $(this._selector).css({"height": "auto"});

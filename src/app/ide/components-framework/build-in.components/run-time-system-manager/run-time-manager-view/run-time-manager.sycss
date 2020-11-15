@@ -14,6 +14,7 @@
     background-image: var(--body-bg);
     font-family: Helvetica, sans-serif;
     background-color: white;
+    box-shadow: 0em 0 0.4em grey;
   }
 
 .output-console {

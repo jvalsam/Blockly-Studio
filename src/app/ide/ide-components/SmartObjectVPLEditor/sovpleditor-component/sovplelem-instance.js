@@ -85,6 +85,19 @@ export class SOVPLElemInstance {
       this.elemData.editorData.details.groups || [];
   }
 
+  updateRegisteredDevices() {
+    let projectComponentData = this.parent.getProjectComponentData(this.elemData.editorData.projectID);
+    projectComponentData.registeredDevices = projectComponentData.registeredDevices || [];
+    projectComponentData.registeredDevices.push({
+      id: this.elemData.editorData.details.resourceID,
+    });
+    
+    this.parent.saveProjectComponentData(
+      this.elemData.editorData.projectID,
+      projectComponentData
+    );
+  }
+
   // --- Start SmartObject Actions ---
   onSORegister(props, resourceID) {
     this.elemData.editorData.details.state = SmartObjectState.REGISTERED;
@@ -111,56 +124,11 @@ export class SOVPLElemInstance {
             this.elemData.editorData.details.mapPropsAlias[aliasElem.old] =
               aliasElem.new;
           });
-
-          if (
-            !this.parent.getProjectComponentData(
-              this.elemData.editorData.projectID
-            ).registeredDevices
-          ) {
-            this.parent.saveProjectComponentData(
-              this.elemData.editorData.projectID,
-              {
-                registeredDevices: [
-                  { id: this.elemData.editorData.details.resourceID },
-                ],
-              }
-            );
-          } else {
-            this.parent.saveProjectComponentData(
-              this.elemData.editorData.projectID,
-              this.parent
-                .getProjectComponentData(this.elemData.editorData.projectID)
-                .registeredDevices.push({
-                  id: this.elemData.editorData.details.resourceID,
-                })
-            );
-          }
+          this.updateRegisteredDevices();
           this.parent.saveElement(this);
         },
         () => {
-          if (
-            !this.parent.getProjectComponentData(
-              this.elemData.editorData.projectID
-            ).registeredDevices
-          ) {
-            this.parent.saveProjectComponentData(
-              this.elemData.editorData.projectID,
-              {
-                registeredDevices: [
-                  { id: this.elemData.editorData.details.resourceID },
-                ],
-              }
-            );
-          } else {
-            this.parent.saveProjectComponentData(
-              this.elemData.editorData.projectID,
-              this.parent
-                .getProjectComponentData(this.elemData.editorData.projectID)
-                .registeredDevices.push({
-                  id: this.elemData.editorData.details.resourceID,
-                })
-            );
-          }
+          this.updateRegisteredDevices();
           this.parent.saveElement(this);
         }
       );
