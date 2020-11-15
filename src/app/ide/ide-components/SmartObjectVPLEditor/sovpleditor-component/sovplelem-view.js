@@ -761,7 +761,6 @@ let RenderSmartObjectUnregistered = function (
     if (!projectComponentsData.registeredDevices) {
       projectComponentsData.registeredDevices = [];
     }
-
     let filteredResources = FilterRegisteredDevicesForScan(
       projectComponentsData.registeredDevices,
       resources.scannedResources //{ scannedResources, registeredResources} from iotivity
