@@ -71,7 +71,7 @@ export abstract class Editor extends IDEUIComponent {
 
     public abstract tools(editorId: string): Array<ITool>;
 
-    public save (id: string, pitem: ProjectItem, data: any): void {
+    protected save (id: string, pitem: ProjectItem, data: any): void {
         ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",

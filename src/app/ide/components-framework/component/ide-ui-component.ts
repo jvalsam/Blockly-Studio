@@ -6,6 +6,7 @@ import {
     ComponentView,
     ComponentViewRegistry
 } from "./component-view";
+import { ComponentsCommunication } from "./components-communication";
 
 export interface IViewDataComponent {
     main?: JQuery;
@@ -21,6 +22,7 @@ export interface IViewDataComponent {
     version: "1.0"
 })
 export abstract class IDEUIComponent extends IDEComponent {
+    protected _componentsData: { [projectId: string]: any };
     protected _viewElems;
     protected _view: ComponentView;
 
@@ -31,6 +33,7 @@ export abstract class IDEUIComponent extends IDEComponent {
         hookSelector: string
     ) {
         super(name, description);
+        this._componentsData = {};
         this._viewElems = {};
         this._view = ComponentViewRegistry
             .getEntry(compViewName)
@@ -55,6 +58,41 @@ export abstract class IDEUIComponent extends IDEComponent {
     @ExportedFunction
     public render(): void {
             this.view.render();
+    }
+    
+    @RequiredFunction("ProjectManager", "saveComponentData")
+    protected saveProjectComponentData(projectId: string, data: any) {
+        this._componentsData[projectId] = data;
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "saveComponentData",
+            [
+                this.name,
+                projectId,
+                this._componentsData[projectId]
+            ]
+        );
+    }
+
+    @RequiredFunction("ProjectManager", "getComponentData")
+    protected getProjectComponentData(projectId: string) {
+        if (this._componentsData[projectId]) {
+            return this._componentsData[projectId];
+        }
+        else {
+            let data = ComponentsCommunication.functionRequest(
+                this.name,
+                "ProjectManager",
+                "getComponentData",
+                [
+                    this.name,
+                    projectId
+                ]
+            ).value;
+            return data || {};
+        }
     }
 
     protected inject(selector: string, templateHTML: JQuery): void;

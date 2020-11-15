@@ -206,38 +206,14 @@ export class SmartObjectVPLEditor extends Editor {
             );
     }
 
+    @RequiredFunction("ProjectManager", "saveComponentData")    
+    @RequiredFunction("ProjectManager", "getComponentData")
+
     private filterToSave(data) {
         return {
             type: data.type,
             details: data.details
         }
-    }
-
-    @RequiredFunction("ProjectManager", "saveComponentData")
-    private saveProjectComponentData(projectId: string, data: any) {
-        ComponentsCommunication.functionRequest(
-            this.name,
-            "ProjectManager",
-            "saveComponentData",
-            [
-                this.name,
-                projectId,
-                data
-            ]
-        );
-    }
-
-    @RequiredFunction("ProjectManager", "getComponentData")
-    private getProjectComponentData(projectId: string) {
-        return ComponentsCommunication.functionRequest(
-            this.name,
-            "ProjectManager",
-            "getComponentData",
-            [
-                this.name,
-                projectId
-            ]
-        ).value;
     }
 
     private registerSmartObject (data, handleGroups) {
