@@ -72,7 +72,6 @@ export class SmartObjectVPLEditor extends Editor {
         assert(editorData, "Source with id not found in SmartObject visual editor.");
         if (this._groupDataOnCreate) {
             editorData.details = { properties: this._groupDataOnCreate };
-            this._groupDataOnCreate = null;
         }
 
         if (!this.instancesMap.hasOwnProperty(editorData.editorId)) {
@@ -89,6 +88,10 @@ export class SmartObjectVPLEditor extends Editor {
                 pitem.pi.getPrivileges(),
                 this.config
             );
+            if (this._groupDataOnCreate) {
+                this.saveElement(this.instancesMap[editorData.editorId]);
+                this._groupDataOnCreate = null;
+            }
         }
         this.instancesMap[editorData.editorId].open();
     }

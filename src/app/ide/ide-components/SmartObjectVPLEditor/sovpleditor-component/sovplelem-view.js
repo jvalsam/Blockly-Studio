@@ -351,10 +351,10 @@ let CreateInputForModal = function (
   inputGroup.appendChild(input);
 };
 
-let CreateNewSmartGroupModal = function (selector) {
+let CreateSelectGroupsModal = function (selector) {
   let modal = CreateDOMElement("div", {
     classList: ["modal", "fade"],
-    id: "new-sg-modal",
+    id: "select-group-modal",
   });
   modal.setAttribute("tabindex", "-1");
   modal.setAttribute("role", "dialog");
@@ -365,7 +365,9 @@ let CreateNewSmartGroupModal = function (selector) {
   modalDialog.setAttribute("role", "document");
   modal.appendChild(modalDialog);
 
-  let modalContent = CreateDOMElement("div", { classList: ["modal-content"] });
+  let modalContent = CreateDOMElement("div", {
+    classList: ["modal-content"],
+  });
   modalDialog.appendChild(modalContent);
 
   let modalHeader = CreateDOMElement("div", { classList: ["modal-header"] });
@@ -373,7 +375,7 @@ let CreateNewSmartGroupModal = function (selector) {
 
   let modalTitle = CreateDOMElement("h5", {
     classList: ["modal-title"],
-    id: "new-sg-modal-title",
+    id: "select-group-modal-title",
     innerHtml: "Create new group: ",
   });
   modalHeader.appendChild(modalTitle);
@@ -408,7 +410,7 @@ let CreateNewSmartGroupModal = function (selector) {
 
   let propertiesContainer = CreateDOMElement("div", {
     classList: ["container-fluid", "overflow-auto"],
-    id: "new-sg-modal-properties-container",
+    id: "select-group-modal-properties-container",
   });
   propertiesContainer.style.paddingTop = ".5rem";
   propertiesContainer.style.maxHeight = "21rem";
@@ -430,12 +432,31 @@ let CreateNewSmartGroupModal = function (selector) {
 
   let confirmButton = CreateDOMElement("div", {
     classList: ["btn", "btn-primary"],
-    id: "new-sg-modal-confirm-button",
+    id: "select-group-modal-confirm-button",
     innerHtml: "Confirm",
   });
   confirmButton.setAttribute("type", "button");
   modalFooter.appendChild(confirmButton);
 };
+
+export function RenderSelectGroupsModal(
+  sovplelemInst,
+  groups,
+  onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+  onSkip
+) {
+  // // Create Modal
+  // CreateSelectGroupsModal(
+  //   document.getElementsByClassName("modal-platform-container")[0]
+  // );
+  // // Destroy on close
+  // $("#select-group-modal").on("hidden.bs.modal", function () {
+  //   document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+  //     "";
+  // });
+  onSuccess([], []);
+  // $("#select-group-modal").modal("show");
+}
 
 let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}
@@ -564,7 +585,7 @@ let RenderSmartObjectRegistered = function (
   // Card Body
   let cardBodyDiv = CreateDOMElement("div", {
     classList: ["card-body"],
-    id: soData.editorData.editorId + "-resource-body",
+    id: soData.editorData.editorId + "-body",
   });
   cardDiv.appendChild(cardBodyDiv);
 
@@ -797,6 +818,22 @@ export function RenderSmartObject(
 }
 
 // Smart Group Renderer
+let RenderSmartGroupProperty = function (
+  selector,
+  id,
+  property,
+  alias,
+  callbacks
+) {
+  soUIGenerator.RenderReadOnlyProperty(
+    selector,
+    id,
+    property,
+    "smartGroup",
+    alias,
+    callbacks
+  );
+};
 
 let RenderSmartObjectofGroup = function (
   selector,
@@ -828,93 +865,20 @@ let RenderSmartObjectofGroup = function (
 
 export function RenderSmartGroup(
   selector,
-  soData,
+  sgData,
   projectComponentsData,
   callbacksMap
 ) {
-  let cardDiv = CreateDOMElement("div", {
-    classList: ["card", "text-left"],
-    id: soData.editorData.id,
+  console.log(sgData);
+  let cardDiv = soUIGenerator.RenderCard({
+    selector: selector,
+    id: sgData.editorData.editorId,
   });
-  cardDiv.style.width = "33rem";
-  cardDiv.style.maxHeight = "45rem";
-  selector.appendChild(cardDiv);
-
-  // Card Header
-  let cardHeaderDiv = CreateDOMElement("div", { classList: ["card-header"] });
-  cardDiv.appendChild(cardHeaderDiv);
-
-  let colHeaderDiv = CreateDOMElement("div", { classList: ["col"] });
-  colHeaderDiv.style.display = "inline-flex";
-  cardHeaderDiv.appendChild(colHeaderDiv);
-
-  let groupIconSpan = CreateDOMElement("span");
-  colHeaderDiv.appendChild(groupIconSpan);
-
-  let groupIcon = CreateDOMElement("i", {
-    classList: ["fas", "fa-layer-group", "fa-lg"],
-  });
-  groupIconSpan.appendChild(groupIcon);
-
-  let resourceHeader = CreateDOMElement("span", { innerHtml: soData.name });
-  resourceHeader.style.fontSize = "large";
-  resourceHeader.style.marginLeft = ".4rem";
-  colHeaderDiv.appendChild(resourceHeader);
-
-  // Render image
-  if (soData.img) {
-    let resourceImg = CreateDOMElement("img", { classList: ["resource-img"] });
-    resourceImg.setAttribute("src", soData.img);
-    resourceImg.style.width = "24px";
-    resourceImg.style.height = "24px";
-    // append
-    colHeaderDiv.appendChild(resourceImg);
-  }
-
-  // DropDown Menu
-  let colMenuDiv = CreateDOMElement("div", { classList: ["col"] });
-  colMenuDiv.style.marginLeft = "2rem";
-  cardHeaderDiv.appendChild(colMenuDiv);
-
-  let dropDownImg = CreateDOMElement("i", {
-    classList: [
-      "dropdown-toggle",
-      "float-right",
-      "resource-menu",
-      "fas",
-      "fa-ellipsis-v",
-    ],
-    id: soData.editorData.id + "-menu",
-  });
-  dropDownImg.setAttribute("data-toggle", "dropdown");
-  dropDownImg.setAttribute("aria-haspopup", "true");
-  dropDownImg.setAttribute("aria-expanded", "false");
-  colMenuDiv.appendChild(dropDownImg);
-
-  let dropDownMenu = CreateDOMElement("div", { classList: ["dropdown-menu"] });
-  dropDownMenu.setAttribute("aria-labelledby", soData.editorData.id + "-menu");
-  colMenuDiv.appendChild(dropDownMenu);
-
-  let editSelect = CreateDOMElement("a", {
-    classList: ["dropdown-item"],
-    id: soData.editorData.id + "-edit",
-    innerHtml: "Edit",
-  });
-  editSelect.onclick = callbacksMap.options.Edit;
-  dropDownMenu.appendChild(editSelect);
-
-  let deleteSelect = CreateDOMElement("a", {
-    classList: ["dropdown-item"],
-    id: soData.editorData.id + "-delete",
-    innerHtml: "Delete",
-  });
-  deleteSelect.onclick = callbacksMap.options.Delete;
-  dropDownMenu.appendChild(deleteSelect);
 
   // Card Body
   let cardBodyDiv = CreateDOMElement("div", {
     classList: ["card-body"],
-    id: soData.editorData.id + "-resource-body",
+    id: sgData.editorData.editorId + "-body",
   });
   cardDiv.appendChild(cardBodyDiv);
 
@@ -929,7 +893,7 @@ export function RenderSmartGroup(
   let propertiesHeader = CreateDOMElement("span", {
     classList: ["font-weight-bold"],
     innerHtml:
-      "Properties (" + soData.editorData.details.properties.length + ")",
+      "Properties (" + sgData.editorData.details.properties.length + ")",
   });
   propertiesHeader.style.fontSize = "large";
   propertiesCol.appendChild(propertiesHeader);
@@ -942,17 +906,18 @@ export function RenderSmartGroup(
   propertiesContainer.style.backgroundColor = "#f7f7f7";
   cardBodyDiv.appendChild(propertiesContainer);
 
-  _.forEach(soData.editorData.details.properties, (property) => {
+  for (const property of sgData.editorData.details.properties) {
     RenderSmartGroupProperty(
       propertiesContainer,
+      sgData.editorData.editorId,
       property,
-      soData.editorData.details.mapPropsAlias[property.name],
+      sgData.editorData.details.mapPropsAlias[property.name],
       {
         onEditPropertyAlias: callbacksMap.onEditPropertyAlias,
         onEditPropertyActive: callbacksMap.onEditPropertyActive,
       }
     );
-  });
+  }
 
   let resetRow = CreateDOMElement("div", { classList: ["row"] });
   resetRow.style.marginTop = ".5rem";
@@ -966,7 +931,7 @@ export function RenderSmartGroup(
     innerHtml: "Reset",
   });
   resetButton.onclick = () => {
-    callbacksMap.onReset(soData.editorData.details.properties);
+    callbacksMap.onReset(sgData.editorData.details.properties);
   };
   resetButton.style.cssFloat = "right";
   resetButton.style.marginRight = "2rem";
@@ -993,13 +958,13 @@ export function RenderSmartGroup(
   let smartObjectsCol = CreateDOMElement("div", { classList: ["col-sm"] });
   smartObjectsRow.appendChild(smartObjectsCol);
 
-  _.forEach(soData.editorData.details.smartObjects, (smartObject) => {
-    RenderSmartObjectofGroup(
-      smartObjectsCol,
-      smartObject,
-      callbacksMap.onDeleteSmartObject
-    );
-  });
+  // for (const smartObject of sgData.editorData.details.smartObjects) {
+  //   RenderSmartObjectofGroup(
+  //     smartObjectsCol,
+  //     smartObject,
+  //     callbacksMap.onDeleteSmartObject
+  //   );
+  // }
 
   let deleteGroupRow = CreateDOMElement("div", { classList: ["row"] });
   deleteGroupRow.style.marginTop = "1rem";
