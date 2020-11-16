@@ -1,7 +1,7 @@
 import {
   RenderSmartObject,
   RenderSmartGroup,
-  dialogueSelectGroups,
+  RenderSelectGroupsModal,
 } from "./sovplelem-view";
 
 export const VPLElemNames = Object.freeze({
@@ -86,8 +86,11 @@ export class SOVPLElemInstance {
   }
 
   updateRegisteredDevices() {
-    let projectComponentData = this.parent.getProjectComponentData(this.elemData.editorData.projectID);
-    projectComponentData.registeredDevices = projectComponentData.registeredDevices || [];
+    let projectComponentData = this.parent.getProjectComponentData(
+      this.elemData.editorData.projectID
+    );
+    projectComponentData.registeredDevices =
+      projectComponentData.registeredDevices || [];
     projectComponentData.registeredDevices.push({
       id: this.elemData.editorData.details.resourceID,
     });
@@ -110,10 +113,9 @@ export class SOVPLElemInstance {
       this.elemData.editorData.details.mapPropsAlias[aliasElem.old] =
         aliasElem.new;
     });
-    
+
     this.onCompletingSORegistration(callback);
   }
-
 
   // --- Start SmartObject Actions ---
   onSORegister(props, resourceID) {
@@ -132,11 +134,15 @@ export class SOVPLElemInstance {
     // post parent
     this.parent.registerSmartObject(this, (groups, onCompletion) => {
       // pop up to select groups
-      dialogueSelectGroups(
+      RenderSelectGroupsModal(
         this,
         groups,
-        (groups, listUpdatedAliases) => this.onApplySelectGroupsForRegistration(
-          groups, listUpdatedAliases, onCompletion),
+        (groups, listUpdatedAliases) =>
+          this.onApplySelectGroupsForRegistration(
+            groups,
+            listUpdatedAliases,
+            onCompletion
+          ),
         () => this.onCompletingSORegistration(onCompletion)
       );
     });

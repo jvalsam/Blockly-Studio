@@ -22,14 +22,6 @@ let CreateDOMElement = function (type, options) {
 
 // ...
 
-// export function DialogueSelectGroups(groups, onSucess, onFail) {
-
-// }
-
-// window.onload = () => {
-//   soUIGenerator.InitializeModals(document.getElementById("so-modals-area"));
-// };
-
 let CreateEditModal = function (selector) {
   let modal = CreateDOMElement("div", {
     classList: ["modal", "fade"],
@@ -449,15 +441,31 @@ let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}
   scannedDevices
 ) {
-  return scannedDevices.filter((el) => !registeredDevices.includes(el.id));
+  let result = scannedDevices.filter(
+    (el) => !registeredDevices.map((x) => x.id).includes(el.id)
+  );
+  return result;
 };
 
 // functions for rendering parts
-export function RenderSOScanList(selector, filteredResources, onRegister) {
+export function RenderSOScanList(
+  selector,
+  filteredResources,
+  registeredDevices,
+  onRegister
+) {
   // Render Scan Button
-  soUIGenerator.RenderScanButton(selector, (filteredResources) => {
+  soUIGenerator.RenderScanButton(selector, (resources) => {
     selector.innerHTML = "";
-    RenderSOScanList(selector, filteredResources, onRegister);
+    RenderSOScanList(
+      selector,
+      FilterRegisteredDevicesForScan(
+        registeredDevices,
+        resources.scannedResources //{ scannedResources, registeredResources} from iotivity
+      ),
+      registeredDevices,
+      onRegister
+    );
   });
 
   // Create row
@@ -544,14 +552,14 @@ let RenderSmartObjectRegistered = function (
   });
 
   // Card Header
-  soUIGenerator.RenderCardHeader({
-    selector: cardDiv,
-    name: soData.name,
-    id: soData.editorData.editorId,
-    image: soData.img,
-    onEdit: callbacksMap.options.Edit,
-    onDelete: callbacksMap.options.Delete,
-  });
+  // soUIGenerator.RenderCardHeader({
+  //   selector: cardDiv,
+  //   name: soData.name,
+  //   id: soData.editorData.editorId,
+  //   image: soData.img,
+  //   onEdit: callbacksMap.options.Edit,
+  //   onDelete: callbacksMap.options.Delete,
+  // });
 
   // Card Body
   let cardBodyDiv = CreateDOMElement("div", {
@@ -711,19 +719,28 @@ let RenderSmartObjectUnregistered = function (
     if (!projectComponentsData.registeredDevices) {
       projectComponentsData.registeredDevices = [];
     }
-    let filteredResources = FilterRegisteredDevicesForScan(
-      projectComponentsData.registeredDevices,
-      resources.scannedResources //{ scannedResources, registeredResources} from iotivity
-    );
     // Clear col
     col.innerHTML = "";
-    RenderSOScanList(col, filteredResources, (resource) => {
-      // Save data
-      callbacksMap.onRegister(resource.properties, resource.id);
-      // Update UI
-      selector.innerHTML = "";
-      RenderSmartObject(selector, soData, projectComponentsData, callbacksMap);
-    });
+    RenderSOScanList(
+      col,
+      FilterRegisteredDevicesForScan(
+        projectComponentsData.registeredDevices,
+        resources.scannedResources //{ scannedResources, registeredResources} from iotivity
+      ),
+      projectComponentsData.registeredDevices,
+      (resource) => {
+        // Save data
+        callbacksMap.onRegister(resource.properties, resource.id);
+        // Update UI
+        selector.innerHTML = "";
+        RenderSmartObject(
+          selector,
+          soData,
+          projectComponentsData,
+          callbacksMap
+        );
+      }
+    );
   });
 
   let messageRow = document.createElement("div");
@@ -780,50 +797,6 @@ export function RenderSmartObject(
 }
 
 // Smart Group Renderer
-let RenderReadOnlyPropertyforSmartGroup = function (
-  selector,
-  property,
-  alias,
-  callbacks
-) {
-  let rowDiv = CreateDOMElement("div", {
-    classList: ["row", "align-items-center", "resource-property"],
-  });
-  selector.appendChild(rowDiv);
-
-  let colDiv = CreateDOMElement("div", {
-    classList: ["col", "property-title", "text-truncate"],
-    innerHtml: property.name,
-  });
-  //tooltip for name
-  colDiv.setAttribute("data-toggle", "tooltip");
-  colDiv.setAttribute("data-placement", "bottom");
-  colDiv.setAttribute("title", property.name);
-  rowDiv.appendChild(colDiv);
-
-  let propertyAliasOuterDiv = CreateDOMElement("div", {
-    classList: ["text-truncate"],
-  });
-  propertyAliasOuterDiv.style.fontSize = "small";
-  colDiv.appendChild(propertyAliasOuterDiv);
-
-  let propertyAliasHeader = CreateDOMElement("span", {
-    innerHtml: "alias: ",
-  });
-  propertyAliasOuterDiv.appendChild(propertyAliasHeader);
-
-  let propertyAliasValue = CreateDOMElement("span", {
-    innerHtml: alias,
-  });
-  propertyAliasValue.setAttribute("data-toggle", "tooltip");
-  propertyAliasValue.setAttribute("data-placement", "bottom");
-  propertyAliasValue.setAttribute("title", alias);
-  propertyAliasValue.style.fontStyle = "italic";
-  propertyAliasOuterDiv.appendChild(propertyAliasValue);
-
-  let hr = CreateDOMElement("hr");
-  selector.appendChild(hr);
-};
 
 let RenderSmartObjectofGroup = function (
   selector,
@@ -1042,13 +1015,4 @@ export function RenderSmartGroup(
   deleteGroupButton.onclick = callbacksMap.options.Delete;
   deleteGroupButton.style.cssFloat = "right";
   deleteGroupCol.appendChild(deleteGroupButton);
-}
-
-export function dialogueSelectGroups(
-  sovplelemInst,
-  groups,
-  onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
-  onSkip
-) {
-  onSuccess([], []);
 }
