@@ -162,16 +162,19 @@ export const SmartObject = {
         {
             action: 'onCreate',
             name: 'create-smart-object',
+            mission: 'ec-smart-object',
             provider: 'SmartObjectVPLEditor'
         },
         {
             action: 'onDelete',
             name: 'delete-smart-object',
+            mission: 'ec-smart-object',
             provider: 'SmartObjectVPLEditor'
         },
         {
             action: 'onEdit',
             name: 'rename-smart-object',
+            mission: 'ec-smart-object',
             provider: 'SmartObjectVPLEditor'
         }
     ]

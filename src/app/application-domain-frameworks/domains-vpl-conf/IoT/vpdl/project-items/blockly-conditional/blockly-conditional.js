@@ -2,7 +2,7 @@
 import BlocklyConditionalTmpl from "./blockly-conditional.tmpl";
 import BlocklyConditionalSYCSS from "./blockly-conditional.sycss";
 
-export const SmartObject = {
+export const BlocklyConditional = {
     name: 'pi-blockly-conditional-event',
     // refers to the editor instances will be injected on the template
     editorsConfig: [
