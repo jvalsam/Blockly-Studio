@@ -221,10 +221,10 @@ export class SmartObjectVPLEditor extends Editor {
         handleGroups(
             this.retrievePItemGroups(data.elemData.editorData.projectID),
             () => {
-                ComponentsCommunication.postSignal(
-                    this.name,
-                    "create-smart-object",
-                    [data.elemData.editorData]);
+                // ComponentsCommunication.postSignal(
+                //     this.name,
+                //     "create-smart-object",
+                //     [data.elemData.editorData]);
             });
     }
 

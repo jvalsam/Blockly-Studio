@@ -22,14 +22,6 @@ let CreateDOMElement = function (type, options) {
 
 // ...
 
-// export function DialogueSelectGroups(groups, onSucess, onFail) {
-
-// }
-
-// window.onload = () => {
-//   soUIGenerator.InitializeModals(document.getElementById("so-modals-area"));
-// };
-
 let CreateEditModal = function (selector) {
   let modal = CreateDOMElement("div", {
     classList: ["modal", "fade"],
@@ -445,7 +437,104 @@ let CreateNewSmartGroupModal = function (selector) {
   modalFooter.appendChild(confirmButton);
 };
 
+let CreateSelectGroupsModal = function (selector) {
+  let modal = CreateDOMElement("div", {
+    classList: ["modal", "fade"],
+    id: "select-group-modal",
+  });
+  modal.setAttribute("tabindex", "-1");
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-hidden", "true");
+  selector.appendChild(modal);
+
+  let modalDialog = CreateDOMElement("div", { classList: ["modal-dialog"] });
+  modalDialog.setAttribute("role", "document");
+  modal.appendChild(modalDialog);
+
+  let modalContent = CreateDOMElement("div", {
+    classList: ["modal-content"],
+  });
+  modalDialog.appendChild(modalContent);
+
+  let modalHeader = CreateDOMElement("div", { classList: ["modal-header"] });
+  modalContent.appendChild(modalHeader);
+
+  let modalTitle = CreateDOMElement("h5", {
+    classList: ["modal-title"],
+    id: "select-group-modal-title",
+    innerHtml: "Create new group: ",
+  });
+  modalHeader.appendChild(modalTitle);
+
+  let closeModal = CreateDOMElement("button", { classList: ["close"] });
+  closeModal.setAttribute("type", "button");
+  closeModal.setAttribute("data-dismiss", "modal");
+  closeModal.setAttribute("aria-label", "Close");
+  modalHeader.appendChild(closeModal);
+
+  let closeSpan = CreateDOMElement("span");
+  closeSpan.setAttribute("aria-hidden", "true");
+  closeSpan.innerHTML = "&times;";
+  closeModal.appendChild(closeSpan);
+
+  let modalBody = CreateDOMElement("div", {
+    classList: ["modal-body"],
+    id: "new-sg-modal-body",
+  });
+  modalContent.appendChild(modalBody);
+
+  CreateInputForModal(modalBody, "Name", "text", "sg-name", "29rem");
+  CreateInputForModal(modalBody, "Image", "file", "sg-image", "29rem");
+  CreateInputForModal(modalBody, "Color", "color", "sg-color", "8rem");
+
+  let propertiesHeader = CreateDOMElement("span", {
+    classList: ["font-weight-bold"],
+    innerHtml: "Properties",
+  });
+  propertiesHeader.style.fontSize = "large";
+  modalBody.appendChild(propertiesHeader);
+
+  let propertiesContainer = CreateDOMElement("div", {
+    classList: ["container-fluid", "overflow-auto"],
+    id: "select-group-modal-properties-container",
+  });
+  propertiesContainer.style.paddingTop = ".5rem";
+  propertiesContainer.style.maxHeight = "21rem";
+  propertiesContainer.style.marginTop = ".5rem";
+  propertiesContainer.style.backgroundColor = "#f7f7f7";
+  modalBody.appendChild(propertiesContainer);
+
+  let modalFooter = CreateDOMElement("div", { classList: ["modal-footer"] });
+  modalContent.appendChild(modalFooter);
+
+  let cancelButton = CreateDOMElement("button", {
+    classList: ["btn", "btn-secondary"],
+    innerHtml: "Cancel",
+  });
+  cancelButton.setAttribute("type", "button");
+  // cancelButton.addEventListener('click', onFail);
+  cancelButton.setAttribute("data-dismiss", "modal");
+  modalFooter.appendChild(cancelButton);
+
+  let confirmButton = CreateDOMElement("div", {
+    classList: ["btn", "btn-primary"],
+    id: "select-group-modal-confirm-button",
+    innerHtml: "Confirm",
+  });
+  confirmButton.setAttribute("type", "button");
+  modalFooter.appendChild(confirmButton);
+};
+
 let RenderNewGroupModal = function (soData, onCreateSmartGroup) {
+  // Create Modal
+  CreateNewSmartGroupModal(
+    document.getElementsByClassName("modal-platform-container")[0]
+  );
+  // Destroy on close
+  $("#new-sg-modal").on("hidden.bs.modal", function () {
+    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+      "";
+  });
   let mapPropsInfo = [];
   // pass the soData to smart group
   for (const property of soData.editorData.details.properties) {
@@ -495,19 +584,54 @@ let RenderNewGroupModal = function (soData, onCreateSmartGroup) {
   $("#new-sg-modal").modal("show");
 };
 
+export function RenderSelectGroupsModal(
+  sovplelemInst,
+  groups,
+  onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+  onSkip
+) {
+  // Create Modal
+  CreateSelectGroupsModal(
+    document.getElementsByClassName("modal-platform-container")[0]
+  );
+  // Destroy on close
+  $("#select-group-modal").on("hidden.bs.modal", function () {
+    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+      "";
+  });
+  // onSuccess([], []);
+  $("#select-group-modal").modal("show");
+}
+
 let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}
   scannedDevices
 ) {
-  return scannedDevices.filter((el) => !registeredDevices.includes(el.id));
+  let result = scannedDevices.filter(
+    (el) => !registeredDevices.map((x) => x.id).includes(el.id)
+  );
+  return result;
 };
 
 // functions for rendering parts
-export function RenderSOScanList(selector, filteredResources, onRegister) {
+export function RenderSOScanList(
+  selector,
+  filteredResources,
+  registeredDevices,
+  onRegister
+) {
   // Render Scan Button
-  soUIGenerator.RenderScanButton(selector, (filteredResources) => {
+  soUIGenerator.RenderScanButton(selector, (resources) => {
     selector.innerHTML = "";
-    RenderSOScanList(selector, filteredResources, onRegister);
+    RenderSOScanList(
+      selector,
+      FilterRegisteredDevicesForScan(
+        registeredDevices,
+        resources.scannedResources //{ scannedResources, registeredResources} from iotivity
+      ),
+      registeredDevices,
+      onRegister
+    );
   });
 
   // Create row
@@ -594,14 +718,14 @@ let RenderSmartObjectRegistered = function (
   });
 
   // Card Header
-  soUIGenerator.RenderCardHeader({
-    selector: cardDiv,
-    name: soData.name,
-    id: soData.editorData.editorId,
-    image: soData.img,
-    onEdit: callbacksMap.options.Edit,
-    onDelete: callbacksMap.options.Delete,
-  });
+  // soUIGenerator.RenderCardHeader({
+  //   selector: cardDiv,
+  //   name: soData.name,
+  //   id: soData.editorData.editorId,
+  //   image: soData.img,
+  //   onEdit: callbacksMap.options.Edit,
+  //   onDelete: callbacksMap.options.Delete,
+  // });
 
   // Card Body
   let cardBodyDiv = CreateDOMElement("div", {
@@ -709,18 +833,8 @@ let RenderSmartObjectRegistered = function (
   });
   // group: { name, img, color, properties, mapPropsInfo, smartObject }
   exportGroupsButtonCol.onclick = () => {
-    // Create Modal
-    CreateNewSmartGroupModal(
-      document.getElementsByClassName("modal-platform-container")[0]
-    );
-    // Destroy on close
-    $("#new-sg-modal").on("hidden.bs.modal", function () {
-      document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-        "";
-    });
     // Render new group modal
     RenderNewGroupModal(soData, callbacksMap.onCreateSmartGroup);
-    // callbacksMap.onCreateSmartGroup();
   };
   exportGroupsButtonCol.appendChild(exportGroupsButton);
 
@@ -761,19 +875,28 @@ let RenderSmartObjectUnregistered = function (
     if (!projectComponentsData.registeredDevices) {
       projectComponentsData.registeredDevices = [];
     }
-    let filteredResources = FilterRegisteredDevicesForScan(
-      projectComponentsData.registeredDevices,
-      resources.scannedResources //{ scannedResources, registeredResources} from iotivity
-    );
     // Clear col
     col.innerHTML = "";
-    RenderSOScanList(col, filteredResources, (resource) => {
-      // Save data
-      callbacksMap.onRegister(resource.properties, resource.id);
-      // Update UI
-      selector.innerHTML = "";
-      RenderSmartObject(selector, soData, projectComponentsData, callbacksMap);
-    });
+    RenderSOScanList(
+      col,
+      FilterRegisteredDevicesForScan(
+        projectComponentsData.registeredDevices,
+        resources.scannedResources //{ scannedResources, registeredResources} from iotivity
+      ),
+      projectComponentsData.registeredDevices,
+      (resource) => {
+        // Save data
+        callbacksMap.onRegister(resource.properties, resource.id);
+        // Update UI
+        selector.innerHTML = "";
+        RenderSmartObject(
+          selector,
+          soData,
+          projectComponentsData,
+          callbacksMap
+        );
+      }
+    );
   });
 
   let messageRow = document.createElement("div");
@@ -830,50 +953,6 @@ export function RenderSmartObject(
 }
 
 // Smart Group Renderer
-let RenderReadOnlyPropertyforSmartGroup = function (
-  selector,
-  property,
-  alias,
-  callbacks
-) {
-  let rowDiv = CreateDOMElement("div", {
-    classList: ["row", "align-items-center", "resource-property"],
-  });
-  selector.appendChild(rowDiv);
-
-  let colDiv = CreateDOMElement("div", {
-    classList: ["col", "property-title", "text-truncate"],
-    innerHtml: property.name,
-  });
-  //tooltip for name
-  colDiv.setAttribute("data-toggle", "tooltip");
-  colDiv.setAttribute("data-placement", "bottom");
-  colDiv.setAttribute("title", property.name);
-  rowDiv.appendChild(colDiv);
-
-  let propertyAliasOuterDiv = CreateDOMElement("div", {
-    classList: ["text-truncate"],
-  });
-  propertyAliasOuterDiv.style.fontSize = "small";
-  colDiv.appendChild(propertyAliasOuterDiv);
-
-  let propertyAliasHeader = CreateDOMElement("span", {
-    innerHtml: "alias: ",
-  });
-  propertyAliasOuterDiv.appendChild(propertyAliasHeader);
-
-  let propertyAliasValue = CreateDOMElement("span", {
-    innerHtml: alias,
-  });
-  propertyAliasValue.setAttribute("data-toggle", "tooltip");
-  propertyAliasValue.setAttribute("data-placement", "bottom");
-  propertyAliasValue.setAttribute("title", alias);
-  propertyAliasValue.style.fontStyle = "italic";
-  propertyAliasOuterDiv.appendChild(propertyAliasValue);
-
-  let hr = CreateDOMElement("hr");
-  selector.appendChild(hr);
-};
 
 let RenderSmartObjectofGroup = function (
   selector,
@@ -1092,13 +1171,4 @@ export function RenderSmartGroup(
   deleteGroupButton.onclick = callbacksMap.options.Delete;
   deleteGroupButton.style.cssFloat = "right";
   deleteGroupCol.appendChild(deleteGroupButton);
-}
-
-export function dialogueSelectGroups(
-  sovplelemInst,
-  groups,
-  onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
-  onSkip
-) {
-  onSuccess([], []);
 }
