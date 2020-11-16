@@ -269,6 +269,16 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
+    public getProjectCategory(projectId: string, categoryName: string): ProjectCategory {
+        let projView = (<ProjectManagerJSTreeView>this.view)
+            .getProject(projectId);
+        if (projView) {
+            return <ProjectCategory>projView.getProjectElement("jstree_" + categoryName);
+        }
+        return null;
+    }
+
+    @ExportedFunction
     public getProjectItem(pitemId: string): ProjectItem {
         let projectId = pitemId.split("_")[0];
         let projView = (<ProjectManagerJSTreeView>this.view)
@@ -645,10 +655,6 @@ export class ProjectManager extends IDEUIComponent {
             itemData,
             concerned, // parent - category of project item
             (elem) => {
-                this.onClickProjectElement(elem);
-                project.projectItems.push(this.pitemviewtoData(elem));
-                elem.trigger("click");
-
                 if (project.saveMode === "SHARED") {
                     ComponentsCommunication.functionRequest(
                         this.name,
@@ -663,6 +669,10 @@ export class ProjectManager extends IDEUIComponent {
                 else {
                     this.saveProject(concerned.project.dbID);
                 }
+
+                this.onClickProjectElement(elem);
+                project.projectItems.push(this.pitemviewtoData(elem));
+                elem.trigger("click");
             }
         );
     }

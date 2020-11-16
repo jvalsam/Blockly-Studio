@@ -445,56 +445,6 @@ let CreateNewSmartGroupModal = function (selector) {
   modalFooter.appendChild(confirmButton);
 };
 
-let RenderNewGroupModal = function (soData, onCreateSmartGroup) {
-  let mapPropsInfo = [];
-  // pass the soData to smart group
-  for (const property of soData.editorData.details.properties) {
-    soUIGenerator.RenderReadOnlyProperty(
-      document.getElementById("new-sg-modal-properties-container"),
-      "new-sg",
-      property,
-      "createSmartGroup",
-      soData.editorData.details.mapPropsAlias[property.name],
-      {
-        onEditPropertyActive: (elem) => {
-          elem.classList.toggle("text-danger");
-          elem.value = !elem.classList.contains("text-danger");
-        },
-      }
-    );
-  }
-  // Confirm button click
-  document.getElementById("new-sg-modal-confirm-button").onclick = () => {
-    if (document.getElementById("sg-name").value.replace(/\s+/g, "") === "") {
-      alert("Invalid name. Type a group name");
-      return;
-    }
-    // create mapPropsInfo
-    for (const property of soData.editorData.details.properties) {
-      mapPropsInfo[property.name] = {
-        alias: document.getElementById("new-sg-" + property.name + "-alias")
-          .value,
-        active: document.getElementById("new-sg-" + property.name + "-active")
-          .value,
-      };
-    }
-
-    onCreateSmartGroup({
-      name: document.getElementById("sg-name").value,
-      img: document.getElementById("sg-image").value,
-      color: document.getElementById("sg-color").value,
-      properties: soData.editorData.details.properties,
-      mapPropsInfo: mapPropsInfo,
-      smartObject: soData,
-    });
-    // Clear listener
-    document.getElementById("new-sg-modal-confirm-button").onclick = null;
-    // Hide modal
-    $("#new-sg-modal").modal("hide");
-  };
-  $("#new-sg-modal").modal("show");
-};
-
 let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}
   scannedDevices
@@ -710,16 +660,16 @@ let RenderSmartObjectRegistered = function (
   // group: { name, img, color, properties, mapPropsInfo, smartObject }
   exportGroupsButtonCol.onclick = () => {
     // Create Modal
-    CreateNewSmartGroupModal(
-      document.getElementsByClassName("modal-platform-container")[0]
-    );
+    // CreateNewSmartGroupModal(
+    //   document.getElementsByClassName("modal-platform-container")[0]
+    // );
     // Destroy on close
-    $("#new-sg-modal").on("hidden.bs.modal", function () {
-      document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-        "";
-    });
+    // $("#new-sg-modal").on("hidden.bs.modal", function () {
+    //   document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+    //     "";
+    // });
     // Render new group modal
-    RenderNewGroupModal(soData, callbacksMap.onCreateSmartGroup);
+    callbacksMap.onCreateSmartGroup(soData.editorData.details.properties);
     // callbacksMap.onCreateSmartGroup();
   };
   exportGroupsButtonCol.appendChild(exportGroupsButton);

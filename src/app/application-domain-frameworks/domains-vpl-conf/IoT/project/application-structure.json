@@ -545,7 +545,7 @@
                 ]
             },
             {
-                "type" : "SmartCategories",
+                "type" : "SmartGroups",
                 "renderParts" : [
                     {
                         "type" : "img",
@@ -680,6 +680,180 @@
                                 "providedBy" : "EditorManager",
                                 "data" : {
                                     "mission" : "EditSmartGroup"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type" : "ConditionalEvents",
+                "renderParts" : [
+                    {
+                        "type" : "img",
+                        "value" : {
+                            "fa" : "fa-industry-alt"
+                        },
+                        "selectedBy" : "domain"
+                    }, 
+                    {
+                        "type" : "title",
+                        "value" : {
+                            "text" : "Conditional Events"
+                        },
+                        "selectedBy" : "domain"
+                    }
+                ],
+                "actions" : [
+                    {
+                        "title" : "New Conditional Event",
+                        "img" : "fa fa-plus",
+                        "events" : [
+                            {
+                                "type" : "click",
+                                "action" : "onAddProjectElement",
+                                "providedBy" : "Platform",
+                                "data" : {
+                                    "choices" : [ 
+                                        {
+                                            "type" : "pi-blockly-conditional-event",
+                                            "mission" : "ec-blockly-conditional-event"
+                                        }
+                                    ]
+                                },
+                                "validation" : [
+                                    {
+                                        "type" : "system",
+                                        "rules" : [ 
+                                            {
+                                                "action" : "duplicate",
+                                                "items" : [ 
+                                                    "blocklyconditional_title"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title" : "Delete All",
+                        "img" : "fa fa-trash",
+                        "help" : "Remove all conditional events",
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "onDeleteAllElements",
+                                "providedBy" : "Platform",
+                                "data" : {
+                                    "mission" : "ProjectManagementHandling"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "validChildren" : [ 
+                    "pi-blockly-conditional-event"
+                ],
+                "children" : [],
+                "items" : [
+                    {
+                        "VisualProgrammingSource" : "BlocklyConditionalHandling",
+                        "type" : "pi-blockly-conditional-event",
+                        "renderParts" : [
+                            {
+                                "type" : "img",
+                                "id" : "blocklyconditional_img",
+                                "value" : {
+                                    "property" : "Image",
+                                    "default" : "fa fa-tablet"
+                                },
+                                "formElemItemRenderNO" : 2,
+                                "selectedBy" : "user"
+                            },
+                            {
+                                "type" : "title",
+                                "id" : "blocklyconditional_title",
+                                "value" : {
+                                    "property" : "Name",
+                                    "default" : "Conditional Event"
+                                },
+                                "formElemItemRenderNO" : 1,
+                                "selectedBy" : "user"
+                            },
+                            {
+                                "type" : "colour",
+                                "id" : "blocklyconditional_colour",
+                                "value" : {
+                                    "property" : "Background-colour",
+                                    "default" : "#00cc00"
+                                },
+                                "selectedBy" : "user",
+                                "formElemItemRenderNO" : 3
+                            }
+                        ],
+                        "actions" : [
+                            {
+                                "title" : "Open",
+                                "img" : "fab fa-codepen",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "open",
+                                        "providedBy" : "EditorManager",
+                                        "data" : {
+                                            "mission" : "EditBlocklyConditional"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "title" : "Delete",
+                                "img" : "fa fa-trash",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onRemoveElement",
+                                        "providedBy" : "Platform",
+                                        "data" : {
+                                            "mission" : "ProjectManagementHandling"
+                                        }
+                                    }
+                                ]
+                            }, 
+                            {
+                                "title" : "Rename",
+                                "img" : "fa fa-edit",
+                                "events" : [ 
+                                    {
+                                        "type" : "click",
+                                        "action" : "onRenameElement",
+                                        "providedBy" : "Platform",
+                                        "validation" : [ 
+                                            {
+                                                "type" : "system",
+                                                "rules" : [ 
+                                                    {
+                                                        "action" : "duplicate",
+                                                        "items" : [ 
+                                                            "blocklyconditional_title"
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "events" : [ 
+                            {
+                                "type" : "click",
+                                "action" : "open",
+                                "providedBy" : "EditorManager",
+                                "data" : {
+                                    "mission" : "EditBlocklyConditional"
                                 }
                             }
                         ]

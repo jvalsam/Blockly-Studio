@@ -42,6 +42,7 @@ var confJson: any = require("./conf_props.json");
   version: "1.1"
 })
 export class SmartObjectVPLEditor extends Editor {
+    private _groupDataOnCreate: any;
     private instancesMap: {[id: string]: any};
 
     constructor(
@@ -58,6 +59,7 @@ export class SmartObjectVPLEditor extends Editor {
             hookSelector
           );
           this.instancesMap = {};
+          this._groupDataOnCreate = null;
     }
 
     @ExportedFunction
@@ -68,6 +70,10 @@ export class SmartObjectVPLEditor extends Editor {
     ): void {
         let editorData = pitem.pi.editorsData.items[selector];
         assert(editorData, "Source with id not found in SmartObject visual editor.");
+        if (this._groupDataOnCreate) {
+            editorData.details = { properties: this._groupDataOnCreate };
+            this._groupDataOnCreate = null;
+        }
 
         if (!this.instancesMap.hasOwnProperty(editorData.editorId)) {
             this.instancesMap[editorData.editorId] = new SOVPLElemInstance(
@@ -228,9 +234,53 @@ export class SmartObjectVPLEditor extends Editor {
             });
     }
 
-    private createSmartGroup(group, type) {
-        // call project manager -> request new project item with data
-        alert("not implemented yet createSmartGRoup");
+    @RequiredFunction("ProjectManager", "getProjectCategory")
+    @RequiredFunction("ProjectManager", "onAddProjectElement")
+    private createSmartGroup(group, projectId) {
+        this._groupDataOnCreate = group;
+
+        let projectCategory = ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getProjectCategory",
+            [
+                projectId,
+                "SmartGroups"
+            ]).value;
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "onAddProjectElement",
+            [
+                {
+                    "type" : "pi-smart-group",
+                    "action" : "onAddProjectElement",
+                    "providedBy" : "Platform",
+                    "data" : {
+                        "choices" : [ 
+                            {
+                                "type" : "pi-smart-group",
+                                "mission" : "ec-smart-group"
+                            }
+                        ]
+                    },
+                    "validation" : [
+                        {
+                            "type" : "system",
+                            "rules" : [ 
+                                {
+                                    "action" : "duplicate",
+                                    "items" : [ 
+                                        "smartgroup_title"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                projectCategory
+            ]);
     }
 
     private deleteSmartGroupFromObject(smartObject, smartGroup, type) {

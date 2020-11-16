@@ -1,0 +1,23 @@
+.pi-smart-group-task-container {
+    width: 99.9%;
+    margin-left: 1px;
+    height: 100%;
+}
+
+.project-item-smart-group-info-area {
+    padding: 1px;
+    padding-left: 10px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.ec-smart-group-task {
+    height: 97%;
+}
+
+.project-item-smart-group-info-area {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+}

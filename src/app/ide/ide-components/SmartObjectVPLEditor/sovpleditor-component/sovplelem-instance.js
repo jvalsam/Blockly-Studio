@@ -167,8 +167,6 @@ export class SOVPLElemInstance {
       group.details.mapPropsActive[propName] = prop.active;
     }
     group.details.smartObjects = [group.smartObject];
-
-    this.parent.createSmartGroup(group);
   }
 
   onSODeleteGroup(groupName) {
@@ -226,7 +224,7 @@ export class SOVPLElemInstance {
           onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),
-          onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
+          onCreateSmartGroup: (group) => this.parent.createSmartGroup(group, this.elemData.editorData.projectID),
           onDeleteGroup: (groupName) => this.onSODeleteGroup(groupName),
           options: {
             Edit: () => {
