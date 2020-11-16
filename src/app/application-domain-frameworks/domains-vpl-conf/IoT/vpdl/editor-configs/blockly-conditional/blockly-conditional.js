@@ -8,33 +8,25 @@ export const BlocklyConditional = {
                 name: 'Built-in',
                 expanded: true
             }
+        },
+        {
+            type: 'Separator',
+            gap: '200'
+        },
+        {
+            name: 'Smart Objects',
+            type: 'Category',
+            colour: '236',
+            elements: [
+                {
+                    name: {
+                        domainElem: 'SmartObject',
+                        item: 'getValue'
+                    },
+                    type: 'Element'
+                }
+            ]
         }
-        // ,
-        // {
-        //     name: 'Smart Objects',
-        //     type: 'Category',
-        //     colour: '210',
-        //     elements: [
-        //         {
-        //             name: 'Smart Objects',
-        //             type: 'Category',
-        //             colour: '225',
-        //             elements: [
-        //                 {
-        //                     name: {
-        //                         domainElem: 'SmartObject'
-        //                     },
-        //                     type: 'Category',
-        //                     elements: [
-        //                         'smart-object-obs-condition',
-        //                         'smart-object-obs-condition-and',
-        //                         'smart-object-obs-condition-or',
-        //                     ]
-        //                 }
-        //             ]
-        //         }
-        //     ]
-        // }
     ],
     editors: [
         {
