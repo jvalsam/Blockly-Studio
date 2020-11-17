@@ -17,7 +17,8 @@ import {
   ExportedFunction,
   RequiredFunction,
   ListensSignal,
-  PlatformEditorMetadata
+  PlatformEditorMetadata,
+  ExportedStaticFunction
 } from "../../components-framework/component/component-loader";
 
 import { DomainElementsHolder } from "../../domain-manager/domains-holder";
@@ -142,6 +143,40 @@ export class BlocklyVPL extends Editor {
     }
   }
 
+  @ExportedFunction
+  public onMissionUpdate(data) {
+    // instancesMap;
+    // configsMap
+    let toolboxXml = null;
+    for (const instId in this.instancesMap) {
+      let blocklyEditorInstance = this.instancesMap[instId];
+      if (blocklyEditorInstance.type === data.name) {
+        if (!toolboxXml) {
+          toolboxXml = blocklyEditorInstance.xmlTextToDom(data.toolbox.gen);
+        }
+
+        blocklyEditorInstance.updateToolbox(toolboxXml);
+      }
+    }
+
+    //TODO: handle the toolbox extra
+    let items = document.getElementsByClassName('blocklyTreeRow');
+    document.getElementsByClassName('blocklyTreeLabel');
+    $('.blocklyTreeLabel').find('span:contains("Built-in")')["prevObject"][0]
+        .nextSibling.style.marginLeft = '20px';
+
+    items = document.getElementsByClassName('blocklyTreeSeparator');
+    Object.keys(items)
+        .forEach(i => items[i].style.marginTop = '20px');
+    alert('OnMissionUpdate: Not implemented yet!');
+  }
+
+  @ExportedFunction
+  public onDeleteVPLElements(data) {
+    data.mission;
+    data.elements;
+    alert('OnDeleteVPLBlocklyBlocks: Not implemented yet!');
+  }
 
   @ExportedFunction
   public updatePItemData(editorId: string, pitem) {

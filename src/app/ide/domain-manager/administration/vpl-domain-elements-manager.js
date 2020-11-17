@@ -22,8 +22,8 @@ class _VPLDomainElementsManager {
         return this._currVPLDomainElements.signals;
     }
 
-    initialize() {
-        
+    initialize(parent) {
+        this.parent = parent;
     }
 
     receiveSignal(signal, data) {
@@ -77,28 +77,24 @@ class _VPLDomainElementsManager {
 
     updateToolbox(mission, toolbox, editors) {
         //function request of the editor handles the mission
-        editors.forEach(editor => IDECore
-            .functionRequest(
+        editors.forEach(editor => this.parent.functionRequest(
                 editor.name,
                 'onMissionUpdate',
                 {
                     name: mission,
                     toolbox: toolbox
-                },
-                this.name
+                }
             ));
     }
 
     deleteVPLElements(elements, mission, editors) {
-        editors.forEach(editor => IDECore
-            .functionRequest(
+        editors.forEach(editor => this.parent.functionRequest(
                 editor.name,
                 'onDeleteVPLElements',
                 {
                     mission: mission,
                     elements: elements
-                },
-                this.name
+                }
             ));
     }
 

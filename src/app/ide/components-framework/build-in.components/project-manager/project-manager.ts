@@ -638,7 +638,8 @@ export class ProjectManager extends IDEUIComponent {
     private createNewItem(
         concerned: ProjectElement,
         newItem: any,
-        src: any
+        src: any,
+        onAdded
     ): void {
         let project = this.loadedProjects[concerned.project.dbID];
         let renderParts = CreateRenderPartsWithData(
@@ -668,6 +669,11 @@ export class ProjectManager extends IDEUIComponent {
                 }
                 else {
                     this.saveProject(concerned.project.dbID);
+                }
+
+                // callback to give information of the created project element
+                if (onAdded) {
+                    onAdded(elem);
                 }
 
                 this.onClickProjectElement(elem);
@@ -779,7 +785,7 @@ export class ProjectManager extends IDEUIComponent {
         return project.componentsData[compName];
     }
 
-    private onSuccessUploadFiles(paths: Array<String>, data, event, concerned) {
+    private onSuccessUploadFiles(paths: Array<String>, data, event, concerned, onAdded) {
             // update img path
             for (var i = 0; i < paths.length; i++) {
                 for (const key of Object.keys(data.imgData)) {
@@ -802,10 +808,11 @@ export class ProjectManager extends IDEUIComponent {
             this.createNewItem(
                 concerned,
                 data,
-                src
+                src,
+                onAdded
             );
     }
-    private onCreateProjectItem(data, event, concerned, index =null, itemsData =null) {
+    private onCreateProjectItem(data, event, concerned, index =null, itemsData =null, onCreated) {
         if (typeof index === "number") {
             assert(
                 index !== -1,
@@ -820,7 +827,8 @@ export class ProjectManager extends IDEUIComponent {
                 paths,
                 data,
                 event,
-                concerned
+                concerned,
+                onCreated
             ),
             (resp) => {
                 IDEError.raise("Error Project Manager Save Img", resp);
@@ -831,7 +839,8 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public onAddProjectElement (
         event: IEventData,
-        concerned: ProjectElement
+        concerned: ProjectElement,
+        onAdded: Function
     ): void {
         this.currEvent = event;
         let dialoguesData = [];
@@ -881,7 +890,10 @@ export class ProjectManager extends IDEUIComponent {
                             callback: (data) => this.onCreateProjectItem(
                                 data,
                                 event,
-                                concerned
+                                concerned,
+                                null,
+                                null,
+                                onAdded
                             )
                         }
                     ]
@@ -939,7 +951,8 @@ export class ProjectManager extends IDEUIComponent {
                                     index,
                                     itemsData,
                                     event,
-                                    concerned
+                                    concerned,
+                                    onAdded
                                 )
                         }
                     ]

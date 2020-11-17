@@ -7,7 +7,8 @@ import {
 import {
     ExportedFunction,
     UIComponentMetadata,
-    RequiredFunction
+    RequiredFunction,
+    ExportedStaticFunction
 } from "../../component/component-loader";
 import { IDEUIComponent } from '../../component/ide-ui-component';
 import { IConsoleOutputMsg } from './run-time-manager-view/run-time-manager-output-view/run-time-manager-output-view';
@@ -33,8 +34,8 @@ var configJson = RuntimeManagerDataHolder.getDomainsConfigJSON();
     version: "1.0"
 })
 export class RuntimeManager extends IDEUIComponent {
-    private readonly modes: Array<string> = ["RELEASE", "DEBUG"];
-    private currentMode: number;
+    private static readonly modes: Array<string> = ["RELEASE", "DEBUG"];
+    private static currentMode: number;
     private isOpen: Boolean;
 
     constructor(
@@ -46,7 +47,7 @@ export class RuntimeManager extends IDEUIComponent {
     ) {
         super(name, description, componentView, hookSelector);
         this.isOpen = false;
-        this.currentMode = 0;
+        RuntimeManager.currentMode = 0;
     }
 
     public registerEvents(): void { ; }
@@ -339,13 +340,13 @@ export class RuntimeManager extends IDEUIComponent {
         inputView.onEnableInput(callback);
     }
 
-    @ExportedFunction
-    public getModes(): Array<string> {
-        return this.modes;
+    // @ExportedStaticFunction
+    public static getModes(): Array<string> {
+        return RuntimeManager.modes;
     }
 
-    @ExportedFunction
-    public getMode(): string {
-        return this.modes[this.currentMode];
+    // @ExportedStaticFunction
+    public static getMode(): string {
+        return RuntimeManager.modes[RuntimeManager.currentMode];
     }
 }
