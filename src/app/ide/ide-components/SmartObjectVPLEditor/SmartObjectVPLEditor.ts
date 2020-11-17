@@ -235,7 +235,7 @@ export class SmartObjectVPLEditor extends Editor {
 
   @RequiredFunction("ProjectManager", "getProjectCategory")
   @RequiredFunction("ProjectManager", "onAddProjectElement")
-  private createSmartGroup(group, projectId) {
+  private createSmartGroup(group, projectId, onCreated) {
     this._groupDataOnCreate = group;
 
     let projectCategory = ComponentsCommunication.functionRequest(
@@ -275,6 +275,7 @@ export class SmartObjectVPLEditor extends Editor {
           ],
         },
         projectCategory,
+        onCreated
       ]
     );
   }

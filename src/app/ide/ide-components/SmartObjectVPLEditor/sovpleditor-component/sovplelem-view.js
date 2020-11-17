@@ -323,28 +323,38 @@ export function RenderSOScanList(
   }
 }
 
+let RenderSmartElements = function (selector, smartElements, onDelete) {
+  for (const smartElement of smartElements) {
+    RenderSmartElementBelongsToAnotherElem(selector, smartElement, onDelete);
+  }
+};
+
 let RenderSmartElementBelongsToAnotherElem = function (
   selector,
   smartElement,
+  onClickAtElement,
   onDeleteSmartElement
 ) {
   let button = CreateDOMElement("button", {
-    classList: ["badge", "badge-pill", "badge-secondary"],
+    classList: ["badge", "badge-pill", "badge-secondary", "bubbles"],
     innerHtml: smartElement.name,
   });
-  button.style.padding = ".4rem";
+  // button.style.padding = ".4rem";
   button.style.paddingRight = "2rem";
+  button.style.lineHeight = "17px";
   button.onclick = () => {
-    alert("tospan to sosto");
+    // onClickAtElement(smartElement)
   };
   selector.appendChild(button);
 
   let buttonIconSpan = CreateDOMElement("span", { classList: ["times"] });
+  buttonIconSpan.style.position = "absolute";
   buttonIconSpan.style.marginLeft = "-1.5rem";
+  buttonIconSpan.style.marginTop = "0.75rem";
   buttonIconSpan.style.color = "white";
+
   buttonIconSpan.onclick = () => {
-    // onDeleteSmartElement(smartObject);
-    alert("to x to koumpi");
+    // onDeleteSmartElement(smartElement);
   };
   selector.appendChild(buttonIconSpan);
 
@@ -507,19 +517,23 @@ let RenderSmartObjectRegistered = function (
   };
   exportGroupsButtonCol.appendChild(exportGroupsButton);
 
-  let groupsRow = CreateDOMElement("div", { classList: ["row"] });
-  groupsRow.style.marginTop = "1rem";
-  cardBodyDiv.appendChild(groupsRow);
+  // let groupsRow = CreateDOMElement("div", { classList: ["row"] });
+  // groupsRow.style.marginTop = "1rem";
+  // cardBodyDiv.appendChild(groupsRow);
 
-  let groupsCol = CreateDOMElement("div", { classList: ["col-sm"] });
-  groupsRow.appendChild(groupsCol);
+  // let groupsCol = CreateDOMElement("div", { classList: ["col-sm"] });
+  // groupsCol.style.marginLeft = "-1.5rem";
+  // groupsRow.appendChild(groupsCol);
 
-  soData.editorData.details.groups.forEach((group) =>
-    RenderSmartElementBelongsToAnotherElem(
-      groupsCol,
-      group,
-      callbacksMap.onDeleteGroup
-    )
+  let groupDiv = CreateDOMElement("div");
+  groupDiv.style.marginLeft = "-1.5rem";
+  groupDiv.style.marginTop = "1.5rem";
+  cardBodyDiv.appendChild(groupDiv);
+
+  RenderSmartElements(
+    groupDiv,
+    soData.editorData.details.groups,
+    callbacksMap.onDeleteGroup
   );
 };
 
@@ -731,18 +745,21 @@ export function RenderSmartGroup(
   smartObjectsName.style.marginBottom = "auto";
   smartObjectsHeaderRow.appendChild(smartObjectsName);
 
-  let smartObjectsRow = CreateDOMElement("div", { classList: ["row"] });
-  smartObjectsRow.style.marginTop = "1rem";
-  cardBodyDiv.appendChild(smartObjectsRow);
+  // let smartObjectsRow = CreateDOMElement("div", { classList: ["row"] });
+  // smartObjectsRow.style.marginTop = "1rem";
+  // cardBodyDiv.appendChild(smartObjectsRow);
 
-  let smartObjectsCol = CreateDOMElement("div", { classList: ["col-sm"] });
-  smartObjectsRow.appendChild(smartObjectsCol);
+  // let smartObjectsCol = CreateDOMElement("div", { classList: ["col-sm"] });
+  // smartObjectsCol.style.marginLeft = "-1.5rem";
+  // smartObjectsRow.appendChild(smartObjectsCol);
+  
+  let objectDiv = CreateDOMElement("div");
+  objectDiv.style.marginLeft = "-1.5rem";
+  cardBodyDiv.appendChild(objectDiv);
 
-  for (const smartObject of sgData.editorData.details.smartObjects) {
-    RenderSmartElementBelongsToAnotherElem(
-      smartObjectsCol,
-      smartObject,
-      callbacksMap.onDeleteSmartObject
-    );
-  }
+  RenderSmartElements(
+    objectDiv,
+    sgData.editorData.details.smartObjects,
+    callbacksMap.onDeleteSmartObject
+  );
 }

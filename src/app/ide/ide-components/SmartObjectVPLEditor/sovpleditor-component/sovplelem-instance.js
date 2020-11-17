@@ -199,14 +199,17 @@ export class SOVPLElemInstance {
 
     this.parent.createSmartGroup(
       group.elemData.editorData.details,
-      this.elemData.editorData.projectID
+      this.elemData.editorData.projectID,
+      (pItem) => {
+        const key = Object.keys(pItem._editorsData.items)[0];
+        const name = pItem._editorsData.items[key].title;
+        //add group to smart object
+        this.elemData.editorData.details.groups.push({
+          id: key,
+          name: name,
+        });
+      }
     );
-
-    //add group to smart object
-    this.elemData.editorData.details.groups.push({
-      id: group.elemData.editorData.editorId,
-      name: group.elemData.name,
-    });
 
     delete group.properties;
     delete group.soDataID;

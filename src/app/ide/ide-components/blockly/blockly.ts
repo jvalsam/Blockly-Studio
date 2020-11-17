@@ -162,13 +162,13 @@ export class BlocklyVPL extends Editor {
     //TODO: handle the toolbox extra
     let items = document.getElementsByClassName('blocklyTreeRow');
     document.getElementsByClassName('blocklyTreeLabel');
-    $('.blocklyTreeLabel').find('span:contains("Built-in")')["prevObject"][0]
-        .nextSibling.style.marginLeft = '20px';
+    // $('.blocklyTreeLabel').find('span:contains("Built-in")')["prevObject"][0]
+    //     .nextSibling.style.marginLeft = '20px';
 
-    items = document.getElementsByClassName('blocklyTreeSeparator');
-    Object.keys(items)
-        .forEach(i => items[i].style.marginTop = '20px');
-    alert('OnMissionUpdate: Not implemented yet!');
+    // items = document.getElementsByClassName('blocklyTreeSeparator');
+    // Object.keys(items)
+    //     .forEach(i => items[i].style.marginTop = '20px');
+    // alert('OnMissionUpdate: Not implemented yet!');
   }
 
   @ExportedFunction
