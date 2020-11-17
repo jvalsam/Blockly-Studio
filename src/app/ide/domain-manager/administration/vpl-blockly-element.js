@@ -77,7 +77,7 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
     }
 
     _elemName(data) {
-        return data.id + '_' + this._name;
+        return data.editorId + '_' + this._name;
     }
 
     _blockDef(data) {
@@ -267,8 +267,8 @@ export class VPLDomainElementHandler {
     }
 
     onCreate(data) {
-        this._items[data.id] = {
-            name: data.name || data.id,
+        this._items[data.editorId] = {
+            name: data.title || data.editorId,
             _domainElementData: JSON.parse(JSON.stringify(data))/* {...data} */,
             elements: {}
         };
@@ -278,11 +278,11 @@ export class VPLDomainElementHandler {
                     .onCreate(data);
             
             //TODO: check to categorize in separate 
-            this._items[data.id].elements[blocklyElem] = createdItems;
+            this._items[data.editorId].elements[blocklyElem] = createdItems;
         }
         
         for (let mission in this._missionsRef) {
-            this._missionsRef[mission].onCreate(this._items[data.id]);
+            this._missionsRef[mission].onCreate(this._items[data.editorId]);
         }
     }
 

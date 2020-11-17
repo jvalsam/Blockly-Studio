@@ -208,4 +208,12 @@ export class BlocklyInstance {
     redo() {
         this.wsp.undo(true);
     }
+
+    updateToolbox(toolboxXml) {
+        this.wsp.updateToolbox(toolboxXml);
+    }
+
+    xmlTextToDom(toolbox) {
+        return Blockly.Xml.textToDom(toolbox);
+    }
 }

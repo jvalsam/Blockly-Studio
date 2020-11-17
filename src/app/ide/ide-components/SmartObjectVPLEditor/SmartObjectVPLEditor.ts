@@ -57,6 +57,8 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedFunction
   public open(selector: string, pitem: PItemView, config: any): void {
     let editorData = pitem.pi.editorsData.items[selector];
+    let img = pitem.pi["_jstreeNode"].icon;
+    editorData.img = img;
     assert(
       editorData,
       "Source with id not found in SmartObject visual editor."
@@ -70,7 +72,7 @@ export class SmartObjectVPLEditor extends Editor {
         this,
         {
           name: pitem.pi["_jstreeNode"].text,
-          img: pitem.pi["_jstreeNode"].icon,
+          img: img,
           color: pitem.pi["_jstreeNode"].color,
           editorData: editorData,
         },
@@ -222,10 +224,11 @@ export class SmartObjectVPLEditor extends Editor {
     handleGroups(
       this.retrievePItemGroups(data.elemData.editorData.projectID),
       () => {
-        // ComponentsCommunication.postSignal(
-        //     this.name,
-        //     "create-smart-object",
-        //     [data.elemData.editorData]);
+        ComponentsCommunication.postSignal(
+          this.name,
+          "create-smart-object",
+          data.elemData.editorData
+        );
       }
     );
   }

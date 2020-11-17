@@ -47,8 +47,18 @@ export class DomainsManager extends IDEComponent {
 
     @ExportedFunction
     public initialize(): void {
-        VPLDomainElementsManager.initialize();
+        VPLDomainElementsManager.initialize(this);
         InitializeVPDLs();
+    }
+
+    @RequiredFunction("BlocklyVPL", "onMissionUpdate")
+    @RequiredFunction("BlocklyVPL", "onDeleteVPLElements")
+    private functionRequest(editorName, action, data) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            editorName,
+            action,
+            [data]);
     }
 
     @ExportedFunction
