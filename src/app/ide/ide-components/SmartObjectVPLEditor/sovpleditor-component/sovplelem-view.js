@@ -22,201 +22,6 @@ let CreateDOMElement = function (type, options) {
 
 // ...
 
-let CreateEditModal = function (selector) {
-  let modal = CreateDOMElement("div", {
-    classList: ["modal", "fade"],
-    id: "edit-modal",
-  });
-  modal.setAttribute("tabindex", "-1");
-  modal.setAttribute("role", "dialog");
-  modal.setAttribute("aria-hidden", "true");
-  selector.appendChild(modal);
-
-  let modalDialog = CreateDOMElement("div", { classList: ["modal-dialog"] });
-  modalDialog.setAttribute("role", "document");
-  modal.appendChild(modalDialog);
-
-  let modalContent = CreateDOMElement("div", { classList: ["modal-content"] });
-  modalDialog.appendChild(modalContent);
-
-  let modalHeader = CreateDOMElement("div", { classList: ["modal-header"] });
-  modalContent.appendChild(modalHeader);
-
-  let modalTitle = CreateDOMElement("h5", {
-    classList: ["modal-title"],
-    id: "edit-modal-title",
-  });
-  modalHeader.appendChild(modalTitle);
-
-  let closeModal = CreateDOMElement("button", { classList: ["close"] });
-  closeModal.setAttribute("type", "button");
-  closeModal.setAttribute("data-dismiss", "modal");
-  closeModal.setAttribute("aria-label", "Close");
-  modalHeader.appendChild(closeModal);
-
-  let closeSpan = CreateDOMElement("span");
-  closeSpan.setAttribute("aria-hidden", "true");
-  closeSpan.innerHTML = "&times;";
-  closeModal.appendChild(closeSpan);
-
-  let modalBody = CreateDOMElement("div", {
-    classList: ["modal-body"],
-    id: "edit-modal-body",
-  });
-  modalContent.appendChild(modalBody);
-
-  // Name
-  let outterInputDiv = CreateDOMElement("div", {
-    classList: ["input-group", "mb-3"],
-  });
-  modalBody.appendChild(outterInputDiv);
-
-  let inputGroup = CreateDOMElement("div", {
-    classList: ["input-group-prepend"],
-  });
-  outterInputDiv.appendChild(inputGroup);
-
-  let inputGroupNameTag = CreateDOMElement("div", {
-    classList: ["input-group-text"],
-    id: "resource-name-tag",
-    innerHtml: "Name",
-  });
-  inputGroup.appendChild(inputGroupNameTag);
-
-  let inputElementName = CreateDOMElement("input", {
-    classList: ["form-control"],
-    id: "edit-modal-nameInput",
-  });
-  inputElementName.setAttribute("aria-label", "edit-modal-nameInput");
-  inputElementName.setAttribute("aria-describedby", "basic-addon1");
-  outterInputDiv.appendChild(inputElementName);
-
-  let formImage = CreateDOMElement("form");
-  modalBody.appendChild(formImage);
-
-  let formGroup = CreateDOMElement("div", { classList: ["form-group"] });
-  formGroup.style.marginLeft = "0.3rem";
-  formImage.appendChild(formGroup);
-
-  // Image
-  let labelImage = CreateDOMElement("label", { innerHtml: "Image" });
-  labelImage.setAttribute("for", "edit-modal-imageInput");
-  formGroup.appendChild(labelImage);
-
-  let inputImage = CreateDOMElement("input", {
-    classList: ["form-control-file"],
-    id: "edit-modal-imageInput",
-  });
-  inputImage.setAttribute("type", "file");
-  inputImage.setAttribute("accept", ".jpg,.png,.jpeg,.img");
-  formGroup.appendChild(inputImage);
-
-  // Color
-  let outterColorDiv = CreateDOMElement("div", {
-    classList: ["input-group", "mb-3"],
-  });
-  modalBody.appendChild(outterColorDiv);
-
-  let inputGroupColor = CreateDOMElement("div", {
-    classList: ["input-group-prepend"],
-  });
-  outterColorDiv.appendChild(inputGroupColor);
-
-  let inputGroupColorTag = CreateDOMElement("div", {
-    classList: ["input-group-text"],
-    id: "edit-modal-color-tag",
-    innerHtml: "Color",
-  });
-  inputGroupColor.appendChild(inputGroupColorTag);
-
-  let inputColor = CreateDOMElement("input", {
-    classList: ["form-control"],
-    id: "edit-modal-colorInput",
-  });
-  inputColor.setAttribute("aria-label", "edit-modal-colorInput");
-  inputColor.setAttribute("aria-describedby", "basic-addon1");
-  inputColor.setAttribute("type", "color");
-  outterColorDiv.appendChild(inputColor);
-
-  let modalFooter = CreateDOMElement("div", { classList: ["modal-footer"] });
-  modalContent.appendChild(modalFooter);
-
-  let cancelButton = CreateDOMElement("button", {
-    classList: ["btn", "btn-secondary"],
-    innerHtml: "Cancel",
-  });
-  cancelButton.setAttribute("type", "button");
-  // cancelButton.addEventListener('click', onFail);
-  cancelButton.setAttribute("data-dismiss", "modal");
-  modalFooter.appendChild(cancelButton);
-
-  let confirmButton = CreateDOMElement("div", {
-    classList: ["btn", "btn-primary"],
-    id: "edit-modal-confirm-button",
-    innerHtml: "Confirm",
-  });
-  confirmButton.setAttribute("type", "button");
-  // confirmButton.addEventListener('click', () => {
-  //     onSucess(
-  //         {
-  //             vplElement: elem,
-  //             name: document.getElementById('resource-name').value,
-  //             image: document.getElementById('resource-image').value,
-  //             color: document.getElementById('resource-color').value
-  //         });
-  // });
-  modalFooter.appendChild(confirmButton);
-};
-
-let CreateDeleteModal = function (selector) {
-  let modal = CreateDOMElement("div", {
-    classList: ["modal", "fade"],
-    id: "delete-modal",
-  });
-  modal.setAttribute("tabindex", "-1");
-  modal.setAttribute("role", "dialog");
-  modal.setAttribute("aria-hidden", "true");
-  selector.appendChild(modal);
-
-  let modalDialog = CreateDOMElement("div", { classList: ["modal-dialog"] });
-  modalDialog.setAttribute("role", "document");
-  modal.appendChild(modalDialog);
-
-  let modalContent = CreateDOMElement("div", { classList: ["modal-content"] });
-  modalDialog.appendChild(modalContent);
-
-  let modalBody = CreateDOMElement("div", {
-    classList: ["modal-body"],
-    id: "delete-modal-body",
-  });
-  modalContent.appendChild(modalBody);
-
-  let modalFooter = CreateDOMElement("div", { classList: ["modal-footer"] });
-  modalContent.appendChild(modalFooter);
-
-  let closeButton = CreateDOMElement("button", {
-    classList: ["btn", "btn-secondary"],
-    innerHtml: "Close",
-  });
-  closeButton.setAttribute("type", "button");
-  closeButton.setAttribute("data-dismiss", "modal");
-  // closeButton.addEventListener('click', () => {
-  //     onFail();
-  // })
-  modalFooter.appendChild(closeButton);
-
-  let deleteButton = CreateDOMElement("div", {
-    classList: ["btn", "btn-danger"],
-    id: "delete-modal-confirm-button",
-    innerHtml: "Delete",
-  });
-  deleteButton.setAttribute("type", "button");
-  // deleteButton.addEventListener('click', () => {
-  //     onSucess(elem);
-  // })
-  modalFooter.appendChild(deleteButton);
-};
-
 let CreateEditPropertyAliasModal = function (selector) {
   let modal = CreateDOMElement("div", {
     classList: ["modal", "fade"],
@@ -518,6 +323,37 @@ export function RenderSOScanList(
   }
 }
 
+let RenderSmartElementBelongsToAnotherElem = function (
+  selector,
+  smartElement,
+  onDeleteSmartElement
+) {
+  let button = CreateDOMElement("button", {
+    classList: ["badge", "badge-pill", "badge-secondary"],
+    innerHtml: smartElement.name,
+  });
+  button.style.padding = ".4rem";
+  button.style.paddingRight = "2rem";
+  button.onclick = () => {
+    alert("tospan to sosto");
+  };
+  selector.appendChild(button);
+
+  let buttonIconSpan = CreateDOMElement("span", { classList: ["times"] });
+  buttonIconSpan.style.marginLeft = "-1.5rem";
+  buttonIconSpan.style.color = "white";
+  buttonIconSpan.onclick = () => {
+    // onDeleteSmartElement(smartObject);
+    alert("to x to koumpi");
+  };
+  selector.appendChild(buttonIconSpan);
+
+  let buttonIcon = CreateDOMElement("i", {
+    classList: ["fas", "fa-times-circle"],
+  });
+  buttonIconSpan.appendChild(buttonIcon);
+};
+
 // Smart Object Renderer
 let RenderSmartObjectProperty = function (
   selector,
@@ -534,30 +370,6 @@ let RenderSmartObjectProperty = function (
     alias,
     callbacks
   );
-};
-
-let RenderSmartGroupofObject = function (selector, group, onDeleteGroup) {
-  let groupName = CreateDOMElement("span", {
-    classList: ["badge", "badge-pill", "badge-secondary"],
-    innerHtml: group.elemData.name,
-  });
-  groupName.style.padding = ".4rem";
-  groupName.style.paddingLeft = ".5rem";
-  groupName.style.fontSize = "medium";
-  selector.appendChild(groupName);
-
-  let groupIconSpan = CreateDOMElement("span", { classList: ["times"] });
-  groupIconSpan.style.paddingLeft = ".2rem";
-  groupIconSpan.style.paddingRight = ".2rem";
-  groupName.appendChild(groupIconSpan);
-
-  let groupIcon = CreateDOMElement("i", {
-    classList: ["fas", "fa-times-circle"],
-  });
-  groupIcon.onclick = () => {
-    onDeleteGroup(group.elemData.name);
-  };
-  groupIconSpan.appendChild(groupIcon);
 };
 
 let RenderSmartObjectRegistered = function (
@@ -684,22 +496,14 @@ let RenderSmartObjectRegistered = function (
 
   let exportGroupsButton = CreateDOMElement("button", {
     classList: ["btn", "btn-info"],
-    innerHtml: "Export Group",
+    innerHtml: "Create Group",
   });
-  // group: { name, img, color, properties, mapPropsInfo, smartObject }
   exportGroupsButtonCol.onclick = () => {
-    // Create Modal
-    // CreateNewSmartGroupModal(
-    //   document.getElementsByClassName("modal-platform-container")[0]
-    // );
-    // Destroy on close
-    // $("#new-sg-modal").on("hidden.bs.modal", function () {
-    //   document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-    //     "";
-    // });
-    // Render new group modal
-    callbacksMap.onCreateSmartGroup(soData.editorData.details.properties);
-    // callbacksMap.onCreateSmartGroup();
+    callbacksMap.onCreateSmartGroup({
+      properties: soData.editorData.details.properties,
+      soDataID: soData.editorData.editorId,
+      soName: soData.name,
+    });
   };
   exportGroupsButtonCol.appendChild(exportGroupsButton);
 
@@ -711,7 +515,11 @@ let RenderSmartObjectRegistered = function (
   groupsRow.appendChild(groupsCol);
 
   soData.editorData.details.groups.forEach((group) =>
-    RenderSmartGroupofObject(groupsCol, group, callbacksMap.onDeleteGroup)
+    RenderSmartElementBelongsToAnotherElem(
+      groupsCol,
+      group,
+      callbacksMap.onDeleteGroup
+    )
   );
 };
 
@@ -835,34 +643,6 @@ let RenderSmartGroupProperty = function (
   );
 };
 
-let RenderSmartObjectofGroup = function (
-  selector,
-  smartObject,
-  onDeleteSmartObject
-) {
-  let smartObjectName = CreateDOMElement("span", {
-    classList: ["badge", "badge-pill", "badge-secondary"],
-    innerHtml: smartObject.elemData.name,
-  });
-  smartObjectName.style.padding = ".4rem";
-  smartObjectName.style.paddingLeft = ".5rem";
-  smartObjectName.style.fontSize = "medium";
-  selector.appendChild(smartObjectName);
-
-  let smartObjectIconSpan = CreateDOMElement("span", { classList: ["times"] });
-  smartObjectIconSpan.style.paddingLeft = ".2rem";
-  smartObjectIconSpan.style.paddingRight = ".2rem";
-  smartObjectName.appendChild(smartObjectIconSpan);
-
-  let smartObjectIcon = CreateDOMElement("i", {
-    classList: ["fas", "fa-times-circle"],
-  });
-  smartObjectIcon.onclick = () => {
-    onDeleteSmartObject(smartObject);
-  };
-  smartObjectIconSpan.appendChild(smartObjectIcon);
-};
-
 export function RenderSmartGroup(
   selector,
   sgData,
@@ -958,26 +738,11 @@ export function RenderSmartGroup(
   let smartObjectsCol = CreateDOMElement("div", { classList: ["col-sm"] });
   smartObjectsRow.appendChild(smartObjectsCol);
 
-  // for (const smartObject of sgData.editorData.details.smartObjects) {
-  //   RenderSmartObjectofGroup(
-  //     smartObjectsCol,
-  //     smartObject,
-  //     callbacksMap.onDeleteSmartObject
-  //   );
-  // }
-
-  let deleteGroupRow = CreateDOMElement("div", { classList: ["row"] });
-  deleteGroupRow.style.marginTop = "1rem";
-  cardBodyDiv.appendChild(deleteGroupRow);
-
-  let deleteGroupCol = CreateDOMElement("div", { classList: ["col-sm"] });
-  deleteGroupRow.appendChild(deleteGroupCol);
-
-  let deleteGroupButton = CreateDOMElement("button", {
-    classList: ["btn", "btn-danger"],
-    innerHtml: "Delete Group",
-  });
-  deleteGroupButton.onclick = callbacksMap.options.Delete;
-  deleteGroupButton.style.cssFloat = "right";
-  deleteGroupCol.appendChild(deleteGroupButton);
+  for (const smartObject of sgData.editorData.details.smartObjects) {
+    RenderSmartElementBelongsToAnotherElem(
+      smartObjectsCol,
+      smartObject,
+      callbacksMap.onDeleteSmartObject
+    );
+  }
 }
