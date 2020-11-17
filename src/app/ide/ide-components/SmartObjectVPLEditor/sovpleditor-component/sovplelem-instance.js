@@ -46,11 +46,21 @@ export class SOVPLElemInstance {
     this.selector = selector;
     this.id = elemData.editorData.editorId;
     this.elemData = elemData;
-    this.fixInitMapPropsAndGroups();
     this.privillege = privillege;
     this.config = config;
 
     this.state = InstStateEnum.INIT;
+
+    switch (elemData.editorData.type) {
+      case VPLElemNames.SMART_OBJECT:
+        this.fixInitMapPropsAndGroupsForObject();
+        break;
+      case VPLElemNames.SMART_GROUP:
+        this.fixInitMapPropsAndSmartObjectsForGroups();
+        break;
+      default:
+        throw new Error("not existing type in SO EDITOR");
+    }
   }
 
   get data() {
@@ -76,13 +86,22 @@ export class SOVPLElemInstance {
 
   // user functionality
 
-  fixInitMapPropsAndGroups() {
+  fixInitMapPropsAndGroupsForObject() {
     this.elemData.editorData.details.mapPropsAlias =
       this.elemData.editorData.details.mapPropsAlias || {};
     this.elemData.editorData.details.mapPropsProgrammingActive =
       this.elemData.editorData.details.mapPropsProgrammingActive || {};
     this.elemData.editorData.details.groups =
       this.elemData.editorData.details.groups || [];
+  }
+
+  fixInitMapPropsAndSmartObjectsForGroups() {
+    this.elemData.editorData.details.mapPropsAlias =
+      this.elemData.editorData.details.mapPropsAlias || {};
+    this.elemData.editorData.details.mapPropsActive =
+      this.elemData.editorData.details.mapPropsActive || {};
+    this.elemData.editorData.details.smartObjects =
+      this.elemData.editorData.details.smartObjects || [];
   }
 
   updateRegisteredDevices() {
@@ -123,7 +142,7 @@ export class SOVPLElemInstance {
     this.elemData.editorData.details.properties = props;
     this.elemData.editorData.details.resourceID = resourceID;
 
-    this.fixInitMapPropsAndGroups();
+    this.fixInitMapPropsAndGroupsForObject();
     props.forEach((prop) => {
       this.elemData.editorData.details.mapPropsAlias[prop.name] = prop.name;
       this.elemData.editorData.details.mapPropsProgrammingActive[
@@ -159,20 +178,39 @@ export class SOVPLElemInstance {
     this.parent.updateSmartObjectPropProgrammingActive(this);
   }
 
-  // group: { name, img, color, properties, mapPropsInfo, smartObject }
+  // group: {properties: properties, soDataID: id, soName: name}
   onSOCreateSmartGroup(group) {
     console.log(group);
-    // init map data of group props
-    group.details = {};
-    group.details.properties = group.properties;
-    group.details.mapPropsAlias = {};
-    group.details.mapPropsActive = {};
-    for (let propName of Object.keys(group.mapPropsInfo)) {
-      let prop = group.mapPropsInfo[propName];
-      group.details.mapPropsAlias[propName] = prop.alias;
-      group.details.mapPropsActive[propName] = prop.active;
+
+    // initialize group
+    group.elemData = { editorData: { details: {} } };
+    group.elemData.editorData.details = {};
+    group.elemData.editorData.details.properties = group.properties;
+    group.elemData.editorData.details.smartObjects = [
+      { id: group.soDataID, name: group.soName },
+    ];
+    group.elemData.editorData.details.mapPropsAlias = {};
+    group.elemData.editorData.details.mapPropsActive = {};
+    for (let property of group.properties) {
+      let propName = property.name;
+      group.elemData.editorData.details.mapPropsAlias[propName] = propName;
+      group.elemData.editorData.details.mapPropsActive[propName] = true;
     }
-    group.details.smartObjects = [group.smartObject];
+
+    this.parent.createSmartGroup(
+      group.elemData.editorData.details,
+      this.elemData.editorData.projectID
+    );
+
+    //add group to smart object
+    this.elemData.editorData.details.groups.push({
+      id: group.elemData.editorData.editorId,
+      name: group.elemData.name,
+    });
+
+    delete group.properties;
+    delete group.soDataID;
+    delete group.soName;
   }
 
   onSODeleteGroup(groupName) {
@@ -230,7 +268,7 @@ export class SOVPLElemInstance {
           onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),
-          onCreateSmartGroup: (group) => this.parent.createSmartGroup(group, this.elemData.editorData.projectID),
+          onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
           onDeleteGroup: (groupName) => this.onSODeleteGroup(groupName),
           options: {
             Edit: () => {
@@ -260,7 +298,7 @@ export class SOVPLElemInstance {
         });
         break;
       default:
-        throw new Error("not xisting type in SO EDITOR");
+        throw new Error("not existing type in SO EDITOR");
     }
   }
 
