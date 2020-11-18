@@ -216,7 +216,7 @@ export class SOVPLElemInstance {
     delete group.soName;
   }
 
-  onClickSmartGroup(groupID) {
+  onSOClickSmartGroup(groupID) {
     let index = this.elemData.editorData.details.groups.findIndex(
       (x) => x.id === groupID
     );
@@ -226,7 +226,7 @@ export class SOVPLElemInstance {
     this.parent.openSmartElement(groupID);
   }
 
-  onDeleteSmartGroup(groupID) {
+  onSODeleteSmartGroup(groupID) {
     let index = this.elemData.editorData.details.groups.findIndex(
       (x) => x.id === groupID
     );
@@ -234,8 +234,7 @@ export class SOVPLElemInstance {
       throw new Error("Not found group name");
     }
 
-    delete this.elemData.editorData.details.groups[index];
-    this.parent.deleteSmartGroupFromObject(this.elemData.name, groupID);
+    this.elemData.editorData.details.groups.splice(index, 1);
     this.parent.saveElement(this);
   }
   // --- End SmartObject Actions ---
@@ -275,9 +274,7 @@ export class SOVPLElemInstance {
     if (index < 0) {
       throw new Error("Not found smart object id");
     }
-
-    delete this.elemData.editorData.details.smartObjects[index];
-    this.parent.deleteSmartObjectFromGroup(this, smartObjectID);
+    this.elemData.editorData.details.smartObjects.splice(index, 1);
     this.parent.saveElement(this);
   }
   // --- End SmartGroup Actions ---
@@ -296,8 +293,8 @@ export class SOVPLElemInstance {
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),
           onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
-          onClickSmartGroup: (groupID) => this.onClickSmartGroup(groupID),
-          onDeleteSmartGroup: (groupID) => this.onDeleteSmartGroup(groupID),
+          onClickSmartGroup: (groupID) => this.onSODeleteSmartGroup(groupID),
+          onDeleteSmartGroup: (groupID) => this.onSODeleteSmartGroup(groupID),
           options: {
             Edit: () => {
               alert("not connected yet.");
