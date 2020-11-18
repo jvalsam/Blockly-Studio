@@ -275,12 +275,16 @@ export class SmartObjectVPLEditor extends Editor {
           ],
         },
         projectCategory,
-        onCreated
+        onCreated,
       ]
     );
   }
 
-  private deleteSmartGroupFromObject(smartObject, smartGroup, type) {
+  private clickSmartGroupFromObject(smartObjectName, smartGroupID) {
+    alert("not implemented yet clickSmartGroupFromObject");
+  }
+
+  private deleteSmartGroupFromObject(smartObject, smartGroupID, type) {
     // retrieve smart group to edit innner data of the list with the smart objects
     alert("not implemented yet deleteSmartGroupFromObject");
   }
@@ -301,7 +305,11 @@ export class SmartObjectVPLEditor extends Editor {
     alert("not implemented yet updateSmartGroupPropActive");
   }
 
-  private deleteSmartObjectFromGroup(smartGroup, smartObject, type) {
+  private clickSmartObjectFromGroup(smartGroupName, smartObjectID) {
+    alert("not implemented yet clickSmartObjectFromGroup");
+  }
+
+  private deleteSmartObjectFromGroup(smartGroup, smartObjectID, type) {
     // retrieve smart group to edit innner data of the list with the smart objects
     alert("not implemented yet deleteSmartObjectFromGroup");
   }
