@@ -65,16 +65,21 @@ export const BlocklyConditional = {
                     type: 'Category',
                     colour: '60',
                     elements: [
-                                {
-                                    name: {
-                                        domainElem: 'SmartObject',
-                                        item: 'getValue'
-                                    },
-                                    type: 'Element'
-                                }
-                            ]
-                        
-                    
+                        {
+                            name: {
+                                domainElem: 'SmartObject',
+                                item: 'getValue'
+                            },
+                            type: 'Element'
+                        },
+                        {
+                            name: {
+                                domainElem: 'SmartObject',
+                                item: 'getValueBlock'
+                            },
+                            type: 'Element'
+                        }
+                    ]
                 }
             ]
         }
