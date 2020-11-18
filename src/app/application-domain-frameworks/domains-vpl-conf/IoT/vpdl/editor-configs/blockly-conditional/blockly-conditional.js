@@ -54,22 +54,30 @@ export const BlocklyConditional = {
                     type: 'Element'
                 }
             ]
+        },
+        {
+            name: 'Smart Objects',
+            type: 'Category',
+            colour: '210',
+            elements: [
+                {
+                    name: 'Get Values',
+                    type: 'Category',
+                    colour: '60',
+                    elements: [
+                                {
+                                    name: {
+                                        domainElem: 'SmartObject',
+                                        item: 'getValue'
+                                    },
+                                    type: 'Element'
+                                }
+                            ]
+                        
+                    
+                }
+            ]
         }
-        // ,
-        // {
-        //     name: 'Smart Objects',
-        //     type: 'Category',
-        //     colour: '236',
-        //     elements: [
-        //         {
-        //             name: {
-        //                 domainElem: 'SmartObject',
-        //                 item: 'getValue'
-        //             },
-        //             type: 'Element'
-        //         }
-        //     ]
-        // }
     ],
     editors: [
         {
