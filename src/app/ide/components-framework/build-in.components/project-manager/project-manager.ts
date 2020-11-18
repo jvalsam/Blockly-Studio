@@ -290,6 +290,17 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
+    public getProjectItemView(pitemId: string): ProjectItem {
+        let projectId = pitemId.split("_")[0];
+        let projView = (<ProjectManagerJSTreeView>this.view)
+            .getProject(projectId);
+        if (projView) {
+            return <ProjectItem>projView.getProjectElement(pitemId);
+        }
+        return null;
+    }
+
+    @ExportedFunction
     public getProjectItems(projectId: string, type: string="ALL"): Array<ProjectItem> {
         let projView = (<ProjectManagerJSTreeView>this.view)
             .getProject(projectId);
@@ -1270,6 +1281,14 @@ export class ProjectManager extends IDEUIComponent {
             "pitemTools",
             [pitemId]
         ).value;
+    }
+
+    @ExportedFunction
+    public clickProjectElement(projectElementId: string) {
+        let pitem = this.getProjectItem(projectElementId);
+        this.onClickProjectElement(pitem);
+        pitem.trigger("click");
+
     }
 
     public onClickProjectElement(element: any): void {

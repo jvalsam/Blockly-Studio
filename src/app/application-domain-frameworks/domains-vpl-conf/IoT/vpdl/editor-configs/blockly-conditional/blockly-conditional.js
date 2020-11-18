@@ -55,7 +55,6 @@ export const BlocklyConditional = {
                 }
             ]
         }
-        // error in toolbox
         // ,
         // {
         //     name: 'Smart Objects',

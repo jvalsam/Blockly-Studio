@@ -695,6 +695,7 @@ export class ProjectInstanceView extends View {
     }
 
     public trigger(evt: string, elem :ProjectElement): void {
+        $("#"+elem.jstreeNode.id)["jstree"]().deselect_all(true);
         this.treeview/*.jstree()*/.select_node(elem.jstreeNode.id);
         $("#"+elem.jstreeNode.id).trigger(evt, elem);
     }

@@ -85,6 +85,7 @@ export class ProjectManagerJSTreeView extends ComponentView {
         }
         this.currClickedElement = element;
         this.currClickedElement.state = "onFocus";
+        //
     }
 
     public onRemoveElement(element: ProjectManagerElementView) {

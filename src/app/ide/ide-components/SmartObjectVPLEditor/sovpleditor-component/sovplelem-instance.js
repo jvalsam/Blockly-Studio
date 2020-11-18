@@ -205,7 +205,7 @@ export class SOVPLElemInstance {
         const name = pItem._editorsData.items[key].title;
         //add group to smart object
         this.elemData.editorData.details.groups.push({
-          id: key,
+          id: pItem.systemId,
           name: name,
         });
       }
@@ -223,7 +223,7 @@ export class SOVPLElemInstance {
     if (index < 0) {
       throw new Error("Not found group name");
     }
-    this.parent.clickSmartGroupFromObject(this.elemData.name, groupID);
+    this.parent.openSmartElement(groupID);
   }
 
   onDeleteSmartGroup(groupID) {
@@ -265,7 +265,7 @@ export class SOVPLElemInstance {
     if (index < 0) {
       throw new Error("Not found object id");
     }
-    this.parent.clickSmartObjectFromGroup(this.elemData.name, smartObjectID);
+    this.parent.openSmartElement(smartObjectID);
   }
 
   onSGDeleteSmartObject(smartObjectID) {
