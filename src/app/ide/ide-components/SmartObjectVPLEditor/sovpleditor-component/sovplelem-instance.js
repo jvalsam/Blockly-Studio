@@ -236,6 +236,7 @@ export class SOVPLElemInstance {
 
     this.elemData.editorData.details.groups.splice(index, 1);
     this.parent.saveElement(this);
+    this.render();
   }
   // --- End SmartObject Actions ---
 
@@ -276,10 +277,13 @@ export class SOVPLElemInstance {
     }
     this.elemData.editorData.details.smartObjects.splice(index, 1);
     this.parent.saveElement(this);
+    this.render();
   }
   // --- End SmartGroup Actions ---
 
   render() {
+    // clear selector
+    document.getElementById(this.selector).innerHTML = "";
     let domSel = document.getElementById(this.selector);
     let componentData = this.parent.getProjectComponentData(
       this.elemData.editorData.projectID

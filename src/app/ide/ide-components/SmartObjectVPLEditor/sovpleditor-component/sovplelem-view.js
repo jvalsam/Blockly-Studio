@@ -303,6 +303,16 @@ let BuildPropertiesArea = function (dom, smartElem) {
   return propertiesContainer;
 };
 
+const bubbleEvents = {};
+
+// detach events for bubbles
+let DetachEventsOnBubble = function (smartElementId) {
+  document.getElementById("bubble-click-" + smartElementId).onclick = null;
+  document.getElementById("bubble-delete-" + smartElementId).onclick = null;
+  delete bubbleEvents["bubble-click-" + smartElementId];
+  delete bubbleEvents["bubble-delete-" + smartElementId];
+};
+
 let BuildBubblesArea = function (dom, htmlForHeading) {
   let smartElemHeaderRow = CreateDOMElement("div", { classList: ["row"] });
   smartElemHeaderRow.style.marginTop = "1rem";
@@ -337,19 +347,25 @@ let RenderBubble = function (
 ) {
   let button = CreateDOMElement("span", {
     classList: ["badge", "badge-pill", "badge-secondary", "bubble"],
+    id: "bubble-click-" + smartElement.id,
     innerHtml: smartElement.name,
   });
   button.onclick = () => {
     onClickAtElement(smartElement.id);
   };
+  bubbleEvents["bubble-click-" + smartElement.id] = "onClick";
   selector.appendChild(button);
 
   let buttonIconSpan = CreateDOMElement("span", {
     classList: ["times", "delete-bubble"],
+    id: "bubble-delete-" + smartElement.id,
   });
-  buttonIconSpan.onclick = () => {
+  let onDeleteHandler = () => {
     onDeleteSmartElement(smartElement.id);
+    DetachEventsOnBubble(smartElement.id);
   };
+  buttonIconSpan.onclick = onDeleteHandler;
+  bubbleEvents["bubble-delete-" + smartElement.id] = "onDelete";
   selector.appendChild(buttonIconSpan);
 
   let buttonIcon = CreateDOMElement("i", {
@@ -522,7 +538,7 @@ let RenderSmartObjectRegistered = function (
   createGroupsButtonCol.onclick = () => {
     callbacksMap.onCreateSmartGroup({
       properties: soData.editorData.details.properties,
-      soDataID: soData.editorData.systemID.split('SmartObjectVPLEditor_')[1],
+      soDataID: soData.editorData.systemID.split("SmartObjectVPLEditor_")[1],
       soName: soData.name,
     });
   };
