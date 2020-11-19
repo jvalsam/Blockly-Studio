@@ -1,6 +1,7 @@
 import sys
 import datetime
 import os
+import platform
 
 
 print(sys.version)
@@ -15,15 +16,23 @@ print('Download DB')
 
 
 print('Start MongoDB...')
+if platform.system() == 'Linux':
+    os.system("gnome-terminal --tab -e  \"/bin/sh -c 'mongod --dbpath=./BlocklyStudioDB/MongoDB/data/'\"")
+else:
+    os.system('start cmd.exe /c mongod --dbpath=.\BlocklyStudioDB\MongoDB\data')
 
-os.system('start cmd.exe /c mongod --dbpath=.\BlocklyStudioDB\MongoDB\data')
-
-os.system('timeout 5 >nul')
+if platform.system() == 'Linux':
+    os.system('sleep 5')
+else:
+    os.system('timeout 5 >nul')
 
 print('Start Blockly Studio Backend...')
 
 os.chdir('./src/app/ide/backend/')
-os.system('start cmd.exe /c node --inspect server.js')
+if platform.system() == 'Linux':
+    os.system("gnome-terminal --tab -e \"/bin/sh -c 'node --inspect server.js'\"")
+else:
+    os.system('start cmd.exe /c node --inspect server.js')
 
 print('Start Blockly Studio Frontend...')
 os.system('npm run build')
