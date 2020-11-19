@@ -156,15 +156,15 @@ let CreateInputForModal = function (
   inputGroup.appendChild(input);
 };
 
-let CreateSelectGroupsModal = function (selector) {
+let CreateModal = function (dom, idPrefix) {
   let modal = CreateDOMElement("div", {
     classList: ["modal", "fade"],
-    id: "select-group-modal",
+    id: idPrefix + "-modal",
   });
   modal.setAttribute("tabindex", "-1");
   modal.setAttribute("role", "dialog");
   modal.setAttribute("aria-hidden", "true");
-  selector.appendChild(modal);
+  dom.appendChild(modal);
 
   let modalDialog = CreateDOMElement("div", { classList: ["modal-dialog"] });
   modalDialog.setAttribute("role", "document");
@@ -180,8 +180,7 @@ let CreateSelectGroupsModal = function (selector) {
 
   let modalTitle = CreateDOMElement("h5", {
     classList: ["modal-title"],
-    id: "select-group-modal-title",
-    innerHtml: "Create new group: ",
+    id: idPrefix + "-modal-title",
   });
   modalHeader.appendChild(modalTitle);
 
@@ -198,46 +197,25 @@ let CreateSelectGroupsModal = function (selector) {
 
   let modalBody = CreateDOMElement("div", {
     classList: ["modal-body"],
-    id: "new-sg-modal-body",
+    id: idPrefix + "-modal-body",
   });
   modalContent.appendChild(modalBody);
-
-  CreateInputForModal(modalBody, "Name", "text", "sg-name", "29rem");
-  CreateInputForModal(modalBody, "Image", "file", "sg-image", "29rem");
-  CreateInputForModal(modalBody, "Color", "color", "sg-color", "8rem");
-
-  let propertiesHeader = CreateDOMElement("span", {
-    classList: ["font-weight-bold"],
-    innerHtml: "Properties",
-  });
-  propertiesHeader.style.fontSize = "large";
-  modalBody.appendChild(propertiesHeader);
-
-  let propertiesContainer = CreateDOMElement("div", {
-    classList: ["container-fluid", "overflow-auto"],
-    id: "select-group-modal-properties-container",
-  });
-  propertiesContainer.style.paddingTop = ".5rem";
-  propertiesContainer.style.maxHeight = "21rem";
-  propertiesContainer.style.marginTop = ".5rem";
-  propertiesContainer.style.backgroundColor = "#f7f7f7";
-  modalBody.appendChild(propertiesContainer);
 
   let modalFooter = CreateDOMElement("div", { classList: ["modal-footer"] });
   modalContent.appendChild(modalFooter);
 
   let cancelButton = CreateDOMElement("button", {
     classList: ["btn", "btn-secondary"],
+    id: idPrefix + "-modal-cancel-button",
     innerHtml: "Cancel",
   });
   cancelButton.setAttribute("type", "button");
-  // cancelButton.addEventListener('click', onFail);
   cancelButton.setAttribute("data-dismiss", "modal");
   modalFooter.appendChild(cancelButton);
 
   let confirmButton = CreateDOMElement("div", {
     classList: ["btn", "btn-primary"],
-    id: "select-group-modal-confirm-button",
+    id: idPrefix + "-modal-confirm-button",
     innerHtml: "Confirm",
   });
   confirmButton.setAttribute("type", "button");
@@ -250,17 +228,109 @@ export function RenderSelectGroupsModal(
   onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
   onSkip
 ) {
-  // // Create Modal
-  // CreateSelectGroupsModal(
-  //   document.getElementsByClassName("modal-platform-container")[0]
-  // );
-  // // Destroy on close
-  // $("#select-group-modal").on("hidden.bs.modal", function () {
-  //   document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-  //     "";
-  // });
-  onSuccess([], []);
-  // $("#select-group-modal").modal("show");
+  // Create Modal
+  CreateModal(
+    document.getElementsByClassName("modal-platform-container")[0],
+    "select-group"
+  );
+  // fill modal
+  document.getElementById("select-group-modal-title").innerHTML =
+    "Select Group(s)";
+  let modalBody = document.getElementById("select-group-modal-body");
+  let properties = sovplelemInst.elemData.editorData.details.properties;
+  let mapPropsAlias = sovplelemInst.elemData.editorData.details.mapPropsAlias;
+
+  let propertyHeader = CreateDOMElement("div", {
+    classList: ["h6"],
+    innerHtml: "Properties",
+  });
+  // propertyHeader.style.paddingBottom = ".5rem";
+  modalBody.appendChild(propertyHeader);
+
+  // Property Area folded
+  let propertiesArea = CreateDOMElement("div");
+  propertiesArea.style.maxHeight = "15rem";
+  propertiesArea.style.overflowY = "auto";
+  propertiesArea.style.display = "none";
+  modalBody.appendChild(propertiesArea);
+
+  let table = CreateDOMElement("table", {
+    classList: ["table", "table-striped"],
+  });
+  propertiesArea.appendChild(table);
+
+  let tHead = CreateDOMElement("tHead");
+  table.appendChild(tHead);
+
+  let trHead = CreateDOMElement("tr");
+  tHead.appendChild(trHead);
+
+  let thName = CreateDOMElement("th", {
+    classList: ["table-row-mini"],
+    innerHtml: "Name",
+  });
+  thName.setAttribute("scope", "col");
+  trHead.appendChild(thName);
+
+  let thAlias = CreateDOMElement("th", {
+    classList: ["table-row-mini"],
+    innerHtml: "Alias",
+  });
+  thAlias.setAttribute("scope", "col");
+  trHead.appendChild(thAlias);
+
+  let tBody = CreateDOMElement("tbody");
+  table.appendChild(tBody);
+
+  // build properties
+  for (const property of properties) {
+    let trProp = CreateDOMElement("tr");
+    tBody.appendChild(trProp);
+
+    let tdPropName = CreateDOMElement("td", {
+      classList: ["table-row-mini"],
+      innerHtml: property.name,
+    });
+    trProp.appendChild(tdPropName);
+
+    let tdPropAlias = CreateDOMElement("td", {
+      classList: ["table-row-mini"],
+      innerHtml: mapPropsAlias[property.name],
+    });
+    trProp.appendChild(tdPropAlias);
+  }
+
+  let hr = CreateDOMElement("hr");
+  modalBody.appendChild(hr);
+
+  let groupsMatchHeader = CreateDOMElement("div", {
+    classList: ["h6"],
+    innerHtml: "Groups that match with your device",
+  });
+  modalBody.appendChild(groupsMatchHeader);
+
+  let groupsMatchArea = CreateDOMElement("div");
+  modalBody.appendChild(groupsMatchArea);
+
+  hr = CreateDOMElement("hr");
+  modalBody.appendChild(hr);
+
+  let groupsNotMatchHeader = CreateDOMElement("div", {
+    classList: ["h6"],
+    innerHtml: "Groups that do not match with your device",
+  });
+  modalBody.appendChild(groupsNotMatchHeader);
+
+  let groupsNotMatchArea = CreateDOMElement("div");
+  modalBody.appendChild(groupsNotMatchArea);
+
+  // Destroy on close
+  $("#select-group-modal").on("hidden.bs.modal", function () {
+    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+      "";
+  });
+  // onSuccess([], []);
+  $("#select-group-modal").modal("show");
 }
 
 let FilterRegisteredDevicesForScan = function (
@@ -334,6 +404,16 @@ let BuildBubblesArea = function (dom, htmlForHeading) {
 };
 
 let RenderBubbles = function (selector, smartElements, onClick, onDelete) {
+  if (smartElements.length === 0) {
+    let span = CreateDOMElement("div", {
+      classList: ["h6"],
+      innerHtml: "There are no elements",
+    });
+    selector.appendChild(span);
+    selector.style.textAlign = "center";
+    selector.style.height = "4rem";
+    span.style.marginTop = "1rem";
+  }
   for (const smartElement of smartElements) {
     RenderBubble(selector, smartElement, onClick, onDelete);
   }
@@ -361,8 +441,8 @@ let RenderBubble = function (
     id: "bubble-delete-" + smartElement.id,
   });
   let onDeleteHandler = () => {
-    onDeleteSmartElement(smartElement.id);
     DetachEventsOnBubble(smartElement.id);
+    onDeleteSmartElement(smartElement.id);
   };
   buttonIconSpan.onclick = onDeleteHandler;
   bubbleEvents["bubble-delete-" + smartElement.id] = "onDelete";

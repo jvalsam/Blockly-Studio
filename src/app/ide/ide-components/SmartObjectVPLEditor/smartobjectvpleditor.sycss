@@ -4,6 +4,7 @@
   height: fit-content;
 }
 
+/* Bubbles at card style */
 .bubble {
   margin-left: 1.5rem;
   margin-top: 0.7rem;
@@ -36,4 +37,10 @@
   overflow-y: auto;
   padding-bottom: 1rem;
   background-color: #f7f7f7;
+}
+
+/* Select groups Modal */
+.table-row-mini {
+  padding: 0rem !important;
+  border-top: none !important;
 }

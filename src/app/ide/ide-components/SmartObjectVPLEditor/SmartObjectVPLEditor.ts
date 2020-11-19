@@ -297,13 +297,23 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @RequiredFunction("ProjectManager", "clickProjectElement")
-  private openSmartElement (elementId: string) {
+  private openSmartElement(elementId: string) {
     ComponentsCommunication.functionRequest(
       this.name,
       "ProjectManager",
       "clickProjectElement",
       [elementId]
     );
+  }
+
+  @RequiredFunction("ProjectManager", "getProjectItem")
+  private getSmartElement(elementId: string) {
+    return ComponentsCommunication.functionRequest(
+      this.name,
+      "ProjectManager",
+      "getProjectItem",
+      [elementId]
+    ).value;
   }
 
   @RequiredFunction("ProjectManager", "getProjectItems")

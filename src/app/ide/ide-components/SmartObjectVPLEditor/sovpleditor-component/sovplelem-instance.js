@@ -235,6 +235,23 @@ export class SOVPLElemInstance {
     }
 
     this.elemData.editorData.details.groups.splice(index, 1);
+
+    // update data for the smart group
+    let projectElement = this.parent.getSmartElement(groupID);
+
+    let firstItem = Object.keys(projectElement._editorsData.items)[0];
+    index = projectElement._editorsData.items[
+      firstItem
+    ].details.smartObjects.findIndex(
+      (x) =>
+        x.id ===
+        this.elemData.editorData.systemID.split("SmartObjectVPLEditor_")[1]
+    );
+    projectElement._editorsData.items[firstItem].details.smartObjects.splice(
+      index,
+      1
+    );
+
     this.parent.saveElement(this);
     this.render();
   }
@@ -276,6 +293,24 @@ export class SOVPLElemInstance {
       throw new Error("Not found smart object id");
     }
     this.elemData.editorData.details.smartObjects.splice(index, 1);
+
+    // update data for the smart object
+    let projectElement = this.parent.getSmartElement(smartObjectID);
+
+    let firstItem = Object.keys(projectElement._editorsData.items)[0];
+    index = projectElement._editorsData.items[
+      firstItem
+    ].details.groups.findIndex(
+      (x) =>
+        x.id ===
+        this.elemData.editorData.systemID.split("SmartObjectVPLEditor_")[1]
+    );
+
+    projectElement._editorsData.items[firstItem].details.groups.splice(
+      index,
+      1
+    );
+
     this.parent.saveElement(this);
     this.render();
   }
@@ -297,7 +332,7 @@ export class SOVPLElemInstance {
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),
           onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
-          onClickSmartGroup: (groupID) => this.onSODeleteSmartGroup(groupID),
+          onClickSmartGroup: (groupID) => this.onSOClickSmartGroup(groupID),
           onDeleteSmartGroup: (groupID) => this.onSODeleteSmartGroup(groupID),
           options: {
             Edit: () => {
