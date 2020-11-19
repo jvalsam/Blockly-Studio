@@ -228,109 +228,91 @@ export function RenderSelectGroupsModal(
   onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
   onSkip
 ) {
-  // Create Modal
-  CreateModal(
-    document.getElementsByClassName("modal-platform-container")[0],
-    "select-group"
-  );
-  // fill modal
-  document.getElementById("select-group-modal-title").innerHTML =
-    "Select Group(s)";
-  let modalBody = document.getElementById("select-group-modal-body");
-  let properties = sovplelemInst.elemData.editorData.details.properties;
-  let mapPropsAlias = sovplelemInst.elemData.editorData.details.mapPropsAlias;
-
-  let propertyHeader = CreateDOMElement("div", {
-    classList: ["h6"],
-    innerHtml: "Properties",
-  });
-  // propertyHeader.style.paddingBottom = ".5rem";
-  modalBody.appendChild(propertyHeader);
-
-  // Property Area folded
-  let propertiesArea = CreateDOMElement("div");
-  propertiesArea.style.maxHeight = "15rem";
-  propertiesArea.style.overflowY = "auto";
-  propertiesArea.style.display = "none";
-  modalBody.appendChild(propertiesArea);
-
-  let table = CreateDOMElement("table", {
-    classList: ["table", "table-striped"],
-  });
-  propertiesArea.appendChild(table);
-
-  let tHead = CreateDOMElement("tHead");
-  table.appendChild(tHead);
-
-  let trHead = CreateDOMElement("tr");
-  tHead.appendChild(trHead);
-
-  let thName = CreateDOMElement("th", {
-    classList: ["table-row-mini"],
-    innerHtml: "Name",
-  });
-  thName.setAttribute("scope", "col");
-  trHead.appendChild(thName);
-
-  let thAlias = CreateDOMElement("th", {
-    classList: ["table-row-mini"],
-    innerHtml: "Alias",
-  });
-  thAlias.setAttribute("scope", "col");
-  trHead.appendChild(thAlias);
-
-  let tBody = CreateDOMElement("tbody");
-  table.appendChild(tBody);
-
-  // build properties
-  for (const property of properties) {
-    let trProp = CreateDOMElement("tr");
-    tBody.appendChild(trProp);
-
-    let tdPropName = CreateDOMElement("td", {
-      classList: ["table-row-mini"],
-      innerHtml: property.name,
-    });
-    trProp.appendChild(tdPropName);
-
-    let tdPropAlias = CreateDOMElement("td", {
-      classList: ["table-row-mini"],
-      innerHtml: mapPropsAlias[property.name],
-    });
-    trProp.appendChild(tdPropAlias);
-  }
-
-  let hr = CreateDOMElement("hr");
-  modalBody.appendChild(hr);
-
-  let groupsMatchHeader = CreateDOMElement("div", {
-    classList: ["h6"],
-    innerHtml: "Groups that match with your device",
-  });
-  modalBody.appendChild(groupsMatchHeader);
-
-  let groupsMatchArea = CreateDOMElement("div");
-  modalBody.appendChild(groupsMatchArea);
-
-  hr = CreateDOMElement("hr");
-  modalBody.appendChild(hr);
-
-  let groupsNotMatchHeader = CreateDOMElement("div", {
-    classList: ["h6"],
-    innerHtml: "Groups that do not match with your device",
-  });
-  modalBody.appendChild(groupsNotMatchHeader);
-
-  let groupsNotMatchArea = CreateDOMElement("div");
-  modalBody.appendChild(groupsNotMatchArea);
-
-  // Destroy on close
-  $("#select-group-modal").on("hidden.bs.modal", function () {
-    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-      "";
-  });
-  // onSuccess([], []);
-  $("#select-group-modal").modal("show");
+  // // Create Modal
+  // CreateModal(
+  //   document.getElementsByClassName("modal-platform-container")[0],
+  //   "select-group"
+  // );
+  // // fill modal
+  // document.getElementById("select-group-modal-title").innerHTML =
+  //   "Select Group(s)";
+  // let modalBody = document.getElementById("select-group-modal-body");
+  // let properties = sovplelemInst.elemData.editorData.details.properties;
+  // let mapPropsAlias = sovplelemInst.elemData.editorData.details.mapPropsAlias;
+  // let propertyHeader = CreateDOMElement("div", {
+  //   classList: ["h6"],
+  //   innerHtml: "Properties",
+  // });
+  // // propertyHeader.style.paddingBottom = ".5rem";
+  // modalBody.appendChild(propertyHeader);
+  // // Property Area folded
+  // let propertiesArea = CreateDOMElement("div");
+  // propertiesArea.style.maxHeight = "15rem";
+  // propertiesArea.style.overflowY = "auto";
+  // propertiesArea.style.display = "none";
+  // modalBody.appendChild(propertiesArea);
+  // let table = CreateDOMElement("table", {
+  //   classList: ["table", "table-striped"],
+  // });
+  // propertiesArea.appendChild(table);
+  // let tHead = CreateDOMElement("tHead");
+  // table.appendChild(tHead);
+  // let trHead = CreateDOMElement("tr");
+  // tHead.appendChild(trHead);
+  // let thName = CreateDOMElement("th", {
+  //   classList: ["table-row-mini"],
+  //   innerHtml: "Name",
+  // });
+  // thName.setAttribute("scope", "col");
+  // trHead.appendChild(thName);
+  // let thAlias = CreateDOMElement("th", {
+  //   classList: ["table-row-mini"],
+  //   innerHtml: "Alias",
+  // });
+  // thAlias.setAttribute("scope", "col");
+  // trHead.appendChild(thAlias);
+  // let tBody = CreateDOMElement("tbody");
+  // table.appendChild(tBody);
+  // // build properties
+  // for (const property of properties) {
+  //   let trProp = CreateDOMElement("tr");
+  //   tBody.appendChild(trProp);
+  //   let tdPropName = CreateDOMElement("td", {
+  //     classList: ["table-row-mini"],
+  //     innerHtml: property.name,
+  //   });
+  //   trProp.appendChild(tdPropName);
+  //   let tdPropAlias = CreateDOMElement("td", {
+  //     classList: ["table-row-mini"],
+  //     innerHtml: mapPropsAlias[property.name],
+  //   });
+  //   trProp.appendChild(tdPropAlias);
+  // }
+  // let hr = CreateDOMElement("hr");
+  // modalBody.appendChild(hr);
+  // let groupsMatchHeader = CreateDOMElement("div", {
+  //   classList: ["h6"],
+  //   innerHtml: "Groups that match with your device",
+  // });
+  // modalBody.appendChild(groupsMatchHeader);
+  // let groupsMatchArea = CreateDOMElement("div");
+  // modalBody.appendChild(groupsMatchArea);
+  // hr = CreateDOMElement("hr");
+  // modalBody.appendChild(hr);
+  // let groupsNotMatchHeader = CreateDOMElement("div", {
+  //   classList: ["h6"],
+  //   innerHtml: "Groups that do not match with your device",
+  // });
+  // modalBody.appendChild(groupsNotMatchHeader);
+  // let groupsNotMatchArea = CreateDOMElement("div");
+  // modalBody.appendChild(groupsNotMatchArea);
+  // // Destroy on close
+  // $("#select-group-modal").on("hidden.bs.modal", function () {
+  //   document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+  //     "";
+  // });
+  // $("#select-group-modal").modal("show");
+  onSuccess([], []);
 }
 
 let FilterRegisteredDevicesForScan = function (
