@@ -113,16 +113,31 @@ export class BlocklyVPL extends Editor {
         config,
         this.configsMap[config],
         (config) => this.getToolbox(config),
-        (jsonEvent) => this.save(
-            id,
-            pitem.pi,
-            (mode) => mode === "SHARED"
-              ? jsonEvent
-              : this.getEditorData(id)),
+        (event) => this.handleInstanceChange(
+          id,
+          pitem,
+          event),
         text
       );
     }
     this.instancesMap[editorData.editorId].open();
+  }
+
+  private handleBlocksTracker(id, pitem, event) {
+    if (event.type === 'create' || event.type === 'delete') {
+
+    }
+  }
+
+  private handleInstanceChange(id, pitem, event) {
+    this.save(
+      id,
+      pitem.pi,
+      (mode) => mode === "SHARED"
+        ? event
+        : this.getEditorData(id));
+    
+    this.handleBlocksTracker(id, pitem, event);
   }
 
   @ExportedFunction
@@ -135,12 +150,15 @@ export class BlocklyVPL extends Editor {
   public update_src(data: any, pitem: any, focus: boolean =false): void {
     let id = data.editorId;
     let event = data.event;
+    
     if (focus) {
       this.instancesMap[id].syncWSP(event);
     }
     else {
       console.warn("Blockly instance not implement. Has to mark that visual src is not updated");
     }
+
+    this.handleBlocksTracker(id, pitem, event);
   }
 
   @ExportedFunction

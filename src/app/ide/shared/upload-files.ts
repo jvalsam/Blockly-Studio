@@ -1,4 +1,4 @@
-import {upload_files_url} from "./../shared/data";
+import { RunPlatformData } from "./../shared/data";
 
 function handle_response_errors(response) {
     let json = response.json();
@@ -10,7 +10,7 @@ function handle_response_errors(response) {
 
 export function upload_files(files, on_success, on_failure) {
     fetch(
-        upload_files_url,
+        RunPlatformData.UPLOAD_FILES_URL,
         {
             method: "POST",
             body: files
