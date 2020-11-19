@@ -138,6 +138,11 @@ export class DomainsManager extends IDEComponent {
     }
 
     @ExportedFunction
+    public getBlockTypesToDomainElementsMap() {
+        return VPLDomainElementsManager.getBlockTypesToDomainElementsMap();
+    }
+
+    @ExportedFunction
     public getEditors(): Array<string> {
         return VPLDomainElementsManager.getEditors();
     }

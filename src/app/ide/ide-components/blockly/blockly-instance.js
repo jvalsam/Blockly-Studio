@@ -15,6 +15,43 @@ export class BlocklyConfig {
     }
 }
 
+export class DomainBlockTracker {
+    // domainElemsMap: { confName: { editorId: { blockIds: [], ...more info?... } } }
+    constructor(domainName, data) {
+        this.domainName = domainName;
+        this.domainElemsMap = data.domainElemsMap || {};
+        this.counter = data.counter || 0;
+    }
+
+    fixMapInitiation(blockType, confName, editorId) {
+        this.domainElemsMap[confName] = this.domainElemsMap[confName] || {};
+        this.domainElemsMap[confName][editorId] = this.domainElemsMap[confName][editorId] || {};
+        this.domainElemsMap[confName][editorId].blockIds = this.domainElemsMap[confName][editorId].blockIds || {};
+        this.domainElemsMap[confName][editorId].blockIds[blockType] = [];
+    }
+
+    createBlockId (blockId, blockType, confName, editorId) {
+        this.fixMapInitiation(blockType, confName, editorId);
+        
+        this.domainElemsMap[confName][editorId].blockIds[blockType].push(blockId);
+
+        ++this.counter;
+    }
+
+    deleteBlockId (blockId, blockType, confName, editorId) {
+        this.domainElemsMap[confName][editorId].blockIds[blockType].push(blockId);
+        --this.counter;
+    }
+
+    getBlocksWithType(type) {
+
+    }
+
+    getBlocksOfEditor(confName, editorId) {
+
+    }
+}
+
 const InstStateEnum = Object.freeze({
     INIT: 0,
     OPEN: 1,

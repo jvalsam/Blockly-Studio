@@ -2,6 +2,7 @@ import { LoadVPLDomainElements } from './vpl-domain-elements';
 import {
     ListensSignals
 } from '../../components-framework/component/components-communication';
+import { VPLDomainElementsHolder } from './vpl-domain-elements-holder';
 
 class _VPLDomainElementsManager {
     constructor() {
@@ -108,6 +109,10 @@ class _VPLDomainElementsManager {
 
     getEditorConfigs(name) {
         return this._currVPLDomainElements.getEditorConfigs(name);
+    }
+
+    getBlockTypesToDomainElementsMap() {
+        return VPLDomainElementsHolder.getBlocksToDomainElemsMap();
     }
 
     getEditors() {

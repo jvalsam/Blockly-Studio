@@ -2,6 +2,7 @@ import * as Blockly from 'blockly';
 import {
     RuntimeManager
 } from "../../components-framework/build-in.components/run-time-system-manager/run-time-manager";
+import { VPLDomainElementsHolder } from "./vpl-domain-elements-holder";
 
 const GEN_CODE_MODE = {
     'RELEASE': 'codeGen',
@@ -101,6 +102,8 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
         Blockly.JavaScript[elemName] = this._codeGen(data);
         this._blocklyElems[elemName] = {};
 
+        VPLDomainElementsHolder.addDefinedBlock(elemName, this.name);
+
         return [elemName];
     }
 
@@ -109,6 +112,7 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
     }
 
     onDelete(elems) {
+        VPLDomainElementsHolder.deleteDefinedBlocks(elems);
         elems.forEach((elemName) => this._deleteBlocklyElem(elemName));
     }
 
@@ -174,11 +178,14 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
             this._blocklyElems[itemName] = {};
             elems.push(itemName);
         }
+
+        VPLDomainElementsHolder.addDefinedBlocks(elemName, elems);
         
         return elems;
     }
 
     onDelete(elems) {
+        VPLDomainElementsHolder.deleteDefinedBlocks(elems);
         elems.forEach(elemName => this._deleteBlocklyElem(elemName));
     }
 

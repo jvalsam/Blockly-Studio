@@ -6,29 +6,36 @@ import { VPLMission } from './vpl-mission';
 import { VPLProjectItem } from './vpl-project-item';
 import { VPLDomainElementsManager } from './vpl-domain-elements-manager';
 
+
 export class VPLDomainElements {
     constructor(domain) {
         this.domain = domain;
         this.vplProjectItems = {};
         this.vplMissions = {};
         this.vplElems = {};
+        this.blocksToVPLElems = {};
     }
 
     addElements(...vplElems) {
         vplElems.forEach(
-            (vplElem) => this.vplElems[vplElem.name] =
-                ('blocklyElems' in vplElem)
+            (vplElem) => {
+                this.vplElems[vplElem.name] = ('blocklyElems' in vplElem)
                     ? new VPLDomainElementHandler(
                         vplElem.name,
                         vplElem.blocklyElems,
-                        vplElem.signals
+                        vplElem.signals,
+                        (vplName, blockType) => this.addBlockType(vplName, blockType),
+                        (blockType) => this.deleteBlockType(blockType)
                       )
                     : new VPLBlocklyElementHandler(
-                                vplElem.name,
-                                vplElem.init,
-                                vplElem.codeGen,
-                                vplElem.debGen
-                      )
+                        {
+                            blockDef: vplElem.init,
+                            codeGen: vplElem.codeGen,
+                            debGen: vplElem.debGen
+                        },
+                        vplElem.name
+                      );
+            }
         );
     }
 
