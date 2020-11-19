@@ -200,7 +200,6 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
         let names = [];
         
         for (const elem in this._blocklyElems) {
-            // names[elem] = [ ...names, Object.keys(this._blocklyElems[elem])];
             names.push(elem);
         }
         

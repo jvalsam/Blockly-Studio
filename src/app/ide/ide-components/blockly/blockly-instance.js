@@ -182,6 +182,7 @@ export class BlocklyInstance {
         if (resp || priv === Privillege.READ_ONLY) {
             return; // Don't mirror UI events.
         }
+        let blockType = this.wsp.getBlockById(event.blockId).type;
         
         this._syncWSP(event.toJson());
     }
@@ -215,5 +216,9 @@ export class BlocklyInstance {
 
     xmlTextToDom(toolbox) {
         return Blockly.Xml.textToDom(toolbox);
+    }
+
+    getBlockById(blockId) {
+        return this.wsp.getBlockById(blockId);
     }
 }
