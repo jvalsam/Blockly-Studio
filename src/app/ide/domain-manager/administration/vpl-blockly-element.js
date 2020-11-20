@@ -78,7 +78,7 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
     }
 
     _elemName(data) {
-        return data.editorId + '_' + this._name;
+        return data.domainElementId + '_' + this._name;
     }
 
     _blockDef(data) {
@@ -257,6 +257,7 @@ export class VPLDomainElementHandler {
 
         signals.forEach((signal) => this._signals[signal.name] = {
                 action: this.getAction(signal.action),
+                actionName: signal.action,
                 provider: signal.provider
         });
 
@@ -274,8 +275,8 @@ export class VPLDomainElementHandler {
     }
 
     onCreate(data) {
-        this._items[data.editorId] = {
-            name: data.title || data.editorId,
+        this._items[data.domainElementId] = {
+            name: data.title || data.domainElementId,
             _domainElementData: JSON.parse(JSON.stringify(data))/* {...data} */,
             elements: {}
         };
@@ -285,11 +286,11 @@ export class VPLDomainElementHandler {
                     .onCreate(data);
             
             //TODO: check to categorize in separate 
-            this._items[data.editorId].elements[blocklyElem] = createdItems;
+            this._items[data.domainElementId].elements[blocklyElem] = createdItems;
         }
         
         for (let mission in this._missionsRef) {
-            this._missionsRef[mission].onCreate(this._items[data.editorId]);
+            this._missionsRef[mission].onCreate(this._items[data.domainElementId]);
         }
     }
 

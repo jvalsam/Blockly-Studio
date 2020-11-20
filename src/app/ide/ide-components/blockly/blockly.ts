@@ -18,8 +18,7 @@ import {
   ExportedFunction,
   RequiredFunction,
   ListensSignal,
-  PlatformEditorMetadata,
-  ExportedStaticFunction
+  PlatformEditorMetadata
 } from "../../components-framework/component/component-loader";
 
 import { DomainElementsHolder } from "../../domain-manager/domains-holder";
@@ -52,7 +51,6 @@ export class BlocklyVPL extends Editor {
   private instancesMap: {[id: string]: any};
   private configsMap: {[name: string]: BlocklyConfig};
 
-  private blockTypeToDomainElemMap: { [blockType: string]: string };
   private domainElementTracker: { [domainElemName: string]: DomainBlockTracker };
 
   constructor(
@@ -71,7 +69,6 @@ export class BlocklyVPL extends Editor {
     this.instancesMap = {};
     this.configsMap = {};
 
-    this.blockTypeToDomainElemMap = {};
     this.domainElementTracker = {};
   }
 
@@ -86,8 +83,10 @@ export class BlocklyVPL extends Editor {
       "getEditorConfigs",
       [this.name]
     ).value;
+  }
 
-    this.blockTypeToDomainElemMap = ComponentsCommunication.functionRequest(
+  private getBlockTypesToDomainElementsMap() {
+    return ComponentsCommunication.functionRequest(
       this.name,
       "DomainsManager",
       "getBlockTypesToDomainElementsMap",
@@ -142,7 +141,7 @@ export class BlocklyVPL extends Editor {
     if (event.type === 'create' || event.type === 'delete') {
       let blocklyInst = this.instancesMap[id];
       let block = blocklyInst.getBlockById(event.blockId);
-      let elemName = this.blockTypeToDomainElemMap[block.type];
+      let elemName = this.getBlockTypesToDomainElementsMap()[block.type];
       let confName = pitem._editorsData.items[this.id].confName;
       this.domainElementTracker[elemName].createBlockId(event.blockId, block.type, confName, id);
     }

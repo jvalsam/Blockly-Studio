@@ -4,10 +4,10 @@
 class _VPLDomainElementsHolder {
     constructor() {
         this._definedBlocksToVPLDomainElemsMap = {};
-        this._signalsToLoadMap = []; // each item = {
+        this._signalsToLoadMap = []; // each data = {
                                      //     domainElemid: string,
                                      //     domainElemType: string,
-                                     //     value: signalData }
+                                     //     ...rest data }
     }
 
     getBlocksToDomainElemsMap() {
@@ -30,13 +30,24 @@ class _VPLDomainElementsHolder {
         blockTypes.forEach(blockType => this.deleteDefinedBlock(blockType));
     }
 
-    // have to keep the add, edit signals...
-    addSaveSignalData() {
-
+    receiveSignal_onCreate(signal, data) {
+        this._signalsToLoadMap.push(JSON.parse(JSON.stringify(data)));
     }
 
-    deleteSaveSignalData() {
+    receiveSignal_onDelete(signal, data) {
+        let index = this._signalsToLoadMap.findIndex(x => x.domainElementId === data.domainElementId
+            && x.domainElementType === data.domainElementType);
+        
+        this._signalsToLoadMap.splice(index, 1);
+    }
 
+    receiveSignal_onEdit(signal, data) {
+        this.receiveSignal_onDelete(signal, data);
+        this.receiveSignal_onCreate(signal, data);
+    }
+
+    receiveSignal(signal, data) {
+        this['receiveSignal_' + signal.actionName](signal.signalName, data);
     }
 }
 

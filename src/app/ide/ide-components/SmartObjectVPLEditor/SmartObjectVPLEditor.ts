@@ -224,6 +224,13 @@ export class SmartObjectVPLEditor extends Editor {
     handleGroups(
       this.retrievePItemGroups(data.elemData.editorData.projectID),
       () => {
+        // this works because only one domain element is able to be created in one editor
+        // this will need extra handling in case of other editors
+        // they will have to generate different ids per vpl elem
+        let domainElementId = data.elemData.editorData.editorId;
+        data.elemData.editorData.domainElementId = domainElementId;
+        //TODO: domainelementtype
+        //
         ComponentsCommunication.postSignal(
           this.name,
           "create-smart-object",

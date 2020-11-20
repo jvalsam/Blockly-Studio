@@ -38,6 +38,13 @@ class _VPLDomainElementsManager {
         }
 
         signals[signal].forEach(elem => elem.action(data));
+
+        VPLDomainElementsHolder.receiveSignal(
+            {
+                signalName: signal,
+                actionName: signals[signal][0].actionName
+            },
+            data);
     }
 
     /**

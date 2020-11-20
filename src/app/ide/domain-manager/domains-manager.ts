@@ -17,7 +17,6 @@ import {
 } from "./administration/vpl-domain-elements-manager";
 import { InitializeVPDLs } from "../../application-domain-frameworks/domains-initialization";
 
-
 export interface IDomainElementDB {
     id: string;
     name: string;
