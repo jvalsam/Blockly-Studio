@@ -396,3 +396,98 @@ class JoinPopup extends CollaborationPopup{
         this._onJoinCb = cb;
     }
 }
+
+class SuggestionPopup extends CollaborationPopup{
+    
+    _onAcceptCb = () => {};
+    _onRejectCb = () => {};
+
+    constructor(container, file, member){
+        super(container, `Suggestion - ${file}`);
+
+        let html = 
+            `<div class = "suggestion-all-content">\
+                <div class = "suggestion-files-container">\
+                    <div class = "suggestion-file">\
+                        <div class="suggestion-text-16"> ${file} </div>\
+                    </div>\
+                    <div class="suggestion-file">\
+                        <div class = "suggestion-file-and-dot">\
+                            <div class="suggestion-purple-dot"></div>\
+                            <div class="suggestion-text-16"> ${file} - Suggested </div>\
+                        </div>\
+                        <div class = "suggestion-user">\
+                            <div class = "suggestion-user-icon" style = "background-image: url(${member.icon})"></div>\
+                            <div class="suggestion-text-16"> ${member.name} </div>\
+                        </div>\
+                    </div>\
+                </div>\
+                <div class="suggestion-editors-area">\
+                    <div class = "suggestion-editor-area">\
+                        <div class="suggestion-annotations">\
+                                <div class="suggestion-annotations suggestion-text-14">\
+                                    <div class = "suggestion-annotation suggestion-annotation-warning"> \
+                                        [Warning] This file was edited after this suggestion was made. \
+                                    </div>\
+                                </div>\
+                        </div>\
+                        <div class = "suggestion-vpl-editor">\
+                        </div>\
+                    </div>\
+                    <div class = "suggestion-editor-area">\
+                        <div class = "suggestion-annotations suggestion-text-14">\
+                            <div class = "suggestion-annotation suggestion-annotation-comment"> \
+                                <div class = "suggestion-comment-title">\
+                                    <div class = "suggestion-arrow"> </div>\
+                                    <div class = "suggestion-comment"> Comment </div>\
+                                </div>\
+                                <div class = "suggestion-comment-content">\
+                                    This is the comment content that could be long\
+                                    This is the comment content that could be long\
+                                    This is the comment content that could be long\
+                                    This is the comment content that could be long\
+                                    This is the comment content that could be long\
+                                    This is the comment content that could be long\
+                                    This is the comment content that could be long\
+                                </div> \
+                            </div>\
+                            <div class = "suggestion-annotation suggestion-annotation-confirmation"> \
+                                <div> Accept this suggestion </div>\
+                                <div class = "suggestion-confirmation-buttons">\
+                                    <div class = "suggestion-tick"></div>\
+                                    <div class = "suggestion-x"></div>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class = "suggestion-vpl-editor">\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>`;
+
+        this._contentContainer.append(html);
+        
+        let arrow_rotation = 0;
+        $(".suggestion-comment-title").click( () => {
+            $(".suggestion-comment-content").toggle();
+            arrow_rotation = arrow_rotation == 0 ? -90 : 0;
+            $(".suggestion-arrow").css('transform', `rotate(${arrow_rotation}deg)`);
+        });
+
+        $(".suggestion-tick").click(() => {
+            this._onAcceptCb();
+        });
+
+        $(".suggestion-x").click(() => {
+            this._onRejectCb();
+        });
+    }
+
+    setOnAcceptCb(cb){
+        this._onAcceptCb = cb;
+    }
+
+    setOnRejectCb(cb){
+        this._onRejectCb = cb;
+    }
+}

@@ -485,7 +485,7 @@
     width: 55px !important;
     height: 55px !important;
     background-color: #4A81B1 !important;
-    background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/man0.png);
+    background-image: url(./Icons/man0.png);
     background-repeat: no-repeat;
     border-radius: 50%;
     margin-top: 0px;
@@ -599,11 +599,14 @@
     height: 100%;
     border: 1px solid #B1B1B1;
     box-sizing: border-box;
+    position: relative;
 }
 
 .suggestion-vpl-editor{
     width: 100%;
     height: 100%;
+    position: absolute;
+    top: 0;
 }
 
 .suggestion-annotations{
@@ -615,14 +618,60 @@
 .suggestion-annotation{
     padding: 10px;
     text-align: left;
+    z-index: 1;
 }
 
 .suggestion-annotation-warning{
     background: #FFE79E;
 }
-.suggestion-annotation-confirmation{
-    background: #DFDDFB;
-}
 .suggestion-annotation-comment{
     background: #FFF7CB;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.suggestion-annotation-confirmation{
+    background: #DFDDFB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suggestion-confirmation-buttons{
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.suggestion-tick{
+    background-image: url(./Icons/suggestion-tick.png);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.suggestion-x{
+    background-image: url(./Icons/suggestion-x.png);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.suggestion-arrow{
+    background-image: url(./Icons/arrow.png);
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.suggestion-comment-title{
+    display:flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.suggestion-comment-content{
+    font-style: italic;
+    font-weight: 300;
 }

@@ -15,7 +15,7 @@
     <body>
         
        <div id = "testDiv"> 
-            <div class = "popup-opacity"> </div>
+            <!-- <div class = "popup-opacity"> </div>
             <div class = "collaboration-popup">
                 <div class = "collaboration-popup-header-bar vcenter">
                     <div class = "collaboration-popup-header-text"> Suggestion - Alarm Clock Rings </div>
@@ -53,8 +53,28 @@
                             </div>
                             <div class = "suggestion-editor-area">
                                 <div class = "suggestion-annotations suggestion-text-14">
-                                    <div class = "suggestion-annotation suggestion-annotation-comment"> Test text </div>
-                                    <div class = "suggestion-annotation suggestion-annotation-confirmation"> Accept this suggestion </div>
+                                    <div class = "suggestion-annotation suggestion-annotation-comment"> 
+                                        <div class = "suggestion-comment-title">
+                                            <div class = "suggestion-arrow"> </div>
+                                            <div class = "suggestion-comment"> Comment </div>
+                                        </div>
+                                        <div class = "suggestion-comment-content">
+                                            This is the comment content that could be long
+                                            This is the comment content that could be long
+                                            This is the comment content that could be long
+                                            This is the comment content that could be long
+                                            This is the comment content that could be long
+                                            This is the comment content that could be long
+                                            This is the comment content that could be long
+                                        </div> 
+                                    </div>
+                                    <div class = "suggestion-annotation suggestion-annotation-confirmation"> 
+                                        <div> Accept this suggestion </div>
+                                        <div class = "suggestion-confirmation-buttons">
+                                            <div class = "suggestion-tick"></div>
+                                            <div class = "suggestion-x"></div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class = "suggestion-vpl-editor">
 
@@ -63,14 +83,21 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
        </div>
 
     </body>
 
     <script>
         $( document ).ready(function() {
-            // ui = new SharePopup("testDiv");
+            popup = new SuggestionPopup(
+                "testDiv", 
+                "Alarm Clock Rings", 
+                {
+                    icon: "./Icons/man0.png",
+                    name: "Random Guy"
+                }
+            );
         });
     </script>
 </html>
