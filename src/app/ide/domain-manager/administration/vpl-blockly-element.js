@@ -105,7 +105,7 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
         VPLDomainElementsHolder.addDefinedBlock(
             data.projectID,
             data.domainElementType,
-            this.name);
+            elemName);
 
         return [elemName];
     }

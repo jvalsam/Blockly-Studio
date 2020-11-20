@@ -157,19 +157,21 @@ export class BlocklyVPL extends Editor {
   fixBlocksTrackerInit(projectId: string, elemName: string) {
     this.domainElementTracker[projectId] = this.domainElementTracker[projectId] || {};
     if (!this.domainElementTracker[projectId][elemName]) {
-      this.domainElementTracker[projectId][elemName] = new DomainBlockTracker(elemName);
+      this.domainElementTracker[projectId][elemName] = new DomainBlockTracker(elemName, {});
     }
   }
 
+  @RequiredFunction("ProjectManager", "getComponentData")
+  @RequiredFunction("ProjectManager", "saveComponentData")
   // save is used for Collaboration purposes
   private handleBlocksTracker(id, pitem, event, save: boolean =false) {
     if (event.type === 'create' || event.type === 'delete') {
-      let projectId = pitem._pi.editorsData.projectId;
+      let projectId = pitem._pi.editorsData.projectID;
       let blocklyInst = this.instancesMap[id];
       let block = blocklyInst.getBlockById(event.blockId);
       let elemName = this.getBlockTypesToDomainElementsMap(projectId)[block.type];
       if (elemName) {
-        let confName = pitem._editorsData.items[this.id].confName;
+        let confName = pitem.pi._editorsData.items[id].confName;
         this.fixBlocksTrackerInit(projectId, elemName);
         this.domainElementTracker[projectId][elemName]
           .createBlockId(event.blockId, block.type, confName, id);
