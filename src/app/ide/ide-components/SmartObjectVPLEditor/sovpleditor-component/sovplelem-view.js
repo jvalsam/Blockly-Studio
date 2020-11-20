@@ -222,17 +222,74 @@ let CreateModal = function (dom, idPrefix) {
   modalFooter.appendChild(confirmButton);
 };
 
+let isMatchGroupWithSO = function (smartObjectDetails, smartGrouptDetails) {
+  if (
+    smartObjectDetails.properties.length !==
+    smartGrouptDetails.properties.length
+  )
+    return false;
+  const matchedProperties = [],
+    unmatchedProperties = [];
+
+  smartObjectDetails.properties.forEach((smartObjectProperty) => {
+    smartGrouptDetails.properties.forEach((smartGroupProperty) => {
+      if (
+        // (name === name || alias)
+        smartObjectProperty.name === smartGroupProperty.name ||
+        smartGrouptDetails.mapPropsAlias[smartGroupProperty.name] ||
+        // (alias === name || alias)
+        smartObjectDetails.mapPropsAlias[smartObjectProperty.name] ===
+          smartGroupProperty.name ||
+        smartGrouptDetails.mapPropsAlias[smartGroupProperty.name]
+      ) {
+        // push matched properties
+        matchedProperties.push({
+          so: {
+            name: smartObjectProperty.name,
+            alias: smartObjectDetails.mapPropsAlias[smartObjectProperty.name],
+          },
+          sg: {
+            name: smartGroupProperty.name,
+            alias: smartGrouptDetails.mapPropsAlias[smartGroupProperty.name],
+          },
+        });
+      }
+    });
+  });
+};
+
+let MatchedAndUmatchedGroupsWithSO = function (
+  smartObjectElemData,
+  groupsVPLElements
+) {
+  let comparedGroups = { matchedGroups: [], unmatchedGroups: [] };
+  let smartObjectDetails = smartObjectElemData.editorData.details;
+
+  for (const group of groupsVPLElements) {
+    let firstItem = Object.keys(group._editorsData.items)[0];
+    let smartGroupDetails = group._editorsData.items[firstItem].details;
+
+    // isMatchGroupWithSO(smartObjectDetails, smartGroupDetails)
+    //   ? comparedGroups.matchedGroups.push(group._editorsData.items[firstItem])
+    //   : comparedGroups.unmatchedGroups.push(
+    //       group._editorsData.items[firstItem]
+    //     );
+  }
+  return comparedGroups;
+};
+
 export function RenderSelectGroupsModal(
   sovplelemInst,
   groups,
   onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
   onSkip
 ) {
-  // // Create Modal
+  // Create Modal
   // CreateModal(
   //   document.getElementsByClassName("modal-platform-container")[0],
   //   "select-group"
   // );
+
   // // fill modal
   // document.getElementById("select-group-modal-title").innerHTML =
   //   "Select Group(s)";
@@ -245,73 +302,96 @@ export function RenderSelectGroupsModal(
   // });
   // // propertyHeader.style.paddingBottom = ".5rem";
   // modalBody.appendChild(propertyHeader);
+
   // // Property Area folded
   // let propertiesArea = CreateDOMElement("div");
   // propertiesArea.style.maxHeight = "15rem";
   // propertiesArea.style.overflowY = "auto";
   // propertiesArea.style.display = "none";
   // modalBody.appendChild(propertiesArea);
+
   // let table = CreateDOMElement("table", {
   //   classList: ["table", "table-striped"],
   // });
   // propertiesArea.appendChild(table);
+
   // let tHead = CreateDOMElement("tHead");
   // table.appendChild(tHead);
+
   // let trHead = CreateDOMElement("tr");
   // tHead.appendChild(trHead);
+
   // let thName = CreateDOMElement("th", {
   //   classList: ["table-row-mini"],
   //   innerHtml: "Name",
   // });
   // thName.setAttribute("scope", "col");
   // trHead.appendChild(thName);
+
   // let thAlias = CreateDOMElement("th", {
   //   classList: ["table-row-mini"],
   //   innerHtml: "Alias",
   // });
   // thAlias.setAttribute("scope", "col");
   // trHead.appendChild(thAlias);
+
   // let tBody = CreateDOMElement("tbody");
   // table.appendChild(tBody);
+
   // // build properties
   // for (const property of properties) {
   //   let trProp = CreateDOMElement("tr");
   //   tBody.appendChild(trProp);
+
   //   let tdPropName = CreateDOMElement("td", {
   //     classList: ["table-row-mini"],
   //     innerHtml: property.name,
   //   });
   //   trProp.appendChild(tdPropName);
+
   //   let tdPropAlias = CreateDOMElement("td", {
   //     classList: ["table-row-mini"],
   //     innerHtml: mapPropsAlias[property.name],
   //   });
   //   trProp.appendChild(tdPropAlias);
   // }
+
   // let hr = CreateDOMElement("hr");
   // modalBody.appendChild(hr);
+
   // let groupsMatchHeader = CreateDOMElement("div", {
   //   classList: ["h6"],
   //   innerHtml: "Groups that match with your device",
   // });
   // modalBody.appendChild(groupsMatchHeader);
+
   // let groupsMatchArea = CreateDOMElement("div");
   // modalBody.appendChild(groupsMatchArea);
   // hr = CreateDOMElement("hr");
   // modalBody.appendChild(hr);
+
+  // let matchedGroups = MatchedGroupsWithSO(
+  //   sovplelemInst.elemData,
+  //   groupsVPLElements
+  // );
+
   // let groupsNotMatchHeader = CreateDOMElement("div", {
   //   classList: ["h6"],
   //   innerHtml: "Groups that do not match with your device",
   // });
   // modalBody.appendChild(groupsNotMatchHeader);
+
   // let groupsNotMatchArea = CreateDOMElement("div");
   // modalBody.appendChild(groupsNotMatchArea);
+
   // // Destroy on close
   // $("#select-group-modal").on("hidden.bs.modal", function () {
   //   document.getElementsByClassName("modal-platform-container")[0].innerHTML =
   //     "";
   // });
+
   // $("#select-group-modal").modal("show");
+
   onSuccess([], []);
 }
 
@@ -509,7 +589,6 @@ let RenderSmartObjectRegistered = function (
   projectComponentsData,
   callbacksMap
 ) {
-  console.log(soData);
   let cardDiv = soUIGenerator.RenderCard({
     selector: selector,
     id: soData.editorData.editorId,
@@ -734,7 +813,6 @@ export function RenderSmartGroup(
   projectComponentsData,
   callbacksMap
 ) {
-  console.log(sgData);
   let cardDiv = soUIGenerator.RenderCard({
     selector: selector,
     id: sgData.editorData.editorId,
