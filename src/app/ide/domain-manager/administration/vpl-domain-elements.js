@@ -13,7 +13,6 @@ export class VPLDomainElements {
         this.vplProjectItems = {};
         this.vplMissions = {};
         this.vplElems = {};
-        this.blocksToVPLElems = {};
     }
 
     addElements(...vplElems) {
@@ -23,9 +22,7 @@ export class VPLDomainElements {
                     ? new VPLDomainElementHandler(
                         vplElem.name,
                         vplElem.blocklyElems,
-                        vplElem.signals,
-                        (vplName, blockType) => this.addBlockType(vplName, blockType),
-                        (blockType) => this.deleteBlockType(blockType)
+                        vplElem.signals
                       )
                     : new VPLBlocklyElementHandler(
                         {
@@ -65,6 +62,7 @@ export class VPLDomainElements {
                 new VPLMission(
                     vplMission.name,
                     vplMission.items,
+                    vplMission.handledDomainElems,
                     vplMission.editors,
                     this
                 )

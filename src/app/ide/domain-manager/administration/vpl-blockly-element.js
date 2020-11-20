@@ -102,7 +102,10 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
         Blockly.JavaScript[elemName] = this._codeGen(data);
         this._blocklyElems[elemName] = {};
 
-        VPLDomainElementsHolder.addDefinedBlock(elemName, this.name);
+        VPLDomainElementsHolder.addDefinedBlock(
+            data.projectID,
+            data.domainElementType,
+            this.name);
 
         return [elemName];
     }
@@ -179,7 +182,10 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
             elems.push(itemName);
         }
 
-        VPLDomainElementsHolder.addDefinedBlocks(elemName, elems);
+        VPLDomainElementsHolder.addDefinedBlocks(
+            data.projectID,
+            data.domainElementType,
+            elems);
         
         return elems;
     }

@@ -2,52 +2,93 @@
 
  
 class _VPLDomainElementsHolder {
+
     constructor() {
-        this._definedBlocksToVPLDomainElemsMap = {};
-        this._signalsToLoadMap = []; // each data = {
+        this._VPLElemsHandlingBlocksMap = {};
+        this._signalsToLoadMap = {}; // each data = {
                                      //     domainElemid: string,
                                      //     domainElemType: string,
                                      //     ...rest data }
+        this._loadingMode = false;
     }
 
-    getBlocksToDomainElemsMap() {
-        return this._definedBlocksToVPLDomainElemsMap;
+    initProject(projectId) {
+        this._VPLElemsHandlingBlocksMap[projectId] = {};
+        this._signalsToLoadMap[projectId] = [];
     }
 
-    addDefinedBlock(vplDomainElem, blockType) {
-        this._definedBlocksToVPLDomainElemsMap[blockType] = vplDomainElem;
+    getProjectComponentsData(projectId) {
+        return {
+            VPLElemsHandlingBlocksMap: this._VPLElemsHandlingBlocksMap[projectId],
+            signals: this._signalsToLoadMap[projectId]
+        };
     }
 
-    addDefinedBlocks(vplDomainElem, blockTypes) {
-        blockTypes.forEach(blockType => this.addDefinedBlock(vplDomainElem, blockType));
+    isOnLoadingMode() {
+        return this._loadingMode;
     }
 
-    deleteDefinedBlock(blockType) {
-        delete this._definedBlocksToVPLDomainElemsMap[blockType];
+    setLoadingMode(mode) {
+        this._loadingMode = mode;
     }
 
-    deleteDefinedBlocks(blockTypes) {
-        blockTypes.forEach(blockType => this.deleteDefinedBlock(blockType));
+    loadProjectVPLElemsHandlingBlocksMap(projectId, data) {
+        this.initProject(projectId);
+        // load blocks
+        this._VPLElemsHandlingBlocksMap[projectId] = data.VPLElemsHandlingBlocksMap;
+        // signals will be loaded through the signal virtual receive
     }
 
-    receiveSignal_onCreate(signal, data) {
-        this._signalsToLoadMap.push(JSON.parse(JSON.stringify(data)));
+    getBlocksToDomainElemsMap(projectId) {
+        return this._VPLElemsHandlingBlocksMap[projectId];
     }
 
-    receiveSignal_onDelete(signal, data) {
-        let index = this._signalsToLoadMap.findIndex(x => x.domainElementId === data.domainElementId
-            && x.domainElementType === data.domainElementType);
+    getSignalsData(projectId) {
+        return this._signalsToLoadMap[projectId];
+    }
+
+    addDefinedBlock(projectId, vplDomainElem, blockType) {
+        this._VPLElemsHandlingBlocksMap[projectId][blockType] = vplDomainElem;
+    }
+
+    addDefinedBlocks(projectId, vplDomainElem, blockTypes) {
+        blockTypes.forEach(blockType => this.addDefinedBlock(projectId, vplDomainElem, blockType));
+    }
+
+    deleteDefinedBlock(projectId, blockType) {
+        delete this._VPLElemsHandlingBlocksMap[projectId][blockType];
+    }
+
+    deleteDefinedBlocks(projectId, blockTypes) {
+        blockTypes.forEach(blockType => this.deleteDefinedBlock(projectId, blockType));
+    }
+
+    // handle save load system for the projects
+
+    receiveSignal_onCreate(projectId, signal, data) {
+        let dbData = {
+            signal: signal,
+            data: JSON.parse(JSON.stringify(data))
+        };
+
+        this._signalsToLoadMap[projectId].push(dbData);
+    }
+
+    receiveSignal_onDelete(projectId, signal, data) {
+        let index = this._signalsToLoadMap[projectId]
+            .findIndex(x => x.domainElementId === data.domainElementId
+                            && x.domainElementType === data.domainElementType);
         
         this._signalsToLoadMap.splice(index, 1);
     }
 
-    receiveSignal_onEdit(signal, data) {
-        this.receiveSignal_onDelete(signal, data);
-        this.receiveSignal_onCreate(signal, data);
+    receiveSignal_onEdit(projectId, signal, data) {
+        this.receiveSignal_onDelete(projectId, signal, data);
+        this.receiveSignal_onCreate(projectId, signal, data);
     }
 
-    receiveSignal(signal, data) {
-        this['receiveSignal_' + signal.actionName](signal.signalName, data);
+    receiveSignal(projectId, signal, data) {
+        this['receiveSignal_' + signal.actionName](projectId, signal.signalName, data);
     }
 }
 

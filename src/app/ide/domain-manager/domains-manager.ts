@@ -16,6 +16,7 @@ import {
     VPLDomainElementsManager
 } from "./administration/vpl-domain-elements-manager";
 import { InitializeVPDLs } from "../../application-domain-frameworks/domains-initialization";
+import { VPLDomainElementsHolder } from "./administration/vpl-domain-elements-holder";
 
 export interface IDomainElementDB {
     id: string;
@@ -75,6 +76,13 @@ export class DomainsManager extends IDEComponent {
         VPLDomainElementsManager.receiveSignal(signal, data);
     }
 
+    @ExportedFunction
+    public receiveSignals(projectId: string, signalsData: any) {
+        signalsData.forEach(elem => {
+            this.receiveSignal(elem.signal, elem.data)
+        });
+    }
+
     private listensSignals(signals): void {
         let signalsArray = [];
         for (let name of Object.keys(signals)) {
@@ -99,26 +107,20 @@ export class DomainsManager extends IDEComponent {
     }
 
     @ExportedFunction
-    public loadProject(
-        projectId: string,
-        domainElements: Array<IDomainElementDB>
-    ): void {
-        let projectDomainElems = {};
-        domainElements.forEach(domainElement =>
-            projectDomainElems[domainElement.name] = domainElement);
-        DomainElementsHolder.put(projectId, projectDomainElems);
+    loadComponentDataOfProject(projectId: string, componentsData: any) {
+        VPLDomainElementsHolder.loadProjectVPLElemsHandlingBlocksMap(projectId, componentsData);
+        // load data using the signals
+        VPLDomainElementsHolder.setLoadingMode(true);
+        this.receiveSignals(
+            projectId,
+            componentsData.signals
+        );
+        VPLDomainElementsHolder.setLoadingMode(false);
+    }
 
-        domainElements.forEach(domainElement => {
-            // request editors to load the domain elements of the project
-            ComponentsCommunication.functionRequest(
-                this.name,
-                domainElement.editor,
-                "getDomainElementData",
-                [projectId, domainElement.id]
-            );
-            // load depedencies for each of the project items
-
-        });
+    @ExportedFunction
+    initComponentDataOfProject(projectId: string) {
+        VPLDomainElementsHolder.initProject(projectId);
     }
 
     @ExportedFunction
@@ -137,8 +139,8 @@ export class DomainsManager extends IDEComponent {
     }
 
     @ExportedFunction
-    public getBlockTypesToDomainElementsMap() {
-        return VPLDomainElementsManager.getBlockTypesToDomainElementsMap();
+    public getBlockTypesToDomainElementsMap(projectId: string) {
+        return VPLDomainElementsManager.getBlockTypesToDomainElementsMap(projectId);
     }
 
     @ExportedFunction

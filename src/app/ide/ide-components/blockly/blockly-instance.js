@@ -43,8 +43,9 @@ export class DomainBlockTracker {
         --this.counter;
     }
 
+    // requirements are not clear, we have all data...
     getBlocksWithType(type) {
-
+        
     }
 
     getBlocksOfEditor(confName, editorId) {

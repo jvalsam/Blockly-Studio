@@ -40,6 +40,7 @@ class _VPLDomainElementsManager {
         signals[signal].forEach(elem => elem.action(data));
 
         VPLDomainElementsHolder.receiveSignal(
+            data.projectID,
             {
                 signalName: signal,
                 actionName: signals[signal][0].actionName
@@ -118,8 +119,8 @@ class _VPLDomainElementsManager {
         return this._currVPLDomainElements.getEditorConfigs(name);
     }
 
-    getBlockTypesToDomainElementsMap() {
-        return VPLDomainElementsHolder.getBlocksToDomainElemsMap();
+    getBlockTypesToDomainElementsMap(projectId) {
+        return VPLDomainElementsHolder.getBlocksToDomainElemsMap(projectId);
     }
 
     getEditors() {

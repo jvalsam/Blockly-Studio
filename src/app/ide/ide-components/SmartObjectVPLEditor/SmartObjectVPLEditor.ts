@@ -55,6 +55,11 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @ExportedFunction
+  loadComponentDataOfProject(projectId: string, componentsData: any) {
+    alert(this.name+'method loadComponentDataOfProject not implemented yet!');
+  }
+
+  @ExportedFunction
   public open(selector: string, pitem: PItemView, config: any): void {
     let editorData = pitem.pi.editorsData.items[selector];
     let img = pitem.pi["_jstreeNode"].icon;
@@ -227,8 +232,12 @@ export class SmartObjectVPLEditor extends Editor {
         // this works because only one domain element is able to be created in one editor
         // this will need extra handling in case of other editors
         // they will have to generate different ids per vpl elem
+        
+        // required fields:
         let domainElementId = data.elemData.editorData.editorId;
         data.elemData.editorData.domainElementId = domainElementId;
+        data.elemData.editorData.domainElementType = 'SmartObject';
+        // required field: data.elemData.editorData.projectID
         //TODO: domainelementtype
         //
         ComponentsCommunication.postSignal(
