@@ -180,8 +180,6 @@ export class SOVPLElemInstance {
 
   // group: {properties: properties, soDataID: id, soName: name}
   onSOCreateSmartGroup(group) {
-    console.log(group);
-
     // initialize group
     group.elemData = { editorData: { details: {} } };
     group.elemData.editorData.details = {};
