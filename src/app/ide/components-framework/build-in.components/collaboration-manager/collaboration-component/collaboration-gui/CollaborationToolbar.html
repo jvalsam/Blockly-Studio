@@ -1,103 +1,161 @@
 <html>
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        <title>JStree - Example</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
-        <link rel="stylesheet" href="./../../../../../../../../libs/treeviews-ui/jstree/dist/themes/default/style.css" />
-        <link rel="stylesheet" type="text/css" href="../../collaboration-manager-view.css">
-        <!-- <script type="text/javascript" src="./CollaborationToolbar.js"></script> -->
-        <script type="text/javascript" src="./CollaborationPopups.js"></script>
-        <script type="text/javascript" src="../../../../../../../../libs/treeviews-ui/jstree/dist/jstree.js"> </script>
-    </head>
 
-    <body>
-        
-       <div id = "testDiv"> 
-            <!-- <div class = "popup-opacity"> </div>
-            <div class = "collaboration-popup">
-                <div class = "collaboration-popup-header-bar vcenter">
-                    <div class = "collaboration-popup-header-text"> Suggestion - Alarm Clock Rings </div>
-                    <div class = "collaboration-popup-header-x middle-right size18x18"></div>
-                </div>
-                <div class = "collaboration-popup-content-container center">
-                    <div class = "suggestion-all-content">
-                        <div class = "suggestion-files-container">
-                            <div class = "suggestion-file">
-                                <div class="suggestion-text-16"> Alarm Clock Rings </div>
-                            </div>
-                            <div class="suggestion-file">
-                                <div class = "suggestion-file-and-dot">
-                                    <div class="suggestion-purple-dot"></div>
-                                    <div class="suggestion-text-16"> Alarm Clock Rings - Suggested </div>
-                                </div>
-                                <div class = "suggestion-user">
-                                    <div class = "suggestion-user-icon"></div>
-                                    <div class="suggestion-text-16"> Joseph Bird </div>
-                                </div>
-                            </div>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>JStree - Example</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="./../../../../../../../../libs/treeviews-ui/jstree/dist/themes/default/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../collaboration-manager-view.css">
+    <!-- <script type="text/javascript" src="./CollaborationToolbar.js"></script> -->
+    <script type="text/javascript" src="./CollaborationPopups.js"></script>
+    <script type="text/javascript" src="../../../../../../../../libs/treeviews-ui/jstree/dist/jstree.js"> </script>
+</head>
+
+<body>
+
+    <div id="testDiv">
+        <div class="popup-opacity"> </div>
+        <div class="collaboration-popup">
+            <div class="collaboration-popup-header-bar vcenter">
+                <div class="collaboration-popup-header-text"> Collaboration Settings </div>
+                <div class="collaboration-popup-header-x middle-right size18x18"></div>
+            </div>
+            <div class="collaboration-popup-content-container center">
+                <div class="collaboration-all-settings-container">
+                    <div class="collaboration-settings-category">
+                        <div class="collaboration-settings-category-title">
+                            General
                         </div>
-                        <div class="suggestion-editors-area">
-                            <div class = "suggestion-editor-area">
-                                <div class="suggestion-annotations">
-                                        <div class="suggestion-annotations suggestion-text-14">
-                                            <div class = "suggestion-annotation suggestion-annotation-warning"> 
-                                                [Warning] This file was edited after this suggestion was made. 
-                                            </div>
-                                        </div>
-                                </div>
-                                <div class = "suggestion-vpl-editor">
-
-                                </div>
-                            </div>
-                            <div class = "suggestion-editor-area">
-                                <div class = "suggestion-annotations suggestion-text-14">
-                                    <div class = "suggestion-annotation suggestion-annotation-comment"> 
-                                        <div class = "suggestion-comment-title">
-                                            <div class = "suggestion-arrow"> </div>
-                                            <div class = "suggestion-comment"> Comment </div>
-                                        </div>
-                                        <div class = "suggestion-comment-content">
-                                            This is the comment content that could be long
-                                            This is the comment content that could be long
-                                            This is the comment content that could be long
-                                            This is the comment content that could be long
-                                            This is the comment content that could be long
-                                            This is the comment content that could be long
-                                            This is the comment content that could be long
-                                        </div> 
-                                    </div>
-                                    <div class = "suggestion-annotation suggestion-annotation-confirmation"> 
-                                        <div> Accept this suggestion </div>
-                                        <div class = "suggestion-confirmation-buttons">
-                                            <div class = "suggestion-tick"></div>
-                                            <div class = "suggestion-x"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class = "suggestion-vpl-editor">
-
-                                </div>
-                            </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Real-time syncing </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
                         </div>
                     </div>
+                    <div class="collaboration-settings-category">
+                        <div class="collaboration-settings-category-title">
+                            Project Items
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to create project items </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Requests for the creation of project items </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to make visual code suggestions
+                            </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to make notes </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Start as the owner of all shared project items
+                            </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to request for ownership </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="collaboration-settings-category">
+                        <div class="collaboration-settings-category-title">
+                            Personal Items
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to create personal items  </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to see others’ personal items </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to share their personal items </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to make visual code suggestions </div>
+                            <div class="collaboration-setting-checkbox-container"> </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="collaboration-setting">
+                            <div class="collaboration-setting-title"> Allow members to make notes </div>
+                            <label class="collaboration-setting-checkbox-container">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="collaboration-settings-apply-button">
+                        APPLY
+                    </div>
                 </div>
-            </div> -->
-       </div>
+            </div>
+        </div>
+    </div>
 
-    </body>
+</body>
 
-    <script>
-        $( document ).ready(function() {
-            popup = new SuggestionPopup(
-                "testDiv", 
-                "Alarm Clock Rings", 
-                {
-                    icon: "./Icons/man0.png",
-                    name: "Random Guy"
-                }
-            );
-        });
-    </script>
+<script>
+    $(document).ready(function () {
+        // popup = new SuggestionPopup(
+        //     "testDiv", 
+        //     "Alarm Clock Rings", 
+        //     {
+        //         icon: "./Icons/man0.png",
+        //         name: "Random Guy"
+        //     }
+        // );
+    });
+</script>
+
 </html>
