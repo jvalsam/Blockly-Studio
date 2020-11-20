@@ -7,22 +7,70 @@
         <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
         <link rel="stylesheet" href="./../../../../../../../../libs/treeviews-ui/jstree/dist/themes/default/style.css" />
         <link rel="stylesheet" type="text/css" href="../../collaboration-manager-view.css">
-        <script type="text/javascript" src="./CollaborationToolbar.js"></script>
+        <!-- <script type="text/javascript" src="./CollaborationToolbar.js"></script> -->
+        <script type="text/javascript" src="./CollaborationPopups.js"></script>
         <script type="text/javascript" src="../../../../../../../../libs/treeviews-ui/jstree/dist/jstree.js"> </script>
     </head>
 
     <body>
         
        <div id = "testDiv"> 
+            <div class = "popup-opacity"> </div>
+            <div class = "collaboration-popup">
+                <div class = "collaboration-popup-header-bar vcenter">
+                    <div class = "collaboration-popup-header-text"> Suggestion - Alarm Clock Rings </div>
+                    <div class = "collaboration-popup-header-x middle-right size18x18"></div>
+                </div>
+                <div class = "collaboration-popup-content-container center">
+                    <div class = "suggestion-all-content">
+                        <div class = "suggestion-files-container">
+                            <div class = "suggestion-file">
+                                <div class="suggestion-text-16"> Alarm Clock Rings </div>
+                            </div>
+                            <div class="suggestion-file">
+                                <div class = "suggestion-file-and-dot">
+                                    <div class="suggestion-purple-dot"></div>
+                                    <div class="suggestion-text-16"> Alarm Clock Rings - Suggested </div>
+                                </div>
+                                <div class = "suggestion-user">
+                                    <div class = "suggestion-user-icon"></div>
+                                    <div class="suggestion-text-16"> Joseph Bird </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="suggestion-editors-area">
+                            <div class = "suggestion-editor-area">
+                                <div class="suggestion-annotations">
+                                        <div class="suggestion-annotations suggestion-text-14">
+                                            <div class = "suggestion-annotation suggestion-annotation-warning"> 
+                                                [Warning] This file was edited after this suggestion was made. 
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class = "suggestion-vpl-editor">
 
+                                </div>
+                            </div>
+                            <div class = "suggestion-editor-area">
+                                <div class = "suggestion-annotations suggestion-text-14">
+                                    <div class = "suggestion-annotation suggestion-annotation-comment"> Test text </div>
+                                    <div class = "suggestion-annotation suggestion-annotation-confirmation"> Accept this suggestion </div>
+                                </div>
+                                <div class = "suggestion-vpl-editor">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
        </div>
 
     </body>
 
     <script>
         $( document ).ready(function() {
-            ui = new CollaborationUI("testDiv");
-            examples = new CollaborationUI_API_Examples(ui)
+            // ui = new SharePopup("testDiv");
         });
     </script>
 </html>

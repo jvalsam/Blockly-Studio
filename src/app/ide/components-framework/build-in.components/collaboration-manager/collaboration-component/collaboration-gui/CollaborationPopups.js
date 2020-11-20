@@ -1,9 +1,9 @@
-export {
-    SharePopup,
-    JoinPopup,
-    PassFloorPopup,
-    SharePersonalFilePopup
-}
+// export {
+//     SharePopup,
+//     JoinPopup,
+//     PassFloorPopup,
+//     SharePersonalFilePopup
+// }
 
 class CollaborationPopup{
     constructor(container, title) {

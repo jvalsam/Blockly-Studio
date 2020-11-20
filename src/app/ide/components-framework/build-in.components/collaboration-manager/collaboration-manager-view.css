@@ -387,7 +387,8 @@
 .collaboration-popup {
     font-family: "Roboto" !important;
     font-size: 14px !important;
-    width: 350px;
+    min-width: 350px;
+    width: fit-content;
     height: fit-content;
     box-sizing: border-box;
     background-color: #ffffff;
@@ -436,6 +437,7 @@
 
 .collaboration-popup-content-container {
     border: 1px solid #b1b1b1;
+    width: fit-content;
     height: 85%;
     box-sizing: border-box;
     position: relative;
@@ -507,4 +509,120 @@
     background-color: green;
     -webkit-mask-image: url(https://www.flaticon.com/svg/static/icons/svg/2107/2107593.svg);
     mask-image: url(https://www.flaticon.com/svg/static/icons/svg/2107/2107593.svg);
+}
+
+/****************************************************************************
+---> Suggestion Popup
+****************************************************************************/
+
+.collaboration-popup-content-container{
+    padding: 0;
+}
+
+.suggestion-all-content{
+    width: 70vw;
+}
+
+.suggestion-files-container{
+    display: flex;
+    width: 100%;
+}
+
+.suggestion-file{
+    width: 50%;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #B1B1B1;
+    box-sizing: border-box;
+}
+
+.suggestion-file-and-dot{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.suggestion-text-16{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.suggestion-text-14{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.suggestion-purple-dot{
+    width: 12px;
+    height: 12px;
+    background: #908EC7;
+    border-radius: 50%;
+}
+
+.suggestion-user{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.suggestion-user-icon{
+    background-position: center center !important;
+    background-size: 18px 18px !important;
+    size: 30px 30px !important;
+    width: 30px !important;
+    height: 30px !important;
+    background-color: #4A81B1 !important;
+    background-image: url(./../../../components-framework/build-in.components/collaboration-manager/Icons/man0.png);
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: solid 2px #24537E;
+}
+
+.suggestion-editors-area{
+    display: flex;
+    width: 100%;
+    height: 60vh;
+    position: relative;
+}
+
+.suggestion-editor-area{
+    width: 50%;
+    height: 100%;
+    border: 1px solid #B1B1B1;
+    box-sizing: border-box;
+}
+
+.suggestion-vpl-editor{
+    width: 100%;
+    height: 100%;
+}
+
+.suggestion-annotations{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.suggestion-annotation{
+    padding: 10px;
+    text-align: left;
+}
+
+.suggestion-annotation-warning{
+    background: #FFE79E;
+}
+.suggestion-annotation-confirmation{
+    background: #DFDDFB;
+}
+.suggestion-annotation-comment{
+    background: #FFF7CB;
 }
