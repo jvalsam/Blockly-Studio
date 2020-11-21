@@ -62,7 +62,6 @@ export class VPLDomainElements {
                 new VPLMission(
                     vplMission.name,
                     vplMission.items,
-                    vplMission.handledDomainElems,
                     vplMission.editors,
                     this
                 )
@@ -75,7 +74,9 @@ export class VPLDomainElements {
             new VPLProjectItem(
                 vplPI.name,
                 vplPI.editorsConfig,
-                vplPI.view
+                vplPI.view,
+                vplPI.actionsHandling,
+                vplPI.handledDomainElems
             )
         );
     }

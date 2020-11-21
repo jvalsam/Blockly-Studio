@@ -27,6 +27,10 @@ export const SmartObject = {
             codeGen: () => (function(block) {
                 var code = 'code...';
                 return [code, Blockly.JavaScript.ORDER_NONE];
+            }),
+            debugGen: () => (function(block) {
+                var code = 'code...';
+                return [code, Blockly.JavaScript.ORDER_NONE];
             })
         },
         {
@@ -198,9 +202,17 @@ export const SmartObject = {
                 });
                 
                 return [code, Blockly.JavaScript.ORDER_NONE];;
-            }
-            //, debugGen: (data) => open VISMA view UI of the smart
+            },
+            debugGen: (data) => {
+                let code = "...";
+                
+                data.details.properties.forEach(property => {
+                    //code generation based on the choice
+                });
+                
+                return [code, Blockly.JavaScript.ORDER_NONE];;
             // object
+            }
         }
     ],
     // reteElements: [

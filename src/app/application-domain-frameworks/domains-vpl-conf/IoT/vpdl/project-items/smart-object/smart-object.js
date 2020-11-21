@@ -18,6 +18,33 @@ export const SmartObject = {
     ],
     // Editor Layout handles to render and load the respective template
     // and inject the editor parts of the project item
+    // defined which are the domain element types are able to be exported in this visual source
+    handledDomainElems: [
+        'SmartObject'
+    ],
+    actionsHandling: {
+        // call after fill-in data
+        createPrevious: () => {
+
+        },
+        createAfter: () => {
+
+        },
+        // call before fill-in the data
+        deletePrevious: () => {
+
+        },
+        deleteAfter: () => {
+
+        },
+        // call after fill-in data
+        renamePrevious: () => {
+
+        },
+        renameAfter: () => {
+
+        }
+    },
     view: {
         template: SmartObjectTaskTmpl, // load template, by default focus out style
         style: SmartObjectTaskSYCSS, // style has to be added dynamically in the first use of template?
