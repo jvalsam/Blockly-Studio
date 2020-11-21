@@ -44,3 +44,31 @@
   padding: 0rem !important;
   border-top: none !important;
 }
+
+.select-group-bubbles {
+  margin-left: 0.5rem;
+  line-height: 19px;
+  cursor: pointer;
+  background-color: #798c9c;
+}
+
+.select-group-bubbles:hover {
+  background-color: #98abbb;
+}
+
+.select-groups-differences-table {
+  /* display: block; */
+  max-height: 20rem;
+  overflow-y: auto;
+  font-size: smaller;
+  padding: 0rem !important;
+  border-top: none !important;
+}
+
+.select-groups-differences-table th {
+  padding: 0.3rem;
+}
+
+.select-groups-differences-table td {
+  padding: 0.3rem;
+}

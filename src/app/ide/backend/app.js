@@ -3,10 +3,19 @@ passport = require("passport"),
 session = require('express-session');
 var app = express();
 var db = require('./managementDB');
+var bodyParser = require("body-parser");
 var authentication = require('./authentication/CheckAuthentication');
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
 app.use(session({
         secret: "Hello World, this is a session",
         resave: false,

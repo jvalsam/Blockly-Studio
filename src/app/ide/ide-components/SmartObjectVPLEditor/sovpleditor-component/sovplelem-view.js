@@ -166,7 +166,9 @@ let CreateModal = function (dom, idPrefix) {
   modal.setAttribute("aria-hidden", "true");
   dom.appendChild(modal);
 
-  let modalDialog = CreateDOMElement("div", { classList: ["modal-dialog"] });
+  let modalDialog = CreateDOMElement("div", {
+    classList: ["modal-dialog", "modal-xl"],
+  });
   modalDialog.setAttribute("role", "document");
   modal.appendChild(modalDialog);
 
@@ -222,13 +224,17 @@ let CreateModal = function (dom, idPrefix) {
   modalFooter.appendChild(confirmButton);
 };
 
-let GetUnmatchedProperties = function (smartObjectDetails, smartGrouptDetails) {
+let CheckAndGetUnmatchedProperties = function (
+  smartObjectDetails,
+  smartGrouptDetails
+) {
   // we dont need to return as unmatched sg and so with different length
   if (
     smartObjectDetails.properties.length !==
     smartGrouptDetails.properties.length
   )
     return {
+      result: "unmatchedInLength",
       so: [],
       sg: [],
     };
@@ -260,6 +266,14 @@ let GetUnmatchedProperties = function (smartObjectDetails, smartGrouptDetails) {
     if (!isMatched) soUnmatchedNames.push(smartObjectProperty.name);
   }
 
+  if (soUnmatchedNames.length === 0) {
+    return {
+      result: "matched",
+      so: [],
+      sg: [],
+    };
+  }
+
   // collect the unmatched properties for group and smart object
   // save unmatchedNames of sg
   let sgUnmatchedNames = smartGrouptDetails.properties
@@ -285,39 +299,138 @@ let GetUnmatchedProperties = function (smartObjectDetails, smartGrouptDetails) {
   }
 
   return {
+    result: "unmatched",
     so: soResult,
     sg: sgResult,
   };
 };
 
-let UmatchedGroupsWithSO = function (smartObjectElemData, groupsVPLElements) {
+let CompareGroupsWithSO = function (smartObjectElemData, groupsVPLElements) {
   let smartObjectDetails = smartObjectElemData.editorData.details;
-  let result = [];
+  let result = { matched: [], unmatched: [], unmatchedInLength: [] };
   let soName = smartObjectElemData.name;
   let tmpObject = {},
     firstItem,
     smartGroupName,
     smartGroupDetails,
-    unmatchedProperties;
+    checkUnmatchedProperties;
 
   for (const group of groupsVPLElements) {
     firstItem = Object.keys(group._editorsData.items)[0];
     smartGroupName = group._editorsData.items[firstItem].title;
     smartGroupDetails = group._editorsData.items[firstItem].details;
 
-    unmatchedProperties = GetUnmatchedProperties(
+    checkUnmatchedProperties = CheckAndGetUnmatchedProperties(
       smartObjectDetails,
       smartGroupDetails
     );
 
-    if (unmatchedProperties.so.length !== 0) {
-      tmpObject = {};
-      tmpObject[soName] = unmatchedProperties.so;
-      tmpObject[smartGroupName] = unmatchedProperties.sg;
-      result.push(tmpObject);
-    }
+    tmpObject = {};
+    tmpObject.so = checkUnmatchedProperties.so;
+    tmpObject.sg = checkUnmatchedProperties.sg;
+    tmpObject.result = checkUnmatchedProperties.result;
+    tmpObject._sgName = smartGroupName;
+    tmpObject._soName = soName;
+    result[tmpObject.result].push(tmpObject);
   }
   return result;
+};
+
+let CreateOptionsForSelectionsOfSGProps = function (selectionDom, smartGroup) {
+  for (let i = 0; i < smartGroup.length; i++) {
+    let option = CreateDOMElement("option", {
+      innerHtml: Object.keys(smartGroup[i])[0],
+    });
+    option.value = Object.keys(smartGroup[i])[0];
+    selectionDom.appendChild(option);
+  }
+};
+
+let CreateDifferencesTableInGroupSelection = function (
+  domSel,
+  elemName,
+  props,
+  isSO,
+  sgProps
+) {
+  let tableDifferences = CreateDOMElement("table", {
+    classList: [
+      "table",
+      "table-striped",
+      "table-bordered",
+      "select-groups-differences-table",
+    ],
+  });
+  domSel.appendChild(tableDifferences);
+
+  if (isSO) {
+    let firstTHead = CreateDOMElement("thead");
+    tableDifferences.appendChild(firstTHead);
+
+    let trHeader = CreateDOMElement("tr");
+    firstTHead.appendChild(trHeader);
+
+    let thSOName = CreateDOMElement("th", { innerHtml: elemName });
+    thSOName.setAttribute("colspan", "2");
+    thSOName.setAttribute("scope", "colgroup");
+    trHeader.appendChild(thSOName);
+  }
+
+  let secondTHead = CreateDOMElement("thead");
+  tableDifferences.appendChild(secondTHead);
+
+  let trSecondHeader = CreateDOMElement("tr");
+  secondTHead.appendChild(trSecondHeader);
+
+  let thSOPropNameHeader = CreateDOMElement("th", { innerHtml: "Property" });
+  thSOPropNameHeader.setAttribute("scope", "col");
+  trSecondHeader.appendChild(thSOPropNameHeader);
+
+  let thSOPropAliasHeader = CreateDOMElement("th");
+  thSOPropAliasHeader.setAttribute("scope", "col");
+  trSecondHeader.appendChild(thSOPropAliasHeader);
+
+  let spanAlias = CreateDOMElement("span", { innerHtml: "Alias" });
+  thSOPropAliasHeader.appendChild(spanAlias);
+
+  if (isSO) {
+    let spanMatchWith = CreateDOMElement("span", {
+      innerHtml: "(select group property)",
+    });
+    spanMatchWith.style.marginLeft = ".3rem";
+    spanMatchWith.style.fontStyle = "italic";
+    thSOPropAliasHeader.appendChild(spanMatchWith);
+  }
+
+  let tBody = CreateDOMElement("tbody");
+  tableDifferences.appendChild(tBody);
+
+  for (let i = 0; i < props.length; i++) {
+    let trValues = CreateDOMElement("tr");
+    tBody.appendChild(trValues);
+
+    // so name and alias
+    let soPropName = Object.keys(props[i])[0];
+    let tdSOName = CreateDOMElement("td", { innerHtml: soPropName });
+    trValues.appendChild(tdSOName);
+
+    if (isSO) {
+      let tdSOAlias = CreateDOMElement("td");
+      trValues.appendChild(tdSOAlias);
+
+      let selectForAlias = CreateDOMElement("select", {
+        classList: ["custom-select", "mr-sm-2"],
+      });
+      selectForAlias.style.width = "auto";
+      tdSOAlias.appendChild(selectForAlias);
+
+      CreateOptionsForSelectionsOfSGProps(selectForAlias, sgProps);
+    } else {
+      let sgPropAlias = props[i][Object.keys(props[i])[0]];
+      let tdSGAlias = CreateDOMElement("td", { innerHtml: sgPropAlias });
+      trValues.appendChild(tdSGAlias);
+    }
+  }
 };
 
 export function RenderSelectGroupsModal(
@@ -365,7 +478,7 @@ export function RenderSelectGroupsModal(
 
   let thName = CreateDOMElement("th", {
     classList: ["table-row-mini"],
-    innerHtml: "Name",
+    innerHtml: "Property",
   });
   thName.setAttribute("scope", "col");
   trHead.appendChild(thName);
@@ -401,8 +514,14 @@ export function RenderSelectGroupsModal(
   let hr = CreateDOMElement("hr");
   modalBody.appendChild(hr);
 
+  /*  Start Groups that matched with so */
+  let comparedArray = CompareGroupsWithSO(
+    sovplelemInst.elemData,
+    groupsVPLElements
+  );
+
   let groupsMatchHeader = CreateDOMElement("div", {
-    classList: ["h6"],
+    classList: ["h5", "pb-3"],
     innerHtml: "Groups that match with your device",
   });
   modalBody.appendChild(groupsMatchHeader);
@@ -412,21 +531,118 @@ export function RenderSelectGroupsModal(
   hr = CreateDOMElement("hr");
   modalBody.appendChild(hr);
 
-  let unmatchedSOWithSGs = UmatchedGroupsWithSO(
-    sovplelemInst.elemData,
-    groupsVPLElements
-  );
+  let matchedGroupRow = CreateDOMElement("div", { classList: ["row"] });
+  groupsMatchArea.appendChild(matchedGroupRow);
 
-  console.log(unmatchedSOWithSGs);
+  for (const matchedPair of comparedArray.matched) {
+    let matchedGroupCol = CreateDOMElement("div", { classList: ["col-sm-4"] });
+    matchedGroupRow.appendChild(matchedGroupCol);
 
+    let checkboxGroup = CreateDOMElement("input", {
+      id: "mathced-group-" + matchedPair._sgName,
+    });
+    checkboxGroup.setAttribute("type", "checkbox");
+    matchedGroupCol.appendChild(checkboxGroup);
+
+    let labelForGroup = CreateDOMElement("label", {
+      innerHtml: matchedPair._sgName,
+    });
+    labelForGroup.setAttribute("for", "mathced-group-" + matchedPair._sgName);
+    matchedGroupCol.appendChild(labelForGroup);
+  }
+  /*  End Groups that matched with so */
+
+  /* Start Groups that dont match with so */
   let groupsNotMatchHeader = CreateDOMElement("div", {
-    classList: ["h6"],
+    classList: ["h5", "pb-3"],
     innerHtml: "Groups that do not match with your device",
   });
   modalBody.appendChild(groupsNotMatchHeader);
 
-  let groupsNotMatchArea = CreateDOMElement("div");
+  let groupsNotMatchArea = CreateDOMElement("div", { classList: ["row"] });
   modalBody.appendChild(groupsNotMatchArea);
+
+  let unmatchedGroupsCol = CreateDOMElement("div", { classList: ["col-3"] });
+  groupsNotMatchArea.appendChild(unmatchedGroupsCol);
+
+  let navDiv = CreateDOMElement("div", {
+    classList: ["nav", "flex-column", "nav-pills"],
+  });
+  navDiv.setAttribute("role", "tablist");
+  navDiv.setAttribute("aria-orientation", "vertical");
+  unmatchedGroupsCol.appendChild(navDiv);
+
+  let unmatchedGroupsInfoCol = CreateDOMElement("div", { classList: ["col"] });
+  groupsNotMatchArea.appendChild(unmatchedGroupsInfoCol);
+
+  let unmatchedGroupsInfoContent = CreateDOMElement("div", {
+    classList: ["tab-content"],
+    id: "v-pills-tabContent",
+  });
+  unmatchedGroupsInfoCol.appendChild(unmatchedGroupsInfoContent);
+
+  for (let i = 0; i < comparedArray.unmatched.length; ++i) {
+    let unmatchedPair = comparedArray.unmatched[i];
+    let aNav = CreateDOMElement("a", {
+      classList: ["nav-link"],
+      id: "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "") + "-tab",
+      innerHtml: unmatchedPair._sgName,
+    });
+    aNav.setAttribute("data-toggle", "pill");
+    aNav.setAttribute(
+      "href",
+      "#v-pills-" + unmatchedPair._sgName.replace(/\s/g, "")
+    );
+    aNav.setAttribute("role", "tab");
+    aNav.setAttribute(
+      "aria-controls",
+      "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "")
+    );
+    aNav.setAttribute("aria-selected", "true");
+    navDiv.appendChild(aNav);
+
+    let tabPane = CreateDOMElement("div", {
+      classList: ["tab-pane", "fade"],
+      id: "v-pills-" + unmatchedPair._sgName.replace(/\s/g, ""),
+    });
+    tabPane.setAttribute("role", "tabpanel");
+    tabPane.setAttribute(
+      "aria-labelledby",
+      "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "") + "-tab"
+    );
+    unmatchedGroupsInfoContent.appendChild(tabPane);
+
+    let tabPaneRow = CreateDOMElement("div", { classList: ["row"] });
+    tabPane.appendChild(tabPaneRow);
+
+    let firstTableCol = CreateDOMElement("div", { classList: ["col"] });
+    tabPaneRow.appendChild(firstTableCol);
+
+    CreateDifferencesTableInGroupSelection(
+      firstTableCol,
+      unmatchedPair._sgName,
+      unmatchedPair.sg,
+      false
+    );
+
+    let secondTableCol = CreateDOMElement("div", { classList: ["col"] });
+    tabPaneRow.appendChild(secondTableCol);
+
+    CreateDifferencesTableInGroupSelection(
+      secondTableCol,
+      unmatchedPair._soName,
+      unmatchedPair.so,
+      true,
+      unmatchedPair.sg
+    );
+
+    if (i === 0) {
+      aNav.classList.add("active");
+      tabPane.classList.add("show");
+      tabPane.classList.add("active");
+    }
+  }
+  /* End Groups that dont match with so */
 
   // Destroy on close
   $("#select-group-modal").on("hidden.bs.modal", function () {
@@ -612,6 +828,7 @@ export function RenderSOScanList(
     );
   }
 }
+
 let RenderSmartObjectProperty = function (
   selector,
   id,
