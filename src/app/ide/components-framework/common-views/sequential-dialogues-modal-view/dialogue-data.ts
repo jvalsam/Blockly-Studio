@@ -38,6 +38,11 @@ export function createDialogue(
     actions,
     dtype: string = "simple"
 ) {
+    let title = body.formElems
+        .find(x=>x.type === 'title')
+        .value
+        .default;
+
     if (body.formElems) {
         body.formElems = RenderPartsToPropertyData(
             body.formElems,
@@ -46,10 +51,7 @@ export function createDialogue(
     return {
         type: dtype,
         data: {
-            title: createDialogueTitle(
-                actionTitle,
-                body.formElems,
-                type),
+            title: actionTitle + title,
             body: body,
             actions: actions
         }
