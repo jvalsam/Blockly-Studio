@@ -222,187 +222,233 @@ let CreateModal = function (dom, idPrefix) {
   modalFooter.appendChild(confirmButton);
 };
 
-let isMatchGroupWithSO = function (smartObjectDetails, smartGrouptDetails) {
+let GetUnmatchedProperties = function (smartObjectDetails, smartGrouptDetails) {
+  // we dont need to return as unmatched sg and so with different length
   if (
     smartObjectDetails.properties.length !==
     smartGrouptDetails.properties.length
   )
-    return false;
-  const matchedProperties = [],
-    unmatchedProperties = [];
+    return {
+      so: [],
+      sg: [],
+    };
 
-  smartObjectDetails.properties.forEach((smartObjectProperty) => {
-    smartGrouptDetails.properties.forEach((smartGroupProperty) => {
+  let sgMatchedProperties = [];
+  let soUnmatchedNames = [];
+
+  let isMatched = false;
+
+  for (const smartObjectProperty of smartObjectDetails.properties) {
+    isMatched = false;
+    for (const smartGroupProperty of smartGrouptDetails.properties) {
       if (
         // (name === name || alias)
         smartObjectProperty.name === smartGroupProperty.name ||
-        smartGrouptDetails.mapPropsAlias[smartGroupProperty.name] ||
+        smartObjectProperty.name ===
+          smartGrouptDetails.mapPropsAlias[smartGroupProperty.name] ||
         // (alias === name || alias)
         smartObjectDetails.mapPropsAlias[smartObjectProperty.name] ===
           smartGroupProperty.name ||
-        smartGrouptDetails.mapPropsAlias[smartGroupProperty.name]
+        smartObjectDetails.mapPropsAlias[smartObjectProperty.name] ===
+          smartGrouptDetails.mapPropsAlias[smartGroupProperty.name]
       ) {
+        isMatched = true;
         // push matched properties
-        matchedProperties.push({
-          so: {
-            name: smartObjectProperty.name,
-            alias: smartObjectDetails.mapPropsAlias[smartObjectProperty.name],
-          },
-          sg: {
-            name: smartGroupProperty.name,
-            alias: smartGrouptDetails.mapPropsAlias[smartGroupProperty.name],
-          },
-        });
+        sgMatchedProperties.push(smartGroupProperty.name);
       }
-    });
-  });
+    }
+    if (!isMatched) soUnmatchedNames.push(smartObjectProperty.name);
+  }
+
+  // collect the unmatched properties for group and smart object
+  // save unmatchedNames of sg
+  let sgUnmatchedNames = smartGrouptDetails.properties
+    .map((prop) => prop.name)
+    .filter((propName) => !sgMatchedProperties.includes(propName));
+
+  let soResult = [],
+    sgResult = [],
+    tmpObj = {};
+
+  for (let i = 0; i < soUnmatchedNames.length; i++) {
+    // so: [ {name: alias} ]
+    tmpObj[soUnmatchedNames[i]] =
+      smartObjectDetails.mapPropsAlias[soUnmatchedNames[i]];
+    soResult.push(tmpObj);
+    tmpObj = {};
+
+    // sg: [ {name: alias} ]
+    tmpObj[sgUnmatchedNames[i]] =
+      smartGrouptDetails.mapPropsAlias[sgUnmatchedNames[i]];
+    sgResult.push(tmpObj);
+    tmpObj = {};
+  }
+
+  return {
+    so: soResult,
+    sg: sgResult,
+  };
 };
 
-let MatchedAndUmatchedGroupsWithSO = function (
-  smartObjectElemData,
-  groupsVPLElements
-) {
-  let comparedGroups = { matchedGroups: [], unmatchedGroups: [] };
+let UmatchedGroupsWithSO = function (smartObjectElemData, groupsVPLElements) {
   let smartObjectDetails = smartObjectElemData.editorData.details;
+  let result = [];
+  let soName = smartObjectElemData.name;
+  let tmpObject = {},
+    firstItem,
+    smartGroupName,
+    smartGroupDetails,
+    unmatchedProperties;
 
   for (const group of groupsVPLElements) {
-    let firstItem = Object.keys(group._editorsData.items)[0];
-    let smartGroupDetails = group._editorsData.items[firstItem].details;
+    firstItem = Object.keys(group._editorsData.items)[0];
+    smartGroupName = group._editorsData.items[firstItem].title;
+    smartGroupDetails = group._editorsData.items[firstItem].details;
 
-    // isMatchGroupWithSO(smartObjectDetails, smartGroupDetails)
-    //   ? comparedGroups.matchedGroups.push(group._editorsData.items[firstItem])
-    //   : comparedGroups.unmatchedGroups.push(
-    //       group._editorsData.items[firstItem]
-    //     );
+    unmatchedProperties = GetUnmatchedProperties(
+      smartObjectDetails,
+      smartGroupDetails
+    );
+
+    if (unmatchedProperties.so.length !== 0) {
+      tmpObject = {};
+      tmpObject[soName] = unmatchedProperties.so;
+      tmpObject[smartGroupName] = unmatchedProperties.sg;
+      result.push(tmpObject);
+    }
   }
-  return comparedGroups;
+  return result;
 };
 
 export function RenderSelectGroupsModal(
   sovplelemInst,
-  groups,
+  groupsVPLElements,
   onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
   onSkip
 ) {
   // Create Modal
-  // CreateModal(
-  //   document.getElementsByClassName("modal-platform-container")[0],
-  //   "select-group"
-  // );
+  CreateModal(
+    document.getElementsByClassName("modal-platform-container")[0],
+    "select-group"
+  );
 
-  // // fill modal
-  // document.getElementById("select-group-modal-title").innerHTML =
-  //   "Select Group(s)";
-  // let modalBody = document.getElementById("select-group-modal-body");
-  // let properties = sovplelemInst.elemData.editorData.details.properties;
-  // let mapPropsAlias = sovplelemInst.elemData.editorData.details.mapPropsAlias;
-  // let propertyHeader = CreateDOMElement("div", {
-  //   classList: ["h6"],
-  //   innerHtml: "Properties",
-  // });
-  // // propertyHeader.style.paddingBottom = ".5rem";
-  // modalBody.appendChild(propertyHeader);
+  // fill modal
+  document.getElementById("select-group-modal-title").innerHTML =
+    "Select Group(s)";
+  let modalBody = document.getElementById("select-group-modal-body");
+  let properties = sovplelemInst.elemData.editorData.details.properties;
+  let mapPropsAlias = sovplelemInst.elemData.editorData.details.mapPropsAlias;
+  let propertyHeader = CreateDOMElement("div", {
+    classList: ["h6"],
+    innerHtml: "Properties",
+  });
+  // propertyHeader.style.paddingBottom = ".5rem";
+  modalBody.appendChild(propertyHeader);
 
-  // // Property Area folded
-  // let propertiesArea = CreateDOMElement("div");
-  // propertiesArea.style.maxHeight = "15rem";
-  // propertiesArea.style.overflowY = "auto";
-  // propertiesArea.style.display = "none";
-  // modalBody.appendChild(propertiesArea);
+  // Property Area folded
+  let propertiesArea = CreateDOMElement("div");
+  propertiesArea.style.maxHeight = "15rem";
+  propertiesArea.style.overflowY = "auto";
+  propertiesArea.style.display = "none";
+  modalBody.appendChild(propertiesArea);
 
-  // let table = CreateDOMElement("table", {
-  //   classList: ["table", "table-striped"],
-  // });
-  // propertiesArea.appendChild(table);
+  let table = CreateDOMElement("table", {
+    classList: ["table", "table-striped"],
+  });
+  propertiesArea.appendChild(table);
 
-  // let tHead = CreateDOMElement("tHead");
-  // table.appendChild(tHead);
+  let tHead = CreateDOMElement("tHead");
+  table.appendChild(tHead);
 
-  // let trHead = CreateDOMElement("tr");
-  // tHead.appendChild(trHead);
+  let trHead = CreateDOMElement("tr");
+  tHead.appendChild(trHead);
 
-  // let thName = CreateDOMElement("th", {
-  //   classList: ["table-row-mini"],
-  //   innerHtml: "Name",
-  // });
-  // thName.setAttribute("scope", "col");
-  // trHead.appendChild(thName);
+  let thName = CreateDOMElement("th", {
+    classList: ["table-row-mini"],
+    innerHtml: "Name",
+  });
+  thName.setAttribute("scope", "col");
+  trHead.appendChild(thName);
 
-  // let thAlias = CreateDOMElement("th", {
-  //   classList: ["table-row-mini"],
-  //   innerHtml: "Alias",
-  // });
-  // thAlias.setAttribute("scope", "col");
-  // trHead.appendChild(thAlias);
+  let thAlias = CreateDOMElement("th", {
+    classList: ["table-row-mini"],
+    innerHtml: "Alias",
+  });
+  thAlias.setAttribute("scope", "col");
+  trHead.appendChild(thAlias);
 
-  // let tBody = CreateDOMElement("tbody");
-  // table.appendChild(tBody);
+  let tBody = CreateDOMElement("tbody");
+  table.appendChild(tBody);
 
-  // // build properties
-  // for (const property of properties) {
-  //   let trProp = CreateDOMElement("tr");
-  //   tBody.appendChild(trProp);
+  // build properties
+  for (const property of properties) {
+    let trProp = CreateDOMElement("tr");
+    tBody.appendChild(trProp);
 
-  //   let tdPropName = CreateDOMElement("td", {
-  //     classList: ["table-row-mini"],
-  //     innerHtml: property.name,
-  //   });
-  //   trProp.appendChild(tdPropName);
+    let tdPropName = CreateDOMElement("td", {
+      classList: ["table-row-mini"],
+      innerHtml: property.name,
+    });
+    trProp.appendChild(tdPropName);
 
-  //   let tdPropAlias = CreateDOMElement("td", {
-  //     classList: ["table-row-mini"],
-  //     innerHtml: mapPropsAlias[property.name],
-  //   });
-  //   trProp.appendChild(tdPropAlias);
-  // }
+    let tdPropAlias = CreateDOMElement("td", {
+      classList: ["table-row-mini"],
+      innerHtml: mapPropsAlias[property.name],
+    });
+    trProp.appendChild(tdPropAlias);
+  }
 
-  // let hr = CreateDOMElement("hr");
-  // modalBody.appendChild(hr);
+  let hr = CreateDOMElement("hr");
+  modalBody.appendChild(hr);
 
-  // let groupsMatchHeader = CreateDOMElement("div", {
-  //   classList: ["h6"],
-  //   innerHtml: "Groups that match with your device",
-  // });
-  // modalBody.appendChild(groupsMatchHeader);
+  let groupsMatchHeader = CreateDOMElement("div", {
+    classList: ["h6"],
+    innerHtml: "Groups that match with your device",
+  });
+  modalBody.appendChild(groupsMatchHeader);
 
-  // let groupsMatchArea = CreateDOMElement("div");
-  // modalBody.appendChild(groupsMatchArea);
-  // hr = CreateDOMElement("hr");
-  // modalBody.appendChild(hr);
+  let groupsMatchArea = CreateDOMElement("div");
+  modalBody.appendChild(groupsMatchArea);
+  hr = CreateDOMElement("hr");
+  modalBody.appendChild(hr);
 
-  // let matchedGroups = MatchedGroupsWithSO(
-  //   sovplelemInst.elemData,
-  //   groupsVPLElements
-  // );
+  let unmatchedSOWithSGs = UmatchedGroupsWithSO(
+    sovplelemInst.elemData,
+    groupsVPLElements
+  );
 
-  // let groupsNotMatchHeader = CreateDOMElement("div", {
-  //   classList: ["h6"],
-  //   innerHtml: "Groups that do not match with your device",
-  // });
-  // modalBody.appendChild(groupsNotMatchHeader);
+  console.log(unmatchedSOWithSGs);
 
-  // let groupsNotMatchArea = CreateDOMElement("div");
-  // modalBody.appendChild(groupsNotMatchArea);
+  let groupsNotMatchHeader = CreateDOMElement("div", {
+    classList: ["h6"],
+    innerHtml: "Groups that do not match with your device",
+  });
+  modalBody.appendChild(groupsNotMatchHeader);
 
-  // // Destroy on close
-  // $("#select-group-modal").on("hidden.bs.modal", function () {
-  //   document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-  //     "";
-  // });
+  let groupsNotMatchArea = CreateDOMElement("div");
+  modalBody.appendChild(groupsNotMatchArea);
 
-  // $("#select-group-modal").modal("show");
+  // Destroy on close
+  $("#select-group-modal").on("hidden.bs.modal", function () {
+    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+      "";
+    onSkip();
+  });
 
-  onSuccess([], []);
+  $("#select-group-modal").modal("show");
+
+  // onSuccess([], []);
 }
 
 let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}
   scannedDevices
 ) {
-  let result = scannedDevices.filter(
-    (el) => !registeredDevices.map((x) => x.id).includes(el.id)
-  );
-  return result;
+  // let result = scannedDevices.filter(
+  //   (el) => !registeredDevices.map((x) => x.id).includes(el.id)
+  // );
+  // return result;
+  return scannedDevices;
 };
 
 // functions for rendering parts
