@@ -491,3 +491,89 @@ class SuggestionPopup extends CollaborationPopup{
         this._onRejectCb = cb;
     }
 }
+
+class CollaborationSettingsPopup extends CollaborationPopup{
+    _allSettingsContainer;
+    _allSettings;
+    _onApplyCb = (settings) => {};
+    /**
+     * 
+     * @param {string/object} container String with id name or jquery object of container 
+     * @param {object} settings 
+     * [ 
+     *     { 
+     *          title: category title
+     *          settings: [
+     *              {
+     *                  title: setting title,
+     *                  checked: true 
+     *              }
+     *          ]
+     *     },
+     *     // more categories
+     * ]
+     */
+    constructor(container, settings){
+        super(container, 'Collaboration Settings');
+        this._allSettingsContainer = $('<div class="collaboration-all-settings-container"> </div>');
+
+        let button = $(`\
+            <div class="collaboration-settings-apply-button">\
+                APPLY\
+            </div>\
+        `);
+
+        this._contentContainer.append(this._allSettingsContainer)
+
+        for (let category of settings){
+            let title = category.title;
+            let categoryJqry = this.createCategory(title);
+            
+            for (let setting of category.settings){
+                let settingJqry = this.createSetting(setting);
+                categoryJqry.append(settingJqry);
+            }
+
+            this._allSettingsContainer.append(categoryJqry);
+        }
+
+        this._allSettingsContainer.append(button);
+        this._allSettings = settings;
+
+        button.click(()=>{
+            this._onApplyCb(this._allSettings);
+        });
+
+    }
+
+    createCategory(title){
+        let category = $('<div class="collaboration-settings-category"></div>');
+        category.append(`<div class="collaboration-settings-category-title"> ${title} </div>`);
+        
+        return category;
+    }
+
+    createSetting(setting){
+        
+        let settingJqry = $(`\
+            <div class="collaboration-setting">\
+                <div class="collaboration-setting-title"> ${setting.title} </div>\
+                <label class="collaboration-setting-checkbox-container">\
+                    <span class="slider"></span>\
+                </label>\
+            </div>\
+        `);
+
+        let checkbox = $(`<input type="checkbox" ${setting.checked ? "checked" : ""}>`)
+        checkbox.click(()=>{
+            setting.checked = checkbox.is(':checked');
+        });
+        
+        settingJqry.children("label").prepend(checkbox);
+        return settingJqry;
+    }
+
+    setOnApplyCb(cb){
+        this._onApplyCb = cb;
+    }
+}

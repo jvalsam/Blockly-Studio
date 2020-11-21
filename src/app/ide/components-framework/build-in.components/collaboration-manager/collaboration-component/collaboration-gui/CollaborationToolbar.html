@@ -15,133 +15,7 @@
 
 <body>
 
-    <div id="testDiv">
-        <div class="popup-opacity"> </div>
-        <div class="collaboration-popup">
-            <div class="collaboration-popup-header-bar vcenter">
-                <div class="collaboration-popup-header-text"> Collaboration Settings </div>
-                <div class="collaboration-popup-header-x middle-right size18x18"></div>
-            </div>
-            <div class="collaboration-popup-content-container center">
-                <div class="collaboration-all-settings-container">
-                    <div class="collaboration-settings-category">
-                        <div class="collaboration-settings-category-title">
-                            General
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Real-time syncing </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="collaboration-settings-category">
-                        <div class="collaboration-settings-category-title">
-                            Project Items
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to create project items </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Requests for the creation of project items </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to make visual code suggestions
-                            </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to make notes </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Start as the owner of all shared project items
-                            </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to request for ownership </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="collaboration-settings-category">
-                        <div class="collaboration-settings-category-title">
-                            Personal Items
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to create personal items  </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to see others’ personal items </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to share their personal items </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to make visual code suggestions </div>
-                            <div class="collaboration-setting-checkbox-container"> </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="collaboration-setting">
-                            <div class="collaboration-setting-title"> Allow members to make notes </div>
-                            <label class="collaboration-setting-checkbox-container">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="collaboration-settings-apply-button">
-                        APPLY
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="testDiv"> </div>
 
 </body>
 
@@ -155,6 +29,77 @@
         //         name: "Random Guy"
         //     }
         // );
+        popup = new CollaborationSettingsPopup('testDiv', 
+            [
+                {
+                    title: 'General',
+                    settings: [
+                        {
+                            title: 'Real-time syncing',
+                            checked: true
+                        }
+                    ]
+                },
+                {
+                    title: 'Project Items',
+                    settings: [
+                        {
+                            title: 'Allow members to create project items',
+                            checked: true
+                        },
+                        {
+                            title: 'Requests for the creation of project items',
+                            checked: true
+                        },
+                        {
+                            title: 'Allow members to make visual code suggestions',
+                            checked: true
+                        },
+                        {
+                            title: 'Allow members to make notes',
+                            checked: true
+                        },
+                        {
+                            title: 'Start as the owner of all shared project items',
+                            checked: true
+                        },
+                        {
+                            title: 'Allow members to request for ownership',
+                            checked: true
+                        }
+                    ]
+                },
+                {
+                    title: 'Personal Items',
+                    settings: [
+                        {
+                            title: 'Allow members to create personal items',
+                            checked: true
+                        },
+                        {
+                            title: 'Allow members to see others’ personal items',
+                            checked: true
+                        },
+                        {
+                            title: 'Allow members to share their personal items',
+                            checked: true
+                        },
+                        {
+                            title: 'Allow members to make visual code suggestions',
+                            checked: true
+                        },
+                        {
+                            title: 'Allow members to make notes',
+                            checked: true
+                        }
+                    ]
+                },
+            ]
+        );
+
+        popup.setOnApplyCb((settings)=>{
+            console.log(settings);
+        });
     });
 </script>
 
