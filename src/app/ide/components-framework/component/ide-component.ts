@@ -40,7 +40,6 @@ export abstract class IDEComponent extends Component {
     configuration.openComponentConfig(this.name, instType);
   }
 
-  
   @RequiredFunction("ProjectManager", "saveComponentData")
   protected saveProjectComponentData(projectId: string, data: any) {
       this._componentsData[projectId] = data;

@@ -48,6 +48,7 @@ export class DomainsManager extends IDEComponent {
     @ExportedFunction
     public initialize(): void {
         VPLDomainElementsManager.initialize(this);
+        VPLDomainElementsHolder.initialize(this);
         InitializeVPDLs();
     }
 
@@ -61,6 +62,7 @@ export class DomainsManager extends IDEComponent {
             [data]);
     }
 
+    @RequiredFunction("ProjectManager", "saveComponentData")
     @ExportedFunction
     public getCurrentDomain (): Domain {
         return this.currentDomain;
@@ -108,7 +110,7 @@ export class DomainsManager extends IDEComponent {
 
     @ExportedFunction
     loadComponentDataOfProject(projectId: string, componentsData: any) {
-        VPLDomainElementsHolder.loadProjectVPLElemsHandlingBlocksMap(projectId, componentsData);
+        VPLDomainElementsHolder.loadProject(projectId, componentsData);
         // load data using the signals
         VPLDomainElementsHolder.setLoadingMode(true);
         this.receiveSignals(
@@ -152,7 +154,6 @@ export class DomainsManager extends IDEComponent {
     public getToolbox(config: string): any {
         return VPLDomainElementsManager.getToolbox(config);
     }
-
 
     @RequiredFunction("ProjectManager", "openProject")
     @ExportedFunction

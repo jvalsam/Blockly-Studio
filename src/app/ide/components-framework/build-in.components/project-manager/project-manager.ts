@@ -238,19 +238,19 @@ export class ProjectManager extends IDEUIComponent {
         this.mainProject = project._id;
         let projView = (<ProjectManagerJSTreeView>this._view).loadProject(project);
 
-        // load compoenentsData of the project
-        for (const compName in project.compoenentsData) {
+        // load componentsData of the project
+        for (const compName in project.componentsData) {
             ComponentsCommunication.functionRequest(
                 this.name,
                 compName,
                 "loadComponentDataOfProject",
-                [project._id, project.compoenentsData[compName]]
+                [project._id, project.componentsData[compName]]
             );
         }
 
         // TODO: remove on completion
-        project.compoenentsData = project.compoenentsData || {};
-        if (!("DomainsManager" in project.compoenentsData)) {
+        project.componentsData = project.componentsData || {};
+        if (!("DomainsManager" in project.componentsData)) {
             ComponentsCommunication.functionRequest(
                 this.name,
                 "DomainsManager",

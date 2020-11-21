@@ -12,6 +12,10 @@ class _VPLDomainElementsHolder {
         this._loadingMode = false;
     }
 
+    initialize(parent) {
+        this._parent = parent;
+    }
+
     initProject(projectId) {
         this._VPLElemsHandlingBlocksMap[projectId] = {};
         this._signalsToLoadMap[projectId] = [];
@@ -32,11 +36,12 @@ class _VPLDomainElementsHolder {
         this._loadingMode = mode;
     }
 
-    loadProjectVPLElemsHandlingBlocksMap(projectId, data) {
+    loadProject(projectId, data) {
         this.initProject(projectId);
         // load blocks
         this._VPLElemsHandlingBlocksMap[projectId] = data.VPLElemsHandlingBlocksMap;
-        // signals will be loaded through the signal virtual receive
+        // signals
+        this._signalsToLoadMap[projectId] = data.signals;
     }
 
     getBlocksToDomainElemsMap(projectId) {
@@ -88,7 +93,12 @@ class _VPLDomainElementsHolder {
     }
 
     receiveSignal(projectId, signal, data) {
-        this['receiveSignal_' + signal.actionName](projectId, signal.signalName, data);
+        if (!this.isOnLoadingMode()) {
+            this['receiveSignal_' + signal.actionName](projectId, signal.signalName, data);
+            this._parent.saveProjectComponentData(
+                projectId,
+                this.getProjectComponentsData(projectId));
+        }
     }
 }
 

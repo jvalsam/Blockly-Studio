@@ -386,6 +386,11 @@ function RequiredFunctionHelper(componentDest: string, funcName: string, argsLen
         funcMap[funcName] = new Array<ComponentFunction>();
     }
 
+    if (!Array.isArray(funcMap[funcName])) {
+        let array = [];
+        array[0] = funcMap[funcName];
+        funcMap[funcName] = array;
+    }
     funcMap[funcName].push(new ComponentFunction(componentDest, funcName, argsLen, isStatic));
     RequiredFunctionsHolder.put(componentSrc, funcMap);
 }
