@@ -476,10 +476,12 @@ class SuggestionPopup extends CollaborationPopup{
 
         $(".suggestion-tick").click(() => {
             this._onAcceptCb();
+            this.closePopup();
         });
 
         $(".suggestion-x").click(() => {
             this._onRejectCb();
+            this.closePopup();
         });
     }
 
@@ -542,6 +544,7 @@ class CollaborationSettingsPopup extends CollaborationPopup{
 
         button.click(()=>{
             this._onApplyCb(this._allSettings);
+            this.closePopup();
         });
 
     }
