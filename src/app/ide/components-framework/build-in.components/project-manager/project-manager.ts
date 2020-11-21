@@ -1100,6 +1100,14 @@ export class ProjectManager extends IDEUIComponent {
     // Action could be prevent using the pre function
 
     private onProjectElementActionPrevious(projectElement, action, onSuccess) {
+        let elementType = projectElement._meta.type;
+        let projectItemConf = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [ elementType ]
+        ).value;
+
         switch(action) {
             case 'delete':
                 onSuccess();
@@ -1116,6 +1124,14 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private onProjectElementActionAfter(projectElement, action, onSuccess) {
+        let elementType = projectElement._meta.type;
+        let projectItemConf = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [ elementType ]
+        ).value;
+
         switch(action) {
             case 'delete':
                 onSuccess();

@@ -16,6 +16,33 @@ export const SmartGroup = {
                           // same use in the template as selector!
                           // e.g. "ec-blockly-task__2"
     ],
+    // defined which are the domain element types are able to be exported in this visual source
+    handledDomainElems: [
+        'SmartGroup'
+    ],
+    actionsHandling: {
+        // call after fill-in data
+        createPrevious: () => {
+
+        },
+        createAfter: () => {
+
+        },
+        // call before fill-in the data
+        deletePrevious: () => {
+
+        },
+        deleteAfter: () => {
+
+        },
+        // call after fill-in data
+        renamePrevious: () => {
+
+        },
+        renameAfter: () => {
+
+        }
+    },
     // Editor Layout handles to render and load the respective template
     // and inject the editor parts of the project item
     view: {

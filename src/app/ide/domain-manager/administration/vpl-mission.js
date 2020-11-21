@@ -524,12 +524,10 @@ export class VPLMission {
     constructor(
         name,
         items, // [ {name, colour*, elements*, path}, ... ]
-        handledDomainElems,
         editors,
         vplDomainElems
     ) {
         this._name = name;
-        this._handledDomainElems = handledDomainElems;
         this._editors = editors;
         this._toolbox = new VPLToolbox(items, vplDomainElems, this);
     }
@@ -541,10 +539,6 @@ export class VPLMission {
     //TODO: toolbox could be blockly or other editor
     get toolbox() {
         return this._toolbox.blocklyToolbox;
-    }
-
-    get handledDomainElems() {
-        return this._handledDomainElems;
     }
 
     get editors() {
