@@ -40,9 +40,31 @@
 }
 
 /* Select groups Modal */
-.table-row-mini {
-  padding: 0rem !important;
-  border-top: none !important;
+
+.selection-group-so-properties-table {
+  max-width: fit-content;
+}
+
+.selection-group-so-properties-table th {
+  padding: 0.2rem !important;
+}
+
+.selection-group-so-properties-table td {
+  padding: 0.2rem !important;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: #8e8c8c;
+}
+
+.nav-group-selection-list {
+  color: #616161;
+}
+
+.nav-group-selection-list:hover {
+  color: #585858 !important;
+  font-weight: 500;
 }
 
 .select-group-bubbles {
@@ -71,4 +93,10 @@
 
 .select-groups-differences-table td {
   padding: 0.3rem;
+}
+
+.select-groups-differences-table select {
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+  height: 0%;
 }

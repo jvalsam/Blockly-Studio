@@ -22,105 +22,6 @@ let CreateDOMElement = function (type, options) {
 
 // ...
 
-let CreateEditPropertyAliasModal = function (selector) {
-  let modal = CreateDOMElement("div", {
-    classList: ["modal", "fade"],
-    id: "editAlias-modal",
-  });
-  modal.setAttribute("tabindex", "-1");
-  modal.setAttribute("role", "dialog");
-  modal.setAttribute("aria-hidden", "true");
-  selector.appendChild(modal);
-
-  let modalDialog = CreateDOMElement("div", { classList: ["modal-dialog"] });
-  modalDialog.setAttribute("role", "document");
-  modal.appendChild(modalDialog);
-
-  let modalContent = CreateDOMElement("div", { classList: ["modal-content"] });
-  modalDialog.appendChild(modalContent);
-
-  let modalHeader = CreateDOMElement("div", { classList: ["modal-header"] });
-  modalContent.appendChild(modalHeader);
-
-  let modalTitle = CreateDOMElement("h5", {
-    classList: ["modal-title"],
-    id: "editAlias-modal-title",
-  });
-  modalHeader.appendChild(modalTitle);
-
-  let closeModal = CreateDOMElement("button", { classList: ["close"] });
-  closeModal.setAttribute("type", "button");
-  closeModal.setAttribute("data-dismiss", "modal");
-  closeModal.setAttribute("aria-label", "Close");
-  modalHeader.appendChild(closeModal);
-
-  let closeSpan = CreateDOMElement("span");
-  closeSpan.setAttribute("aria-hidden", "true");
-  closeSpan.innerHTML = "&times;";
-  closeModal.appendChild(closeSpan);
-
-  let modalBody = CreateDOMElement("div", {
-    classList: ["modal-body"],
-    id: "editAlias-modal-body",
-  });
-  modalContent.appendChild(modalBody);
-
-  // Alias
-  let outterInputDiv = CreateDOMElement("div", {
-    classList: ["input-group", "mb-3"],
-  });
-  modalBody.appendChild(outterInputDiv);
-
-  let inputGroup = CreateDOMElement("div", {
-    classList: ["input-group-prepend"],
-  });
-  outterInputDiv.appendChild(inputGroup);
-
-  let inputGroupAliasTag = CreateDOMElement("div", {
-    classList: ["input-group-text"],
-    id: "editAlias-modal-alias-tag",
-    innerHtml: "Name",
-  });
-  inputGroup.appendChild(inputGroupAliasTag);
-
-  let inputPropertyAlias = CreateDOMElement("input", {
-    classList: ["form-control"],
-    id: "editAlias-modal-aliasInput",
-  });
-  inputPropertyAlias.setAttribute("aria-label", "editAlias-modal-aliasInput");
-  inputPropertyAlias.setAttribute("aria-describedby", "basic-addon1");
-  outterInputDiv.appendChild(inputPropertyAlias);
-
-  let modalFooter = CreateDOMElement("div", { classList: ["modal-footer"] });
-  modalContent.appendChild(modalFooter);
-
-  let cancelButton = CreateDOMElement("button", {
-    classList: ["btn", "btn-secondary"],
-    innerHtml: "Cancel",
-  });
-  cancelButton.setAttribute("type", "button");
-  // cancelButton.addEventListener('click', onFail);
-  cancelButton.setAttribute("data-dismiss", "modal");
-  modalFooter.appendChild(cancelButton);
-
-  let confirmButton = CreateDOMElement("div", {
-    classList: ["btn", "btn-primary"],
-    id: "editAlias-modal-confirm-button",
-    innerHtml: "Confirm",
-  });
-  confirmButton.setAttribute("type", "button");
-  // confirmButton.addEventListener('click', () => {
-  //     onSucess(
-  //         {
-  //             vplElement: elem,
-  //             name: document.getElementById('resource-name').value,
-  //             image: document.getElementById('resource-image').value,
-  //             color: document.getElementById('resource-color').value
-  //         });
-  // });
-  modalFooter.appendChild(confirmButton);
-};
-
 let CreateInputForModal = function (
   selector,
   inputName,
@@ -167,7 +68,7 @@ let CreateModal = function (dom, idPrefix) {
   dom.appendChild(modal);
 
   let modalDialog = CreateDOMElement("div", {
-    classList: ["modal-dialog", "modal-xl"],
+    classList: ["modal-dialog", "modal-lg"],
   });
   modalDialog.setAttribute("role", "document");
   modal.appendChild(modalDialog);
@@ -224,6 +125,21 @@ let CreateModal = function (dom, idPrefix) {
   modalFooter.appendChild(confirmButton);
 };
 
+let ClearModal = function (idPrefix) {
+  idPrefix + "-modal-title";
+  idPrefix + "-modal-body";
+  idPrefix + "-modal-cancel-button";
+  idPrefix + "-modal-confirm-button";
+
+  document.getElementById(idPrefix + "-modal-title").innerHTML = "";
+  document.getElementById(idPrefix + "-modal-body").innerHTML = "";
+  document.getElementById(idPrefix + "-modal-cancel-button").innerHTML =
+    "Cancel";
+  document.getElementById(idPrefix + "-modal-confirm-button").innerHTML =
+    "Confirm";
+};
+
+/* Start functions for selection group modal */
 let CheckAndGetUnmatchedProperties = function (
   smartObjectDetails,
   smartGrouptDetails
@@ -309,28 +225,28 @@ let CompareGroupsWithSO = function (smartObjectElemData, groupsVPLElements) {
   let smartObjectDetails = smartObjectElemData.editorData.details;
   let result = { matched: [], unmatched: [], unmatchedInLength: [] };
   let soName = smartObjectElemData.name;
-  let tmpObject = {},
-    firstItem,
-    smartGroupName,
-    smartGroupDetails,
-    checkUnmatchedProperties;
 
   for (const group of groupsVPLElements) {
-    firstItem = Object.keys(group._editorsData.items)[0];
-    smartGroupName = group._editorsData.items[firstItem].title;
-    smartGroupDetails = group._editorsData.items[firstItem].details;
+    let firstItem = Object.keys(group._editorsData.items)[0];
+    let smartGroupName = group._editorsData.items[firstItem].title;
+    let smartGroupDetails = group._editorsData.items[firstItem].details;
+    let smartGroupID = group._editorsData.items[firstItem].systemID.split(
+      "SmartObjectVPLEditor_"
+    )[1];
 
-    checkUnmatchedProperties = CheckAndGetUnmatchedProperties(
+    let checkUnmatchedProperties = CheckAndGetUnmatchedProperties(
       smartObjectDetails,
       smartGroupDetails
     );
 
-    tmpObject = {};
+    let tmpObject = {};
     tmpObject.so = checkUnmatchedProperties.so;
     tmpObject.sg = checkUnmatchedProperties.sg;
     tmpObject.result = checkUnmatchedProperties.result;
     tmpObject._sgName = smartGroupName;
+    tmpObject._sgID = smartGroupID;
     tmpObject._soName = soName;
+
     result[tmpObject.result].push(tmpObject);
   }
   return result;
@@ -351,7 +267,8 @@ let CreateDifferencesTableInGroupSelection = function (
   elemName,
   props,
   isSO,
-  sgProps
+  sgProps,
+  updatedAliases
 ) {
   let tableDifferences = CreateDOMElement("table", {
     classList: [
@@ -420,9 +337,27 @@ let CreateDifferencesTableInGroupSelection = function (
 
       let selectForAlias = CreateDOMElement("select", {
         classList: ["custom-select", "mr-sm-2"],
+        id: "select-alias-" + soPropName.replace(/\s/g, ""),
       });
+      selectForAlias.onchange = () => {
+        let index = updatedAliases.findIndex(
+          (x) => x.old === props[i][Object.keys(props[i])[0]]
+        );
+        updatedAliases[index].new = document.getElementById(
+          "select-alias-" + soPropName.replace(/\s/g, "")
+        ).value;
+      };
       selectForAlias.style.width = "auto";
       tdSOAlias.appendChild(selectForAlias);
+
+      // default option with value the current alias of smart object
+      let option = CreateDOMElement("option", {
+        innerHtml: "select alias",
+      });
+      option.disabled = true;
+      option.setAttribute("selected", "selected");
+      option.value = props[i][Object.keys(props[i])[0]];
+      selectForAlias.appendChild(option);
 
       CreateOptionsForSelectionsOfSGProps(selectForAlias, sgProps);
     } else {
@@ -433,7 +368,7 @@ let CreateDifferencesTableInGroupSelection = function (
   }
 };
 
-export function RenderSelectGroupsModal(
+export function CreateAndRenderSelectGroupsModal(
   sovplelemInst,
   groupsVPLElements,
   onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
@@ -445,28 +380,101 @@ export function RenderSelectGroupsModal(
     "select-group"
   );
 
+  RenderSelectGroupsModal(
+    document.getElementById("select-group-modal"),
+    sovplelemInst,
+    groupsVPLElements,
+    onSuccess // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+  );
+
+  // Destroy on close
+  $("#select-group-modal").on("hidden.bs.modal", function () {
+    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+      "";
+    onSkip();
+  });
+
+  $("#select-group-modal").modal("show");
+}
+
+function RenderSelectGroupsModal(
+  domSelector,
+  sovplelemInst,
+  groupsVPLElements,
+  onSuccess // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+) {
+  let updatedAliases = [];
+
+  // clear Modal
+  ClearModal("select-group");
+
   // fill modal
   document.getElementById("select-group-modal-title").innerHTML =
-    "Select Group(s)";
+    "Select Group(s) for " + sovplelemInst.elemData.name;
   let modalBody = document.getElementById("select-group-modal-body");
   let properties = sovplelemInst.elemData.editorData.details.properties;
   let mapPropsAlias = sovplelemInst.elemData.editorData.details.mapPropsAlias;
-  let propertyHeader = CreateDOMElement("div", {
-    classList: ["h6"],
-    innerHtml: "Properties",
+
+  let soPropertiesDiv = CreateDOMElement("div", {
+    classList: ["pb-3"],
   });
-  // propertyHeader.style.paddingBottom = ".5rem";
-  modalBody.appendChild(propertyHeader);
+  // soPropertiesDiv.style.paddingBottom = ".5rem";
+  modalBody.appendChild(soPropertiesDiv);
+
+  let foldPropertiesSpanForIcon = CreateDOMElement("span");
+  foldPropertiesSpanForIcon.style.cursor = "pointer";
+  foldPropertiesSpanForIcon.onclick = () => {
+    if (
+      document
+        .getElementById("fold-so-properties-icon")
+        .classList.contains("fa-caret-down")
+    ) {
+      // change icon
+      foldPropertiesIcon.classList.remove("fa-caret-down");
+      foldPropertiesIcon.classList.add("fa-caret-right");
+      // remove padding bottom from soPropertiesDiv
+      soPropertiesDiv.classList.remove("pb-3");
+      // hide properties' area
+      propertiesArea.style.display = "none";
+    } else {
+      // change icon
+      foldPropertiesIcon.classList.remove("fa-caret-right");
+      foldPropertiesIcon.classList.add("fa-caret-down");
+      // add padding bottom to soPropertiesDiv
+      soPropertiesDiv.classList.add("pb-3");
+      // show properties' area
+      propertiesArea.style.display = "block";
+    }
+  };
+  soPropertiesDiv.appendChild(foldPropertiesSpanForIcon);
+
+  let foldPropertiesIcon = CreateDOMElement("i", {
+    classList: ["fas", "fa-caret-down", "fa-lg"],
+    id: "fold-so-properties-icon",
+  });
+  foldPropertiesSpanForIcon.appendChild(foldPropertiesIcon);
+
+  let soPropertiesHeader = CreateDOMElement("span", {
+    classList: ["h5", "ml-2"],
+    innerHtml: "Smart Object Properties",
+  });
+  soPropertiesDiv.appendChild(soPropertiesHeader);
 
   // Property Area folded
   let propertiesArea = CreateDOMElement("div");
   propertiesArea.style.maxHeight = "15rem";
   propertiesArea.style.overflowY = "auto";
-  propertiesArea.style.display = "none";
+  // propertiesArea.style.display = "none";
   modalBody.appendChild(propertiesArea);
 
+  // Create table for properties
   let table = CreateDOMElement("table", {
-    classList: ["table", "table-striped"],
+    classList: [
+      "table",
+      "table-striped",
+      "table-bordered",
+      "selection-group-so-properties-table",
+    ],
   });
   propertiesArea.appendChild(table);
 
@@ -477,14 +485,12 @@ export function RenderSelectGroupsModal(
   tHead.appendChild(trHead);
 
   let thName = CreateDOMElement("th", {
-    classList: ["table-row-mini"],
     innerHtml: "Property",
   });
   thName.setAttribute("scope", "col");
   trHead.appendChild(thName);
 
   let thAlias = CreateDOMElement("th", {
-    classList: ["table-row-mini"],
     innerHtml: "Alias",
   });
   thAlias.setAttribute("scope", "col");
@@ -499,16 +505,21 @@ export function RenderSelectGroupsModal(
     tBody.appendChild(trProp);
 
     let tdPropName = CreateDOMElement("td", {
-      classList: ["table-row-mini"],
       innerHtml: property.name,
     });
     trProp.appendChild(tdPropName);
 
     let tdPropAlias = CreateDOMElement("td", {
-      classList: ["table-row-mini"],
       innerHtml: mapPropsAlias[property.name],
     });
     trProp.appendChild(tdPropAlias);
+
+    // init updated alliases for smart object
+    updatedAliases.push({
+      old: mapPropsAlias[property.name],
+      new: mapPropsAlias[property.name],
+      property: property.name,
+    });
   }
 
   let hr = CreateDOMElement("hr");
@@ -528,27 +539,44 @@ export function RenderSelectGroupsModal(
 
   let groupsMatchArea = CreateDOMElement("div");
   modalBody.appendChild(groupsMatchArea);
+
   hr = CreateDOMElement("hr");
   modalBody.appendChild(hr);
 
-  let matchedGroupRow = CreateDOMElement("div", { classList: ["row"] });
-  groupsMatchArea.appendChild(matchedGroupRow);
-
-  for (const matchedPair of comparedArray.matched) {
-    let matchedGroupCol = CreateDOMElement("div", { classList: ["col-sm-4"] });
-    matchedGroupRow.appendChild(matchedGroupCol);
-
-    let checkboxGroup = CreateDOMElement("input", {
-      id: "mathced-group-" + matchedPair._sgName,
+  // warning that there are not groups that match
+  if (comparedArray.matched.length === 0) {
+    let noGroupsMatched = CreateDOMElement("div", {
+      innerHtml: "There are no groups which are matched with the smart object",
     });
-    checkboxGroup.setAttribute("type", "checkbox");
-    matchedGroupCol.appendChild(checkboxGroup);
+    // noGroupsMatched.style.fontSize = "";
+    groupsMatchArea.appendChild(noGroupsMatched);
+  } else {
+    let matchedGroupRow = CreateDOMElement("div", { classList: ["row"] });
+    groupsMatchArea.appendChild(matchedGroupRow);
 
-    let labelForGroup = CreateDOMElement("label", {
-      innerHtml: matchedPair._sgName,
-    });
-    labelForGroup.setAttribute("for", "mathced-group-" + matchedPair._sgName);
-    matchedGroupCol.appendChild(labelForGroup);
+    for (const matchedPair of comparedArray.matched) {
+      let matchedGroupCol = CreateDOMElement("div", {
+        classList: ["col-sm-4"],
+      });
+      matchedGroupRow.appendChild(matchedGroupCol);
+
+      let checkboxGroup = CreateDOMElement("input", {
+        id: "mathced-group-" + matchedPair._sgName.replace(/\s/g, ""),
+      });
+      checkboxGroup.setAttribute("type", "checkbox");
+      matchedGroupCol.appendChild(checkboxGroup);
+
+      let labelForGroup = CreateDOMElement("label", {
+        innerHtml: matchedPair._sgName,
+      });
+      labelForGroup.style.marginLeft = ".2rem";
+      labelForGroup.setAttribute(
+        "for",
+        "mathced-group-" + matchedPair._sgName.replace(/\s/g, "")
+      );
+
+      matchedGroupCol.appendChild(labelForGroup);
+    }
   }
   /*  End Groups that matched with so */
 
@@ -559,102 +587,202 @@ export function RenderSelectGroupsModal(
   });
   modalBody.appendChild(groupsNotMatchHeader);
 
-  let groupsNotMatchArea = CreateDOMElement("div", { classList: ["row"] });
+  let groupsNotMatchArea = CreateDOMElement("div");
   modalBody.appendChild(groupsNotMatchArea);
 
-  let unmatchedGroupsCol = CreateDOMElement("div", { classList: ["col-3"] });
-  groupsNotMatchArea.appendChild(unmatchedGroupsCol);
-
-  let navDiv = CreateDOMElement("div", {
-    classList: ["nav", "flex-column", "nav-pills"],
-  });
-  navDiv.setAttribute("role", "tablist");
-  navDiv.setAttribute("aria-orientation", "vertical");
-  unmatchedGroupsCol.appendChild(navDiv);
-
-  let unmatchedGroupsInfoCol = CreateDOMElement("div", { classList: ["col"] });
-  groupsNotMatchArea.appendChild(unmatchedGroupsInfoCol);
-
-  let unmatchedGroupsInfoContent = CreateDOMElement("div", {
-    classList: ["tab-content"],
-    id: "v-pills-tabContent",
-  });
-  unmatchedGroupsInfoCol.appendChild(unmatchedGroupsInfoContent);
-
-  for (let i = 0; i < comparedArray.unmatched.length; ++i) {
-    let unmatchedPair = comparedArray.unmatched[i];
-    let aNav = CreateDOMElement("a", {
-      classList: ["nav-link"],
-      id: "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "") + "-tab",
-      innerHtml: unmatchedPair._sgName,
+  if (
+    comparedArray.unmatched.length === 0 &&
+    comparedArray.unmatchedInLength.length === 0
+  ) {
+    let noGroupsUnMatched = CreateDOMElement("div", {
+      innerHtml:
+        "There are no groups which are not matched with the smart object",
     });
-    aNav.setAttribute("data-toggle", "pill");
-    aNav.setAttribute(
-      "href",
-      "#v-pills-" + unmatchedPair._sgName.replace(/\s/g, "")
-    );
-    aNav.setAttribute("role", "tab");
-    aNav.setAttribute(
-      "aria-controls",
-      "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "")
-    );
-    aNav.setAttribute("aria-selected", "true");
-    navDiv.appendChild(aNav);
+    // noGroupsMatched.style.fontSize = "";
+    groupsNotMatchArea.appendChild(noGroupsUnMatched);
+  } else {
+    let unmatchedGroupsRow = CreateDOMElement("div", { classList: ["row"] });
+    groupsNotMatchArea.appendChild(unmatchedGroupsRow);
 
-    let tabPane = CreateDOMElement("div", {
-      classList: ["tab-pane", "fade"],
-      id: "v-pills-" + unmatchedPair._sgName.replace(/\s/g, ""),
+    let unmatchedGroupsCol = CreateDOMElement("div", {
+      classList: ["col-3"],
     });
-    tabPane.setAttribute("role", "tabpanel");
-    tabPane.setAttribute(
-      "aria-labelledby",
-      "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "") + "-tab"
-    );
-    unmatchedGroupsInfoContent.appendChild(tabPane);
+    unmatchedGroupsCol.style.borderRight = "1px solid #8e8c8c";
+    unmatchedGroupsRow.appendChild(unmatchedGroupsCol);
 
-    let tabPaneRow = CreateDOMElement("div", { classList: ["row"] });
-    tabPane.appendChild(tabPaneRow);
+    let navDiv = CreateDOMElement("div", {
+      classList: ["nav", "flex-column", "nav-pills"],
+    });
+    navDiv.setAttribute("role", "tablist");
+    navDiv.setAttribute("aria-orientation", "vertical");
+    unmatchedGroupsCol.appendChild(navDiv);
 
-    let firstTableCol = CreateDOMElement("div", { classList: ["col"] });
-    tabPaneRow.appendChild(firstTableCol);
+    let unmatchedGroupsInfoCol = CreateDOMElement("div", {
+      classList: ["col"],
+    });
+    unmatchedGroupsRow.appendChild(unmatchedGroupsInfoCol);
+    let unmatchedGroupsInfoContent = CreateDOMElement("div", {
+      classList: ["tab-content"],
+      id: "v-pills-tabContent",
+    });
+    unmatchedGroupsInfoCol.appendChild(unmatchedGroupsInfoContent);
 
-    CreateDifferencesTableInGroupSelection(
-      firstTableCol,
-      unmatchedPair._sgName,
-      unmatchedPair.sg,
-      false
-    );
+    for (let i = 0; i < comparedArray.unmatched.length; ++i) {
+      let unmatchedPair = comparedArray.unmatched[i];
+      let aNav = CreateDOMElement("a", {
+        classList: ["nav-link", "nav-group-selection-list"],
+        id: "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "") + "-tab",
+        innerHtml: unmatchedPair._sgName,
+      });
+      aNav.setAttribute("data-toggle", "pill");
+      aNav.setAttribute(
+        "href",
+        "#v-pills-" + unmatchedPair._sgName.replace(/\s/g, "")
+      );
+      aNav.setAttribute("role", "tab");
+      aNav.setAttribute(
+        "aria-controls",
+        "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "")
+      );
+      aNav.setAttribute("aria-selected", "true");
+      navDiv.appendChild(aNav);
 
-    let secondTableCol = CreateDOMElement("div", { classList: ["col"] });
-    tabPaneRow.appendChild(secondTableCol);
+      let tabPane = CreateDOMElement("div", {
+        classList: ["tab-pane", "fade"],
+        id: "v-pills-" + unmatchedPair._sgName.replace(/\s/g, ""),
+      });
+      tabPane.setAttribute("role", "tabpanel");
+      tabPane.setAttribute(
+        "aria-labelledby",
+        "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "") + "-tab"
+      );
+      unmatchedGroupsInfoContent.appendChild(tabPane);
 
-    CreateDifferencesTableInGroupSelection(
-      secondTableCol,
-      unmatchedPair._soName,
-      unmatchedPair.so,
-      true,
-      unmatchedPair.sg
-    );
+      let tabPaneRow = CreateDOMElement("div", { classList: ["row"] });
+      tabPane.appendChild(tabPaneRow);
 
-    if (i === 0) {
-      aNav.classList.add("active");
-      tabPane.classList.add("show");
-      tabPane.classList.add("active");
+      let firstTableCol = CreateDOMElement("div", { classList: ["col"] });
+      firstTableCol.style.maxWidth = "fit-content";
+      tabPaneRow.appendChild(firstTableCol);
+
+      CreateDifferencesTableInGroupSelection(
+        firstTableCol,
+        unmatchedPair._sgName,
+        unmatchedPair.sg,
+        false
+      );
+
+      let secondTableCol = CreateDOMElement("div", { classList: ["col"] });
+      secondTableCol.style.maxWidth = "fit-content";
+      tabPaneRow.appendChild(secondTableCol);
+
+      CreateDifferencesTableInGroupSelection(
+        secondTableCol,
+        unmatchedPair._soName,
+        unmatchedPair.so,
+        true,
+        unmatchedPair.sg,
+        updatedAliases
+      );
+
+      let matchButton = CreateDOMElement("button", {
+        classList: ["btn", "btn-info", "float-right"],
+        innerHtml: "Apply",
+      });
+      matchButton.onclick = () => {
+        // update mapPropAlias of smartobject to re-render modal
+        for (const aliasPair of updatedAliases) {
+          sovplelemInst.elemData.editorData.details.mapPropsAlias[
+            aliasPair.property
+          ] = aliasPair.new;
+        }
+
+        // re-render modal
+        RenderSelectGroupsModal(
+          domSelector,
+          sovplelemInst,
+          groupsVPLElements,
+          onSuccess
+        );
+      };
+      secondTableCol.appendChild(matchButton);
+
+      if (i === 0) {
+        aNav.classList.add("active");
+        tabPane.classList.add("show");
+        tabPane.classList.add("active");
+      }
+    }
+
+    for (let i = 0; i < comparedArray.unmatchedInLength.length; ++i) {
+      let unmatchedPair = comparedArray.unmatchedInLength[i];
+      let aNav = CreateDOMElement("a", {
+        classList: ["nav-link", "nav-group-selection-list"],
+        id: "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "") + "-tab",
+        innerHtml: unmatchedPair._sgName,
+      });
+      aNav.style.color = "rgb(202 202 202)";
+      aNav.setAttribute("data-toggle", "pill");
+      aNav.setAttribute(
+        "href",
+        "#v-pills-" + unmatchedPair._sgName.replace(/\s/g, "")
+      );
+      aNav.setAttribute("role", "tab");
+      aNav.setAttribute(
+        "aria-controls",
+        "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "")
+      );
+      aNav.setAttribute("aria-selected", "true");
+      navDiv.appendChild(aNav);
+
+      let tabPane = CreateDOMElement("div", {
+        classList: ["tab-pane", "fade"],
+        id: "v-pills-" + unmatchedPair._sgName.replace(/\s/g, ""),
+      });
+      tabPane.setAttribute("role", "tabpanel");
+      tabPane.setAttribute(
+        "aria-labelledby",
+        "v-pills-" + unmatchedPair._sgName.replace(/\s/g, "") + "-tab"
+      );
+      unmatchedGroupsInfoContent.appendChild(tabPane);
+
+      let tabPaneContent = CreateDOMElement("div", {
+        innerHtml:
+          "This group cannot be matched with the smart object because of difference in properties length",
+      });
+      tabPaneContent.style.fontStyle = "italic";
+      tabPane.appendChild(tabPaneContent);
+
+      if (i === 0 && comparedArray.unmatched.length === 0) {
+        aNav.classList.add("active");
+        tabPane.classList.add("show");
+        tabPane.classList.add("active");
+      }
     }
   }
   /* End Groups that dont match with so */
 
-  // Destroy on close
-  $("#select-group-modal").on("hidden.bs.modal", function () {
+  // onclick confirm Button
+  document.getElementById("select-group-modal-confirm-button").innerHTML =
+    "End Selection";
+  document.getElementById("select-group-modal-confirm-button").onclick = () => {
+    let groups = [];
+    for (const matchedGroup of comparedArray.matched) {
+      if (
+        document.getElementById(
+          "mathced-group-" + matchedGroup._sgName.replace(/\s/g, "")
+        ).checked
+      ) {
+        groups.push({ id: matchedGroup._sgID, name: matchedGroup._sgName });
+      }
+    }
+    onSuccess(groups, updatedAliases);
     document.getElementsByClassName("modal-platform-container")[0].innerHTML =
       "";
-    onSkip();
-  });
-
-  $("#select-group-modal").modal("show");
-
-  // onSuccess([], []);
+    document.getElementsByClassName("modal-backdrop")[0].remove();
+  };
 }
+/* End functions for selection group modal */
 
 let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}

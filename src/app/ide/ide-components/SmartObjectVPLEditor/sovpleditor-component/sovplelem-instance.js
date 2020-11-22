@@ -1,7 +1,7 @@
 import {
   RenderSmartObject,
   RenderSmartGroup,
-  RenderSelectGroupsModal,
+  CreateAndRenderSelectGroupsModal,
 } from "./sovplelem-view";
 
 export const VPLElemNames = Object.freeze({
@@ -121,6 +121,7 @@ export class SOVPLElemInstance {
   }
 
   onCompletingSORegistration(callback) {
+    this.render();
     this.updateRegisteredDevices();
     this.parent.saveElement(this);
     callback();
@@ -153,7 +154,7 @@ export class SOVPLElemInstance {
     // post parent
     this.parent.registerSmartObject(this, (groups, onCompletion) => {
       // pop up to select groups
-      RenderSelectGroupsModal(
+      CreateAndRenderSelectGroupsModal(
         this,
         groups,
         (groups, listUpdatedAliases) =>
