@@ -295,10 +295,8 @@ export class VPLDomainElementHandler {
             this._items[data.domainElementId].elements[blocklyElem] = createdItems;
         }
         
-        if (!VPLDomainElementsHolder.isOnLoadingMode()) {
-            for (let mission in this._missionsRef) {
-                this._missionsRef[mission].onCreate(this._items[data.domainElementId]);
-            }
+        for (let mission in this._missionsRef) {
+            this._missionsRef[mission].onCreate(this._items[data.domainElementId]);
         }
     }
 

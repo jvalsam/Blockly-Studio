@@ -1099,51 +1099,20 @@ export class ProjectManager extends IDEUIComponent {
     // Default functionality: post signals of edit/delete and fix it for the project manager
     // Action could be prevent using the pre function
 
-    private onProjectElementActionPrevious(projectElement, action, onSuccess) {
-        let elementType = projectElement._meta.type;
-        let projectItemConf = ComponentsCommunication.functionRequest(
+    private onProjectElementAction(pelem, action, when, onSuccess) {
+        let elementType = pelem._meta.type;
+        let pitemAuthored = ComponentsCommunication.functionRequest(
             this.name,
             "DomainsManager",
             "getProjectItem",
             [ elementType ]
         ).value;
 
-        switch(action) {
-            case 'delete':
-                onSuccess();
-                break;
-            case 'rename':
-                onSuccess();
-                break;
-            default:
-                throw new Error(
-                    "Project Element Action After: "
-                    + action
-                    + " is not supported action for project element.");
+        try {
+            pitemAuthored.actionsHandling[action + when] (pelem, onSuccess);
         }
-    }
-
-    private onProjectElementActionAfter(projectElement, action, onSuccess) {
-        let elementType = projectElement._meta.type;
-        let projectItemConf = ComponentsCommunication.functionRequest(
-            this.name,
-            "DomainsManager",
-            "getProjectItem",
-            [ elementType ]
-        ).value;
-
-        switch(action) {
-            case 'delete':
-                onSuccess();
-                break;
-            case 'rename':
-                onSuccess();
-                break;
-            default:
-                throw new Error(
-                    "Project Element Action After: "
-                    + action
-                    + " is not supported action for project element.");
+        catch (error) {
+            console.warn(error);
         }
     }
 
@@ -1151,9 +1120,10 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public onRemoveElement(event: IEventData, concerned: ProjectManagerItemView): void {
-        this.onProjectElementActionPrevious(
+        this.onProjectElementAction(
             concerned,
             'delete',
+            'Previous',
             () => {
                 this.currModalData = {
                     itemData: Object.assign({}, concerned.itemData()),
@@ -1180,9 +1150,10 @@ export class ProjectManager extends IDEUIComponent {
                                 choice: "Yes",
                                 type: "submit",
                                 providedBy: "creator",
-                                callback: () => this.onProjectElementActionAfter(
+                                callback: () => this.onProjectElementAction(
                                         concerned,
                                         'delete',
+                                        'After',
                                         () => this.onDeleteElementLocal(concerned))
                             }
                         ]
@@ -1305,9 +1276,10 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
-        this.onProjectElementActionPrevious(
+        this.onProjectElementAction(
             concerned,
             'rename',
+            'Previous',
             () => {
                 let projInstView = (<ProjectManagerJSTreeView>this._view)
                     .getProject(concerned["project"].projectID);
@@ -1346,9 +1318,10 @@ export class ProjectManager extends IDEUIComponent {
                                         callback
                                     ),
                                     callback: (data) => {
-                                        this.onProjectElementActionAfter(
+                                        this.onProjectElementAction(
                                             concerned,
                                             'rename',
+                                            'After',
                                             () => this.renameElementLocal(concerned, data)
                                         );
                                     }

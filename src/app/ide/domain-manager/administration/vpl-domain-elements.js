@@ -129,7 +129,9 @@ export class VPLDomainElements {
         if (name in this.vplProjectItems) {
             let info = {
                 editorConfigs: {},
-                view: this.vplProjectItems[name].view
+                view: this.vplProjectItems[name].view,
+                actionsHandling: this.vplProjectItems[name]._actionsHandling,
+                handledDomainElems: this.vplProjectItems[name]._handledDomainElems
             };
 
             this.vplProjectItems[name].editorsConfig.forEach(

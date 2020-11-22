@@ -24,25 +24,31 @@ export const SmartObject = {
     ],
     actionsHandling: {
         // call after fill-in data
-        createPrevious: () => {
-
+        createPrevious: (pelem, onsuccess) => {
+            alert('create previous is not implemented yet.');
+            onsuccess();
         },
-        createAfter: () => {
-
+        createAfter: (pelem, onsuccess) => {
+            alert('create after is not implemented yet.');
+            onsuccess();
         },
         // call before fill-in the data
-        deletePrevious: () => {
-
+        deletePrevious: (pelem, onsuccess) => {
+            alert('delete previous is not implemented yet.');
+            onsuccess();
         },
-        deleteAfter: () => {
-
+        deleteAfter: (pelem, onsuccess) => {
+            alert('delete after is not implemented yet.');
+            onsuccess();
         },
         // call after fill-in data
-        renamePrevious: () => {
-
+        renamePrevious: (pelem, onsuccess) => {
+            alert('rename previous is not implemented yet.');
+            onsuccess();
         },
-        renameAfter: () => {
-
+        renameAfter: (pelem, onsuccess) => {
+            alert('rename after is not implemented yet.');
+            onsuccess();
         }
     },
     view: {

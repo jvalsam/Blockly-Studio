@@ -117,6 +117,7 @@ export class DomainsManager extends IDEComponent {
             projectId,
             componentsData.signals
         );
+        VPLDomainElementsHolder.updateToolboxesAndRemove();
         VPLDomainElementsHolder.setLoadingMode(false);
     }
 

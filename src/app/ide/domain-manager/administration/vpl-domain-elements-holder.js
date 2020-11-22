@@ -10,6 +10,7 @@ class _VPLDomainElementsHolder {
                                      //     domainElemType: string,
                                      //     ...rest data }
         this._loadingMode = false;
+        this._missionsToUpdate = {};
     }
 
     initialize(parent) {
@@ -98,6 +99,17 @@ class _VPLDomainElementsHolder {
             this._parent.saveProjectComponentData(
                 projectId,
                 this.getProjectComponentsData(projectId));
+        }
+    }
+
+    bookMissionToUpdate(mission, callback) {
+        this._missionsToUpdate[mission] = callback;
+    }
+
+    updateToolboxesAndRemove() {
+        for (const elem in this._missionsToUpdate) {
+            this._missionsToUpdate[elem] ();
+            delete this._missionsToUpdate[elem];
         }
     }
 }

@@ -2,6 +2,7 @@ import { assert } from './../common/assert';
 import { VPLBlocklyMultiElementHandler } from './vpl-blockly-element';
 import { genPredefinedCategoriesToolbox } from '../common/general-blockly-toolbox';
 import { VPLDomainElementsManager } from './vpl-domain-elements-manager';
+import { VPLDomainElementsHolder } from "./vpl-domain-elements-holder";
 
 //TODO: toolbox could be blockly or other editor
 class VPLToolbox {
@@ -550,13 +551,19 @@ export class VPLMission {
     }
 
     onUpdateToolbox() {
-        this._toolbox.generateBlocklyToolbox();
-
-        VPLDomainElementsManager.updateToolbox(
-            this._name,
-            this._toolbox.blocklyToolbox,
-            this._editors
-        );
+        if (VPLDomainElementsHolder.isOnLoadingMode()) {
+            VPLDomainElementsHolder.bookMissionToUpdate(
+                this.name,
+                () => this._toolbox.generateBlocklyToolbox());
+        }
+        else {
+            this._toolbox.generateBlocklyToolbox();
+            VPLDomainElementsManager.updateToolbox(
+                this._name,
+                this._toolbox.blocklyToolbox,
+                this._editors
+            );
+        }
     }
 
     // callback notifications for element actions...
