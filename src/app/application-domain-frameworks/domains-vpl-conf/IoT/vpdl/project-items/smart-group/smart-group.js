@@ -22,25 +22,25 @@ export const SmartGroup = {
     ],
     actionsHandling: {
         // call after fill-in data
-        createPrevious: () => {
-
+        createPrevious: (pelem, onsuccess) => {
+            onsuccess();
         },
-        createAfter: () => {
-
+        createAfter: (pelem, onsuccess) => {
+            onsuccess();
         },
         // call before fill-in the data
-        deletePrevious: () => {
-
+        deletePrevious: (pelem, onsuccess) => {
+            onsuccess();
         },
-        deleteAfter: () => {
-
+        deleteAfter: (pelem, onsuccess) => {
+            onsuccess();
         },
         // call after fill-in data
-        renamePrevious: () => {
-
+        renamePrevious: (pelem, onsuccess) => {
+            onsuccess();
         },
-        renameAfter: () => {
-
+        renameAfter: (pelem, onsuccess) => {
+            onsuccess();
         }
     },
     // Editor Layout handles to render and load the respective template

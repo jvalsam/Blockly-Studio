@@ -232,7 +232,7 @@ export class SmartObjectVPLEditor extends Editor {
         // this works because only one domain element is able to be created in one editor
         // this will need extra handling in case of other editors
         // they will have to generate different ids per vpl elem
-        
+
         // required fields:
         let domainElementId = data.elemData.editorData.editorId;
         data.elemData.editorData.domainElementId = domainElementId;
@@ -349,6 +349,38 @@ export class SmartObjectVPLEditor extends Editor {
       "getProjectItems",
       [projectId, "pi-smart-object"]
     ).value;
+  }
+
+  @RequiredFunction("BlocklyVPL", "getVisualSourcesUseDomainElementInstaceById")
+  onProjectElementActionsHandling(action, pelem, onSuccess) {
+    switch(action) {
+      case 'delete-previous':
+        let projectID = pelem._editorsData.projectID;
+        let smartObject = pelem._editorsData.items[Object.keys(pelem._editorsData.items)[0]];
+        let domainElementId = smartObject.domainElementId;
+
+        let visualSources = ComponentsCommunication.functionRequest(
+          this.name,
+          "BlocklyVPL",
+          "getVisualSourcesUseDomainElementInstaceById",
+          [
+            projectID,
+            domainElementId,
+            smartObject.domainElementType
+          ]
+        ).value;
+        
+
+        // TODO: check to delete
+        // in case it is ok, delete signal for the element + call on success
+        break;
+      case 'rename-after':
+        // TODO: check to rename
+        // signal to rename element + call on success
+        break;
+      default:
+        onSuccess();
+    }
   }
 
   @ExportedFunction

@@ -21,7 +21,6 @@ export class VPLDomainElements {
                 this.vplElems[vplElem.name] = ('blocklyElems' in vplElem)
                     ? new VPLDomainElementHandler(
                         vplElem.name,
-                        vplElem.uniqueInstance,
                         vplElem.blocklyElems,
                         vplElem.signals
                       )

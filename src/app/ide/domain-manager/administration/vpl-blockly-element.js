@@ -79,7 +79,7 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
     }
 
     _elemName(data) {
-        return data.domainElementId + '_' + this._name;
+        return data.domainElementId + '$' + this._name;
     }
 
     _blockDef(data) {
@@ -185,7 +185,7 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
         let codes = this._codeGen(data);
 
         for (let elem in blocks) {
-            let itemName = elemName + elem;
+            let itemName = elemName + '$' + elem;
 
             Blockly.Blocks[itemName] = blocks[elem];
             Blockly.JavaScript[itemName] = codes[elem];
@@ -236,7 +236,6 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
 export class VPLDomainElementHandler {
     constructor(
         name,
-        uniqueInstance,
         blocklyElems,
         signals
     ) {

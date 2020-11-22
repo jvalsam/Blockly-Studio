@@ -1,6 +1,8 @@
 /// <reference path="../../../../../../../../node.d.ts"/>
 import SmartObjectTaskTmpl from "./smart-object.tmpl";
 import SmartObjectTaskSYCSS from "./smart-object.sycss";
+import { ProjectElementActionsHandling } from "../../../../../../ide/ide-components/SmartObjectVPLEditor/sovpleditor-component/sovplelem-instance";
+
 
 export const SmartObject = {
     name: 'pi-smart-object',
@@ -25,30 +27,48 @@ export const SmartObject = {
     actionsHandling: {
         // call after fill-in data
         createPrevious: (pelem, onsuccess) => {
-            alert('create previous is not implemented yet.');
-            onsuccess();
+            ProjectElementActionsHandling(
+                'create-previous',
+                pelem,
+                onsuccess
+            );
         },
         createAfter: (pelem, onsuccess) => {
-            alert('create after is not implemented yet.');
-            onsuccess();
+            ProjectElementActionsHandling(
+                'create-after',
+                pelem,
+                onsuccess
+            );
         },
         // call before fill-in the data
         deletePrevious: (pelem, onsuccess) => {
-            alert('delete previous is not implemented yet.');
-            onsuccess();
+            ProjectElementActionsHandling(
+                'delete-previous',
+                pelem,
+                onsuccess
+            );
         },
         deleteAfter: (pelem, onsuccess) => {
-            alert('delete after is not implemented yet.');
-            onsuccess();
+            ProjectElementActionsHandling(
+                'delete-after',
+                pelem,
+                onsuccess
+            );
         },
         // call after fill-in data
         renamePrevious: (pelem, onsuccess) => {
-            alert('rename previous is not implemented yet.');
-            onsuccess();
+            ProjectElementActionsHandling(
+                'rename-previous',
+                pelem,
+                onsuccess
+            );
         },
         renameAfter: (pelem, onsuccess) => {
-            alert('rename after is not implemented yet.');
-            onsuccess();
+            ProjectElementActionsHandling(
+                'rename-after',
+                pelem,
+                onsuccess
+            );
         }
     },
     view: {

@@ -23,29 +23,38 @@ export class DomainBlockTracker {
         this.counter = data.counter || 0;
     }
 
-    fixMapInitiation(blockType, confName, editorId) {
-        this.domainElemsMap[confName] = this.domainElemsMap[confName] || {};
-        this.domainElemsMap[confName][editorId] = this.domainElemsMap[confName][editorId] || {};
-        this.domainElemsMap[confName][editorId].blockIds = this.domainElemsMap[confName][editorId].blockIds || {};
-        this.domainElemsMap[confName][editorId].blockIds[blockType] = [];
+    fixMapInitiation(domainElementInstId) {
+        this.domainElemsMap[domainElementInstId] = this.domainElemsMap[domainElementInstId] || {};
+        this.domainElemsMap[domainElementInstId].blocks = this.domainElemsMap[domainElementInstId].blocks || [];
     }
 
-    createBlockId (blockId, blockType, confName, editorId) {
-        this.fixMapInitiation(blockType, confName, editorId);
+    createBlockId (blockId, blockType, confName, editorId, pelemId, pelemName) {
+        let domainElementInstId = blockType.split('$')[0];
+
+        this.fixMapInitiation(domainElementInstId);
         
-        this.domainElemsMap[confName][editorId].blockIds[blockType].push(blockId);
+        this.domainElemsMap[domainElementInstId].blocks.push({
+                blockId: blockId,
+                conf: confName,
+                blockType: blockType,
+                pelemId: pelemId,
+                pelemName: pelemName,
+                editorId: editorId
+            });
 
         ++this.counter;
     }
 
-    deleteBlockId (blockId, blockType, confName, editorId) {
-        this.domainElemsMap[confName][editorId].blockIds[blockType].push(blockId);
+    deleteBlockId (blockId, domainElementInstId) {
+        let index = this.domainElemsMap[domainElementInstId].blocks.findIndex(x => x.blockId === blockId);
+        this.domainElemsMap[domainElementInstId].blocks.splice(index, 1);
+        
         --this.counter;
     }
 
     // requirements are not clear, we have all data...
     getBlocksWithType(type) {
-        
+
     }
 
     getBlocksOfEditor(confName, editorId) {
@@ -220,7 +229,6 @@ export class BlocklyInstance {
         if (resp || priv === Privillege.READ_ONLY) {
             return; // Don't mirror UI events.
         }
-        let blockType = this.wsp.getBlockById(event.blockId).type;
         
         this._syncWSP(event.toJson());
     }

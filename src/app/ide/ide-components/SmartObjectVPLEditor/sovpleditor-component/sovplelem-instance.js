@@ -32,6 +32,16 @@ const Privillege = Object.freeze({
   EDITING: "EDITING",
 });
 
+var SOVPLEditorComponent = null;
+
+export function ProjectElementActionsHandling (action, pelem, onSuccess) {
+  SOVPLEditorComponent.onProjectElementActionsHandling(
+    action,
+    pelem,
+    onSuccess
+  );
+}
+
 export class SOVPLElemInstance {
   constructor(
     parent,
@@ -41,7 +51,7 @@ export class SOVPLElemInstance {
     privillege,
     config
   ) {
-    this.parent = parent;
+    this.parent = SOVPLEditorComponent = parent;
     this.pitem = pitem;
     this.selector = selector;
     this.id = elemData.editorData.editorId;

@@ -174,13 +174,30 @@ export class BlocklyVPL extends Editor {
         let confName = pitem.pi._editorsData.items[id].confName;
         this.fixBlocksTrackerInit(projectId, elemName);
         this.domainElementTracker[projectId][elemName]
-          .createBlockId(event.blockId, block.type, confName, id);
+          .createBlockId(
+            event.blockId,
+            block.type,
+            confName,
+            id,
+            pitem.pi.systemId,
+            pitem.pi._jstreeNode.text);
         if (save) {
           let data = this.getProjectComponentData(projectId);
           data.domainElementTracker = this.domainElementTracker[projectId];
           this.saveProjectComponentData(projectId, data);
         }
       }
+    }
+  }
+
+  @ExportedFunction
+  public getVisualSourcesUseDomainElementInstaceById(projectId: string, domainElementId: string, domainElementType: string) {
+    let domainElem = this.domainElementTracker[projectId][domainElementType];
+    if (domainElem) {
+      return domainElem.domainElemsMap[domainElementId];
+    }
+    else {
+      return undefined;
     }
   }
 
