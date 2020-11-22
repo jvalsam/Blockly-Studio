@@ -337,22 +337,20 @@ let CreateDifferencesTableInGroupSelection = function (
 
       let selectForAlias = CreateDOMElement("select", {
         classList: ["custom-select", "mr-sm-2"],
-        id: "select-alias-" + soPropName.replace(/\s/g, ""),
+        // id: "select-alias-" + soPropName.replace(/\s/g, ""),
       });
       selectForAlias.onchange = () => {
         let index = updatedAliases.findIndex(
           (x) => x.old === props[i][Object.keys(props[i])[0]]
         );
-        updatedAliases[index].new = document.getElementById(
-          "select-alias-" + soPropName.replace(/\s/g, "")
-        ).value;
+        updatedAliases[index].new = selectForAlias.value;
       };
       selectForAlias.style.width = "auto";
       tdSOAlias.appendChild(selectForAlias);
 
       // default option with value the current alias of smart object
       let option = CreateDOMElement("option", {
-        innerHtml: "select alias",
+        innerHtml: "select",
       });
       option.disabled = true;
       option.setAttribute("selected", "selected");
@@ -531,26 +529,50 @@ function RenderSelectGroupsModal(
     groupsVPLElements
   );
 
-  let groupsMatchHeader = CreateDOMElement("div", {
+  let groupsMatchHeaderDiv = CreateDOMElement("div", { classList: ["pb-3"] });
+  modalBody.appendChild(groupsMatchHeaderDiv);
+
+  let groupsMatchHeader = CreateDOMElement("span", {
     classList: ["h5", "pb-3"],
     innerHtml: "Groups that match with your device",
   });
-  modalBody.appendChild(groupsMatchHeader);
+  groupsMatchHeaderDiv.appendChild(groupsMatchHeader);
 
   let groupsMatchArea = CreateDOMElement("div");
   modalBody.appendChild(groupsMatchArea);
-
-  hr = CreateDOMElement("hr");
-  modalBody.appendChild(hr);
 
   // warning that there are not groups that match
   if (comparedArray.matched.length === 0) {
     let noGroupsMatched = CreateDOMElement("div", {
       innerHtml: "There are no groups which are matched with the smart object",
     });
-    // noGroupsMatched.style.fontSize = "";
+    noGroupsMatched.style.fontStyle = "italic";
     groupsMatchArea.appendChild(noGroupsMatched);
   } else {
+    let selectAllGroupsDiv = CreateDOMElement("span");
+    selectAllGroupsDiv.style.marginLeft = "12.1rem";
+    groupsMatchHeaderDiv.appendChild(selectAllGroupsDiv);
+
+    let selectAllGroups = CreateDOMElement("input", {
+      id: "select-all-groups",
+    });
+    selectAllGroups.setAttribute("type", "checkbox");
+    selectAllGroups.onchange = () => {
+      for (const matchedPair of comparedArray.matched) {
+        document.getElementById(
+          "mathced-group-" + matchedPair._sgName.replace(/\s/g, "")
+        ).checked = selectAllGroups.checked;
+      }
+    };
+    selectAllGroupsDiv.appendChild(selectAllGroups);
+
+    let labelSelectAllGroups = CreateDOMElement("label", {
+      innerHtml: "Select all",
+    });
+    labelSelectAllGroups.setAttribute("for", "select-all-groups");
+    labelSelectAllGroups.style.marginLeft = ".2rem";
+    selectAllGroupsDiv.appendChild(labelSelectAllGroups);
+
     let matchedGroupRow = CreateDOMElement("div", { classList: ["row"] });
     groupsMatchArea.appendChild(matchedGroupRow);
 
@@ -570,14 +592,14 @@ function RenderSelectGroupsModal(
         innerHtml: matchedPair._sgName,
       });
       labelForGroup.style.marginLeft = ".2rem";
-      labelForGroup.setAttribute(
-        "for",
-        "mathced-group-" + matchedPair._sgName.replace(/\s/g, "")
-      );
+      labelForGroup.setAttribute("for", checkboxGroup.id);
 
       matchedGroupCol.appendChild(labelForGroup);
     }
   }
+
+  hr = CreateDOMElement("hr");
+  modalBody.appendChild(hr);
   /*  End Groups that matched with so */
 
   /* Start Groups that dont match with so */
@@ -598,6 +620,7 @@ function RenderSelectGroupsModal(
       innerHtml:
         "There are no groups which are not matched with the smart object",
     });
+    noGroupsUnMatched.style.fontStyle = "italic";
     // noGroupsMatched.style.fontSize = "";
     groupsNotMatchArea.appendChild(noGroupsUnMatched);
   } else {
@@ -687,7 +710,7 @@ function RenderSelectGroupsModal(
 
       let matchButton = CreateDOMElement("button", {
         classList: ["btn", "btn-info", "float-right"],
-        innerHtml: "Apply",
+        innerHtml: "Update",
       });
       matchButton.onclick = () => {
         // update mapPropAlias of smartobject to re-render modal
@@ -764,23 +787,37 @@ function RenderSelectGroupsModal(
 
   // onclick confirm Button
   document.getElementById("select-group-modal-confirm-button").innerHTML =
-    "End Selection";
+    "Apply";
   document.getElementById("select-group-modal-confirm-button").onclick = () => {
     let groups = [];
-    for (const matchedGroup of comparedArray.matched) {
-      if (
-        document.getElementById(
-          "mathced-group-" + matchedGroup._sgName.replace(/\s/g, "")
-        ).checked
-      ) {
+    if (
+      document.getElementById("select-all-groups") &&
+      document.getElementById("select-all-groups").checked
+    ) {
+      for (const matchedGroup of comparedArray.matched) {
         groups.push({ id: matchedGroup._sgID, name: matchedGroup._sgName });
       }
+    } else {
+      for (const matchedGroup of comparedArray.matched) {
+        if (
+          document.getElementById(
+            "mathced-group-" + matchedGroup._sgName.replace(/\s/g, "")
+          ).checked
+        ) {
+          groups.push({ id: matchedGroup._sgID, name: matchedGroup._sgName });
+        }
+      }
     }
+
     onSuccess(groups, updatedAliases);
     document.getElementsByClassName("modal-platform-container")[0].innerHTML =
       "";
     document.getElementsByClassName("modal-backdrop")[0].remove();
   };
+
+  // Update cancel button
+  document.getElementById("select-group-modal-cancel-button").innerHTML =
+    "Skip";
 }
 /* End functions for selection group modal */
 

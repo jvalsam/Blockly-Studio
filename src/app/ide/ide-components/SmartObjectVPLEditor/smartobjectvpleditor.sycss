@@ -40,6 +40,11 @@
 }
 
 /* Select groups Modal */
+#select-group-modal .modal-body {
+  /* 100% = dialog height, 120px = header + footer */
+  max-height: 41rem;
+  overflow-y: scroll;
+}
 
 .selection-group-so-properties-table {
   max-width: fit-content;
