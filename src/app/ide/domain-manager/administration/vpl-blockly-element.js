@@ -75,6 +75,7 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
 
         // blockly blocks added map with references in missions and wsps
         this._blocklyElems = {};
+        this._counterInstances = 0;
     }
 
     _elemName(data) {
@@ -96,6 +97,11 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
     }
 
     onCreate(data) {
+        if (this._ctor.uniqueInstance && this._counterInstances > 0) {
+            return [];
+        }
+        ++this._counterInstances;
+
         let elemName = this._elemName(data);
         
         Blockly.Blocks[elemName] = this._blockDef(data);
@@ -117,6 +123,7 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
     onDelete(elems) {
         VPLDomainElementsHolder.deleteDefinedBlocks(elems);
         elems.forEach((elemName) => this._deleteBlocklyElem(elemName));
+        --this._counterInstances;
     }
 
     onEdit(data) {
@@ -166,6 +173,11 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
     }
 
     onCreate(data) {
+        if (this._ctor.uniqueInstance && this._counterInstances > 0) {
+            return [];
+        }
+        ++this._counterInstances;
+
         let elems = [];
         let elemName = super._elemName(data);
         
@@ -193,6 +205,7 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
     onDelete(elems) {
         VPLDomainElementsHolder.deleteDefinedBlocks(elems);
         elems.forEach(elemName => this._deleteBlocklyElem(elemName));
+        --this._counterInstances;
     }
 
     onEdit(data) {
@@ -223,6 +236,7 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
 export class VPLDomainElementHandler {
     constructor(
         name,
+        uniqueInstance,
         blocklyElems,
         signals
     ) {
@@ -233,6 +247,7 @@ export class VPLDomainElementHandler {
 
         blocklyElems.forEach((blocklyElem) => {
             let ctor = {
+                uniqueInstance: blocklyElem.uniqueInstance || false,
                 codeGen: blocklyElem.codeGen,
                 debGen: blocklyElem.debGen
             };
@@ -291,8 +306,10 @@ export class VPLDomainElementHandler {
             let createdItems = this._vplBlocklyElems[blocklyElem]
                     .onCreate(data);
             
-            //TODO: check to categorize in separate 
-            this._items[data.domainElementId].elements[blocklyElem] = createdItems;
+            if (createdItems.length > 0) {
+                //TODO: check to categorize in separate 
+                this._items[data.domainElementId].elements[blocklyElem] = createdItems;
+            }
         }
         
         for (let mission in this._missionsRef) {

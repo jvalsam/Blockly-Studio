@@ -8,6 +8,7 @@ export const SmartObject = {
         // Conditional Blocks
         {
             name: 'Conditional_When',
+            uniqueInstance: true,
             blockDef: () => ({
                 init: function() {
                     this.appendDummyInput()
@@ -35,6 +36,7 @@ export const SmartObject = {
         },
         {
             name: 'Conditional_When_Top_Bottom',
+            uniqueInstance: true, 
             blockDef: () => ({
                 init: function() {
                     this.appendDummyInput()
@@ -60,6 +62,7 @@ export const SmartObject = {
         },
         {
             name: 'so_logical_operators',
+            uniqueInstance: true,
             blockDef: () => ({
                 init: function() {
                     this.appendValueInput("LEFT")
@@ -82,6 +85,7 @@ export const SmartObject = {
         },
         {
             name: 'so_relational_operators',
+            uniqueInstance: true,
             blockDef: () => ({
                 init: function() {
                     this.appendValueInput("left_value")
@@ -104,6 +108,7 @@ export const SmartObject = {
         },
         {
             name: 'so_changes',
+            uniqueInstance: true,
             blockDef: () => ({
                 init: function() {
                     this.appendValueInput("NAME")
@@ -127,6 +132,7 @@ export const SmartObject = {
         // Handle Smart Objects
         {
             name: 'getValue',
+            uniqueInstance: false,
             // use for special cases of properties of properies VPL domain elements
             // (optional use) here we use it for example in properties of VPL domains elements (Smart Object properties)
             // this would be required in case if there was (Smart Object properties of properties)
@@ -173,6 +179,7 @@ export const SmartObject = {
         // way to define getter without multiple 
         {
             name: 'getValueBlock',
+            uniqueInstance: false,
             blockDef: (data) => {
                 let dropdownSel = [];
 

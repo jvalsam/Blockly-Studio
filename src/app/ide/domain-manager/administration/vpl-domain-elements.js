@@ -21,12 +21,14 @@ export class VPLDomainElements {
                 this.vplElems[vplElem.name] = ('blocklyElems' in vplElem)
                     ? new VPLDomainElementHandler(
                         vplElem.name,
+                        vplElem.uniqueInstance,
                         vplElem.blocklyElems,
                         vplElem.signals
                       )
                     : new VPLBlocklyElementHandler(
                         {
                             blockDef: vplElem.init,
+                            uniqueInstance: vplElem.uniqueInstance,
                             codeGen: vplElem.codeGen,
                             debGen: vplElem.debGen
                         },
