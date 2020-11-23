@@ -120,8 +120,8 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
         delete this._blocklyElems[name];
     }
 
-    onDelete(elems) {
-        VPLDomainElementsHolder.deleteDefinedBlocks(elems);
+    onDelete(projectID, elems) {
+        VPLDomainElementsHolder.deleteDefinedBlocks(projectID, elems);
         elems.forEach((elemName) => this._deleteBlocklyElem(elemName));
         --this._counterInstances;
     }
@@ -202,8 +202,8 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
         return elems;
     }
 
-    onDelete(elems) {
-        VPLDomainElementsHolder.deleteDefinedBlocks(elems);
+    onDelete(projectID, elems) {
+        VPLDomainElementsHolder.deleteDefinedBlocks(projectID, elems);
         elems.forEach(elemName => this._deleteBlocklyElem(elemName));
         --this._counterInstances;
     }
@@ -335,14 +335,14 @@ export class VPLDomainElementHandler {
     }
 
     onDelete(data) {
-        let delItem = this._items[data.id];
+        let delItem = this._items[data.domainElementId];
 
         let delBlockElems = [];
 
         for (let blocklyElem in this._vplBlocklyElems) {
                 let bElems = delItem.elements[blocklyElem];
 
-                this._vplBlocklyElems[blocklyElem].onDelete(bElems);
+                this._vplBlocklyElems[blocklyElem].onDelete(data.projectID, bElems);
 
                 delBlockElems = [...delBlockElems, ...bElems];
         }
@@ -354,7 +354,7 @@ export class VPLDomainElementHandler {
         delete this._items[data.id];
 
         for (let mission in this._missionsRef) {
-            this._missionsRef[mission].onDelete(delBlockElems);
+            this._missionsRef[mission].onDelete(data, delBlockElems);
         }
 
         delBlockElems.forEach(elemName => {
@@ -401,7 +401,7 @@ export class VPLDomainElementHandler {
             refElems: [],
             refDomainElem: false,
             onCreate: (data) => mission.onCreateElement(data),
-            onDelete: (data) => mission.onDeleteElement(data),
+            onDelete: (domainElem, elemsToRemove) => mission.onDeleteElement(domainElem, elemsToRemove),
             onEdit: (data) => mission.onEditElement(data)
         };
     }

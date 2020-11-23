@@ -52,9 +52,22 @@ export class DomainBlockTracker {
         --this.counter;
     }
 
-    // requirements are not clear, we have all data...
-    getBlocksWithType(type) {
+    deleteBlocksOfDomainElementInst(domainElementInstId) {
+        let length = this.domainElemsMap[domainElementInstId].blocks.length;
+        this.counter -= length;
+        this.domainElemsMap[domainElementInstId].blocks.splice(0, length);
+        delete this.domainElemsMap[domainElementInstId];
+    }
 
+    // requirements are not clear, we have all data...
+    getBlockById(blockId) {
+        for(const domElemInst in this.domainElemsMap) {
+            let elem = this.domainElemsMap[domElemInst].blocks.find(x => x.blockId === blockId);
+            if (elem) {
+                return elem;
+            }
+        }
+        return null;
     }
 
     getBlocksOfEditor(confName, editorId) {
@@ -266,5 +279,9 @@ export class BlocklyInstance {
 
     getBlockById(blockId) {
         return this.wsp.getBlockById(blockId);
+    }
+
+    deleteBlockById(blockId) {
+        this.getBlockById(blockId).dispose();
     }
 }

@@ -48,8 +48,6 @@ export const SmartObject = {
                 
                 return codes;
             }
-            //, debugGen: (data) => open VISMA view UI of the smart
-            // object
         },
         // way to define getter without multiple 
         {

@@ -353,10 +353,8 @@ export class SmartObjectVPLEditor extends Editor {
     ).value;
   }
 
-  // Handle deletion for the smart objects
-  private deleteBlocks(projectID, visualSources) {
-
-  }
+  @ExportedSignal("delete-smart-object", ["so-data"])
+  @ExportedSignal("delete-smart-group", ["so-data"])
   private onAskToDeleteSmartElementWithDependencies (
     type,
     pelem,
@@ -381,9 +379,9 @@ export class SmartObjectVPLEditor extends Editor {
               body: {
                 text: 'The smart object "<b>' + smartElement.title + '</b>" has been used from project element'
                 + pluralText
-                + ':<br/><i> -'
-                + sources.join(', ')
-                + '<i><br/><br/>'
+                + ':<br/><b><div style="max-height: 6rem; margin-bottom: 0.8rem; overflow-y: auto;"><li>'
+                + sources.join('</li><li>')
+                + '</li></div></b>'
                 + 'Do you want to delete <b>"'
                 + smartElement.title
                 + '</b>" and the respective <b>blocks</b> from the <br/>above project element'
@@ -400,7 +398,16 @@ export class SmartObjectVPLEditor extends Editor {
                       choice: "Delete",
                       type: "submit",
                       providedBy: "creator",
-                      callback: () => alert('choose to delete the element.')
+                      callback: () => {
+                        // notify to delete defined blocks and the designed blocks from the wsps
+                        ComponentsCommunication.postSignal(
+                          this.name,
+                          "delete-" + pelem._jstreeNode.type.split('pi-')[1],
+                          smartElement
+                        );
+                        // delete project element
+                        onSuccess.exec_action();
+                      }
                   }
               ]
             }
@@ -441,7 +448,7 @@ export class SmartObjectVPLEditor extends Editor {
           );
         }
         else {
-          onSuccess();
+          onSuccess.exec_open_dialogue();
         }
         // TODO: check to delete
         // in case it is ok, delete signal for the element + call on success

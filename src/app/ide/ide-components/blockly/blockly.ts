@@ -169,7 +169,20 @@ export class BlocklyVPL extends Editor {
       let projectId = pitem._pi.editorsData.projectID;
       let blocklyInst = this.instancesMap[id];
       let block = blocklyInst.getBlockById(event.blockId);
-      let elemName = this.getBlockTypesToDomainElementsMap(projectId)[block.type];
+      let type;
+      if (block) {
+        type = block.type;
+      }
+      else {
+        for (const elem in this.domainElementTracker[projectId]) {
+          let block = this.domainElementTracker[projectId][elem].getBlockById(event.blockId);
+          if (block) {
+            type = block.blockType;
+            break;
+          }
+        }
+      }
+      let elemName = this.getBlockTypesToDomainElementsMap(projectId)[type];
       if (elemName) {
         let confName = pitem.pi._editorsData.items[id].confName;
         this.fixBlocksTrackerInit(projectId, elemName);
@@ -191,13 +204,16 @@ export class BlocklyVPL extends Editor {
   }
 
   @ExportedFunction
-  public getVisualSourcesUseDomainElementInstaceById(projectId: string, domainElementId: string, domainElementType: string) {
-    let domainElem = this.domainElementTracker[projectId][domainElementType];
-    if (domainElem) {
-      return domainElem.domainElemsMap[domainElementId];
+  public getVisualSourcesUseDomainElementInstaceById(
+    projectId: string,
+    domainElementId: string,
+    domainElementType: string) {
+    let domainElem = this.domainElementTracker[projectId];
+    if (domainElem && domainElem[domainElementType]) {
+      return domainElem[domainElementType].domainElemsMap[domainElementId];
     }
     else {
-      return undefined;
+      return null;
     }
   }
 
@@ -272,9 +288,16 @@ export class BlocklyVPL extends Editor {
 
   @ExportedFunction
   public onDeleteVPLElements(data) {
-    data.mission;
-    data.elements;
-    alert('OnDeleteVPLBlocklyBlocks: Not implemented yet!');
+    let domainElem = data.domainElem;
+
+    let visualSources = this.getVisualSourcesUseDomainElementInstaceById(
+      domainElem.projectID,
+      domainElem.domainElementId,
+      domainElem.domainElementType);
+    
+    visualSources.blocks.forEach(block => {
+      this.instancesMap[block.editorId].deleteBlockById(block.blockId);
+    });
   }
 
   @ExportedFunction

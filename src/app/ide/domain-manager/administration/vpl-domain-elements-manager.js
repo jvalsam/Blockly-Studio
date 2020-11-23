@@ -96,11 +96,12 @@ class _VPLDomainElementsManager {
             ));
     }
 
-    deleteVPLElements(elements, mission, editors) {
+    deleteVPLElements(domainElem, elements, mission, editors) {
         editors.forEach(editor => this.parent.functionRequest(
                 editor.name,
                 'onDeleteVPLElements',
                 {
+                    domainElem: domainElem,
                     mission: mission,
                     elements: elements
                 }

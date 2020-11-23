@@ -617,10 +617,11 @@ export class VPLMission {
         this.onUpdateToolbox();
     }
 
-    onDeleteElement(elements) {
+    onDeleteElement(domainElem, elements) {
         this.onUpdateToolbox();
 
         VPLDomainElementsManager.deleteVPLElements(
+            domainElem,
             elements,
             this._name,
             this._editors
