@@ -1,3 +1,4 @@
+import * as Blockly from "blockly";
 import {
     VPLDomainElementHandler,
     VPLBlocklyElementHandler
@@ -13,6 +14,15 @@ export class VPLDomainElements {
         this.vplProjectItems = {};
         this.vplMissions = {};
         this.vplElems = {};
+    }
+
+    loadStaticElements(...vplStaticElements) {
+        vplStaticElements.forEach(vplBlocks => {
+            vplBlocks.forEach(vplBlock => {
+                Blockly.Blocks[vplBlock.name] = vplBlock.blockDef();
+                Blockly.JavaScript[vplBlock.name] = vplBlock.codeGen();
+            });
+        });
     }
 
     addElements(...vplElems) {
@@ -198,6 +208,7 @@ export function LoadVPLDomainElements(domain, elemsLoader) {
     let vplDomainElemsData = elemsLoader();
 
     let vplDomainElems = new VPLDomainElements(domain);
+    vplDomainElems.loadStaticElements(...vplDomainElemsData.domainStaticElements);
     vplDomainElems.addElements(...vplDomainElemsData.domainElements);
     vplDomainElems.addEditorConfigs(...vplDomainElemsData.editorConfigs);
     vplDomainElems.addProjectItems(...vplDomainElemsData.projectItems);

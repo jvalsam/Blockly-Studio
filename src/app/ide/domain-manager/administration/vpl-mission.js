@@ -268,6 +268,31 @@ class VPLToolbox {
             });
     }
 
+    addDomainStatic(item) {
+        this._findCategory(item.path)
+            .push({
+                name: item.name,
+                type: item.type,
+                colour: item.colour,
+                category: item.category,
+                choices: (typeof item.elements === 'string')
+                    ? item.elements
+                    : [...item.elements]
+            });
+    }
+
+    addStatic(item) {
+        this._findCategory(item.path)
+            .push({
+                type: item.type,
+                colour: item.colour,
+                category: item.category,
+                choices: (typeof item.elements === 'string')
+                    ? item.elements
+                    : [...item.elements]
+            });
+    }
+
     notSupportedToolboxElement(item) {
         throw new Error(
             item.type +
@@ -483,6 +508,26 @@ class VPLToolbox {
 
     _genPredefinedToolbox(item) {
         return genPredefinedCategoriesToolbox(item);
+    }
+
+    _genDomainStaticToolbox(item) {
+        let toolbox = {
+            gen: '<category',
+            extra: []
+        };
+
+        toolbox.gen += ' name="' + item.name + '"';
+        toolbox.gen += 'colour' in item
+            ? ' colour="' + item.colour + '"'
+            : '';
+        toolbox.gen += '>';
+
+        item.choices.forEach(block => {
+            toolbox.gen += '<block type="' + block + '"></block>';
+        });
+
+        toolbox.gen += '</category>';
+        return toolbox;
     }
 
     _genCategoryElements(elements) {
