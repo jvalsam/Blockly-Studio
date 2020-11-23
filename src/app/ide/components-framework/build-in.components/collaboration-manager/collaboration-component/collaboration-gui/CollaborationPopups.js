@@ -580,3 +580,77 @@ class CollaborationSettingsPopup extends CollaborationPopup{
         this._onApplyCb = cb;
     }
 }
+
+class SelectiveDebuggingPopup extends CollaborationPopup{
+    _fileA = {
+        'style' :   "                               \
+                        display: flex;              \
+                        align-items: center;        \
+                        flex-wrap: wrap;            \
+                        height : 24px;              \
+                        margin-bottom: 1px;         \
+                        font-size: 16px;            \
+                    "
+    };
+    treeJqry;
+    tree;
+
+    constructor(container, nodes){
+        super(container, 'Selective Execution');
+        
+        let selectiveExecutionContinaer = $('<div class = "selective-execution-container"> </div>');
+        
+        this.treeJqry = $('<div class = "selective-execution-tree"> </div>');
+        
+        let treeContainer = $('<div class = "selective-execution-tree-container"> </div>');
+
+        $.jstree.defaults.checkbox.three_state = false;
+        $.jstree.defaults.checkbox.cascade = 'down up';
+
+        this.treeJqry.jstree({
+            "plugins": [ "colorv", "sort", "contextmenu", "unique", "checkbox", ],
+            'core': {
+                'check_callback': true,
+            }
+        });
+        this.tree = $.jstree.reference(this.treeJqry);
+
+        this._contentContainer.append(
+            selectiveExecutionContinaer.append(
+                treeContainer.append(
+                    this.treeJqry
+                ),
+                $('<div class = "selective-execution-button"> Start </div>')
+            )
+        );
+
+        this.createNodes(null, nodes);
+    }
+
+    createNodes(parentId, node){
+        node.id = this.tree.create_node(
+            parentId,
+            {
+                id: parentId === null ? 'selective-execution-tree-root' : parentId + '/' + node.name,
+                text: node.name,
+                icon: node.icon,
+                color: node.color,
+                state : { opened : true },
+                a_attr: this._fileA
+            },
+            0,
+            () => {
+                if (node.children)
+                    for (let child of node.children)
+                        this.createNodes(
+                            parentId === null ? 'selective-execution-tree-root' : parentId + '/' + node.name,
+                            child
+                        )
+            },
+        );
+    }
+
+    getCheckedNodes(){
+        return this.tree.get_checked_descendants('selective-execution-tree-root');
+    }
+}

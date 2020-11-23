@@ -5998,8 +5998,9 @@
 	var cacheColor = {};
 	var cacheColorNodes = function (self) {
 		function cacheNodeRec(self, node) {
-            for (let field of updated_fields)
+            for (let field of updated_fields){
                 self._model.data[node.id][field] = node[field];
+			}
 
 			if (node.children) {
 				cacheColorNodesRec(self, node.children);

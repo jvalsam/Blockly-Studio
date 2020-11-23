@@ -29,77 +29,109 @@
         //         name: "Random Guy"
         //     }
         // );
-        popup = new CollaborationSettingsPopup('testDiv', 
-            [
+
+        // popup = new CollaborationSettingsPopup('testDiv', 
+        //     [
+        //         {
+        //             title: 'General',
+        //             settings: [
+        //                 {
+        //                     title: 'Real-time syncing',
+        //                     checked: true
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             title: 'Project Items',
+        //             settings: [
+        //                 {
+        //                     title: 'Allow members to create project items',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Requests for the creation of project items',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Allow members to make visual code suggestions',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Allow members to make notes',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Start as the owner of all shared project items',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Allow members to request for ownership',
+        //                     checked: true
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             title: 'Personal Items',
+        //             settings: [
+        //                 {
+        //                     title: 'Allow members to create personal items',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Allow members to see others’ personal items',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Allow members to share their personal items',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Allow members to make visual code suggestions',
+        //                     checked: true
+        //                 },
+        //                 {
+        //                     title: 'Allow members to make notes',
+        //                     checked: true
+        //                 }
+        //             ]
+        //         },
+        //     ]
+        // );
+        // popup.setOnApplyCb((settings)=>{
+        //     console.log(settings);
+        // });
+        
+        let node = {
+            icon: '../../Icons/clock.png',
+            name: 'Personal Files - Mary',
+            children: [
                 {
-                    title: 'General',
-                    settings: [
+                    name: 'Personal Files - Mary',
+                    icon: '../../Icons/clock.png',
+                    color: 'blue',
+                    children: [
                         {
-                            title: 'Real-time syncing',
-                            checked: true
-                        }
-                    ]
-                },
-                {
-                    title: 'Project Items',
-                    settings: [
-                        {
-                            title: 'Allow members to create project items',
-                            checked: true
+                            name: 'Personal Files - Mary',
+                            icon: '../../Icons/clock.png',
+                            color: 'blue',
+                            state : {
+                                'opened' : true,
+                            },
                         },
                         {
-                            title: 'Requests for the creation of project items',
-                            checked: true
-                        },
-                        {
-                            title: 'Allow members to make visual code suggestions',
-                            checked: true
-                        },
-                        {
-                            title: 'Allow members to make notes',
-                            checked: true
-                        },
-                        {
-                            title: 'Start as the owner of all shared project items',
-                            checked: true
-                        },
-                        {
-                            title: 'Allow members to request for ownership',
-                            checked: true
-                        }
-                    ]
-                },
-                {
-                    title: 'Personal Items',
-                    settings: [
-                        {
-                            title: 'Allow members to create personal items',
-                            checked: true
-                        },
-                        {
-                            title: 'Allow members to see others’ personal items',
-                            checked: true
-                        },
-                        {
-                            title: 'Allow members to share their personal items',
-                            checked: true
-                        },
-                        {
-                            title: 'Allow members to make visual code suggestions',
-                            checked: true
-                        },
-                        {
-                            title: 'Allow members to make notes',
-                            checked: true
+                            name: 'Personal',
+                            icon: '../../Icons/clock.png',
+                            color: 'blue',
+                            state : {
+                                'opened' : true,
+                            },
                         }
                     ]
                 },
             ]
-        );
+        };
 
-        popup.setOnApplyCb((settings)=>{
-            console.log(settings);
-        });
+        popup = new SelectiveDebuggingPopup('testDiv',node);
     });
 </script>
 
