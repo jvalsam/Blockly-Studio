@@ -1,6 +1,10 @@
 /// <reference path="../../../../../../../../node.d.ts"/>
 import SmartGroupTaskTmpl from "./smart-group.tmpl";
 import SmartGroupTaskSYCSS from "./smart-group.sycss";
+import {
+    ProjectElementActionsHandling
+} from "../../../../../../ide/ide-components/SmartObjectVPLEditor/sovpleditor-component/sovplelem-instance";
+
 
 export const SmartGroup = {
     name: 'pi-smart-group',
@@ -23,24 +27,54 @@ export const SmartGroup = {
     actionsHandling: {
         // call after fill-in data
         createPrevious: (pelem, onsuccess) => {
-            onsuccess();
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'create-previous',
+                pelem,
+                onsuccess
+            );
         },
         createAfter: (pelem, onsuccess) => {
-            onsuccess();
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'create-after',
+                pelem,
+                onsuccess
+            );
         },
         // call before fill-in the data
         deletePrevious: (pelem, onsuccess) => {
-            onsuccess();
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'delete-previous',
+                pelem,
+                onsuccess
+            );
         },
         deleteAfter: (pelem, onsuccess) => {
-            onsuccess();
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'delete-after',
+                pelem,
+                onsuccess
+            );
         },
         // call after fill-in data
         renamePrevious: (pelem, onsuccess) => {
-            onsuccess();
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'rename-previous',
+                pelem,
+                onsuccess
+            );
         },
         renameAfter: (pelem, onsuccess) => {
-            onsuccess();
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'rename-after',
+                pelem,
+                onsuccess
+            );
         }
     },
     // Editor Layout handles to render and load the respective template

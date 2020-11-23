@@ -20,6 +20,8 @@ import { assert } from "../../shared/ide-error/ide-error";
 import { ProjectItem } from "../../components-framework/build-in.components/project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 import { ITool } from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
 import { ComponentsCommunication } from "../../components-framework/component/components-communication";
+import { ModalView } from "../../components-framework/component/view";
+import { ViewRegistry } from "../../components-framework/component/registry";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -351,13 +353,72 @@ export class SmartObjectVPLEditor extends Editor {
     ).value;
   }
 
+  // Handle deletion for the smart objects
+  private deleteBlocks(projectID, visualSources) {
+
+  }
+  private onAskToDeleteSmartElementWithDependencies (
+    type,
+    pelem,
+    smartElement,
+    projectID,
+    visualSources,
+    onSuccess) {
+      let sources = [];
+      
+      visualSources.blocks.forEach(block => {
+        if (!sources.includes(block.pelemName)) {
+          sources.push (block.pelemName);
+        }});
+      let pluralText = sources.length > 1 ? 's' : '';
+      
+      (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
+          this,
+          [{
+            type: 'simple',
+            data: {
+              title: 'Delete '+type+': ' + smartElement.title,
+              body: {
+                text: 'The smart object "<b>' + smartElement.title + '</b>" has been used from project element'
+                + pluralText
+                + ':<br/><i> -'
+                + sources.join(', ')
+                + '<i><br/><br/>'
+                + 'Do you want to delete <b>"'
+                + smartElement.title
+                + '</b>" and the respective <b>blocks</b> from the <br/>above project element'
+                + pluralText
+                + '?'
+              },
+              actions: [
+                  {
+                      choice:"Cancel",
+                      type: "button",
+                      providedBy:"self"
+                  },
+                  {
+                      choice: "Delete",
+                      type: "submit",
+                      providedBy: "creator",
+                      callback: () => alert('choose to delete the element.')
+                  }
+              ]
+            }
+          }]
+      )).open();
+  }
+
+  private onRenameReferencedBlocks () {
+
+  }
+
   @RequiredFunction("BlocklyVPL", "getVisualSourcesUseDomainElementInstaceById")
-  onProjectElementActionsHandling(action, pelem, onSuccess) {
+  onProjectElementActionsHandling(type, action, pelem, onSuccess) {
     switch(action) {
       case 'delete-previous':
         let projectID = pelem._editorsData.projectID;
-        let smartObject = pelem._editorsData.items[Object.keys(pelem._editorsData.items)[0]];
-        let domainElementId = smartObject.domainElementId;
+        let smartElement = pelem._editorsData.items[Object.keys(pelem._editorsData.items)[0]];
+        let domainElementId = smartElement.domainElementId;
 
         let visualSources = ComponentsCommunication.functionRequest(
           this.name,
@@ -366,11 +427,22 @@ export class SmartObjectVPLEditor extends Editor {
           [
             projectID,
             domainElementId,
-            smartObject.domainElementType
+            smartElement.domainElementType
           ]
         ).value;
-        
-
+        if (visualSources && Array.isArray(visualSources.blocks) && visualSources.blocks.length > 0) {
+          this.onAskToDeleteSmartElementWithDependencies(
+            type,
+            pelem,
+            smartElement,
+            projectID,
+            visualSources,
+            onSuccess
+          );
+        }
+        else {
+          onSuccess();
+        }
         // TODO: check to delete
         // in case it is ok, delete signal for the element + call on success
         break;

@@ -34,8 +34,9 @@ const Privillege = Object.freeze({
 
 var SOVPLEditorComponent = null;
 
-export function ProjectElementActionsHandling (action, pelem, onSuccess) {
+export function ProjectElementActionsHandling (type, action, pelem, onSuccess) {
   SOVPLEditorComponent.onProjectElementActionsHandling(
+    type,
     action,
     pelem,
     onSuccess

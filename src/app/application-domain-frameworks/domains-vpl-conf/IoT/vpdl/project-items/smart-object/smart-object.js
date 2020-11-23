@@ -28,6 +28,7 @@ export const SmartObject = {
         // call after fill-in data
         createPrevious: (pelem, onsuccess) => {
             ProjectElementActionsHandling(
+                'Smart Object',
                 'create-previous',
                 pelem,
                 onsuccess
@@ -35,6 +36,7 @@ export const SmartObject = {
         },
         createAfter: (pelem, onsuccess) => {
             ProjectElementActionsHandling(
+                'Smart Object',
                 'create-after',
                 pelem,
                 onsuccess
@@ -43,6 +45,7 @@ export const SmartObject = {
         // call before fill-in the data
         deletePrevious: (pelem, onsuccess) => {
             ProjectElementActionsHandling(
+                'Smart Object',
                 'delete-previous',
                 pelem,
                 onsuccess
@@ -50,6 +53,7 @@ export const SmartObject = {
         },
         deleteAfter: (pelem, onsuccess) => {
             ProjectElementActionsHandling(
+                'Smart Object',
                 'delete-after',
                 pelem,
                 onsuccess
@@ -58,6 +62,7 @@ export const SmartObject = {
         // call after fill-in data
         renamePrevious: (pelem, onsuccess) => {
             ProjectElementActionsHandling(
+                'Smart Object',
                 'rename-previous',
                 pelem,
                 onsuccess
@@ -65,6 +70,7 @@ export const SmartObject = {
         },
         renameAfter: (pelem, onsuccess) => {
             ProjectElementActionsHandling(
+                'Smart Object',
                 'rename-after',
                 pelem,
                 onsuccess
