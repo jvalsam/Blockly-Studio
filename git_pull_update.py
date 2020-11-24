@@ -24,6 +24,6 @@ os.chdir(AutomaticIoTInterfacesPath)
 if (not os.path.isdir('./node_modules')):
     os.system('npm i')
 
-os.system('npm run remote_library')
+os.system('npm run library')
 
 print('\nBlockly Visual Debugger:\n')

@@ -3,6 +3,8 @@ import * as soUIGenerator from "../../../../../../domains-libs/IoT/AutoIoTGen/io
 // functionality
 import { RenderSmartObject } from "./sovplelem-view";
 
+import { RequestScanResources } from "../request";
+
 let CreateDOMElement = function (type, options) {
   let element = document.createElement(type);
 
@@ -825,11 +827,10 @@ let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}
   scannedDevices
 ) {
-  // let result = scannedDevices.filter(
-  //   (el) => !registeredDevices.map((x) => x.id).includes(el.id)
-  // );
-  // return result;
-  return scannedDevices;
+  let result = scannedDevices.filter(
+    (el) => !registeredDevices.map((x) => x.id).includes(el.id)
+  );
+  return result;
 };
 
 // functions for rendering parts
@@ -945,55 +946,6 @@ let RenderBubble = function (
 };
 
 // Smart Object Renderer
-export function RenderSOScanList(
-  selector,
-  filteredResources,
-  registeredDevices,
-  onRegister
-) {
-  // Render Scan Button
-  soUIGenerator.RenderScanButton(selector, (resources) => {
-    selector.innerHTML = "";
-    RenderSOScanList(
-      selector,
-      FilterRegisteredDevicesForScan(
-        registeredDevices,
-        resources.scannedResources //{ scannedResources, registeredResources} from iotivity
-      ),
-      registeredDevices,
-      onRegister
-    );
-  });
-
-  // Create row
-  let rowDiv = CreateDOMElement("div", {
-    classList: ["row", "justify-content-center"],
-  });
-  selector.appendChild(rowDiv);
-
-  // Create col
-  let colDiv = CreateDOMElement("div", { classList: ["col"] });
-  rowDiv.appendChild(colDiv);
-
-  // Create div for list
-  let listDiv = CreateDOMElement("div", {
-    classList: ["list-group", "scan-list"],
-  });
-  colDiv.appendChild(listDiv);
-
-  // Create List Element
-  for (const resource of filteredResources) {
-    soUIGenerator.RenderScannedResourceInScanList(
-      listDiv,
-      resource,
-      () => {
-        onRegister(resource);
-      },
-      true
-    );
-  }
-}
-
 let RenderSmartObjectProperty = function (
   selector,
   id,
@@ -1135,19 +1087,19 @@ let RenderSmartObjectUnregistered = function (
   row.appendChild(col);
 
   // render message for unregistered smart object
-  soUIGenerator.RenderScanButton(col, (resources) => {
+  soUIGenerator.RenderScanButton(col, RequestScanResources, (resources) => {
     if (!projectComponentsData.registeredDevices) {
       projectComponentsData.registeredDevices = [];
     }
     // Clear col
     col.innerHTML = "";
-    RenderSOScanList(
+    soUIGenerator.RenderScanList(
       col,
       FilterRegisteredDevicesForScan(
         projectComponentsData.registeredDevices,
-        resources.scannedResources //{ scannedResources, registeredResources} from iotivity
+        resources //{ scannedResources, registeredResources} from iotivity
       ),
-      projectComponentsData.registeredDevices,
+      RequestScanResources,
       (resource) => {
         // Save data
         callbacksMap.onRegister(resource.properties, resource.id);
@@ -1159,7 +1111,8 @@ let RenderSmartObjectUnregistered = function (
           projectComponentsData,
           callbacksMap
         );
-      }
+      },
+      false
     );
   });
 

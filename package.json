@@ -76,6 +76,7 @@
     "source-map": "^0.7.3",
     "tether": "^1.4.3",
     "ts-loader": "^3.5.0",
-    "xml-loader": "^1.2.1"
+    "xml-loader": "^1.2.1",
+    "superagent": "^6.1.0"
   }
 }
