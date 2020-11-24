@@ -34,7 +34,7 @@ const Privillege = Object.freeze({
 
 var SOVPLEditorComponent = null;
 
-export function ProjectElementActionsHandling (type, action, pelem, onSuccess) {
+export function ProjectElementActionsHandling(type, action, pelem, onSuccess) {
   SOVPLEditorComponent.onProjectElementActionsHandling(
     type,
     action,
@@ -199,11 +199,11 @@ export class SOVPLElemInstance {
     group.elemData.editorData.details.smartObjects = [
       { id: group.soDataID, name: group.soName },
     ];
-    group.elemData.editorData.details.mapPropsAlias = {};
+    group.elemData.editorData.details.mapPropsAlias = group.mapPropsAlias;
     group.elemData.editorData.details.mapPropsActive = {};
     for (let property of group.properties) {
       let propName = property.name;
-      group.elemData.editorData.details.mapPropsAlias[propName] = propName;
+      // group.elemData.editorData.details.mapPropsAlias[propName] = propName;
       group.elemData.editorData.details.mapPropsActive[propName] = true;
     }
 
@@ -221,7 +221,10 @@ export class SOVPLElemInstance {
       }
     );
 
+    group.properties = [];
     delete group.properties;
+    group.mapPropsAlias = {};
+    delete group.mapPropsAlias;
     delete group.soDataID;
     delete group.soName;
   }

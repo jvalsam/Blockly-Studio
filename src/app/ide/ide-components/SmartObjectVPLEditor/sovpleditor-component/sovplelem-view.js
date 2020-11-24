@@ -1058,7 +1058,8 @@ let RenderSmartObjectRegistered = function (
   });
   createGroupsButtonCol.onclick = () => {
     callbacksMap.onCreateSmartGroup({
-      properties: soData.editorData.details.properties,
+      properties: [].concat(soData.editorData.details.properties),
+      mapPropsAlias: Object.assign({}, soData.editorData.details.mapPropsAlias),
       soDataID: soData.editorData.systemID.split("SmartObjectVPLEditor_")[1],
       soName: soData.name,
     });
