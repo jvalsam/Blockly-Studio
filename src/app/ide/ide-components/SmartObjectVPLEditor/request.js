@@ -22,9 +22,6 @@ const GetRequest = (url, callback) => {
  * @description Request scan resources
  */
 export function RequestScanResources(onSuccess, onFail) {
-  // Disable scan button
-  // Display loader
-  document.getElementById("scan-loader").style.display = "block";
   GetRequest(urlInfo.iotivityUrl + "/scan", function (err, res) {
     if (err) {
       onFail();

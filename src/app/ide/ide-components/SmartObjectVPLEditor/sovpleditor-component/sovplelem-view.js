@@ -1078,47 +1078,53 @@ let RenderSmartObjectUnregistered = function (
   scanContainer.style.maxHeight = "50rem";
   selector.appendChild(scanContainer);
 
-  let row = document.createElement("div");
-  row.classList.add("row");
-  scanContainer.appendChild(row);
+  let scanButtonRow = document.createElement("div");
+  scanButtonRow.classList.add("row");
+  scanContainer.appendChild(scanButtonRow);
 
-  let col = document.createElement("div");
-  col.classList.add("col");
-  row.appendChild(col);
+  let scanButtoncol = document.createElement("div");
+  scanButtoncol.classList.add("col");
+  scanButtonRow.appendChild(scanButtoncol);
+
+  let resourcesArea = CreateDOMElement("div");
+  scanContainer.appendChild(resourcesArea);
 
   // render message for unregistered smart object
-  soUIGenerator.RenderScanButton(col, RequestScanResources, (resources) => {
-    if (!projectComponentsData.registeredDevices) {
-      projectComponentsData.registeredDevices = [];
+  soUIGenerator.RenderScanButton(
+    scanButtoncol,
+    RequestScanResources,
+    (resources) => {
+      if (!projectComponentsData.registeredDevices) {
+        projectComponentsData.registeredDevices = [];
+      }
+      // Clear col
+      resourcesArea.innerHTML = "";
+      soUIGenerator.RenderScanList(
+        resourcesArea,
+        FilterRegisteredDevicesForScan(
+          projectComponentsData.registeredDevices,
+          resources
+        ),
+        (resource) => {
+          // Save data
+          callbacksMap.onRegister(resource.properties, resource.id);
+          // Update UI
+          selector.innerHTML = "";
+          RenderSmartObject(
+            selector,
+            soData,
+            projectComponentsData,
+            callbacksMap
+          );
+        },
+        false
+      );
     }
-    // Clear col
-    col.innerHTML = "";
-    soUIGenerator.RenderScanList(
-      col,
-      FilterRegisteredDevicesForScan(
-        projectComponentsData.registeredDevices,
-        resources //{ scannedResources, registeredResources} from iotivity
-      ),
-      RequestScanResources,
-      (resource) => {
-        // Save data
-        callbacksMap.onRegister(resource.properties, resource.id);
-        // Update UI
-        selector.innerHTML = "";
-        RenderSmartObject(
-          selector,
-          soData,
-          projectComponentsData,
-          callbacksMap
-        );
-      },
-      false
-    );
-  });
+  );
 
   let messageRow = document.createElement("div");
   messageRow.classList.add("row");
-  col.appendChild(messageRow);
+  resourcesArea.appendChild(messageRow);
 
   let messageDiv = document.createElement("div");
   messageDiv.style.marginLeft = "auto";
