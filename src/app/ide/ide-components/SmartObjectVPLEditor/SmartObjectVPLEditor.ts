@@ -457,11 +457,11 @@ export class SmartObjectVPLEditor extends Editor {
         // in case it is ok, delete signal for the element + call on success
         break;
       case 'rename-after':
-        // ComponentsCommunication.postSignal(
-        //   this.name,
-        //   'rename-' + pelem._jstreeNode.type.split('pi-')[1],
-        //   smartElement
-        // );
+        ComponentsCommunication.postSignal(
+          this.name,
+          'rename-' + pelem._jstreeNode.type.split('pi-')[1],
+          smartElement
+        );
         onSuccess.exec_action();
         break;
       default:
