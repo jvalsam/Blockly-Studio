@@ -249,16 +249,19 @@ export class CollaborationManager extends IDEUIComponent {
                 tooltip: "Give Floor",
                 icon: "../../../../../../images/collaboration/send.png",
                 action: () => {
-                    let html = $("html"); // TODO ask for the real container
-                    let popup = new PassFloorPopup(html);
-                    // console.log(this.shProject.componentsData.collaborationData.members);
-                    popup.setMembers(this.shProject.componentsData.collaborationData.members);
-                    console.log('Give floor');
-                    let newOwner = 'whatever';
-                    collabData.privileges.owner = newOwner;
-                    // console.log(pitem);
-                    this.pitemUpdated(pitem.id, PItemEditType.OWNERSHIP ,newOwner);
-                    // this.pitemFocus(pitem.id); // ASK GIANNI
+                    let container = $("<div></div>");
+                    $("body").append(container);
+                    let passFloorPopup = new PassFloorPopup(container);
+                    passFloorPopup.setMembers(collabInfo.connected_users);
+                    passFloorPopup.setOnPassFloorCb((newOwner)=>{
+                        console.log(newOwner);
+                        collabData.privileges.owner = newOwner;
+                        this.pitemUpdated(pitem.id, PItemEditType.OWNERSHIP, newOwner);
+                    });
+                    // console.log('Give floor');
+                    // let newOwner = 'whatever';
+                    // collabData.privileges.owner = newOwner;
+                    // this.pitemUpdated(pitem.id, PItemEditType.OWNERSHIP ,newOwner);
                 }
             })
         }

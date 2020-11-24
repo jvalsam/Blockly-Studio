@@ -67,7 +67,7 @@
     "npm": "^6.12.0",
     "passport": "^0.4.0",
     "passport-local-mongoose": "^5.0.0",
-    "peerjs": "^1.2.0",
+    "peerjs": "^0.3.18",
     "pngquant-bin": "^3.1.1",
     "popper.js": "^1.16.1",
     "react": "^16.10.2",
