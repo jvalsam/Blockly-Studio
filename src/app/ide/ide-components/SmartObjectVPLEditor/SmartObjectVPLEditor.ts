@@ -355,6 +355,8 @@ export class SmartObjectVPLEditor extends Editor {
 
   @ExportedSignal("delete-smart-object", ["so-data"])
   @ExportedSignal("delete-smart-group", ["so-data"])
+  @ExportedSignal("rename-smart-object", ["so-data"])
+  @ExportedSignal("rename-smart-group", ["so-data"])
   private onAskToDeleteSmartElementWithDependencies (
     type,
     pelem,
@@ -421,9 +423,7 @@ export class SmartObjectVPLEditor extends Editor {
 
   @RequiredFunction("BlocklyVPL", "getVisualSourcesUseDomainElementInstaceById")
   onProjectElementActionsHandling(type, action, pelem, onSuccess) {
-    switch(action) {
-      case 'delete-previous':
-        let projectID = pelem._editorsData.projectID;
+    let projectID = pelem._editorsData.projectID;
         let smartElement = pelem._editorsData.items[Object.keys(pelem._editorsData.items)[0]];
         let domainElementId = smartElement.domainElementId;
 
@@ -437,6 +437,9 @@ export class SmartObjectVPLEditor extends Editor {
             smartElement.domainElementType
           ]
         ).value;
+
+    switch(action) {
+      case 'delete-previous':
         if (visualSources && Array.isArray(visualSources.blocks) && visualSources.blocks.length > 0) {
           this.onAskToDeleteSmartElementWithDependencies(
             type,
@@ -454,11 +457,15 @@ export class SmartObjectVPLEditor extends Editor {
         // in case it is ok, delete signal for the element + call on success
         break;
       case 'rename-after':
-        // TODO: check to rename
-        // signal to rename element + call on success
+        // ComponentsCommunication.postSignal(
+        //   this.name,
+        //   'rename-' + pelem._jstreeNode.type.split('pi-')[1],
+        //   smartElement
+        // );
+        onSuccess.exec_action();
         break;
       default:
-        onSuccess();
+        onSuccess.exec_open_dialogue();
     }
   }
 

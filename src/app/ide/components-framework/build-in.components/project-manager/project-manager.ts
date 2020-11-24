@@ -810,33 +810,23 @@ export class ProjectManager extends IDEUIComponent {
         return project.componentsData[compName];
     }
 
-    private onSuccessUploadFiles(paths: Array<String>, data, event, concerned, onAdded) {
-            // update img path
-            for (var i = 0; i < paths.length; i++) {
-                for (const key of Object.keys(data.imgData)) {
-                    let value = data.imgData[key];
-                    if (value === i) {
-                        data.json[key] = paths[i];
-                        break;
-                    }
+    private handleUpdateImagePath(paths: Array<String>, data) {
+        // update img path
+        for (var i = 0; i < paths.length; i++) {
+            for (const key of Object.keys(data.imgData)) {
+                let value = data.imgData[key];
+                if (value === i) {
+                    data.json[key] = paths[i];
+                    break;
                 }
             }
-            assert(
-                paths.length === 0 || paths.length === 1,
-                "Invalid number of paths in save img of Project Manager New Item"
-            );
-            let src = this.createNewElement(
-                event,
-                data,
-                this.newSystemID(concerned.project["projectID"])
-            );
-            this.createNewItem(
-                concerned,
-                data,
-                src,
-                onAdded
-            );
+        }
+        assert(
+            paths.length === 0 || paths.length === 1,
+            "Invalid number of paths in save img of Project Manager New Item"
+        );
     }
+
     private onCreateProjectItem(data, event, concerned, index =null, itemsData =null, onCreated) {
         if (typeof index === "number") {
             assert(
@@ -848,13 +838,20 @@ export class ProjectManager extends IDEUIComponent {
 
         upload_files(
             data.form,
-            (paths: Array<String>) => this.onSuccessUploadFiles(
-                paths,
-                data,
-                event,
-                concerned,
-                onCreated
-            ),
+            (paths: Array<String>) => {
+                this.handleUpdateImagePath(paths, data);
+                
+                this.createNewItem(
+                    concerned,
+                    data,
+                    this.createNewElement(
+                        event,
+                        data,
+                        this.newSystemID(concerned.project["projectID"])
+                    ),
+                    onCreated
+                );
+            },
             (resp) => {
                 IDEError.raise("Error Project Manager Save Img", resp);
             }
@@ -1118,6 +1115,19 @@ export class ProjectManager extends IDEUIComponent {
 
     // End of the Project Element handling 
 
+    private onRenameProjectItem(concerned, data) {
+        upload_files(
+            data.form,
+            (paths: Array<String>) => {
+                this.handleUpdateImagePath(paths, data);
+                this.renameElement(concerned, data);
+            },
+            (resp) => {
+                IDEError.raise("Error Project Manager On Rename Action: Save Img", resp);
+            }
+        );
+    }
+
     @ExportedFunction
     public onRemoveElement(event: IEventData, concerned: ProjectManagerItemView): void {
         let execAction = () => this.onDeleteElementLocal(concerned);
@@ -1222,17 +1232,9 @@ export class ProjectManager extends IDEUIComponent {
         // edit name in title
         let index = loadedProject.projectItems.map(x=>x.systemID).indexOf(concerned.systemID);
         assert(index>-1, "Not found element in project to rename!");
-        let element = loadedProject.projectItems[index];
-        let viewData = {};
-        Object.keys(data.json[0]).forEach((type) => {
-            let value = data.json[0][type];
-            // map defined id with the type: id == label + '_' + type
-            let mtype = type.split('_')[1];
-            let index = element.renderParts.map(x=>x.type).indexOf(mtype);
-            
-            let renderPart = element.renderParts[ index ];
-            viewData[renderPart.type] = this.assignRenderPartValue(renderPart, value);
-        });
+
+        let viewData = this.convertAuthoredRenderPartsFromUpload(data);
+
         concerned.rename(viewData);
 
         ComponentsCommunication.functionRequest(
@@ -1249,7 +1251,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private renameElementLocal(concerned, data: any) {
-        this.renameElement(concerned, data);
+        this.onRenameProjectItem(concerned, data);
 
         ComponentsCommunication.functionRequest(
             this.name,
@@ -1265,7 +1267,7 @@ export class ProjectManager extends IDEUIComponent {
 
     private renameElementRemote(pitemID, data, callback) {
         let pitem = this.retrievePitem(pitemID);
-        this.renameElement(pitem, data);
+        this.onRenameProjectItem(pitem, data);
         callback("rename: pitem -> " + pitemID);
     }
 
@@ -1395,18 +1397,37 @@ export class ProjectManager extends IDEUIComponent {
         }
     }
 
-    // modal actions are statically supported
-    private createNewElement(event: IEventData, data: any, systemID: string): string {
-        let index = event.data.choices.map(x=>x.type).indexOf(this.currModalData.itemData.type);
-        assert(index !== -1, "Not defined event click for this specific element type.");
+    private convertRenderPartsFromUpload (data) {
         let renderParts = {};
         let formData = typeof data === "object"
             ? data.json[0]
             : data[data.length - 1].json[0];
         for (const id of Object.keys(formData)) {
             let rp = this.currModalData.itemData.renderParts.find(x=> x.id === id);
-            renderParts[rp.type] = formData[id];
+            renderParts[rp.type] = data.json[id] || formData[id];
         }
+        return renderParts;
+    }
+
+    private convertAuthoredRenderPartsFromUpload (data) {
+        let renderParts = {};
+        let formData = typeof data === "object"
+            ? data.json[0]
+            : data[data.length - 1].json[0];
+        for (let id of Object.keys(formData)) {
+            let type = id.split('_')[1];
+            let rp = this.currModalData.itemData.renderParts.find(x=> x.type === type);
+            renderParts[rp.type] = data.json[id] || formData[id];
+        }
+        return renderParts;
+    }
+
+    // modal actions are statically supported
+    private createNewElement(event: IEventData, data: any, systemID: string): string {
+        let index = event.data.choices.map(x=>x.type).indexOf(this.currModalData.itemData.type);
+        assert(index !== -1, "Not defined event click for this specific element type.");
+        
+        let renderParts = this.convertRenderPartsFromUpload(data);
 
         let response = ComponentsCommunication.functionRequest(
             "ProjectManager",

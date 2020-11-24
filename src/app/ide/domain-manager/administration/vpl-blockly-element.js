@@ -321,8 +321,8 @@ export class VPLDomainElementHandler {
     }
 
     onEdit(data) {
-        this._items[data.id].name = data.name || data.id;
-        this._items[data.id]._domainElementData =
+        this._items[data.domainElementId].name = data.name || data.domainElementId;
+        this._items[data.domainElementId]._domainElementData =
             JSON.parse(JSON.stringify(data)) /* {...data} */ ;
 
         for (let blocklyElem in this._vplBlocklyElems) {
@@ -330,7 +330,7 @@ export class VPLDomainElementHandler {
         }
 
         for (let mission in this._missionsRef) {
-            this._missionsRef[mission].onEdit(this._items[data.id]);
+            this._missionsRef[mission].onEdit(this._items[data.domainElementId]);
         }
     }
 
