@@ -1,10 +1,17 @@
 
 
 export class VPLProjectItem {
-    constructor(name, editorsConfig, view) {
+    constructor(
+        name,
+        editorsConfig,
+        view,
+        actionsHandling,
+        handledDomainElems) {
         this._name = name;
         this._editorsConfig = editorsConfig;
         this._view = view;
+        this._actionsHandling = actionsHandling;
+        this._handledDomainElems = handledDomainElems;
     }
 
     get name() {
@@ -19,4 +26,11 @@ export class VPLProjectItem {
         return this._view;
     }
 
+    get actionsHandling() {
+        return this._actionsHandling;
+    }
+
+    get handledDomainElems() {
+        return this._handledDomainElems;
+    }
 }

@@ -1,6 +1,8 @@
 /// <reference path="../../../../../../../../node.d.ts"/>
 import SmartObjectTaskTmpl from "./smart-object.tmpl";
 import SmartObjectTaskSYCSS from "./smart-object.sycss";
+import { ProjectElementActionsHandling } from "../../../../../../ide/ide-components/SmartObjectVPLEditor/sovpleditor-component/sovplelem-instance";
+
 
 export const SmartObject = {
     name: 'pi-smart-object',
@@ -18,6 +20,63 @@ export const SmartObject = {
     ],
     // Editor Layout handles to render and load the respective template
     // and inject the editor parts of the project item
+    // defined which are the domain element types are able to be exported in this visual source
+    handledDomainElems: [
+        'SmartObject'
+    ],
+    actionsHandling: {
+        // call after fill-in data
+        createPrevious: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Object',
+                'create-previous',
+                pelem,
+                onsuccess
+            );
+        },
+        createAfter: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Object',
+                'create-after',
+                pelem,
+                onsuccess
+            );
+        },
+        // call before fill-in the data
+        deletePrevious: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Object',
+                'delete-previous',
+                pelem,
+                onsuccess
+            );
+        },
+        deleteAfter: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Object',
+                'delete-after',
+                pelem,
+                onsuccess
+            );
+        },
+        // call after fill-in data
+        renamePrevious: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Object',
+                'rename-previous',
+                pelem,
+                onsuccess
+            );
+        },
+        renameAfter: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Object',
+                'rename-after',
+                pelem,
+                onsuccess
+            );
+        }
+    },
     view: {
         template: SmartObjectTaskTmpl, // load template, by default focus out style
         style: SmartObjectTaskSYCSS, // style has to be added dynamically in the first use of template?

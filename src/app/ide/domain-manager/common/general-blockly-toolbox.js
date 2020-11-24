@@ -503,7 +503,7 @@ const categFunctions = {
     custom: 'PROCEDURE'
 };
 
-export const categories = [
+export var categories = [
     {
         name: 'Logic',
         data: categLogic

@@ -2,6 +2,7 @@ import * as Blockly from 'blockly';
 import {
     RuntimeManager
 } from "../../components-framework/build-in.components/run-time-system-manager/run-time-manager";
+import { VPLDomainElementsHolder } from "./vpl-domain-elements-holder";
 
 const GEN_CODE_MODE = {
     'RELEASE': 'codeGen',
@@ -74,10 +75,11 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
 
         // blockly blocks added map with references in missions and wsps
         this._blocklyElems = {};
+        this._counterInstances = 0;
     }
 
     _elemName(data) {
-        return data.editorId + '_' + this._name;
+        return data.domainElementId + '$' + this._name;
     }
 
     _blockDef(data) {
@@ -95,11 +97,21 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
     }
 
     onCreate(data) {
+        if (this._ctor.uniqueInstance && this._counterInstances > 0) {
+            return [];
+        }
+        ++this._counterInstances;
+
         let elemName = this._elemName(data);
         
         Blockly.Blocks[elemName] = this._blockDef(data);
         Blockly.JavaScript[elemName] = this._codeGen(data);
         this._blocklyElems[elemName] = {};
+
+        VPLDomainElementsHolder.addDefinedBlock(
+            data.projectID,
+            data.domainElementType,
+            elemName);
 
         return [elemName];
     }
@@ -108,8 +120,10 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
         delete this._blocklyElems[name];
     }
 
-    onDelete(elems) {
+    onDelete(projectID, elems) {
+        VPLDomainElementsHolder.deleteDefinedBlocks(projectID, elems);
         elems.forEach((elemName) => this._deleteBlocklyElem(elemName));
+        --this._counterInstances;
     }
 
     onEdit(data) {
@@ -159,6 +173,11 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
     }
 
     onCreate(data) {
+        if (this._ctor.uniqueInstance && this._counterInstances > 0) {
+            return [];
+        }
+        ++this._counterInstances;
+
         let elems = [];
         let elemName = super._elemName(data);
         
@@ -166,7 +185,7 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
         let codes = this._codeGen(data);
 
         for (let elem in blocks) {
-            let itemName = elemName + elem;
+            let itemName = elemName + '$' + elem;
 
             Blockly.Blocks[itemName] = blocks[elem];
             Blockly.JavaScript[itemName] = codes[elem];
@@ -174,12 +193,19 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
             this._blocklyElems[itemName] = {};
             elems.push(itemName);
         }
+
+        VPLDomainElementsHolder.addDefinedBlocks(
+            data.projectID,
+            data.domainElementType,
+            elems);
         
         return elems;
     }
 
-    onDelete(elems) {
+    onDelete(projectID, elems) {
+        VPLDomainElementsHolder.deleteDefinedBlocks(projectID, elems);
         elems.forEach(elemName => this._deleteBlocklyElem(elemName));
+        --this._counterInstances;
     }
 
     onEdit(data) {
@@ -220,6 +246,7 @@ export class VPLDomainElementHandler {
 
         blocklyElems.forEach((blocklyElem) => {
             let ctor = {
+                uniqueInstance: blocklyElem.uniqueInstance || false,
                 codeGen: blocklyElem.codeGen,
                 debGen: blocklyElem.debGen
             };
@@ -250,6 +277,7 @@ export class VPLDomainElementHandler {
 
         signals.forEach((signal) => this._signals[signal.name] = {
                 action: this.getAction(signal.action),
+                actionName: signal.action,
                 provider: signal.provider
         });
 
@@ -267,8 +295,8 @@ export class VPLDomainElementHandler {
     }
 
     onCreate(data) {
-        this._items[data.editorId] = {
-            name: data.title || data.editorId,
+        this._items[data.domainElementId] = {
+            name: data.title || data.domainElementId,
             _domainElementData: JSON.parse(JSON.stringify(data))/* {...data} */,
             elements: {}
         };
@@ -277,12 +305,14 @@ export class VPLDomainElementHandler {
             let createdItems = this._vplBlocklyElems[blocklyElem]
                     .onCreate(data);
             
-            //TODO: check to categorize in separate 
-            this._items[data.editorId].elements[blocklyElem] = createdItems;
+            if (createdItems.length > 0) {
+                //TODO: check to categorize in separate 
+                this._items[data.domainElementId].elements[blocklyElem] = createdItems;
+            }
         }
         
         for (let mission in this._missionsRef) {
-            this._missionsRef[mission].onCreate(this._items[data.editorId]);
+            this._missionsRef[mission].onCreate(this._items[data.domainElementId]);
         }
     }
 
@@ -305,14 +335,14 @@ export class VPLDomainElementHandler {
     }
 
     onDelete(data) {
-        let delItem = this._items[data.id];
+        let delItem = this._items[data.domainElementId];
 
         let delBlockElems = [];
 
         for (let blocklyElem in this._vplBlocklyElems) {
                 let bElems = delItem.elements[blocklyElem];
 
-                this._vplBlocklyElems[blocklyElem].onDelete(bElems);
+                this._vplBlocklyElems[blocklyElem].onDelete(data.projectID, bElems);
 
                 delBlockElems = [...delBlockElems, ...bElems];
         }
@@ -324,7 +354,7 @@ export class VPLDomainElementHandler {
         delete this._items[data.id];
 
         for (let mission in this._missionsRef) {
-            this._missionsRef[mission].onDelete(delBlockElems);
+            this._missionsRef[mission].onDelete(data, delBlockElems);
         }
 
         delBlockElems.forEach(elemName => {
@@ -371,7 +401,7 @@ export class VPLDomainElementHandler {
             refElems: [],
             refDomainElem: false,
             onCreate: (data) => mission.onCreateElement(data),
-            onDelete: (data) => mission.onDeleteElement(data),
+            onDelete: (domainElem, elemsToRemove) => mission.onDeleteElement(domainElem, elemsToRemove),
             onEdit: (data) => mission.onEditElement(data)
         };
     }

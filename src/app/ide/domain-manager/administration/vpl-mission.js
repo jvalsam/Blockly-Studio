@@ -2,6 +2,7 @@ import { assert } from './../common/assert';
 import { VPLBlocklyMultiElementHandler } from './vpl-blockly-element';
 import { genPredefinedCategoriesToolbox } from '../common/general-blockly-toolbox';
 import { VPLDomainElementsManager } from './vpl-domain-elements-manager';
+import { VPLDomainElementsHolder } from "./vpl-domain-elements-holder";
 
 //TODO: toolbox could be blockly or other editor
 class VPLToolbox {
@@ -267,6 +268,31 @@ class VPLToolbox {
             });
     }
 
+    addDomainStatic(item) {
+        this._findCategory(item.path)
+            .push({
+                name: item.name,
+                type: item.type,
+                colour: item.colour,
+                category: item.category,
+                choices: (typeof item.elements === 'string')
+                    ? item.elements
+                    : [...item.elements]
+            });
+    }
+
+    addStatic(item) {
+        this._findCategory(item.path)
+            .push({
+                type: item.type,
+                colour: item.colour,
+                category: item.category,
+                choices: (typeof item.elements === 'string')
+                    ? item.elements
+                    : [...item.elements]
+            });
+    }
+
     notSupportedToolboxElement(item) {
         throw new Error(
             item.type +
@@ -484,6 +510,26 @@ class VPLToolbox {
         return genPredefinedCategoriesToolbox(item);
     }
 
+    _genDomainStaticToolbox(item) {
+        let toolbox = {
+            gen: '<category',
+            extra: []
+        };
+
+        toolbox.gen += ' name="' + item.name + '"';
+        toolbox.gen += 'colour' in item
+            ? ' colour="' + item.colour + '"'
+            : '';
+        toolbox.gen += '>';
+
+        item.choices.forEach(block => {
+            toolbox.gen += '<block type="' + block + '"></block>';
+        });
+
+        toolbox.gen += '</category>';
+        return toolbox;
+    }
+
     _genCategoryElements(elements) {
         let toolbox = {
             gen: '',
@@ -550,13 +596,19 @@ export class VPLMission {
     }
 
     onUpdateToolbox() {
-        this._toolbox.generateBlocklyToolbox();
-
-        VPLDomainElementsManager.updateToolbox(
-            this._name,
-            this._toolbox.blocklyToolbox,
-            this._editors
-        );
+        if (VPLDomainElementsHolder.isOnLoadingMode()) {
+            VPLDomainElementsHolder.bookMissionToUpdate(
+                this.name,
+                () => this._toolbox.generateBlocklyToolbox());
+        }
+        else {
+            this._toolbox.generateBlocklyToolbox();
+            VPLDomainElementsManager.updateToolbox(
+                this._name,
+                this._toolbox.blocklyToolbox,
+                this._editors
+            );
+        }
     }
 
     // callback notifications for element actions...
@@ -565,10 +617,11 @@ export class VPLMission {
         this.onUpdateToolbox();
     }
 
-    onDeleteElement(elements) {
+    onDeleteElement(domainElem, elements) {
         this.onUpdateToolbox();
 
         VPLDomainElementsManager.deleteVPLElements(
+            domainElem,
             elements,
             this._name,
             this._editors

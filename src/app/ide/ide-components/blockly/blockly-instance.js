@@ -15,6 +15,66 @@ export class BlocklyConfig {
     }
 }
 
+export class DomainBlockTracker {
+    // domainElemsMap: { confName: { editorId: { blockIds: [], ...more info?... } } }
+    constructor(domainName, data) {
+        this.domainName = domainName;
+        this.domainElemsMap = data.domainElemsMap || {};
+        this.counter = data.counter || 0;
+    }
+
+    fixMapInitiation(domainElementInstId) {
+        this.domainElemsMap[domainElementInstId] = this.domainElemsMap[domainElementInstId] || {};
+        this.domainElemsMap[domainElementInstId].blocks = this.domainElemsMap[domainElementInstId].blocks || [];
+    }
+
+    createBlockId (blockId, blockType, confName, editorId, pelemId, pelemName) {
+        let domainElementInstId = blockType.split('$')[0];
+
+        this.fixMapInitiation(domainElementInstId);
+        
+        this.domainElemsMap[domainElementInstId].blocks.push({
+                blockId: blockId,
+                conf: confName,
+                blockType: blockType,
+                pelemId: pelemId,
+                pelemName: pelemName,
+                editorId: editorId
+            });
+
+        ++this.counter;
+    }
+
+    deleteBlockId (blockId, domainElementInstId) {
+        let index = this.domainElemsMap[domainElementInstId].blocks.findIndex(x => x.blockId === blockId);
+        this.domainElemsMap[domainElementInstId].blocks.splice(index, 1);
+        
+        --this.counter;
+    }
+
+    deleteBlocksOfDomainElementInst(domainElementInstId) {
+        let length = this.domainElemsMap[domainElementInstId].blocks.length;
+        this.counter -= length;
+        this.domainElemsMap[domainElementInstId].blocks.splice(0, length);
+        delete this.domainElemsMap[domainElementInstId];
+    }
+
+    // requirements are not clear, we have all data...
+    getBlockById(blockId) {
+        for(const domElemInst in this.domainElemsMap) {
+            let elem = this.domainElemsMap[domElemInst].blocks.find(x => x.blockId === blockId);
+            if (elem) {
+                return elem;
+            }
+        }
+        return null;
+    }
+
+    getBlocksOfEditor(confName, editorId) {
+
+    }
+}
+
 const InstStateEnum = Object.freeze({
     INIT: 0,
     OPEN: 1,
@@ -182,7 +242,6 @@ export class BlocklyInstance {
         if (resp || priv === Privillege.READ_ONLY) {
             return; // Don't mirror UI events.
         }
-        let blockType = this.wsp.getBlockById(event.blockId).type;
         
         this._syncWSP(event.toJson());
     }
@@ -220,5 +279,9 @@ export class BlocklyInstance {
 
     getBlockById(blockId) {
         return this.wsp.getBlockById(blockId);
+    }
+
+    deleteBlockById(blockId) {
+        this.getBlockById(blockId).dispose();
     }
 }

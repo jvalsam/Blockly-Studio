@@ -10,50 +10,20 @@ export const BlocklyConditional = {
             }
         },
         {
-            type: 'Separator',
-            gap: '200'
-        },
-        {
             name: 'Conditional',
-            type: 'Category',
+            type: 'DomainStatic',
             colour: '75',
             elements: [
-                {
-                    name: {
-                        domainElem: 'SmartObject',
-                        item: 'Conditional_When'
-                    },
-                    type: 'Element'
-                },
-                {
-                    name: {
-                        domainElem: 'SmartObject',
-                        item: 'Conditional_When_Top_Bottom'
-                    },
-                    type: 'Element'
-                },
-                {
-                    name: {
-                        domainElem: 'SmartObject',
-                        item: 'so_logical_operators'
-                    },
-                    type: 'Element'
-                },
-                {
-                    name: {
-                        domainElem: 'SmartObject',
-                        item: 'so_relational_operators'
-                    },
-                    type: 'Element'
-                },
-                {
-                    name: {
-                        domainElem: 'SmartObject',
-                        item: 'so_changes'
-                    },
-                    type: 'Element'
-                }
+                'Conditional_When',
+                'Conditional_When_Top_Bottom',
+                'so_logical_operators',
+                'so_relational_operators',
+                'so_changes',
             ]
+        },
+        {
+            type: 'Separator',
+            gap: '200'
         },
         {
             name: 'Smart Objects',
@@ -65,13 +35,6 @@ export const BlocklyConditional = {
                     type: 'Category',
                     colour: '60',
                     elements: [
-                        {
-                            name: {
-                                domainElem: 'SmartObject',
-                                item: 'getValue'
-                            },
-                            type: 'Element'
-                        },
                         {
                             name: {
                                 domainElem: 'SmartObject',

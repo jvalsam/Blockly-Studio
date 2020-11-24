@@ -238,12 +238,26 @@ export class ProjectManager extends IDEUIComponent {
         this.mainProject = project._id;
         let projView = (<ProjectManagerJSTreeView>this._view).loadProject(project);
 
-        ComponentsCommunication.functionRequest(
-            this.name,
-            "DomainsManager",
-            "loadProject",
-            [project._id, project.domainElements]
-        );
+        // load componentsData of the project
+        for (const compName in project.componentsData) {
+            ComponentsCommunication.functionRequest(
+                this.name,
+                compName,
+                "loadComponentDataOfProject",
+                [project._id, project.componentsData[compName]]
+            );
+        }
+
+        // TODO: remove on completion
+        project.componentsData = project.componentsData || {};
+        if (!("DomainsManager" in project.componentsData)) {
+            ComponentsCommunication.functionRequest(
+                this.name,
+                "DomainsManager",
+                "initComponentDataOfProject",
+                [project._id]
+            );
+        }
 
         // set default values if there is no state
         if (!project.editorsState) {
@@ -1079,38 +1093,83 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
+    // Project Element Pre and Post action
+    // Each project element requires different handling on Delete/Edit based in its type
+    // The domain author defines through script extra actions are required
+    // Default functionality: post signals of edit/delete and fix it for the project manager
+    // Action could be prevent using the pre function
+
+    private onProjectElementAction(pelem, action, when, onSuccess) {
+        let elementType = pelem._meta.type;
+        let pitemAuthored = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [ elementType ]
+        ).value;
+
+        try {
+            pitemAuthored.actionsHandling[action + when] (pelem, onSuccess);
+        }
+        catch (error) {
+            console.warn(error);
+        }
+    }
+
+    // End of the Project Element handling 
+
     @ExportedFunction
     public onRemoveElement(event: IEventData, concerned: ProjectManagerItemView): void {
-        this.currModalData = {
-            itemData: Object.assign({}, concerned.itemData()),
-            projectID: concerned.projectID
-        };
-        let title: string = getTitleValueofRenderParts(concerned.itemData().renderParts);
-        (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
-            this,
-            [createDialogue (
-                "Remove ",
-                {
-                    text: "Deleting <b>"
-                          + title
-                          + "</b> element has not undo action. Are you sure you would like to continue?"
-                },
-                title ? title : "Element",
-                [
+        let execAction = () => this.onDeleteElementLocal(concerned);
+        let execOpenDialogue = () => {
+            this.currModalData = {
+                itemData: Object.assign({}, concerned.itemData()),
+                projectID: concerned.projectID
+            };
+            let title: string = getTitleValueofRenderParts(concerned.itemData().renderParts);
+            (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
+                this,
+                [createDialogue (
+                    "Remove ",
                     {
-                        choice:"No",
-                        type: "button",
-                        providedBy:"self"
+                        text: "Deleting <b>"
+                              + title
+                              + "</b> element has not undo action. Are you sure you would like to continue?"
                     },
-                    {
-                        choice: "Yes",
-                        type: "submit",
-                        providedBy: "creator",
-                        callback: () => this.onDeleteElementLocal(concerned)
-                    }
-                ]
-            )]
-        )).open();
+                    title ? title : "Element",
+                    [
+                        {
+                            choice:"No",
+                            type: "button",
+                            providedBy:"self"
+                        },
+                        {
+                            choice: "Yes",
+                            type: "submit",
+                            providedBy: "creator",
+                            callback: () => this.onProjectElementAction(
+                                    concerned,
+                                    'delete',
+                                    'After',
+                                    {
+                                        exec_action: execAction
+                                    }
+                            )
+                        }
+                    ]
+                )]
+            )).open();
+        };
+        
+        this.onProjectElementAction(
+            concerned,
+            'delete',
+            'Previous',
+            {
+                exec_action: execAction,
+                exec_open_dialogue: execOpenDialogue
+            }
+        );
     }
 
     private assignRenderPartValue (renderPart, value: string) {
@@ -1226,43 +1285,64 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
-        let projInstView = (<ProjectManagerJSTreeView>this._view).getProject(concerned["project"].projectID);
-        let itemData = concerned.itemData();
-        let renderMData = this.renderDataForDialogue(concerned["_meta"].renderParts, itemData.renderParts);
+        let execOpenDialogue = () => {
+            let projInstView = (<ProjectManagerJSTreeView>this._view)
+                .getProject(concerned["project"].projectID);
+            let itemData = concerned.itemData();
+            let renderMData = this.renderDataForDialogue(
+                concerned["_meta"].renderParts,
+                itemData.renderParts);
 
-        assert(projInstView !== null);
-        this.currModalData = {
-            itemData: Object.assign({}, concerned.itemData()),
-            projectID: concerned.projectID
+            assert(projInstView !== null);
+            this.currModalData = {
+                itemData: Object.assign({}, concerned.itemData()),
+                projectID: concerned.projectID
+            };
+            let title: string = itemData.jstree.text;
+            (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView")
+                .create(
+                    this,
+                    [createDialogue (
+                        "Rename: ",
+                        { formElems: renderMData },
+                        title ? title : "Element",
+                        [
+                            {
+                                choice:"Cancel",
+                                type: "button",
+                                providedBy:"self"
+                            },
+                            {
+                                choice: "Rename",
+                                type: "submit",
+                                providedBy: "creator",
+                                validation: (data, callback) => ProjectManagerValidation.check(
+                                    data,
+                                    projInstView,
+                                    event.validation,
+                                    callback
+                                ),
+                                callback: (data) => {
+                                    this.onProjectElementAction(
+                                        concerned,
+                                        'rename',
+                                        'After',
+                                        {
+                                            exec_action: () => this.renameElementLocal(concerned, data)
+                                        }
+                                    );
+                                }
+                }])]))
+                .open();
         };
-        let title: string = itemData.jstree.text;
-        (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
-            this,
-            [createDialogue (
-                "Rename: ",
-                { formElems: renderMData },
-                title ? title : "Element",
-                [
-                    {
-                        choice:"Cancel",
-                        type: "button",
-                        providedBy:"self"
-                    },
-                    {
-                        choice: "Rename",
-                        type: "submit",
-                        providedBy: "creator",
-                        validation: (data, callback) => ProjectManagerValidation.check(
-                            data,
-                            projInstView,
-                            event.validation,
-                            callback
-                        ),
-                        callback: (data) => this.renameElementLocal(concerned, data)
-                    }
-                ]
-            )]
-        )).open();
+
+        this.onProjectElementAction(
+            concerned,
+            'rename',
+            'Previous',
+            {
+                exec_open_dialogue: execOpenDialogue
+            });
     }
 
     public itemsMenuCollaboration(pitemId: string) {

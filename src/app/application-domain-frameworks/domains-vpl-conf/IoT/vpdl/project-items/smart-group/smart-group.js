@@ -1,6 +1,10 @@
 /// <reference path="../../../../../../../../node.d.ts"/>
 import SmartGroupTaskTmpl from "./smart-group.tmpl";
 import SmartGroupTaskSYCSS from "./smart-group.sycss";
+import {
+    ProjectElementActionsHandling
+} from "../../../../../../ide/ide-components/SmartObjectVPLEditor/sovpleditor-component/sovplelem-instance";
+
 
 export const SmartGroup = {
     name: 'pi-smart-group',
@@ -16,6 +20,63 @@ export const SmartGroup = {
                           // same use in the template as selector!
                           // e.g. "ec-blockly-task__2"
     ],
+    // defined which are the domain element types are able to be exported in this visual source
+    handledDomainElems: [
+        'SmartGroup'
+    ],
+    actionsHandling: {
+        // call after fill-in data
+        createPrevious: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'create-previous',
+                pelem,
+                onsuccess
+            );
+        },
+        createAfter: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'create-after',
+                pelem,
+                onsuccess
+            );
+        },
+        // call before fill-in the data
+        deletePrevious: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'delete-previous',
+                pelem,
+                onsuccess
+            );
+        },
+        deleteAfter: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'delete-after',
+                pelem,
+                onsuccess
+            );
+        },
+        // call after fill-in data
+        renamePrevious: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'rename-previous',
+                pelem,
+                onsuccess
+            );
+        },
+        renameAfter: (pelem, onsuccess) => {
+            ProjectElementActionsHandling(
+                'Smart Group',
+                'rename-after',
+                pelem,
+                onsuccess
+            );
+        }
+    },
     // Editor Layout handles to render and load the respective template
     // and inject the editor parts of the project item
     view: {

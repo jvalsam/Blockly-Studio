@@ -2,7 +2,7 @@ export const SmartObject =
 {
     name: 'ec-smart-object',
     items: [
-        // configurate toolbar if exist
+        // configure toolbar if exist
     ],
     // at least one editor handles the mission
     // in case of more the end-user choose which

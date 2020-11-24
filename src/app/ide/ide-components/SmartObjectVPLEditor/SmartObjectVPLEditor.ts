@@ -20,6 +20,8 @@ import { assert } from "../../shared/ide-error/ide-error";
 import { ProjectItem } from "../../components-framework/build-in.components/project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 import { ITool } from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
 import { ComponentsCommunication } from "../../components-framework/component/components-communication";
+import { ModalView } from "../../components-framework/component/view";
+import { ViewRegistry } from "../../components-framework/component/registry";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -52,6 +54,11 @@ export class SmartObjectVPLEditor extends Editor {
     super(name, description, compViewName, hookSelector);
     this.instancesMap = {};
     this._groupDataOnCreate = null;
+  }
+
+  @ExportedFunction
+  loadComponentDataOfProject(projectId: string, componentsData: any) {
+    alert(this.name+'method loadComponentDataOfProject not implemented yet!');
   }
 
   @ExportedFunction
@@ -224,6 +231,17 @@ export class SmartObjectVPLEditor extends Editor {
     handleGroups(
       this.retrievePItemGroups(data.elemData.editorData.projectID),
       () => {
+        // this works because only one domain element is able to be created in one editor
+        // this will need extra handling in case of other editors
+        // they will have to generate different ids per vpl elem
+
+        // required fields:
+        let domainElementId = data.elemData.editorData.editorId;
+        data.elemData.editorData.domainElementId = domainElementId;
+        data.elemData.editorData.domainElementType = 'SmartObject';
+        // required field: data.elemData.editorData.projectID
+        //TODO: domainelementtype
+        //
         ComponentsCommunication.postSignal(
           this.name,
           "create-smart-object",
@@ -297,13 +315,23 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @RequiredFunction("ProjectManager", "clickProjectElement")
-  private openSmartElement (elementId: string) {
+  private openSmartElement(elementId: string) {
     ComponentsCommunication.functionRequest(
       this.name,
       "ProjectManager",
       "clickProjectElement",
       [elementId]
     );
+  }
+
+  @RequiredFunction("ProjectManager", "getProjectItem")
+  private getSmartElement(elementId: string) {
+    return ComponentsCommunication.functionRequest(
+      this.name,
+      "ProjectManager",
+      "getProjectItem",
+      [elementId]
+    ).value;
   }
 
   @RequiredFunction("ProjectManager", "getProjectItems")
@@ -323,6 +351,115 @@ export class SmartObjectVPLEditor extends Editor {
       "getProjectItems",
       [projectId, "pi-smart-object"]
     ).value;
+  }
+
+  @ExportedSignal("delete-smart-object", ["so-data"])
+  @ExportedSignal("delete-smart-group", ["so-data"])
+  private onAskToDeleteSmartElementWithDependencies (
+    type,
+    pelem,
+    smartElement,
+    projectID,
+    visualSources,
+    onSuccess) {
+      let sources = [];
+      
+      visualSources.blocks.forEach(block => {
+        if (!sources.includes(block.pelemName)) {
+          sources.push (block.pelemName);
+        }});
+      let pluralText = sources.length > 1 ? 's' : '';
+      
+      (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
+          this,
+          [{
+            type: 'simple',
+            data: {
+              title: 'Delete '+type+': ' + smartElement.title,
+              body: {
+                text: 'The smart object "<b>' + smartElement.title + '</b>" has been used from project element'
+                + pluralText
+                + ':<br/><b><div style="max-height: 6rem; margin-bottom: 0.8rem; overflow-y: auto;"><li>'
+                + sources.join('</li><li>')
+                + '</li></div></b>'
+                + 'Do you want to delete <b>"'
+                + smartElement.title
+                + '</b>" and the respective <b>blocks</b> from the <br/>above project element'
+                + pluralText
+                + '?'
+              },
+              actions: [
+                  {
+                      choice:"Cancel",
+                      type: "button",
+                      providedBy:"self"
+                  },
+                  {
+                      choice: "Delete",
+                      type: "submit",
+                      providedBy: "creator",
+                      callback: () => {
+                        // notify to delete defined blocks and the designed blocks from the wsps
+                        ComponentsCommunication.postSignal(
+                          this.name,
+                          "delete-" + pelem._jstreeNode.type.split('pi-')[1],
+                          smartElement
+                        );
+                        // delete project element
+                        onSuccess.exec_action();
+                      }
+                  }
+              ]
+            }
+          }]
+      )).open();
+  }
+
+  private onRenameReferencedBlocks () {
+
+  }
+
+  @RequiredFunction("BlocklyVPL", "getVisualSourcesUseDomainElementInstaceById")
+  onProjectElementActionsHandling(type, action, pelem, onSuccess) {
+    switch(action) {
+      case 'delete-previous':
+        let projectID = pelem._editorsData.projectID;
+        let smartElement = pelem._editorsData.items[Object.keys(pelem._editorsData.items)[0]];
+        let domainElementId = smartElement.domainElementId;
+
+        let visualSources = ComponentsCommunication.functionRequest(
+          this.name,
+          "BlocklyVPL",
+          "getVisualSourcesUseDomainElementInstaceById",
+          [
+            projectID,
+            domainElementId,
+            smartElement.domainElementType
+          ]
+        ).value;
+        if (visualSources && Array.isArray(visualSources.blocks) && visualSources.blocks.length > 0) {
+          this.onAskToDeleteSmartElementWithDependencies(
+            type,
+            pelem,
+            smartElement,
+            projectID,
+            visualSources,
+            onSuccess
+          );
+        }
+        else {
+          onSuccess.exec_open_dialogue();
+        }
+        // TODO: check to delete
+        // in case it is ok, delete signal for the element + call on success
+        break;
+      case 'rename-after':
+        // TODO: check to rename
+        // signal to rename element + call on success
+        break;
+      default:
+        onSuccess();
+    }
   }
 
   @ExportedFunction

@@ -4,6 +4,7 @@
   height: fit-content;
 }
 
+/* Bubbles at card style */
 .bubble {
   margin-left: 1.5rem;
   margin-top: 0.7rem;
@@ -36,4 +37,71 @@
   overflow-y: auto;
   padding-bottom: 1rem;
   background-color: #f7f7f7;
+}
+
+/* Select groups Modal */
+#select-group-modal .modal-body {
+  /* 100% = dialog height, 120px = header + footer */
+  max-height: 41rem;
+  overflow-y: scroll;
+}
+
+.selection-group-so-properties-table {
+  max-width: fit-content;
+}
+
+.selection-group-so-properties-table th {
+  padding: 0.2rem !important;
+}
+
+.selection-group-so-properties-table td {
+  padding: 0.2rem !important;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: #8e8c8c;
+}
+
+.nav-group-selection-list {
+  color: #616161;
+}
+
+.nav-group-selection-list:hover {
+  color: #585858 !important;
+  font-weight: 500;
+}
+
+.select-group-bubbles {
+  margin-left: 0.5rem;
+  line-height: 19px;
+  cursor: pointer;
+  background-color: #798c9c;
+}
+
+.select-group-bubbles:hover {
+  background-color: #98abbb;
+}
+
+.select-groups-differences-table {
+  /* display: block; */
+  max-height: 20rem;
+  overflow-y: auto;
+  font-size: smaller;
+  padding: 0rem !important;
+  border-top: none !important;
+}
+
+.select-groups-differences-table th {
+  padding: 0.3rem;
+}
+
+.select-groups-differences-table td {
+  padding: 0.3rem;
+}
+
+.select-groups-differences-table select {
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+  height: 0%;
 }

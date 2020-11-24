@@ -1,7 +1,7 @@
 import {
   RenderSmartObject,
   RenderSmartGroup,
-  RenderSelectGroupsModal,
+  CreateAndRenderSelectGroupsModal,
 } from "./sovplelem-view";
 
 export const VPLElemNames = Object.freeze({
@@ -32,6 +32,17 @@ const Privillege = Object.freeze({
   EDITING: "EDITING",
 });
 
+var SOVPLEditorComponent = null;
+
+export function ProjectElementActionsHandling (type, action, pelem, onSuccess) {
+  SOVPLEditorComponent.onProjectElementActionsHandling(
+    type,
+    action,
+    pelem,
+    onSuccess
+  );
+}
+
 export class SOVPLElemInstance {
   constructor(
     parent,
@@ -41,7 +52,7 @@ export class SOVPLElemInstance {
     privillege,
     config
   ) {
-    this.parent = parent;
+    this.parent = SOVPLEditorComponent = parent;
     this.pitem = pitem;
     this.selector = selector;
     this.id = elemData.editorData.editorId;
@@ -121,6 +132,7 @@ export class SOVPLElemInstance {
   }
 
   onCompletingSORegistration(callback) {
+    this.render();
     this.updateRegisteredDevices();
     this.parent.saveElement(this);
     callback();
@@ -153,7 +165,7 @@ export class SOVPLElemInstance {
     // post parent
     this.parent.registerSmartObject(this, (groups, onCompletion) => {
       // pop up to select groups
-      RenderSelectGroupsModal(
+      CreateAndRenderSelectGroupsModal(
         this,
         groups,
         (groups, listUpdatedAliases) =>
@@ -180,8 +192,6 @@ export class SOVPLElemInstance {
 
   // group: {properties: properties, soDataID: id, soName: name}
   onSOCreateSmartGroup(group) {
-    console.log(group);
-
     // initialize group
     group.elemData = { editorData: { details: {} } };
     group.elemData.editorData.details = {};
@@ -235,7 +245,25 @@ export class SOVPLElemInstance {
     }
 
     this.elemData.editorData.details.groups.splice(index, 1);
+
+    // update data for the smart group
+    let projectElement = this.parent.getSmartElement(groupID);
+
+    let firstItem = Object.keys(projectElement._editorsData.items)[0];
+    index = projectElement._editorsData.items[
+      firstItem
+    ].details.smartObjects.findIndex(
+      (x) =>
+        x.id ===
+        this.elemData.editorData.systemID.split("SmartObjectVPLEditor_")[1]
+    );
+    projectElement._editorsData.items[firstItem].details.smartObjects.splice(
+      index,
+      1
+    );
+
     this.parent.saveElement(this);
+    this.render();
   }
   // --- End SmartObject Actions ---
 
@@ -275,11 +303,32 @@ export class SOVPLElemInstance {
       throw new Error("Not found smart object id");
     }
     this.elemData.editorData.details.smartObjects.splice(index, 1);
+
+    // update data for the smart object
+    let projectElement = this.parent.getSmartElement(smartObjectID);
+
+    let firstItem = Object.keys(projectElement._editorsData.items)[0];
+    index = projectElement._editorsData.items[
+      firstItem
+    ].details.groups.findIndex(
+      (x) =>
+        x.id ===
+        this.elemData.editorData.systemID.split("SmartObjectVPLEditor_")[1]
+    );
+
+    projectElement._editorsData.items[firstItem].details.groups.splice(
+      index,
+      1
+    );
+
     this.parent.saveElement(this);
+    this.render();
   }
   // --- End SmartGroup Actions ---
 
   render() {
+    // clear selector
+    document.getElementById(this.selector).innerHTML = "";
     let domSel = document.getElementById(this.selector);
     let componentData = this.parent.getProjectComponentData(
       this.elemData.editorData.projectID
@@ -293,7 +342,7 @@ export class SOVPLElemInstance {
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),
           onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
-          onClickSmartGroup: (groupID) => this.onSODeleteSmartGroup(groupID),
+          onClickSmartGroup: (groupID) => this.onSOClickSmartGroup(groupID),
           onDeleteSmartGroup: (groupID) => this.onSODeleteSmartGroup(groupID),
           options: {
             Edit: () => {

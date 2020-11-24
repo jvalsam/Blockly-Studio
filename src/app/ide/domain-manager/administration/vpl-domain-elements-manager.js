@@ -2,6 +2,7 @@ import { LoadVPLDomainElements } from './vpl-domain-elements';
 import {
     ListensSignals
 } from '../../components-framework/component/components-communication';
+import { VPLDomainElementsHolder } from './vpl-domain-elements-holder';
 
 class _VPLDomainElementsManager {
     constructor() {
@@ -37,6 +38,14 @@ class _VPLDomainElementsManager {
         }
 
         signals[signal].forEach(elem => elem.action(data));
+
+        VPLDomainElementsHolder.receiveSignal(
+            data.projectID,
+            {
+                signalName: signal,
+                actionName: signals[signal][0].actionName
+            },
+            data);
     }
 
     /**
@@ -87,11 +96,12 @@ class _VPLDomainElementsManager {
             ));
     }
 
-    deleteVPLElements(elements, mission, editors) {
+    deleteVPLElements(domainElem, elements, mission, editors) {
         editors.forEach(editor => this.parent.functionRequest(
                 editor.name,
                 'onDeleteVPLElements',
                 {
+                    domainElem: domainElem,
                     mission: mission,
                     elements: elements
                 }
@@ -108,6 +118,10 @@ class _VPLDomainElementsManager {
 
     getEditorConfigs(name) {
         return this._currVPLDomainElements.getEditorConfigs(name);
+    }
+
+    getBlockTypesToDomainElementsMap(projectId) {
+        return VPLDomainElementsHolder.getBlocksToDomainElemsMap(projectId);
     }
 
     getEditors() {

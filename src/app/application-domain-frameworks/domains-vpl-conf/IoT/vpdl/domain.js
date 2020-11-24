@@ -6,6 +6,9 @@ import {
     defineGeneralCategories
 } from '../../../../ide/domain-manager/common/general-blockly-toolbox';
 
+import { ConditionalStaticBlocks } from "./domain-static-elements/conditional-blocks";
+import { CalendarStaticBlocks } from "./domain-static-elements/calendar-blocks";
+
 import { SmartObject as SmartObjectVPLElem } from './domain-elems/smart-object';
 import { SmartObject as SmartObjectConf } from './editor-configs/smart-object';
 import { SmartObject as SmartObjectPI } from './project-items/smart-object/smart-object';
@@ -30,6 +33,10 @@ export function InitializeVPDL() {
         () => ({
             domainElements: [
                 SmartObjectVPLElem
+            ],
+            domainStaticElements: [
+                ConditionalStaticBlocks,
+                CalendarStaticBlocks
             ],
             editorConfigs: [
                 SmartObjectConf,

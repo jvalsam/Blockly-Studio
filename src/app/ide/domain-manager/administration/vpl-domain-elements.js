@@ -1,3 +1,4 @@
+import * as Blockly from "blockly";
 import {
     VPLDomainElementHandler,
     VPLBlocklyElementHandler
@@ -5,6 +6,7 @@ import {
 import { VPLMission } from './vpl-mission';
 import { VPLProjectItem } from './vpl-project-item';
 import { VPLDomainElementsManager } from './vpl-domain-elements-manager';
+
 
 export class VPLDomainElements {
     constructor(domain) {
@@ -14,21 +16,34 @@ export class VPLDomainElements {
         this.vplElems = {};
     }
 
+    loadStaticElements(...vplStaticElements) {
+        vplStaticElements.forEach(vplBlocks => {
+            vplBlocks.forEach(vplBlock => {
+                Blockly.Blocks[vplBlock.name] = vplBlock.blockDef();
+                Blockly.JavaScript[vplBlock.name] = vplBlock.codeGen();
+            });
+        });
+    }
+
     addElements(...vplElems) {
         vplElems.forEach(
-            (vplElem) => this.vplElems[vplElem.name] =
-                ('blocklyElems' in vplElem)
+            (vplElem) => {
+                this.vplElems[vplElem.name] = ('blocklyElems' in vplElem)
                     ? new VPLDomainElementHandler(
                         vplElem.name,
                         vplElem.blocklyElems,
                         vplElem.signals
                       )
                     : new VPLBlocklyElementHandler(
-                                vplElem.name,
-                                vplElem.init,
-                                vplElem.codeGen,
-                                vplElem.debGen
-                      )
+                        {
+                            blockDef: vplElem.init,
+                            uniqueInstance: vplElem.uniqueInstance,
+                            codeGen: vplElem.codeGen,
+                            debGen: vplElem.debGen
+                        },
+                        vplElem.name
+                      );
+            }
         );
     }
 
@@ -70,7 +85,9 @@ export class VPLDomainElements {
             new VPLProjectItem(
                 vplPI.name,
                 vplPI.editorsConfig,
-                vplPI.view
+                vplPI.view,
+                vplPI.actionsHandling,
+                vplPI.handledDomainElems
             )
         );
     }
@@ -123,7 +140,9 @@ export class VPLDomainElements {
         if (name in this.vplProjectItems) {
             let info = {
                 editorConfigs: {},
-                view: this.vplProjectItems[name].view
+                view: this.vplProjectItems[name].view,
+                actionsHandling: this.vplProjectItems[name]._actionsHandling,
+                handledDomainElems: this.vplProjectItems[name]._handledDomainElems
             };
 
             this.vplProjectItems[name].editorsConfig.forEach(
@@ -189,6 +208,7 @@ export function LoadVPLDomainElements(domain, elemsLoader) {
     let vplDomainElemsData = elemsLoader();
 
     let vplDomainElems = new VPLDomainElements(domain);
+    vplDomainElems.loadStaticElements(...vplDomainElemsData.domainStaticElements);
     vplDomainElems.addElements(...vplDomainElemsData.domainElements);
     vplDomainElems.addEditorConfigs(...vplDomainElemsData.editorConfigs);
     vplDomainElems.addProjectItems(...vplDomainElemsData.projectItems);
