@@ -457,12 +457,15 @@ export class SmartObjectVPLEditor extends Editor {
         // in case it is ok, delete signal for the element + call on success
         break;
       case 'rename-after':
+        smartElement.title = pelem._jstreeNode.text;
+        smartElement.img = pelem._jstreeNode.icon;
+        smartElement.colour = pelem._jstreeNode.color;
+        
         ComponentsCommunication.postSignal(
           this.name,
           'rename-' + pelem._jstreeNode.type.split('pi-')[1],
           smartElement
         );
-        onSuccess.exec_action();
         break;
       default:
         onSuccess.exec_open_dialogue();

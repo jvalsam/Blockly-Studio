@@ -384,7 +384,7 @@ export class SOVPLElemInstance {
     this.elemData.name = name;
     this.elemData.img = img;
     this.elemData.color = color;
-    this.render(this.selector, this.elemData);
+    //this.render(this.selector, this.elemData);
   }
 
   sync(data, pitem) {

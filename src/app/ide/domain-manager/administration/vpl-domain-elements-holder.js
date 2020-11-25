@@ -89,8 +89,10 @@ class _VPLDomainElementsHolder {
     }
 
     receiveSignal_onEdit(projectId, signal, data) {
-        this.receiveSignal_onDelete(projectId, signal, data);
-        this.receiveSignal_onCreate(projectId, signal, data);
+        let index = this._signalsToLoadMap[projectId]
+            .findIndex(x => x.data.domainElementId === data.domainElementId
+                            && x.data.domainElementType === data.domainElementType);
+        this._signalsToLoadMap[projectId][index].data = data;
     }
 
     receiveSignal(projectId, signal, data) {

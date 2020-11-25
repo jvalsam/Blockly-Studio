@@ -215,7 +215,7 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
         let codes = this._codeGen(data);
 
         for (let elem in blocks) {
-            let itemName = elemName + elem;
+            let itemName = elemName + '$' + elem;
 
             Blockly.Blocks[itemName] = blocks[elem];
             Blockly.JavaScript[itemName] = codes[elem];

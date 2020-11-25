@@ -1115,12 +1115,13 @@ export class ProjectManager extends IDEUIComponent {
 
     // End of the Project Element handling 
 
-    private onRenameProjectItem(concerned, data) {
+    private onRenameProjectItem(concerned, data, callback) {
         upload_files(
             data.form,
             (paths: Array<String>) => {
                 this.handleUpdateImagePath(paths, data);
                 this.renameElement(concerned, data);
+                callback();
             },
             (resp) => {
                 IDEError.raise("Error Project Manager On Rename Action: Save Img", resp);
@@ -1250,25 +1251,33 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
-    private renameElementLocal(concerned, data: any) {
-        this.onRenameProjectItem(concerned, data);
-
-        ComponentsCommunication.functionRequest(
-            this.name,
-            "CollaborationManager",
-            "pitemUpdated",
-            [
-                concerned.systemID,
-                "rename",
-                data
-            ]
+    private renameElementLocal(concerned, data: any, callback) {
+        this.onRenameProjectItem(
+            concerned,
+            data,
+            () => {
+                callback();
+                ComponentsCommunication.functionRequest(
+                    this.name,
+                    "CollaborationManager",
+                    "pitemUpdated",
+                    [
+                        concerned.systemID,
+                        "rename",
+                        data
+                    ]
+                );
+            }
         );
     }
 
     private renameElementRemote(pitemID, data, callback) {
         let pitem = this.retrievePitem(pitemID);
-        this.onRenameProjectItem(pitem, data);
-        callback("rename: pitem -> " + pitemID);
+        this.onRenameProjectItem(
+            pitem,
+            data,
+            () => callback("rename: pitem -> " + pitemID)
+        );
     }
 
     private editElementOwnership(pitemID, data, callback) {
@@ -1325,14 +1334,17 @@ export class ProjectManager extends IDEUIComponent {
                                     callback
                                 ),
                                 callback: (data) => {
-                                    this.onProjectElementAction(
+                                    this.renameElementLocal(
                                         concerned,
-                                        'rename',
-                                        'After',
-                                        {
-                                            exec_action: () => this.renameElementLocal(concerned, data)
-                                        }
-                                    );
+                                        data,
+                                        () => this.onProjectElementAction(
+                                            concerned,
+                                            'rename',
+                                            'After',
+                                            {
+                                                exec_action: () => {}
+                                            }
+                                        ));
                                 }
                 }])]))
                 .open();

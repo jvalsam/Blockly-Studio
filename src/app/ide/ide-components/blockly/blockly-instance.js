@@ -202,6 +202,9 @@ export class BlocklyInstance {
         let toolbox = this.toolbox();
         var toolboxXml = Blockly.Xml.textToDom(toolbox.gen);
 
+        if (this.wsp) {
+            this.wsp.dispose();
+        }
         this.wsp = Blockly.inject(
             this._blocklyDiv, {
                 media: "../../../../../node_modules/blockly/media/",
@@ -219,6 +222,10 @@ export class BlocklyInstance {
                 // toolbox: toolboxXml,
                 readOnly: true
             });
+    }
+
+    setInitState() {
+        this.state = InstStateEnum.INIT;
     }
 
     close() {
