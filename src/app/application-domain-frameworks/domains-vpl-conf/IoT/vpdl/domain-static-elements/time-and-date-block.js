@@ -1,3 +1,5 @@
+import * as Blockly from "blockly";
+
 export const TimeAndDateStaticBlocks = [
   {
     name: "specific_hour",
