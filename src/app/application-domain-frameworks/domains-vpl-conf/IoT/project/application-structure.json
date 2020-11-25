@@ -151,7 +151,7 @@
                     {
                         "type" : "img",
                         "value" : {
-                            "fa" : "fa-industry-alt"
+                            "fa" : "fas fa-wifi"
                         },
                         "selectedBy" : "domain"
                     }, 
@@ -165,7 +165,7 @@
                 ],
                 "actions" : [
                     {
-                        "title" : "New Smart Object",
+                        "title" : "New Smart Device",
                         "img" : "fa fa-plus",
                         "events" : [ 
                             {
@@ -231,7 +231,7 @@
                     {
                         "title" : "Delete All",
                         "img" : "fa fa-trash",
-                        "help" : "Remove all smart objects and environments",
+                        "help" : "Remove all smart devices and environments",
                         "events" : [ 
                             {
                                 "type" : "click",
@@ -259,7 +259,7 @@
                                 "id" : "smartobject_img",
                                 "value" : {
                                     "property" : "Image",
-                                    "default" : "fa fa-tablet"
+                                    "default" : "https://img.icons8.com/ios-filled/2x/smart-home-connection.png"
                                 },
                                 "formElemItemRenderNO" : 2,
                                 "selectedBy" : "user"
@@ -269,7 +269,7 @@
                                 "id" : "smartobject_title",
                                 "value" : {
                                     "property" : "Name",
-                                    "default" : "Smart Object"
+                                    "default" : "Smart Device"
                                 },
                                 "formElemItemRenderNO" : 1,
                                 "selectedBy" : "user"
@@ -550,7 +550,7 @@
                     {
                         "type" : "img",
                         "value" : {
-                            "fa" : "fa-industry-alt"
+                            "fa" : "fas fa-layer-group"
                         },
                         "selectedBy" : "domain"
                     }, 
@@ -692,21 +692,21 @@
                     {
                         "type" : "img",
                         "value" : {
-                            "fa" : "fa-industry-alt"
+                            "fa" : "fas fa-code-branch"
                         },
                         "selectedBy" : "domain"
                     }, 
                     {
                         "type" : "title",
                         "value" : {
-                            "text" : "Conditional Events"
+                            "text" : "Conditional Automation Tasks"
                         },
                         "selectedBy" : "domain"
                     }
                 ],
                 "actions" : [
                     {
-                        "title" : "New Conditional Event",
+                        "title" : "New Conditional Task",
                         "img" : "fa fa-plus",
                         "events" : [
                             {
@@ -740,7 +740,7 @@
                     {
                         "title" : "Delete All",
                         "img" : "fa fa-trash",
-                        "help" : "Remove all conditional events",
+                        "help" : "Remove all conditional tasks",
                         "events" : [ 
                             {
                                 "type" : "click",
@@ -767,7 +767,7 @@
                                 "id" : "blocklyconditional_img",
                                 "value" : {
                                     "property" : "Image",
-                                    "default" : "fa fa-tablet"
+                                    "default" : "https://img.icons8.com/ultraviolet/2x/compare-git.png"
                                 },
                                 "formElemItemRenderNO" : 2,
                                 "selectedBy" : "user"
@@ -777,7 +777,7 @@
                                 "id" : "blocklyconditional_title",
                                 "value" : {
                                     "property" : "Name",
-                                    "default" : "Conditional Event"
+                                    "default" : "Conditional Task"
                                 },
                                 "formElemItemRenderNO" : 1,
                                 "selectedBy" : "user"
@@ -859,6 +859,342 @@
                         ]
                     }
                 ]
+            },
+            {
+              "type": "CalendarEvents",
+              "renderParts": [
+                {
+                  "type": "img",
+                  "value": {
+                    "fa": "fas fa-calendar-alt"
+                  },
+                  "selectedBy": "domain"
+                },
+                {
+                  "type": "title",
+                  "value": {
+                    "text": "Calendar Automation Tasks"
+                  },
+                  "selectedBy": "domain"
+                }
+              ],
+              "actions": [
+                {
+                  "title": "New Calendar Task",
+                  "img": "fa fa-plus",
+                  "events": [
+                    {
+                      "type": "click",
+                      "action": "onAddProjectElement",
+                      "providedBy": "Platform",
+                      "data": {
+                        "choices": [
+                          {
+                            "type": "pi-blockly-calendar-event",
+                            "mission": "ec-blockly-calendar-event"
+                          }
+                        ]
+                      },
+                      "validation": [
+                        {
+                          "type": "system",
+                          "rules": [
+                            {
+                              "action": "duplicate",
+                              "items": ["blocklycalendar_title"]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "Delete All",
+                  "img": "fa fa-trash",
+                  "help": "Remove all calendar tasks",
+                  "events": [
+                    {
+                      "type": "click",
+                      "action": "onDeleteAllElements",
+                      "providedBy": "Platform",
+                      "data": {
+                        "mission": "ProjectManagementHandling"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "validChildren": ["pi-blockly-calendar-event"],
+              "children": [],
+              "items": [
+                {
+                  "VisualProgrammingSource": "BlocklyCalendarHandling",
+                  "type": "pi-blockly-calendar-event",
+                  "renderParts": [
+                    {
+                      "type": "img",
+                      "id": "blocklycalendar_img",
+                      "value": {
+                        "property": "Image",
+                        "default": "https://img.icons8.com/color/2x/calendar.png"
+                      },
+                      "formElemItemRenderNO": 2,
+                      "selectedBy": "user"
+                    },
+                    {
+                      "type": "title",
+                      "id": "blocklycalendar_title",
+                      "value": {
+                        "property": "Name",
+                        "default": "Calendar Task"
+                      },
+                      "formElemItemRenderNO": 1,
+                      "selectedBy": "user"
+                    },
+                    {
+                      "type": "colour",
+                      "id": "blocklycalendar_colour",
+                      "value": {
+                        "property": "Background-colour",
+                        "default": "#00b4cc"
+                      },
+                      "selectedBy": "user",
+                      "formElemItemRenderNO": 3
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "title": "Open",
+                      "img": "fab fa-codepen",
+                      "events": [
+                        {
+                          "type": "click",
+                          "action": "open",
+                          "providedBy": "EditorManager",
+                          "data": {
+                            "mission": "EditBlocklyCalendar"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "title": "Delete",
+                      "img": "fa fa-trash",
+                      "events": [
+                        {
+                          "type": "click",
+                          "action": "onRemoveElement",
+                          "providedBy": "Platform",
+                          "data": {
+                            "mission": "ProjectManagementHandling"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "title": "Rename",
+                      "img": "fa fa-edit",
+                      "events": [
+                        {
+                          "type": "click",
+                          "action": "onRenameElement",
+                          "providedBy": "Platform",
+                          "validation": [
+                            {
+                              "type": "system",
+                              "rules": [
+                                {
+                                  "action": "duplicate",
+                                  "items": ["blocklycalendar_title"]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "events": [
+                    {
+                      "type": "click",
+                      "action": "open",
+                      "providedBy": "EditorManager",
+                      "data": {
+                        "mission": "EditBlocklyCalendar"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "AutomationTasks",
+              "renderParts": [
+                {
+                  "type": "img",
+                  "value": {
+                    "fa": "fas fa-tasks"
+                  },
+                  "selectedBy": "domain"
+                },
+                {
+                  "type": "title",
+                  "value": {
+                    "text": "Automation Tasks"
+                  },
+                  "selectedBy": "domain"
+                }
+              ],
+              "actions": [
+                {
+                  "title": "New Automation Task",
+                  "img": "fa fa-plus",
+                  "events": [
+                    {
+                      "type": "click",
+                      "action": "onAddProjectElement",
+                      "providedBy": "Platform",
+                      "data": {
+                        "choices": [
+                          {
+                            "type": "pi-blockly-automation-task",
+                            "mission": "ec-blockly-automation-task"
+                          }
+                        ]
+                      },
+                      "validation": [
+                        {
+                          "type": "system",
+                          "rules": [
+                            {
+                              "action": "duplicate",
+                              "items": ["blocklyautomationtask_title"]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "Delete All",
+                  "img": "fa fa-trash",
+                  "help": "Remove all calendar tasks",
+                  "events": [
+                    {
+                      "type": "click",
+                      "action": "onDeleteAllElements",
+                      "providedBy": "Platform",
+                      "data": {
+                        "mission": "ProjectManagementHandling"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "validChildren": ["pi-blockly-automation-task"],
+              "children": [],
+              "items": [
+                {
+                  "VisualProgrammingSource": "BlocklyCalendarHandling",
+                  "type": "pi-blockly-automation-task",
+                  "renderParts": [
+                    {
+                      "type": "img",
+                      "id": "blocklycalendar_img",
+                      "value": {
+                        "property": "Image",
+                        "default": "https://img.icons8.com/color/2x/task-completed.png"
+                      },
+                      "formElemItemRenderNO": 2,
+                      "selectedBy": "user"
+                    },
+                    {
+                      "type": "title",
+                      "id": "blocklyautomationtask_title",
+                      "value": {
+                        "property": "Name",
+                        "default": "Automation Task"
+                      },
+                      "formElemItemRenderNO": 1,
+                      "selectedBy": "user"
+                    },
+                    {
+                      "type": "colour",
+                      "id": "blocklyautomationtask_colour",
+                      "value": {
+                        "property": "Background-colour",
+                        "default": "#cccc00"
+                      },
+                      "selectedBy": "user",
+                      "formElemItemRenderNO": 3
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "title": "Open",
+                      "img": "fab fa-codepen",
+                      "events": [
+                        {
+                          "type": "click",
+                          "action": "open",
+                          "providedBy": "EditorManager",
+                          "data": {
+                            "mission": "EditBlocklyAutomationTask"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "title": "Delete",
+                      "img": "fa fa-trash",
+                      "events": [
+                        {
+                          "type": "click",
+                          "action": "onRemoveElement",
+                          "providedBy": "Platform",
+                          "data": {
+                            "mission": "ProjectManagementHandling"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "title": "Rename",
+                      "img": "fa fa-edit",
+                      "events": [
+                        {
+                          "type": "click",
+                          "action": "onRenameElement",
+                          "providedBy": "Platform",
+                          "validation": [
+                            {
+                              "type": "system",
+                              "rules": [
+                                {
+                                  "action": "duplicate",
+                                  "items": ["blocklyautomationtask_title"]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "events": [
+                    {
+                      "type": "click",
+                      "action": "open",
+                      "providedBy": "EditorManager",
+                      "data": {
+                        "mission": "EditBlocklyAutomationTask"
+                      }
+                    }
+                  ]
+                }
+              ]
             }
         ]
     }

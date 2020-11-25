@@ -13,15 +13,23 @@ import { SmartObject as SmartObjectVPLElem } from './domain-elems/smart-object';
 import { SmartObject as SmartObjectConf } from './editor-configs/smart-object';
 import { SmartObject as SmartObjectPI } from './project-items/smart-object/smart-object';
 
+import { SmartGroup as SmartGroupVPLElem } from "./domain-elems/smart-group";
 import { SmartGroup as SmartGroupConf } from './editor-configs/smart-group';
 import { SmartGroup as SmartGroupPI } from './project-items/smart-group/smart-group';
 
+import { AutomationTask as AutomationTaskVPLElem } from "./domain-elems/automation-task";
+import { AutomationTask as AutomationTaskConf } from "./editor-configs/automation-task";
+import { AutomationTask as AutomationTaskPI} from "./project-items/blockly-task/blockly-task"
+
 import {
     BlocklyConditional as BlocklyConditionalConf
-} from './editor-configs/blockly-conditional/blockly-conditional';
+} from './editor-configs/blockly-conditional';
 import {
     BlocklyConditional as BlocklyConditionalPI
 } from './project-items/blockly-conditional/blockly-conditional';
+
+import { BlocklyCalendar as BlocklyCalendarConf } from "./editor-configs/blockly-calendar";
+import { BlocklyCalendar as BlocklyCalendarPI } from "./project-items/blockly-calendar/blockly-calendar";
 
 let predefinedCategories = getPredefinedCategories();
 // domain author is able to edit them...
@@ -32,7 +40,9 @@ export function InitializeVPDL() {
         'IoT',
         () => ({
             domainElements: [
-                SmartObjectVPLElem
+                SmartObjectVPLElem,
+                SmartGroupVPLElem,
+                AutomationTaskVPLElem
             ],
             domainStaticElements: [
                 ConditionalStaticBlocks,
@@ -41,12 +51,16 @@ export function InitializeVPDL() {
             editorConfigs: [
                 SmartObjectConf,
                 SmartGroupConf,
-                BlocklyConditionalConf
+                AutomationTaskConf,
+                BlocklyConditionalConf,
+                BlocklyCalendarConf
             ],
             projectItems: [
                 SmartObjectPI,
                 SmartGroupPI,
-                BlocklyConditionalPI
+                AutomationTaskPI,
+                BlocklyConditionalPI,
+                BlocklyCalendarPI
             ]
         })
     );
