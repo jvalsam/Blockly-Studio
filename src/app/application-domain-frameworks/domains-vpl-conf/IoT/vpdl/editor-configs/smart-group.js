@@ -8,7 +8,7 @@ export const SmartGroup =
     // in case of more the end-user choose which
     // this action does not include undo (converter is required)
     handledDomainElems: [
-        'SmartObject'
+        'SmartGroup'
     ],
     editors: [
         {

@@ -1,10 +1,10 @@
 import * as Blockly from 'blockly';
 
-export const SmartObjectsTask = {
-    name: 'smart-objects-task',
+export const AutomationTask = {
+    name: 'automation-task',
     blocklyElems: [
         {
-            name: 'run_task',
+            name: 'invoke_task',
             blockDef: (data) => ({
                 init: function() {
                     this.appendDummyInput()
@@ -19,7 +19,7 @@ export const SmartObjectsTask = {
                                 }
                             )
                         )
-                        .appendField("Run task:")
+                        .appendField("Invoke task:")
                         .appendField(
                             new Blockly.FieldLabel(
                                 data.taskName,
@@ -43,19 +43,19 @@ export const SmartObjectsTask = {
         {
             action: 'onCreate',
             name: 'create-project-element',
-            mission: 'smart-objects-task',
+            mission: 'ec-automation-task',
             provider: 'BlocklyVPL'
         },
         {
             action: 'onDelete',
             name: 'delete-project-element',
-            mission: 'smart-objects-task',
+            mission: 'ec-automation-task',
             provider: 'BlocklyVPL'
         },
         {
             action: 'onEdit',
             name: 'rename-project-element',
-            mission: 'smart-objects-task',
+            mission: 'ec-automation-task',
             provider: 'BlocklyVPL'
         }
     ]
