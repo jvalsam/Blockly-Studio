@@ -262,7 +262,7 @@ export class BlocklyVPL extends Editor {
         }
 
         blocklyEditorInstance.updateToolbox(toolboxXml);
-        blocklyEditorInstance.setInitState();
+        blocklyEditorInstance.refresh();
       }
     }
 

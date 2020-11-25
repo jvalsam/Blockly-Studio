@@ -1251,11 +1251,35 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
+    private mapTypeToValueIndex(type) {
+        const map = {
+            'title': 'text',
+            'img': 'path',
+        }
+        return map[type] || type;
+    }
+    private updatePItemRenderData(projectId, pitemId, updatedData) {
+        let pitem = this.loadedProjects[projectId].projectItems.find(x => x.systemID === pitemId);
+        
+        for(const id in updatedData[0]) {
+            let type = id.split('_')[1];
+            let rpart = pitem.renderParts.find(x => x.type === type);
+
+            rpart.value[this.mapTypeToValueIndex(type)] = 
+                updatedData[id] || updatedData[0][id];
+        }
+    }
+
     private renameElementLocal(concerned, data: any, callback) {
         this.onRenameProjectItem(
             concerned,
             data,
             () => {
+                this.updatePItemRenderData(
+                    concerned._editorsData.projectID,
+                    concerned.systemId,
+                    data.json);
+
                 callback();
                 ComponentsCommunication.functionRequest(
                     this.name,
