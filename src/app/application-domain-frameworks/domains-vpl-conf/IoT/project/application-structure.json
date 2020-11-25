@@ -259,7 +259,7 @@
                                 "id" : "smartobject_img",
                                 "value" : {
                                     "property" : "Image",
-                                    "default" : "https://img.icons8.com/ios-filled/2x/smart-home-connection.png"
+                                    "default" : "https://img.icons8.com/dusk/2x/ipad.png"
                                 },
                                 "formElemItemRenderNO" : 2,
                                 "selectedBy" : "user"
@@ -593,7 +593,7 @@
                                 "id" : "smartgroup_img",
                                 "value" : {
                                     "property" : "Image",
-                                    "default" : "fa fa-tablet"
+                                    "default" : "https://img.icons8.com/dusk/2x/genealogy.png"
                                 },
                                 "formElemItemRenderNO" : 2,
                                 "selectedBy" : "user"

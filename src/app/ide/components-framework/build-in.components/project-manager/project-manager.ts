@@ -841,6 +841,20 @@ export class ProjectManager extends IDEUIComponent {
             (paths: Array<String>) => {
                 this.handleUpdateImagePath(paths, data);
                 
+                for (const key in data.json[0]) {
+                    if (key.split('_')[1] === 'img') {
+                        let defaultImgPath = concerned._meta.items
+                            .find(x => x.renderParts.findIndex(e => e.id === key) > -1 )
+                            .renderParts
+                            .find(x => x.id === key)
+                            .value
+                            .default;
+                        
+                        data.json[0][key] = defaultImgPath;
+                        data.json[key] = defaultImgPath;
+                    }
+                }
+                
                 this.createNewItem(
                     concerned,
                     data,
