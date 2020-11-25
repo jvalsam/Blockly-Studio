@@ -66,7 +66,94 @@ export const SmartObject = {
     },
     // way to define getter without multiple
     {
-      name: "getValueBlock",
+      name: "getter",
+      uniqueInstance: false,
+      blockDef: (data) => {
+        let dropdownSel = [];
+
+        data.details.properties.forEach((property) => {
+          dropdownSel.push([property.name, property.name.toUpperCase()]);
+        });
+
+        return {
+          init: function () {
+            this.appendDummyInput()
+              .appendField(
+                new Blockly.FieldImage(data.img, 20, 20, {
+                  alt: "*",
+                  flipRtl: "FALSE",
+                })
+              )
+              .appendField(data.title + ":")
+              .appendField(" get value from")
+              .appendField(
+                new Blockly.FieldDropdown(dropdownSel),
+                "PROPERTIES"
+              );
+            this.setOutput(true, null);
+            this.setColour(240);
+            this.setTooltip("");
+            this.setHelpUrl("");
+          },
+        };
+      },
+      codeGen: (data) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+
+        data.details.properties.forEach((property) => {
+          //code generation based on the choice
+        });
+        // TODO: Assemble JavaScript into code variable.
+        var code = "...";
+        // TODO: Change ORDER_NONE to the correct strength.
+        return [code, Blockly.JavaScript.ORDER_NONE];
+      },
+    },
+    {
+      name: "getter_boolean",
+      uniqueInstance: false,
+      blockDef: (data) => {
+        let dropdownSel = [];
+
+        data.details.properties.forEach((property) => {
+          dropdownSel.push([property.name, property.name.toUpperCase()]);
+        });
+
+        return {
+          init: function () {
+            this.appendDummyInput()
+              .appendField("Is")
+              .appendField(
+                new Blockly.FieldImage(data.img, 20, 20, {
+                  alt: "*",
+                  flipRtl: "FALSE",
+                })
+              )
+              .appendField(data.title)
+              .appendField(
+                new Blockly.FieldDropdown(dropdownSel),
+                "PROPERTIES"
+              );
+            this.setOutput(true, "getter_boolean");
+            this.setColour(230);
+            this.setTooltip("");
+            this.setHelpUrl("");
+          },
+        };
+      },
+      codeGen: (data) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+        // TODO: Assemble JavaScript into code variable.
+        data.details.properties.forEach((property) => {
+          //code generation based on the choice
+        });
+        var code = "...";
+        // TODO: Change ORDER_NONE to the correct strength.
+        return [code, Blockly.JavaScript.ORDER_NONE];
+      },
+    },
+    {
+      name: "setter",
       uniqueInstance: false,
       blockDef: (data) => {
         let dropdownSel = [];
@@ -85,12 +172,18 @@ export const SmartObject = {
                 })
               )
               .appendField(data.title)
-              .appendField("get ")
-              .appendField(
-                new Blockly.FieldDropdown(dropdownSel),
-                "PROPERTIES"
-              );
-            this.setOutput(true, "getter");
+              .appendField(": set")
+              .appendField(new Blockly.FieldDropdown(dropdownSel), "PROPERTIES")
+              .appendField("to");
+            this.appendValueInput("VALUE").setCheck([
+              "String",
+              "Boolean",
+              "Number",
+              "getter",
+            ]);
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
             this.setColour(240);
             this.setTooltip("");
             this.setHelpUrl("");
@@ -98,13 +191,84 @@ export const SmartObject = {
         };
       },
       codeGen: (data) => {
-        let code = "...";
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+        var value_value = Blockly.JavaScript.valueToCode(
+          block,
+          "VALUE",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
 
         data.details.properties.forEach((property) => {
           //code generation based on the choice
         });
 
-        return [code, Blockly.JavaScript.ORDER_NONE];
+        // TODO: Assemble JavaScript into code variable.
+        var code = "...;\n";
+        return code;
+      },
+    },
+    {
+      name: "setter_enum",
+      uniqueInstance: false,
+      blockDef: (data) => {
+        let enumeratedProps = [];
+
+        data.details.properties.forEach((property) => {
+          if (property.type === "enumerated") {
+            enumeratedProps.push([property.name, property.name.toUpperCase()]);
+          }
+        });
+
+        // multiple blocks maybe (????)
+
+        return {
+          init: function () {
+            this.appendDummyInput()
+              .appendField(
+                new Blockly.FieldImage(data.img, 20, 20, {
+                  alt: "*",
+                  flipRtl: "FALSE",
+                })
+              )
+              .appendField(data.title + ":")
+              .appendField(" set")
+              .appendField(
+                new Blockly.FieldDropdown(enumeratedProps),
+                "PROPERTIES"
+              )
+              .appendField("to")
+              .appendField(
+                new Blockly.FieldDropdown([
+                  ["auto", "AUTO"],
+                  ["top", "TOP"],
+                  ["bottom", "BOTTOM"],
+                ]),
+                "PROPERTIES"
+              );
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(240);
+            this.setTooltip("");
+            this.setHelpUrl("");
+          },
+        };
+      },
+      codeGen: (data) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+        var value_value = Blockly.JavaScript.valueToCode(
+          block,
+          "VALUE",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        data.details.properties.forEach((property) => {
+          //code generation based on the choice
+        });
+
+        // TODO: Assemble JavaScript into code variable.
+        var code = "...;\n";
+        return code;
       },
     },
   ],

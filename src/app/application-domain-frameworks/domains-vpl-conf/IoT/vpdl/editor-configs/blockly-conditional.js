@@ -10,6 +10,10 @@ export const BlocklyConditional = {
       },
     },
     {
+      type: "Separator",
+      gap: "200",
+    },
+    {
       name: "Conditional",
       type: "DomainStatic",
       colour: "75",
@@ -20,10 +24,6 @@ export const BlocklyConditional = {
         "relational_operators",
         "changes",
       ],
-    },
-    {
-      type: "Separator",
-      gap: "200",
     },
     {
       name: "Smart Objects",
@@ -38,14 +38,14 @@ export const BlocklyConditional = {
             {
               name: {
                 domainElem: "SmartObject",
-                item: "getValueBlock",
+                item: "getter",
               },
               type: "Element",
             },
           ],
         },
       ],
-    }
+    },
   ],
   editors: [
     {

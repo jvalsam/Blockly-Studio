@@ -26,7 +26,7 @@ export const AutomationTask = {
             {
               name: {
                 domainElem: "SmartObject",
-                item: "getValueBlock",
+                item: "getter",
               },
               type: "Element",
             },
