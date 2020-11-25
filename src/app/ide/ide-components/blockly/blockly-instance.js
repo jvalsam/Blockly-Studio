@@ -150,21 +150,22 @@ export class BlocklyInstance {
             // create new div with absolute position in the IDE
             if (this.wsp) {
                 this.wsp.dispose();
-                this.wsp = null;
+                // this.wsp = null;
                 $('#'+blocklySel).empty();
             }
-            
-            $(".blockly-editors-area")
+            else {
+                $(".blockly-editors-area")
                 .append(
                     "<div id=\""
                     + blocklySel
                     + "\" style=\"position: absolute\"></div>");
-            this.calcPItemBlocklyArea();
-            this._blocklyDiv = document.getElementById(blocklySel);
+                this.calcPItemBlocklyArea();
+                this._blocklyDiv = document.getElementById(blocklySel);
+            }
             
             this["initWSP_" + this.privilleges]();
             
-            // load text
+            // load text if exists
             if (this.text) {
                 var xml = Blockly.Xml.textToDom(this.text);
                 Blockly.Xml.domToWorkspace(xml, this.wsp);
@@ -175,6 +176,8 @@ export class BlocklyInstance {
                 (e) => this.onResize(e),
                 false
             );
+            this._blocklyDiv.style.visibility = 'visible';
+            this.calcPItemBlocklyArea();
             this.onResize();
         }
         else {
@@ -229,7 +232,6 @@ export class BlocklyInstance {
 
     refresh() {
         this.state = InstStateEnum.INIT;
-        this.open();
     }
 
     close() {

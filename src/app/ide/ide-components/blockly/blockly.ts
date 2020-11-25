@@ -257,11 +257,11 @@ export class BlocklyVPL extends Editor {
     for (const instId in this.instancesMap) {
       let blocklyEditorInstance = this.instancesMap[instId];
       if (blocklyEditorInstance.type === data.name) {
-        if (!toolboxXml) {
-          toolboxXml = blocklyEditorInstance.xmlTextToDom(data.toolbox.gen);
-        }
+        // if (!toolboxXml) {
+        //   toolboxXml = blocklyEditorInstance.xmlTextToDom(data.toolbox.gen);
+        // }
 
-        blocklyEditorInstance.updateToolbox(toolboxXml);
+        // blocklyEditorInstance.updateToolbox(toolboxXml);
         blocklyEditorInstance.refresh();
       }
     }
