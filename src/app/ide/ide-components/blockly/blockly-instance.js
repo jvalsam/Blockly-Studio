@@ -146,8 +146,14 @@ export class BlocklyInstance {
         }
 
         if (this.state === InstStateEnum.INIT) {
-            // create new div with absolute position in the IDE
             let blocklySel = "blockly_" + this.id;
+            // create new div with absolute position in the IDE
+            if (this.wsp) {
+                this.wsp.dispose();
+                this.wsp = null;
+                $('#'+blocklySel).empty();
+            }
+            
             $(".blockly-editors-area")
                 .append(
                     "<div id=\""
@@ -202,9 +208,6 @@ export class BlocklyInstance {
         let toolbox = this.toolbox();
         var toolboxXml = Blockly.Xml.textToDom(toolbox.gen);
 
-        if (this.wsp) {
-            this.wsp.dispose();
-        }
         this.wsp = Blockly.inject(
             this._blocklyDiv, {
                 media: "../../../../../node_modules/blockly/media/",
@@ -224,8 +227,9 @@ export class BlocklyInstance {
             });
     }
 
-    setInitState() {
+    refresh() {
         this.state = InstStateEnum.INIT;
+        this.open();
     }
 
     close() {
