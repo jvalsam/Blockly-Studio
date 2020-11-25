@@ -456,6 +456,9 @@ export class SmartObjectVPLEditor extends Editor {
         // TODO: check to delete
         // in case it is ok, delete signal for the element + call on success
         break;
+      case 'delete-after':
+        onSuccess.exec_action();
+        break;
       case 'rename-after':
         smartElement.title = pelem._jstreeNode.text;
         smartElement.img = pelem._jstreeNode.icon;
