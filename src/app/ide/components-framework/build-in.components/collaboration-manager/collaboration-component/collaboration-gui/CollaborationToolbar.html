@@ -15,20 +15,137 @@
 
 <body>
 
-    <div id="testDiv"> </div>
+    <div id="testDiv">
+        <!-- <div class="popup-opacity"> </div>
+        <div class="collaboration-popup">
+            <div class="collaboration-popup-header-bar vcenter">
+                <div class="collaboration-popup-header-text"> ${title} </div>
+                <div class="collaboration-popup-header-x middle-right size18x18"></div>
+            </div>
+            <div class="collaboration-popup-content-container center">
+                <div class="suggestion-all-content">
+                    <div class="suggestion-editors-area">
+                        <div class="suggestion-editor-area">
+                            <div class="suggestion-annotation-with-x suggestion-annotation-warning">
+                                <div class="suggestion-text-14">
+                                    [Warning] This file was edited after this suggestion was made.
+                                </div>
+                                <div class="suggestion-annotation-x"> </div>
+                            </div>
+                            <div class="suggestion-vpl-editor">
+                            </div>
+                        </div>
+                        <div class="suggestion-editor-area">
+                            <div class="suggestion-vpl-editor">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="suggestion-right-menu">
+                        <div class="suggestion-right-menu-content">
+                            <div class="suggestion-right-menu-section">
+                                <div class="suggestion-text-16">
+                                    Manage Suggestion
+                                </div>
+                                <div class="suggestion-annotation suggestion-annotation-comment">
+                                    <div class="suggestion-comment-title">
+                                        <div class="suggestion-arrow"> </div>
+                                        <div class="suggestion-comment"> Comment </div>
+                                    </div>
+                                    <div class="suggestion-comment-content">
+                                        This is the comment content that could be long
+                                        This is the comment content that could be long
+                                    </div>
+                                </div>
+                                <div class="suggesiton-confirmation-buttons">
+                                    <div class="suggestion-confirmation-button suggestion-accept">
+                                        Accept
+                                    </div>
+                                    <div class="suggestion-confirmation-button suggestion-reject">
+                                        Reject
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="suggestion-right-menu-section">
+                                <div class="suggestion-text-16">
+                                    This item's other suggestions
+                                </div>
+                                <div class="suggestion-users-container">
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                    <div class="suggestion-user">
+                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
+                                        </div>
+                                        <div class="suggestion-text-14"> ${member.name} </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
 
 </body>
 
 <script>
     $(document).ready(function () {
-        // popup = new SuggestionPopup(
-        //     "testDiv", 
-        //     "Alarm Clock Rings", 
-        //     {
-        //         icon: "./Icons/man0.png",
-        //         name: "Random Guy"
-        //     }
-        // );
+        popup = new SuggestionPopup(
+            "testDiv",
+            "Alarm Clock Rings",
+            {
+                icon: "./Icons/man0.png",
+                name: "Random Guy"
+            }
+        );
 
         // popup = new CollaborationSettingsPopup('testDiv', 
         //     [
@@ -100,43 +217,43 @@
         // popup.setOnApplyCb((settings)=>{
         //     console.log(settings);
         // });
-        
-        let node = {
-            id: 'node143563',
-            icon: '../../Icons/clock.png',
-            name: 'Personal Files - Mary',
-            children: [
-                {
-                    id: 'node234561235',
-                    name: 'Personal Files - Mary',
-                    icon: '../../Icons/clock.png',
-                    color: 'blue',
-                    children: [
-                        {
-                            id: 'node345631235',
-                            name: 'Personal Files - Mary',
-                            icon: '../../Icons/clock.png',
-                            color: 'blue',
-                            state : {
-                                'opened' : true,
-                            },
-                        },
-                        {
-                            id: 'node471325',
-                            name: 'Personal',
-                            icon: '../../Icons/clock.png',
-                            color: 'blue',
-                            state : {
-                                'opened' : true,
-                            },
-                        }
-                    ]
-                },
-            ]
-        };
 
-        popup = new SelectiveDebuggingPopup('testDiv');
-        popup.createNodesSpecificIds(node);
+        // let node = {
+        //     id: 'node143563',
+        //     icon: '../../Icons/clock.png',
+        //     name: 'Personal Files - Mary',
+        //     children: [
+        //         {
+        //             id: 'node234561235',
+        //             name: 'Personal Files - Mary',
+        //             icon: '../../Icons/clock.png',
+        //             color: 'blue',
+        //             children: [
+        //                 {
+        //                     id: 'node345631235',
+        //                     name: 'Personal Files - Mary',
+        //                     icon: '../../Icons/clock.png',
+        //                     color: 'blue',
+        //                     state : {
+        //                         'opened' : true,
+        //                     },
+        //                 },
+        //                 {
+        //                     id: 'node471325',
+        //                     name: 'Personal',
+        //                     icon: '../../Icons/clock.png',
+        //                     color: 'blue',
+        //                     state : {
+        //                         'opened' : true,
+        //                     },
+        //                 }
+        //             ]
+        //         },
+        //     ]
+        // };
+
+        // popup = new SelectiveDebuggingPopup('testDiv');
+        // popup.createNodesSpecificIds(node);
     });
 </script>
 

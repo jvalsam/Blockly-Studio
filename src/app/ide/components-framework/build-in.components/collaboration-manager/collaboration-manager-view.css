@@ -519,27 +519,7 @@
 
 .suggestion-all-content{
     width: 70vw;
-}
-
-.suggestion-files-container{
     display: flex;
-    width: 100%;
-}
-
-.suggestion-file{
-    width: 50%;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #B1B1B1;
-    box-sizing: border-box;
-}
-
-.suggestion-file-and-dot{
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
 .suggestion-text-16{
@@ -558,25 +538,24 @@
     color: rgba(0, 0, 0, 0.81);
 }
 
-.suggestion-purple-dot{
-    width: 12px;
-    height: 12px;
-    background: #908EC7;
-    border-radius: 50%;
-}
-
 .suggestion-user{
     display: flex;
     gap: 10px;
     align-items: center;
+    width: 100%;
+    cursor: pointer;
+}
+
+.suggestion-user:hover{
+    background-color: #f1f1f1;
 }
 
 .suggestion-user-icon{
     background-position: center center !important;
-    background-size: 18px 18px !important;
-    size: 30px 30px !important;
-    width: 30px !important;
-    height: 30px !important;
+    background-size: 15px 15px !important;
+    size: 24px 24px !important;
+    width: 24px !important;
+    height: 24px !important;
     background-color: #4A81B1 !important;
     background-image: url(./../../../components-framework/build-in.components/collaboration-manager/Icons/man0.png);
     background-repeat: no-repeat;
@@ -587,9 +566,65 @@
 
 .suggestion-editors-area{
     display: flex;
-    width: 100%;
+    width: 80%;
     height: 60vh;
     position: relative;
+}
+
+.suggestion-right-menu{
+    display: flex;
+    justify-content: center;
+    width: 20%;
+    height: 60vh;
+}
+
+.suggestion-right-menu-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 40px;
+    width: 80%;
+    margin-top: 40px;
+}
+
+.suggestion-right-menu-section{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.suggesiton-confirmation-buttons{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    color: #ffffff;
+}
+
+.suggestion-confirmation-button{
+    width: 47.5%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.suggestion-accept{
+    background-color: #4DB151;
+}
+.suggestion-reject{
+    background-color: #F44236;
+}
+
+.suggestion-users-container{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 20vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .suggestion-editor-area{
@@ -607,16 +642,38 @@
     top: 0;
 }
 
-.suggestion-annotations{
+.suggestion-annotation-with-x{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
     display: flex;
-    flex-direction: column;
     gap: 5px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    text-align: left;
+    z-index: 1;
 }
 
 .suggestion-annotation{
     padding: 10px;
     text-align: left;
     z-index: 1;
+}
+
+.suggestion-annotation-x{
+    width: 15px;
+    height: 15px;
+    size: 15px 15px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.45);
+    background-size: cover;
+    -webkit-mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+    -webkit-mask-size: 100% 100%;
+    mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+    mask-size: 100% 100%;
+    cursor: pointer;
 }
 
 .suggestion-annotation-warning{
@@ -627,32 +684,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-.suggestion-annotation-confirmation{
-    background: #DFDDFB;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.suggestion-confirmation-buttons{
-    display: flex;
-    gap: 10px;
-    justify-content: space-between;
-}
-
-.suggestion-tick{
-    background-image: url(./Icons/suggestion-tick.png);
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.suggestion-x{
-    background-image: url(./Icons/suggestion-x.png);
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
 }
 
 .suggestion-arrow{

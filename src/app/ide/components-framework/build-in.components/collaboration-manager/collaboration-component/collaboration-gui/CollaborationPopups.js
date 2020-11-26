@@ -404,68 +404,67 @@ class SuggestionPopup extends CollaborationPopup{
     _onAcceptCb = () => {};
     _onRejectCb = () => {};
 
-    constructor(container, file, member){
+    constructor(container, file, members){
         super(container, `Suggestion - ${file}`);
 
-        let html = 
-            `<div class = "suggestion-all-content">\
-                <div class = "suggestion-files-container">\
-                    <div class = "suggestion-file">\
-                        <div class="suggestion-text-16"> ${file} </div>\
-                    </div>\
-                    <div class="suggestion-file">\
-                        <div class = "suggestion-file-and-dot">\
-                            <div class="suggestion-purple-dot"></div>\
-                            <div class="suggestion-text-16"> ${file} - Suggested </div>\
+        let html = `\
+        <div class="suggestion-all-content">\
+            <div class="suggestion-editors-area">\
+                <div class="suggestion-editor-area">\
+                    <div class="suggestion-annotation-with-x suggestion-annotation-warning">\
+                        <div class="suggestion-text-14">\
+                            [Warning] This file was edited after this suggestion was made.\
                         </div>\
-                        <div class = "suggestion-user">\
-                            <div class = "suggestion-user-icon" style = "background-image: url(${member.icon})"></div>\
-                            <div class="suggestion-text-16"> ${member.name} </div>\
+                        <div class="suggestion-annotation-x"> </div>\
+                    </div>\
+                    <div class="suggestion-vpl-editor">\
+                    </div>\
+                </div>\
+                <div class="suggestion-editor-area">\
+                    <div class="suggestion-vpl-editor">\
+                    </div>\
+                </div>\
+            </div>\
+            <div class="suggestion-right-menu">\
+                <div class="suggestion-right-menu-content">\
+                    <div class="suggestion-right-menu-section">\
+                        <div class="suggestion-text-16">\
+                            Manage Suggestion\
+                        </div>\
+                        <div class="suggestion-annotation suggestion-annotation-comment">\
+                            <div class="suggestion-comment-title">\
+                                <div class="suggestion-arrow"> </div>\
+                                <div class="suggestion-comment"> Comment </div>\
+                            </div>\
+                            <div class="suggestion-comment-content">\
+                                This is the comment content that could be long\
+                                This is the comment content that could be long\
+                            </div>\
+                        </div>\
+                        <div class="suggesiton-confirmation-buttons">\
+                            <div class="suggestion-confirmation-button suggestion-accept">\
+                                Accept\
+                            </div>\
+                            <div class="suggestion-confirmation-button suggestion-reject">\
+                                Reject\
+                            </div>\
+                        </div>\
+                    </div>\
+                    <div class="suggestion-right-menu-section">\
+                        <div class="suggestion-text-16">\
+                            This item's other suggestions\
+                        </div>\
+                        <div class="suggestion-users-container">\
+                            <div class="suggestion-user">\
+                                <div class="suggestion-user-icon" style="background-image: url(${members.icon})">\
+                                </div>\
+                                <div class="suggestion-text-14"> ${members.name} </div>\
+                            </div>\
                         </div>\
                     </div>\
                 </div>\
-                <div class="suggestion-editors-area">\
-                    <div class = "suggestion-editor-area">\
-                        <div class="suggestion-annotations">\
-                                <div class="suggestion-annotations suggestion-text-14">\
-                                    <div class = "suggestion-annotation suggestion-annotation-warning"> \
-                                        [Warning] This file was edited after this suggestion was made. \
-                                    </div>\
-                                </div>\
-                        </div>\
-                        <div class = "suggestion-vpl-editor">\
-                        </div>\
-                    </div>\
-                    <div class = "suggestion-editor-area">\
-                        <div class = "suggestion-annotations suggestion-text-14">\
-                            <div class = "suggestion-annotation suggestion-annotation-comment"> \
-                                <div class = "suggestion-comment-title">\
-                                    <div class = "suggestion-arrow"> </div>\
-                                    <div class = "suggestion-comment"> Comment </div>\
-                                </div>\
-                                <div class = "suggestion-comment-content">\
-                                    This is the comment content that could be long\
-                                    This is the comment content that could be long\
-                                    This is the comment content that could be long\
-                                    This is the comment content that could be long\
-                                    This is the comment content that could be long\
-                                    This is the comment content that could be long\
-                                    This is the comment content that could be long\
-                                </div> \
-                            </div>\
-                            <div class = "suggestion-annotation suggestion-annotation-confirmation"> \
-                                <div> Accept this suggestion </div>\
-                                <div class = "suggestion-confirmation-buttons">\
-                                    <div class = "suggestion-tick"></div>\
-                                    <div class = "suggestion-x"></div>\
-                                </div>\
-                            </div>\
-                        </div>\
-                        <div class = "suggestion-vpl-editor">\
-                        </div>\
-                    </div>\
-                </div>\
-            </div>`;
+            </div>\
+        </div>`;
 
         this._contentContainer.append(html);
         
@@ -476,14 +475,18 @@ class SuggestionPopup extends CollaborationPopup{
             $(".suggestion-arrow").css('transform', `rotate(${arrow_rotation}deg)`);
         });
 
-        $(".suggestion-tick").click(() => {
+        $(".suggestion-accept").click(() => {
             this._onAcceptCb();
             this.closePopup();
         });
 
-        $(".suggestion-x").click(() => {
+        $(".suggestion-reject").click(() => {
             this._onRejectCb();
             this.closePopup();
+        });
+
+        $(".suggestion-annotation-x").click(function(){
+            $(this).parent().hide();
         });
     }
 
