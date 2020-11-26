@@ -479,4 +479,9 @@ export class SmartObjectVPLEditor extends Editor {
   public onChangeConfig(values: any): void {
     alert("on change config data not developed yet in Blockly Component");
   }
+
+  @ExportedFunction
+  public generateCodeDataForExecution (data: any) {
+    alert("Not implemented generateCodeDataForExecution in " + this.name);     
+  }
 }

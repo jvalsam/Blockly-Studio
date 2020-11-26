@@ -109,10 +109,7 @@ export class RuntimeManagerToolbarView extends ComponentViewElement {
 
         // disable run and debug btns
         let $startEl = this.findEl(".ts-runtime-toolbar-run-btn", true);
-        $startEl.css({
-            "color": "lightgrey",
-            "cursor": "not-allowed"
-        });
+        $startEl.css({"color": "lightgrey", "cursor": "not-allowed"});
         $startEl.hover(
             function () { $(this).css({ "color": "lightgrey" }); },
             function () { $(this).css({ "color": "lightgrey" }); }

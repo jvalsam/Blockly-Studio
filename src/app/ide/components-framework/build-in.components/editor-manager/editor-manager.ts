@@ -352,6 +352,7 @@ export class EditorManager extends IDEUIComponent {
             projectItem.items[editorId].tmplSel = ec.selector;
             projectItem.items[editorId].editorId = editorId;
             projectItem.items[editorId].confName = ec.config;
+            projectItem.items[editorId].editorName = editorConfig.name;
         }
 
         return projectItem;

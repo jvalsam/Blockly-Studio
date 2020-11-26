@@ -124,4 +124,6 @@ export abstract class Editor extends IDEUIComponent {
         pitemInfo: any,
         editorConfig: any
     ): any;
+
+    public abstract generateCodeDataForExecution (data: any);
 }

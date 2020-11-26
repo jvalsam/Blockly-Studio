@@ -233,11 +233,11 @@ export class RuntimeManager extends IDEUIComponent {
 
     private _startMsgHookId: String;
 
-    @RequiredFunction("ProjectManager", "getMainApplicationData")
+    @RequiredFunction("ProjectManager", "getRunApplicationData")
     private onStartRunApplicationBtn(): void {
-        this._viewElems.RuntimeManagerToolbarView[0]
-            .elem
-            .disableButtons();
+        let toolbarView = this._viewElems.RuntimeManagerToolbarView[0].elem;
+        toolbarView.disableButtons();
+        toolbarView.activateStopBtn();
 
         // this.ClearMessages();
         this.AddDefaultMessage("prepare");
@@ -245,7 +245,7 @@ export class RuntimeManager extends IDEUIComponent {
         let appData = ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
-            "getMainApplicationData"
+            "getRunApplicationData"
         ).value;
 
         let runData = this.runDataGen(appData);
