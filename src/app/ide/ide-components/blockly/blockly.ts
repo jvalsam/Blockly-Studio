@@ -503,4 +503,9 @@ export class BlocklyVPL extends Editor {
     return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
   }
 
+  @ExportedFunction
+  public generateCodeDataForExecution (data: any) {
+    alert("Not implemented generateCodeDataForExecution in " + this.name);     
+  }
+
 }

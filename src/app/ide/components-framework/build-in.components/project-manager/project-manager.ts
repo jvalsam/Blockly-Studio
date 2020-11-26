@@ -226,9 +226,51 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public getMainApplicationData() {
+    public getRunApplicationData() {
         let mainProject = this.loadedProjects[this.mainProject];
-        return { main: "srcMain", domain: "IoT" };
+        let runAppData = {
+            title: mainProject.title,
+            author: mainProject.author,
+            created: mainProject.created,
+            description: mainProject.description,
+            domain: mainProject.domainType,
+            project: {}
+        };
+        this.projManagerDescr.project.categories.forEach(category => {
+            // collect data for each one of the project item with category.type
+            let categData = [];
+            let pitems = mainProject.projectItems.filter(x => category.validChildren.includes(x.type));
+            
+            pitems.forEach(pitem => {
+                let pitemData = {
+                    type: pitem.type,
+                    editorsData: []
+                };
+
+                for(const key in pitem.editorsData.items) {
+                    let item = pitem.editorsData.items[key];
+                    // call vpl editor to export data src for execution
+                    let generated = ComponentsCommunication.functionRequest(
+                        this.name,
+                        item.editorName,
+                        "generateCodeDataForExecution",
+                        [ item ]
+                    ).value;
+
+                    pitemData.editorsData.push({
+                        selector: item.tmplSel,
+                        configType: item.confName,
+                        generated: generated
+                    });
+                }
+
+                categData.push(pitemData);
+            });
+
+            runAppData.project[category.type] = categData;
+        });
+
+        return runAppData;
     }
 
     @ExportedFunction
