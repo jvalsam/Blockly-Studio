@@ -231,7 +231,8 @@ export class RuntimeManager extends IDEUIComponent {
         return domScript;
     }
 
-    private handleRuntimeEnvironmentMessages(event) {
+    private listenRuntimeEnvironmentMessages(event) {
+        event.data
         if (event.data === 'send-runtime-environment-data') {
             let data = {
                 mydata: "test",
@@ -241,6 +242,10 @@ export class RuntimeManager extends IDEUIComponent {
         }
     }
 
+    @ExportedFunction
+    getEnvironmentRunData() {
+        
+    }
 
     private _startMsgHookId: String;
 
@@ -266,9 +271,8 @@ export class RuntimeManager extends IDEUIComponent {
             .attr('width',500)
             .appendTo('.runtime-environment-area');
 
-        // send data to run the application...
-
-        window.onmessage = (event) => this.handleRuntimeEnvironmentMessages(event);
+        // connect the runtime application with IDE
+        window.onmessage = (event) => this.listenRuntimeEnvironmentMessages(event);
 
         let runData = this.runDataGen(appData);
 
