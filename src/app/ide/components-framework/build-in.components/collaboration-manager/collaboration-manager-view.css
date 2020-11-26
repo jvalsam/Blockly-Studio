@@ -809,10 +809,6 @@ input:checked + .slider:before {
     padding: 2vw;
 }
 
-.selective-execution-container ::-webkit-scrollbar {
-
-}
-
 .selective-execution-tree-container{
     display: flex;
     width: 50vw;
@@ -826,19 +822,19 @@ input:checked + .slider:before {
     margin-right: auto;
 }
 
-#selective-execution-tree-root{
-    font-weight: 600;
-    color: #2e2e2e;
-    font-size: 18px;
+.selective-execution-tree > ul > li > a{
+    font-weight: 600 !important;
+    color: #2e2e2e !important;
+    font-size: 18px !important; 
 }
 
-#selective-execution-tree-root > .jstree-children {
+.selective-execution-tree > .jstree-children {
     font-size: 16px;
-    color: rgba(0,0, 0, 0.81);
+    color: rgba(0, 0, 0, 0.81);
     font-weight: normal;
 }
 
-#selective-execution-tree-root > .jstree-children a i.jstree-themeicon {
+.selective-execution-tree > .jstree-children a i.jstree-themeicon {
     background-position: center center !important;
     background-size: 16px 16px !important;
     size: 16px 16px !important;
@@ -852,42 +848,22 @@ input:checked + .slider:before {
     border: 0px;
 }
 
-#selective-execution-tree-root i.jstree-themeicon {
-    margin-right: 10px;
-    background-position: center center !important;
-    background-size: 20px 20px !important;
-    size: 20px 20px !important;
-    width: 20px !important;
-    height: 20px !important;
-    background-color: transparent !important;
-    border-radius: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
-}
-
-#selective-execution-tree-root > .jstree-ocl {
+/*  */
+.selective-execution-tree > ul > li > .jstree-ocl {
     float: left;
 }
 
-#selective-execution-tree-root > .jstree-children .jstree-ocl {
+.selective-execution-tree > ul > li > .jstree-children .jstree-ocl {
     float: left;
     margin-top: 0;
 }
 
-#selective-execution-tree-root > .jstree-wholerow {
-    height: 24px;
-}
-
-#selective-execution-tree-root > .jstree-children > .jstree-wholerow {
-    height: 24px;
-}
-
-#selective-execution-tree-root span {
+.selective-execution-tree span {
     height: 19px !important;
     margin-right: 10px !important;
 }
 
-#selective-execution-tree-root .jstree-checkbox{
+.selective-execution-tree .jstree-checkbox{
     margin-right: 10px;
 }
 

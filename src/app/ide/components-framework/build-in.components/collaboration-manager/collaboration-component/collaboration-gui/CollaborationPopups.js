@@ -1,3 +1,5 @@
+// import * as assert from "assert";
+
 // export {
 //     SharePopup,
 //     JoinPopup,
@@ -589,49 +591,95 @@ class SelectiveDebuggingPopup extends CollaborationPopup{
                         flex-wrap: wrap;            \
                         height : 24px;              \
                         margin-bottom: 1px;         \
-                        font-size: 16px;            \
                     "
     };
-    treeJqry;
-    tree;
+    _treeJqry;
+    _tree;
+    _onCheckCb = (node) => {console.log(node.id);};
+    _onUncheckCb = (node) => {console.log(node.id);};
+    _onStartExecutionCb = (nodes) => {console.log(nodes)};
 
-    constructor(container, nodes){
+    constructor(container){
         super(container, 'Selective Execution');
         
         let selectiveExecutionContinaer = $('<div class = "selective-execution-container"> </div>');
-        
-        this.treeJqry = $('<div class = "selective-execution-tree"> </div>');
-        
+        this._treeJqry = $('<div class = "selective-execution-tree"> </div>');
         let treeContainer = $('<div class = "selective-execution-tree-container"> </div>');
+        this._buttonJqry = $('<div class = "selective-execution-button"> Start </div>');
 
         $.jstree.defaults.checkbox.three_state = false;
         $.jstree.defaults.checkbox.cascade = 'down up';
 
-        this.treeJqry.jstree({
-            "plugins": [ "colorv", "sort", "contextmenu", "unique", "checkbox", ],
+        this._treeJqry.jstree({
+            "plugins": [ "colorv", "sort", "contextmenu", "unique", "conditionalselect", "checkbox"],
             'core': {
                 'check_callback': true,
+            },
+            "conditionalselect" : (node, event) => {
+                if (this._tree.is_checked(node))
+                    this._onUncheckCb(node);
+                else
+                    this._onCheckCb(node);
+
+                return true;
             }
         });
-        this.tree = $.jstree.reference(this.treeJqry);
+        
+        this._tree = $.jstree.reference(this._treeJqry);
 
         this._contentContainer.append(
             selectiveExecutionContinaer.append(
                 treeContainer.append(
-                    this.treeJqry
+                    this._treeJqry
                 ),
-                $('<div class = "selective-execution-button"> Start </div>')
+                this._buttonJqry
             )
         );
 
-        this.createNodes(null, nodes);
+        this._buttonJqry.click( () => this._onStartExecutionCb(this.getCheckedNodes()) );
     }
 
-    createNodes(parentId, node){
-        node.id = this.tree.create_node(
+    createNodesSpecificIds(nodes){
+        let idsExist = this._nodesForEach(nodes, (node) => {
+            return node.id !== undefined;
+        });
+
+        // assert.equal(idsExist, "Some node does not have an id field");
+        
+        if (idsExist)
+            this._createNodes(null, nodes, (parentId, node) => {
+                return node.id;
+            });
+    }
+
+    createNodesAutoIds(nodes){
+        this._createNodes(null, nodes, (parentId, node) => {
+            return parentId === null ? 'selective-execution-tree-root' : parentId + '/' + node.name
+        });
+    }
+
+    _nodesForEach(root, cb){
+        let proceed = true;
+
+        if (!cb(root))
+            proceed = false;
+        
+        if (proceed && root.children)
+            for (let child of root.children){
+                proceed = proceed && this._nodesForEach(child, cb)
+                if (!proceed) break;
+            }
+        
+        return proceed;
+    }
+
+    _createNodes(parentId, node, calculateId){
+        let id = calculateId(parentId, node);
+
+        node.id = this._tree.create_node(
             parentId,
             {
-                id: parentId === null ? 'selective-execution-tree-root' : parentId + '/' + node.name,
+                id: id,
                 text: node.name,
                 icon: node.icon,
                 color: node.color,
@@ -642,15 +690,32 @@ class SelectiveDebuggingPopup extends CollaborationPopup{
             () => {
                 if (node.children)
                     for (let child of node.children)
-                        this.createNodes(
-                            parentId === null ? 'selective-execution-tree-root' : parentId + '/' + node.name,
-                            child
-                        )
+                        this._createNodes(id, child, calculateId)
             },
         );
     }
+    
+    checkNode(id){
+        this._tree.check_node(id);
+    }
+
+    uncheckNode(id){
+        this._tree.uncheck_node(id);
+    }
 
     getCheckedNodes(){
-        return this.tree.get_checked_descendants('selective-execution-tree-root');
+        return this._tree.get_checked();
+    }
+
+    setOnCheck(cb){
+        this._onCheckCb = cb; 
+    }
+
+    setOnUncheck(cb){
+        this._onUncheckCb = cb;
+    }
+
+    setOnStartExecution(cb){
+        this._onStartExecutionCb = cb;
     }
 }
