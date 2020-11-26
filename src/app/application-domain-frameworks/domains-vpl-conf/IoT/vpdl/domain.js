@@ -6,7 +6,7 @@ import {
 
 import { ConditionalStaticBlocks } from "./domain-static-elements/conditional-blocks";
 import { CalendarStaticBlocks } from "./domain-static-elements/calendar-blocks";
-import { TimeAndDateStaticBlocks } from "./domain-static-elements/time-and-date-block";
+import { TimeAndDateStaticBlocks } from "./domain-static-elements/time-date-block";
 
 import { SmartObject as SmartObjectVPLElem } from "./domain-elems/smart-object";
 import { SmartObject as SmartObjectConf } from "./editor-configs/smart-object";
