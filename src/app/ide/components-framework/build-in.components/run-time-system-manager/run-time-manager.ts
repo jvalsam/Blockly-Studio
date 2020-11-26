@@ -231,6 +231,17 @@ export class RuntimeManager extends IDEUIComponent {
         return domScript;
     }
 
+    private handleRuntimeEnvironmentMessages(event) {
+        if (event.data === 'send-runtime-environment-data') {
+            let data = {
+                mydata: "test",
+                name: "testing..."
+            };
+            event.source.window.postMessage(JSON.stringify(data), '*');
+        }
+    }
+
+
     private _startMsgHookId: String;
 
     @RequiredFunction("ProjectManager", "getRunApplicationData")
@@ -247,6 +258,17 @@ export class RuntimeManager extends IDEUIComponent {
             "ProjectManager",
             "getRunApplicationData"
         ).value;
+
+        var file_src = "/runtime-environment-app.html";
+        $('<iframe>')
+            .attr('src',file_src)
+            .attr('height',500)
+            .attr('width',500)
+            .appendTo('.runtime-environment-area');
+
+        // send data to run the application...
+
+        window.onmessage = (event) => this.handleRuntimeEnvironmentMessages(event);
 
         let runData = this.runDataGen(appData);
 
