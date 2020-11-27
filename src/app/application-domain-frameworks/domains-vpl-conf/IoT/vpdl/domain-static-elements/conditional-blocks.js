@@ -10,6 +10,7 @@ export const ConditionalStaticBlocks = [
           "relational_operators",
           "logical_operators",
           "changes",
+          "Boolean",
           //   "getter_boolean",
         ]);
         this.appendDummyInput().appendField("then");
@@ -46,6 +47,7 @@ export const ConditionalStaticBlocks = [
           "relational_operators",
           "logical_operators",
           "changes",
+          "Boolean",
           //   "getter_boolean",
         ]);
         this.appendDummyInput().appendField("then");
@@ -93,6 +95,7 @@ export const ConditionalStaticBlocks = [
         this.appendValueInput("RIGHT").setCheck([
           "relational_operators",
           "logical_operators",
+          "Boolean",
           //   "getter_boolean",
         ]);
         this.setInputsInline(true);
@@ -127,8 +130,11 @@ export const ConditionalStaticBlocks = [
     blockDef: () => ({
       init: function () {
         this.appendValueInput("left_value").setCheck([
-          "getter",
-          "getter_boolean",
+          "String",
+          "Boolean",
+          "Number",
+          // "getter",
+          // "getter_boolean",
         ]);
         this.appendDummyInput().appendField(
           new Blockly.FieldDropdown([
@@ -145,8 +151,8 @@ export const ConditionalStaticBlocks = [
           "String",
           "Boolean",
           "Number",
-          "getter",
-          "getter_boolean",
+          // "getter",
+          // "getter_boolean",
         ]);
         this.setInputsInline(true);
         this.setOutput(true, "relational_operators");
@@ -179,7 +185,7 @@ export const ConditionalStaticBlocks = [
     uniqueInstance: true,
     blockDef: () => ({
       init: function () {
-        this.appendValueInput("NAME").setCheck(["getter", "getter_boolean"]);
+        this.appendValueInput("NAME").setCheck(["String", "Boolean", "Number"]);
         this.appendDummyInput().appendField("changes");
         this.setInputsInline(true);
         this.setOutput(true, "changes");
