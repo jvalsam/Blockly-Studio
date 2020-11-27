@@ -6,27 +6,30 @@ import { RuntimeEnvironmentDebug } from "./runtime-environment-debug";
 
 
 class RuntimeEnvironmentApp {
-    constructor() {
+    constructor(parentApp) {
+        this.parentApp = parentApp;
         this.name = "RuntimeEnvironmentApp";
         this.callbackFuncId = 1;
         this.callbackFuncMap = {};
         this.callbackSignalId = 1;
         this.callbackSignalMap = {};
 
-        this.listenIDEMsgs();
+        this.listenMsg();
         this.connectApp();
     }
 
     connectApp () {
-        window.top.postMessage(this.codingMsg(
-            "RuntimeManager",
+        this.functionRequest(
+            this.name,
+            this.destComp,
             "getEnvironmentRunData",
             [],
             this.createMsg(
                 "RuntimeEnvironmentApp",
                 "loadEnvironmentRunData"
-            )
-        ), '*');
+            ),
+            (data) => this.loadEnvironmentRunData(data)
+        );
     }
 
     loadEnvironmentRunData(data) {
@@ -59,9 +62,10 @@ class RuntimeEnvironmentApp {
         };
     }
 
-    postMsg(compName, funcName, data ={}, callbackData) {
+    postMsg(srcName, destName, funcName, data ={}, callbackData) {
         let msg = this.codingMsg(
-            compName,
+            srcName,
+            destName,
             funcName,
             data,
             callbackData);
@@ -69,22 +73,25 @@ class RuntimeEnvironmentApp {
         window.top.postMessage(msg);
     }
 
-    createMsg(compName, funcName, data ={}, callbackData) {
+    createMsg(srcName, destName, funcName, data, callbackData) {
         return {
-            compName: compName,
+            srcName: srcName,
+            destName: destName,
             funcName: funcName,
             data: data,
             callbackData: callbackData
         };
     }
 
-    codingMsg(compName, funcName, data, callbackData) {
-        return JSON.stringify(this.createMsg(
-            compName,
-            funcName,
-            data,
-            callbackData
-        ));
+    codingMsg(srcName, destName, funcName, data, callbackData) {
+        return JSON.stringify(
+            this.createMsg(
+                srcName,
+                destName,
+                funcName,
+                data,
+                callbackData
+            ));
     }
 
     encodingMsg(msg) {
@@ -96,7 +103,7 @@ class RuntimeEnvironmentApp {
     functionRequest(srcComp, destComp, funcName, args, callback) {
         if (callback) {
             let callbackData = {
-                destComp: "RuntimeEnvironmentApp",
+                destComp: this.name,
                 funcName: "receiveResponseCallback",
                 data: [this.callbackFuncId]
             };
@@ -118,16 +125,24 @@ class RuntimeEnvironmentApp {
 
     listenSignal(signal, callback) {
         this._addSignal(signal, callback);
-        // TODO: post message that listen signal
+
         this.postMsg(
-            "RuntimeManager",
+            this.name,
+            this.parentApp,
+            "addListenSignals",
+            [signal]
         );
     }
 
     listensSignals(signals) {
         signals.forEach(elem => this._addSignal(elem.signal, elem.callback));
-        // TODO: post message that listens list of signals
 
+        this.postMsg(
+            this.name,
+            this.parentApp,
+            "addListenSignals",
+            signals
+        );
     }
 
     receiveResponseCallback(callbackFuncId, data) {
@@ -137,11 +152,7 @@ class RuntimeEnvironmentApp {
         delete this.callbackFuncMap[callbackFuncId];
     }
 
-    receiveSignal(signal, data) {
-
-    }
-
-    receiveFunctionRequest(compName, funcName, data, callbackData) {
+    dispatchFunctionRequest(compName, funcName, data, callbackData) {
         let resp;
         
         switch(compName) {
@@ -167,9 +178,9 @@ class RuntimeEnvironmentApp {
         this.responseMsg(resp, callbackData);
     }
 
-    receiveSignal () {
-
+    receiveSignal (signal, data) {
+        this.callbackSignalMap[signal].forEach(receiveSignal => receiveSignal(data));
     }
 }
 
-const runtimeEnvironment = new RuntimeEnvironmentApp();
+const runtimeEnvironment = new RuntimeEnvironmentApp("RuntimeManager");

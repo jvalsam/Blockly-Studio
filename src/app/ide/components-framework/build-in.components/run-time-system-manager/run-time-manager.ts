@@ -210,24 +210,7 @@ export class RuntimeManager extends IDEUIComponent {
     private getDomainRunScript(domain: String, callback): void {
         let domainPath = "../../../domains/" + domain + "/execution/run-app.js";
         var domScript;
-        // $.when(
-        //     $.getScript(domainPath),
-        //     $.Deferred(function (deferred) {
-        //         $(deferred.resolve);
-        //     })
-        // ).done(function () {
-        //     //place your code here, the scripts are all loaded
-        //     alert("loaded...");
-        // });
-        // eval('require('+domainPath+');');
-        // import("./test.js")
-        //     .then(module => callback(module))
-        //     .catch(err => {
-        //         IDEError.raise(
-        //             "NotFoundDomainRunScript",
-        //             err.message
-        //         );
-        //     });
+        
         return domScript;
     }
 
