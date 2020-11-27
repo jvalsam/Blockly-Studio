@@ -40,6 +40,7 @@ export const SmartObject = {
     //       };
     //     });
 
+    //     // if the blocks must not be generated, return empty map
     //     return blocks;
     //   },
     //   codeGen: (data) => {
@@ -168,10 +169,10 @@ export const SmartObject = {
           }
         });
 
-        let validate = function (newValue) {
-          this.getSourceBlock().updateConnections(newValue);
-          return newValue;
-        };
+        // check if we have properties for these blocks
+        if (dropdownSel.length === 0) {
+          return null;
+        }
 
         return {
           updateConnections: function (newValue) {
@@ -180,9 +181,15 @@ export const SmartObject = {
                 propertiesValueType[newValue]
               );
 
-              // TODO: not math_number we need checking
+              let blockSVG;
+              if (propertiesValueType[newValue] === "String")
+                blockSVG = this.workspace.newBlock("text");
+              else if (propertiesValueType[newValue] === "Number")
+                blockSVG = this.workspace.newBlock("math_number");
+              else if (propertiesValueType[newValue] === "Boolean")
+                blockSVG = this.workspace.newBlock("logic_boolean");
+
               // workspaceSVG
-              let blockSVG = this.workspace.newBlock("math_number");
               blockSVG.initSvg();
               blockSVG.render();
 
@@ -191,6 +198,10 @@ export const SmartObject = {
               var inputConn = input.connection;
               outputConn.connect(inputConn);
             }
+          },
+          validate: function (newValue) {
+            this.getSourceBlock().updateConnections(newValue);
+            return newValue;
           },
           init: function () {
             this.appendDummyInput()
@@ -203,7 +214,7 @@ export const SmartObject = {
               .appendField(data.title)
               .appendField(" set")
               .appendField(
-                new Blockly.FieldDropdown(dropdownSel, validate),
+                new Blockly.FieldDropdown(dropdownSel, this.validate),
                 "PROPERTIES"
               )
               .appendField("to");
