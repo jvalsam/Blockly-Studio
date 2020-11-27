@@ -106,7 +106,7 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
         
         let blockDef = this._blockDef(data);
         if (blockDef !== null) {
-            Blockly.Blocks[elemName] = 
+            Blockly.Blocks[elemName] = blockDef;
             Blockly.JavaScript[elemName] = this._codeGen(data);
             this._blocklyElems[elemName] = {};
 

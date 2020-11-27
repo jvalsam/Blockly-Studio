@@ -432,11 +432,10 @@ class VPLToolbox {
                 toolbox.extra.push(...blocks.extra);
             }
         }
-        else {
-            let blocks = this._genBlockToolbox(blocklyElems);
-            
-            toolbox.gen += blocks.gen;
-            toolbox.extra.push(...blocks.extra);
+        else if (blocklyElems) {
+          let blocks = this._genBlockToolbox(blocklyElems);
+          toolbox.gen += blocks.gen;
+          toolbox.extra.push(...blocks.extra);
         }
         
         return toolbox;
