@@ -71,12 +71,23 @@ export const SmartObject = {
       uniqueInstance: false,
       blockDef: (data) => {
         let dropdownSel = [];
+        let propertiesValueType = {};
 
         data.details.properties.forEach((property) => {
           dropdownSel.push([property.name, property.name.toUpperCase()]);
+          let propertyType = typeof property.value;
+          propertiesValueType[property.name.toUpperCase()] =
+            propertyType.charAt(0).toUpperCase() + propertyType.slice(1);
         });
 
         return {
+          updateConnections: function (newValue) {
+            this.setOutput(true, propertiesValueType[newValue]);
+          },
+          validate: function (newValue) {
+            this.getSourceBlock().updateConnections(newValue);
+            return newValue;
+          },
           init: function () {
             this.appendDummyInput()
               .appendField(
@@ -88,10 +99,10 @@ export const SmartObject = {
               .appendField(data.title + ":")
               .appendField(" get value from")
               .appendField(
-                new Blockly.FieldDropdown(dropdownSel),
+                new Blockly.FieldDropdown(dropdownSel, this.validate),
                 "PROPERTIES"
               );
-            this.setOutput(true, null);
+            this.setOutput(true, propertiesValueType[dropdownSel[0][1]]);
             this.setColour(240);
             this.setTooltip("");
             this.setHelpUrl("");
@@ -117,8 +128,15 @@ export const SmartObject = {
         let dropdownSel = [];
 
         data.details.properties.forEach((property) => {
-          dropdownSel.push([property.name, property.name.toUpperCase()]);
+          if (property.type === "boolean") {
+            dropdownSel.push([property.name, property.name.toUpperCase()]);
+          }
         });
+
+        // check if we have properties for these blocks
+        if (dropdownSel.length === 0) {
+          return null;
+        }
 
         return {
           init: function () {
@@ -176,12 +194,16 @@ export const SmartObject = {
 
         return {
           updateConnections: function (newValue) {
+            if (this.getInput("VALUE_INPUT").connection.isConnected()) {
+              let inputBlock = this.getInputTargetBlock("VALUE_INPUT");
+              inputBlock.dispose();
+            }
+            this.getInput("VALUE_INPUT").setCheck(
+              propertiesValueType[newValue]
+            );
             if (!this.getInput("VALUE_INPUT").connection.isConnected()) {
-              this.getInput("VALUE_INPUT").setCheck(
-                propertiesValueType[newValue]
-              );
-
               let blockSVG;
+
               if (propertiesValueType[newValue] === "String")
                 blockSVG = this.workspace.newBlock("text");
               else if (propertiesValueType[newValue] === "Number")
