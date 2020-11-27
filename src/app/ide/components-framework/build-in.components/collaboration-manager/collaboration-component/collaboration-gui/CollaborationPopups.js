@@ -401,11 +401,11 @@ class JoinPopup extends CollaborationPopup{
 
 class SuggestionPopup extends CollaborationPopup{
     
-    _onAcceptCb = () => {};
-    _onRejectCb = () => {};
+    _onYesCb = () => {};
+    _onNoCb = () => {};
 
-    constructor(container, file, members){
-        super(container, `Suggestion - ${file}`);
+    constructor(container, fileName, comment, buttonNames){
+        super(container, `Suggestion - ${fileName}`);
 
         let html = `\
         <div class="suggestion-all-content">\
@@ -436,29 +436,18 @@ class SuggestionPopup extends CollaborationPopup{
                                 <div class="suggestion-arrow"> </div>\
                                 <div class="suggestion-comment"> Comment </div>\
                             </div>\
-                            <div class="suggestion-comment-content">\
-                                This is the comment content that could be long\
-                                This is the comment content that could be long\
-                            </div>\
+                            <textarea\
+                                class="suggestion-comment-content"\ 
+                                ${comment.readonly ? 'readonly' : ''}\
+                                placeholder="Suggestion description"
+                            >${comment.text ? comment.text : ''}</textarea>\
                         </div>\
                         <div class="suggesiton-confirmation-buttons">\
                             <div class="suggestion-confirmation-button suggestion-accept">\
-                                Accept\
+                                ${buttonNames.yes}\
                             </div>\
                             <div class="suggestion-confirmation-button suggestion-reject">\
-                                Reject\
-                            </div>\
-                        </div>\
-                    </div>\
-                    <div class="suggestion-right-menu-section">\
-                        <div class="suggestion-text-16">\
-                            This item's other suggestions\
-                        </div>\
-                        <div class="suggestion-users-container">\
-                            <div class="suggestion-user">\
-                                <div class="suggestion-user-icon" style="background-image: url(${members.icon})">\
-                                </div>\
-                                <div class="suggestion-text-14"> ${members.name} </div>\
+                                ${buttonNames.no}\
                             </div>\
                         </div>\
                     </div>\
@@ -476,26 +465,85 @@ class SuggestionPopup extends CollaborationPopup{
         });
 
         $(".suggestion-accept").click(() => {
-            this._onAcceptCb();
+            this._onYesCb();
             this.closePopup();
         });
 
         $(".suggestion-reject").click(() => {
-            this._onRejectCb();
+            this._onNoCb();
             this.closePopup();
         });
 
+        $(".suggestion-annotation-warning").hide();
         $(".suggestion-annotation-x").click(function(){
             $(this).parent().hide();
         });
     }
 
-    setOnAcceptCb(cb){
-        this._onAcceptCb = cb;
+    setOnYesCb(cb){
+        this._onYesCb = cb;
     }
 
-    setOnRejectCb(cb){
-        this._onRejectCb = cb;
+    setOnNoCb(cb){
+        this._onNoCb = cb;
+    }
+
+    showWarning(){
+        $(".suggestion-annotation-warning").show();
+    }
+}
+
+class AuthorSuggestionPopup extends SuggestionPopup {
+    constructor(container, file){
+        super(container, file, {readonly: false, text: ''}, {yes: 'Send', no: 'Cancel'});
+    }
+}
+
+class ViewSuggestionPopup extends SuggestionPopup {
+
+    _onMemberClick = (member) => {console.log(member)};
+
+    constructor(container, file, members, comment){
+        super(container, file, {readonly: true, text: comment ? comment : ' '}, {yes: 'Accept', no: 'Reject'});
+
+        let html = 
+        `<div class="suggestion-right-menu-section">\
+            <div class="suggestion-text-16">\
+                This item's other suggestions\
+            </div>\
+            <div class="suggestion-users-container">\
+            </div>\
+        </div>`;
+        
+        $(".suggestion-right-menu-content").append(html);
+
+        if (members)
+            this.addMembers(members);
+    }
+
+    setOnUserClickCb(cb){
+        this._onMemberClick = cb;
+    }
+
+    addMember(member){
+        let memberJqry = $(`\
+            <div class="suggestion-user">\
+                <div class="suggestion-user-icon" style="background-image: url(${member.icon})"> </div>\
+                <div class="suggestion-text-14"> ${member.name} </div>\
+            </div>\
+        `);
+        let onclick = () => this._onMemberClick(member);
+        memberJqry.click(function(){
+            $('.suggestion-user').removeClass('suggestion-user-active');
+            $(this).addClass('suggestion-user-active');
+            onclick();
+        });
+        $('.suggestion-users-container').append(memberJqry);
+    }
+
+    addMembers(members){
+        for (let member of members)
+            this.addMember(member);
     }
 }
 

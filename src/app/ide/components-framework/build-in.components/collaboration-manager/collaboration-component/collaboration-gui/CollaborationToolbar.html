@@ -138,14 +138,27 @@
 
 <script>
     $(document).ready(function () {
-        popup = new SuggestionPopup(
+        popup = new ViewSuggestionPopup(
             "testDiv",
             "Alarm Clock Rings",
-            {
-                icon: "./Icons/man0.png",
-                name: "Random Guy"
-            }
+            [
+                {
+                    icon: "./Icons/man0.png",
+                    name: "Random Guy 1"
+                },
+                {
+                    icon: "./Icons/man0.png",
+                    name: "Random Guy 2"
+                },
+                {
+                    icon: "./Icons/man0.png",
+                    name: "Random Guy 3"
+                }
+            ],
+            'test'
         );
+
+        // popup = new AuthorSuggestionPopup("testDiv", "Alarm Clock Rigns");
 
         // popup = new CollaborationSettingsPopup('testDiv', 
         //     [
