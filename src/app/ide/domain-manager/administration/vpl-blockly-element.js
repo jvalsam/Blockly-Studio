@@ -104,16 +104,22 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
 
         let elemName = this._elemName(data);
         
-        Blockly.Blocks[elemName] = this._blockDef(data);
-        Blockly.JavaScript[elemName] = this._codeGen(data);
-        this._blocklyElems[elemName] = {};
+        let blockDef = this._blockDef(data);
+        if (blockDef !== null) {
+            Blockly.Blocks[elemName] = 
+            Blockly.JavaScript[elemName] = this._codeGen(data);
+            this._blocklyElems[elemName] = {};
 
-        VPLDomainElementsHolder.addDefinedBlock(
-            data.projectID,
-            data.domainElementType,
-            elemName);
+            VPLDomainElementsHolder.addDefinedBlock(
+                data.projectID,
+                data.domainElementType,
+                elemName);
 
-        return [elemName];
+            return [elemName];
+        }
+        else {
+            return [];
+        }
     }
 
     _deleteBlocklyElem(name) {
