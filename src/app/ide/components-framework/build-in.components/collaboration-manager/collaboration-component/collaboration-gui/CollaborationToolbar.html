@@ -10,153 +10,87 @@
     <link rel="stylesheet" type="text/css" href="../../collaboration-manager-view.css">
     <!-- <script type="text/javascript" src="./CollaborationToolbar.js"></script> -->
     <script type="text/javascript" src="./CollaborationPopups.js"></script>
+    <script type="text/javascript" src="./CollaborationToolbar.js"></script>
     <script type="text/javascript" src="../../../../../../../../libs/treeviews-ui/jstree/dist/jstree.js"> </script>
 </head>
 
 <body>
 
     <div id="testDiv">
-        <!-- <div class="popup-opacity"> </div>
-        <div class="collaboration-popup">
-            <div class="collaboration-popup-header-bar vcenter">
-                <div class="collaboration-popup-header-text"> ${title} </div>
-                <div class="collaboration-popup-header-x middle-right size18x18"></div>
+        <!-- <div class="collaboration-toolbar-menu">
+            <div class = "collaboraiton-toolbar-top">
+                <div class = "toolbar-menu-member">
+                    <div class = "toolbar-menu-member-icon"></div>
+                    <div> George Chang </div>
+                </div>
+                <div class = "toolbar-menu-minimize"></div>
             </div>
-            <div class="collaboration-popup-content-container center">
-                <div class="suggestion-all-content">
-                    <div class="suggestion-editors-area">
-                        <div class="suggestion-editor-area">
-                            <div class="suggestion-annotation-with-x suggestion-annotation-warning">
-                                <div class="suggestion-text-14">
-                                    [Warning] This file was edited after this suggestion was made.
-                                </div>
-                                <div class="suggestion-annotation-x"> </div>
-                            </div>
-                            <div class="suggestion-vpl-editor">
-                            </div>
-                        </div>
-                        <div class="suggestion-editor-area">
-                            <div class="suggestion-vpl-editor">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="suggestion-right-menu">
-                        <div class="suggestion-right-menu-content">
-                            <div class="suggestion-right-menu-section">
-                                <div class="suggestion-text-16">
-                                    Manage Suggestion
-                                </div>
-                                <div class="suggestion-annotation suggestion-annotation-comment">
-                                    <div class="suggestion-comment-title">
-                                        <div class="suggestion-arrow"> </div>
-                                        <div class="suggestion-comment"> Comment </div>
-                                    </div>
-                                    <div class="suggestion-comment-content">
-                                        This is the comment content that could be long
-                                        This is the comment content that could be long
-                                    </div>
-                                </div>
-                                <div class="suggesiton-confirmation-buttons">
-                                    <div class="suggestion-confirmation-button suggestion-accept">
-                                        Accept
-                                    </div>
-                                    <div class="suggestion-confirmation-button suggestion-reject">
-                                        Reject
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="suggestion-right-menu-section">
-                                <div class="suggestion-text-16">
-                                    This item's other suggestions
-                                </div>
-                                <div class="suggestion-users-container">
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                    <div class="suggestion-user">
-                                        <div class="suggestion-user-icon" style="background-image: url(${member.icon})">
-                                        </div>
-                                        <div class="suggestion-text-14"> ${member.name} </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <hr>
+            <div class="toolbar-menu-section">
+                <div class="toolbar-menu-section-title"> Live Share </div>
+                <div class="toolbar-menu-project-and-link">
+                    <div class="toolbar-menu-project-name"> IOT example project </div>
+                    <div class="toolbar-menu-link">
+                        <input readonly type="text" class="toolbar-menu-link-text" value="asdfasdfasdf">
+                        <div class="toolbar-menu-copy-link"></div>
                     </div>
                 </div>
             </div>
-        </div> -->
+            <div class="toolbar-menu-section">
+                <div class="toolbar-menu-section-title"> Settings </div>
+                <div class="toolbar-menu-settings">
+                    <div class="collaboration-setting">
+                        <div class="collaboration-setting-title"> ${setting.title} </div>
+                        <label class="collaboration-setting-checkbox-container">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="collaboration-setting">
+                        <div class="collaboration-setting-title"> ${setting.title} </div>
+                        <label class="collaboration-setting-checkbox-container">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="collaboration-setting">
+                        <div class="collaboration-setting-title"> ${setting.title} </div>
+                        <label class="collaboration-setting-checkbox-container">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>        -->
     </div>
 
 </body>
 
 <script>
     $(document).ready(function () {
-        popup = new ViewSuggestionPopup(
-            "testDiv",
-            "Alarm Clock Rings",
-            [
-                {
-                    icon: "./Icons/man0.png",
-                    name: "Random Guy 1"
-                },
-                {
-                    icon: "./Icons/man0.png",
-                    name: "Random Guy 2"
-                },
-                {
-                    icon: "./Icons/man0.png",
-                    name: "Random Guy 3"
-                }
-            ],
-            'test'
-        );
+        
+        // toolbar = new CollaborationUI('testDiv');
+
+        // popup = new ViewSuggestionPopup(
+        //     "testDiv",
+        //     "Alarm Clock Rings",
+        //     [
+        //         {
+        //             icon: "./Icons/man0.png",
+        //             name: "Random Guy 1"
+        //         },
+        //         {
+        //             icon: "./Icons/man0.png",
+        //             name: "Random Guy 2"
+        //         },
+        //         {
+        //             icon: "./Icons/man0.png",
+        //             name: "Random Guy 3"
+        //         }
+        //     ],
+        //     'test'
+        // );
 
         // popup = new AuthorSuggestionPopup("testDiv", "Alarm Clock Rigns");
 

@@ -57,6 +57,7 @@
     font-family: "Roboto";
     width: 350px;
     height: 91vh;
+    position: relative;
 }
 
 #collaboration-content{
@@ -378,6 +379,150 @@
     margin-left: 0px;
     border: 0px;
     background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/clock.png);
+}
+
+/****************************************************************************
+---> toolbar menu
+****************************************************************************/
+
+.collaboration-toolbar-opacity{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.33);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.collaboration-toolbar-menu{
+    height: 100%;
+    width: 80%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1vw;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #ffffff;
+    z-index: 1;
+}
+
+.collaboraiton-toolbar-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.toolbar-menu-member{
+    display: flex;
+    flex-direction: column;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 21px;
+    color: rgba(0, 0, 0, 0.81);
+    gap: 10px;
+}
+
+.toolbar-menu-member-icon{
+    background-position: center center !important;
+    background-size: 35px 35px !important;
+    size: 55px 55px !important;
+    width: 55px !important;
+    height: 55px !important;
+    background-repeat: no-repeat !important;
+    background-color: lightblue !important;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: solid 1px #24537E;
+    background-image: url(./Icons/man0.png);
+}
+
+.toolbar-menu-minimize{
+    width: 30px;
+    height: 30px;
+    background-size: 20px 20px;
+    background-image: url(./Icons/minimize.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.collaboration-toolbar-menu > hr {
+    width: 100%;
+    background-color: #4A81B1;
+    height: 1px;
+    border: 0;
+    margin: 0;
+}
+
+.toolbar-menu-section-title{
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 18px;
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.toolbar-menu-project-name{
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 16px;
+
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.toolbar-menu-copy-link{
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #4A81B1;
+    -webkit-mask-image: url(https://www.flaticon.com/svg/static/icons/svg/126/126498.svg);
+    -webkit-mask-size: 100% 100%;
+    mask-image: url(https://www.flaticon.com/svg/static/icons/svg/126/126498.svg);
+    mask-size: 100% 100%;
+    cursor: pointer;
+}
+
+.toolbar-menu-link{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toolbar-menu-link > input {
+    border: 0.5px solid #6091BB;
+    box-sizing: border-box;
+    margin: 0;
+    height: 25px;
+    width: 80%;
+
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.50);
+}
+
+.toolbar-menu-section{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toolbar-menu-project-and-link{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.toolbar-menu-settings{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 /****************************************************************************

@@ -297,7 +297,7 @@ class SharePopup extends CollaborationPopup{
         super(container, "Share Project");
 
         let html = '\
-            <div>\
+            <div style = "padding: 2vw;">\
                 <div class = "collaboration-popup-row center">\
                     <div class = "vcenter" style = "display: inline-flex">\
                         <div class = "collaboration-popup-user-icon"> </div>\
@@ -348,7 +348,7 @@ class JoinPopup extends CollaborationPopup{
     constructor(container){
         super(container, "Join to a shared project");
         let html = '\
-            <div>\
+            <div style = "padding: 2vw;">\
                 <div class="collaboration-popup-row center">\
                     <div class="vcenter" style="display: inline-flex">\
                         <div class="collaboration-popup-user-icon"> </div>\

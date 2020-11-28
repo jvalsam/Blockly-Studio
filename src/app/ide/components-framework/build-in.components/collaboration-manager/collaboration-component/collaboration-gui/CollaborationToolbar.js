@@ -1,4 +1,4 @@
-export class CollaborationUI{
+class CollaborationUI{
     
     constructor(container){
         this._membersA = {
@@ -345,6 +345,32 @@ export class CollaborationUI{
     _injectHtml(container) {
         let html =
         '<div id = "collaboration-toolbar"> \
+            <div class = "collaboration-toolbar-opacity"></div>\
+            <div class = "collaboration-toolbar-menu">\
+                <div class = "collaboraiton-toolbar-top">\
+                    <div class = "toolbar-menu-member">\
+                        <div class = "toolbar-menu-member-icon"></div>\
+                        <div class = "toolbar-menu-member-name"> George Chang </div>\
+                    </div>\
+                    <div class = "toolbar-menu-minimize"></div>\
+                </div>\
+                <hr>\
+                <div class="toolbar-menu-section">\
+                    <div class="toolbar-menu-section-title"> Live Share </div>\
+                    <div class="toolbar-menu-project-and-link">\
+                        <div class="toolbar-menu-project-name"> IOT example project </div>\
+                        <div class="toolbar-menu-link">\
+                            <input readonly type="text" class="toolbar-menu-link-text">\
+                            <div class="toolbar-menu-copy-link"></div>\
+                        </div>\
+                    </div>\
+                </div>\
+                <div class="toolbar-menu-section">\
+                    <div class="toolbar-menu-section-title"> Settings </div>\
+                    <div class="toolbar-menu-settings">\
+                    </div>\
+                </div>\
+            </div>\
             <div id = "collaboration-header-container" class = "vcenter"> \
                 <div id = "collaboration-icon" class = "size30x30"> </div> \
                 <div id = "collaboration-title"> Collaboration </div> \
@@ -382,6 +408,15 @@ export class CollaborationUI{
             $("#" + container).append(html);
         else
             container.append(html);
+
+        $('#collaboration-burger').click(() => this._toggleToolbarMenu());
+        $('.toolbar-menu-minimize').click(() => this._toggleToolbarMenu());
+        this._toggleToolbarMenu();
+    }
+
+    _toggleToolbarMenu(){
+        $('.collaboration-toolbar-opacity').toggle();
+        $('.collaboration-toolbar-menu').toggle();
     }
 
     _addMemberFileAnotation(memberName, fileName, fileIcon, fileColor, fileBubbleColor, cb = undefined){
@@ -409,12 +444,12 @@ export class CollaborationUI{
      */
     _addAction(member, file, actionColor, type, time, add){
         let html = `                                                                                                \
-            <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                                                             \
+            <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                 \
                 <div class = "recent-action-row vcenter font-size16px">                                             \
                     <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
                     <div> ${member.name} </div>                                                                     \
                     <div class = "middle-right vcenter">                                                            \
-                        <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \                                                  \
+                        <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \
                         ${file.name}                                                                                \
                     </div>                                                                                          \
                 </div>                                                                                              \
@@ -484,6 +519,42 @@ export class CollaborationUI{
 
     /* API */
 
+    setToolbarMenuMember(member){
+        $(".toolbar-menu-member-icon").css("background-image", member.icon);
+        $(".toolbar-menu-member-name").text(member.name);
+    }
+
+    setToolbarMenuProjectInfo(projectName, link){
+        $('.toolbar-menu-project-name').text(projectName);
+        $('.toolbar-menu-link-text').val(link);
+    }
+
+    /**
+     * 
+     * @param {Array} settings for example [{name: 'settingName', checked: 'true'}, {name: 'settingName2' checked: false}] 
+     */
+    setToolbarMenuSettings(settings){
+        $('.toolbar-menu-settings').empty();
+        for (let setting of settings){
+            let settingJqry = $(`\
+                <div class="collaboration-setting">\
+                    <div class="collaboration-setting-title"> ${setting.name} </div>\
+                    <label class="collaboration-setting-checkbox-container">\
+                        <span class="slider"></span>\
+                    </label>\
+                </div>\
+            `);
+    
+            let checkbox = $(`<input type="checkbox" ${setting.checked ? "checked" : ""}>`)
+            checkbox.click(()=>{
+                setting.checked = checkbox.is(':checked');
+            });
+            
+            settingJqry.children("label").prepend(checkbox);
+            $('.toolbar-menu-settings').append(settingJqry);
+        }
+    }
+
     /**
      * 
      * @param {Object} member Should contain name and icon
@@ -491,6 +562,7 @@ export class CollaborationUI{
      */
     addMemberMe(member, cb = undefined ){
         this._addMember(member, true, cb);
+        this._userName = member.name;
     }
 
     /**
