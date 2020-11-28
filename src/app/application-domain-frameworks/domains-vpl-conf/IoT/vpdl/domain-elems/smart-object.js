@@ -83,6 +83,7 @@ export const SmartObject = {
         return {
           updateConnections: function (newValue) {
             this.setOutput(true, propertiesValueType[newValue]);
+            this.setTooltip("Output type: " + propertiesValueType[newValue]);
           },
           validate: function (newValue) {
             this.getSourceBlock().updateConnections(newValue);
@@ -104,7 +105,9 @@ export const SmartObject = {
               );
             this.setOutput(true, propertiesValueType[dropdownSel[0][1]]);
             this.setColour(240);
-            this.setTooltip("");
+            this.setTooltip(
+              "Output type: " + propertiesValueType[dropdownSel[0][1]]
+            );
             this.setHelpUrl("");
           },
         };
@@ -155,7 +158,7 @@ export const SmartObject = {
               );
             this.setOutput(true, "getter_boolean");
             this.setColour(230);
-            this.setTooltip("");
+            this.setTooltip("Output type: Boolean");
             this.setHelpUrl("");
           },
         };
@@ -194,32 +197,10 @@ export const SmartObject = {
 
         return {
           updateConnections: function (newValue) {
-            if (this.getInput("VALUE_INPUT").connection.isConnected()) {
-              let inputBlock = this.getInputTargetBlock("VALUE_INPUT");
-              inputBlock.dispose();
-            }
             this.getInput("VALUE_INPUT").setCheck(
               propertiesValueType[newValue]
             );
-            if (!this.getInput("VALUE_INPUT").connection.isConnected()) {
-              let blockSVG;
-
-              if (propertiesValueType[newValue] === "String")
-                blockSVG = this.workspace.newBlock("text");
-              else if (propertiesValueType[newValue] === "Number")
-                blockSVG = this.workspace.newBlock("math_number");
-              else if (propertiesValueType[newValue] === "Boolean")
-                blockSVG = this.workspace.newBlock("logic_boolean");
-
-              // workspaceSVG
-              blockSVG.initSvg();
-              blockSVG.render();
-
-              var outputConn = blockSVG.outputConnection;
-              var input = this.getInput("VALUE_INPUT");
-              var inputConn = input.connection;
-              outputConn.connect(inputConn);
-            }
+            this.setTooltip("Input type: " + propertiesValueType[newValue]);
           },
           validate: function (newValue) {
             this.getSourceBlock().updateConnections(newValue);
@@ -233,7 +214,7 @@ export const SmartObject = {
                   flipRtl: "FALSE",
                 })
               )
-              .appendField(data.title)
+              .appendField(data.title + ":")
               .appendField(" set")
               .appendField(
                 new Blockly.FieldDropdown(dropdownSel, this.validate),
@@ -247,7 +228,9 @@ export const SmartObject = {
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
             this.setColour(240);
-            this.setTooltip("");
+            this.setTooltip(
+              "Input type: " + propertiesValueType[dropdownSel[0][1]]
+            );
             this.setHelpUrl("");
           },
         };
@@ -342,6 +325,58 @@ export const SmartObject = {
           //code generation based on the choice
         });
 
+        // TODO: Assemble JavaScript into code variable.
+        var code = "...;\n";
+        return code;
+      },
+    },
+    {
+      name: "action",
+      uniqueInstance: false,
+      blockDef: (data) => {
+        // Here we need to parse actions and modify blocks dynamically
+
+        return {
+          updateConnections: function (newValue) {},
+          validate: function (newValue) {
+            this.getSourceBlock().updateConnections(newValue);
+            return newValue;
+          },
+          init: function () {
+            this.appendDummyInput()
+              .appendField(
+                new Blockly.FieldImage(data.img, 20, 20, {
+                  alt: "*",
+                  flipRtl: "FALSE",
+                })
+              )
+              .appendField(data.title)
+              .appendField(
+                new Blockly.FieldDropdown([["Change temperature", "SWING"]]),
+                "METHODS"
+              )
+              .appendField("with:");
+            this.appendValueInput("Args").setCheck([
+              "Boolean",
+              "Number",
+              "String",
+            ]);
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(135);
+            this.setTooltip("");
+            this.setHelpUrl("");
+          },
+        };
+      },
+      codeGen: (data) => {
+        var dropdown_methods = block.getFieldValue("METHODS");
+        var value_args = Blockly.JavaScript.valueToCode(
+          block,
+          "Args",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
         // TODO: Assemble JavaScript into code variable.
         var code = "...;\n";
         return code;

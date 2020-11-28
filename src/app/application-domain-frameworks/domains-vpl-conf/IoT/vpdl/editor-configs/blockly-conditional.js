@@ -40,6 +40,21 @@ export const BlocklyConditional = {
         },
       ],
     },
+    {
+      name: "Smart Groups",
+      type: "Category",
+      colour: "210",
+      elements: [
+        {
+          name: {
+            domainElem: "SmartGroup",
+          },
+          type: "Category",
+          colour: "60",
+          elements: "ALL",
+        },
+      ],
+    },
   ],
   editors: [
     {

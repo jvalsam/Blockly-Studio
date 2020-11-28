@@ -1108,7 +1108,11 @@ let RenderSmartObjectUnregistered = function (
         ),
         (resource) => {
           // Save data
-          callbacksMap.onRegister(resource.properties, resource.id);
+          callbacksMap.onRegister(
+            resource.properties,
+            resource.methods,
+            resource.id
+          );
           // Update UI
           selector.innerHTML = "";
           RenderSmartObject(

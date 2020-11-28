@@ -27,7 +27,7 @@ export const BlocklyCalendar = {
       ],
     },
     {
-      name: "TimeAndDate",
+      name: "Time/Date",
       type: "DomainStatic",
       colour: "75",
       elements: [
@@ -35,8 +35,8 @@ export const BlocklyCalendar = {
         "specific_day",
         "specific_month",
         "every_seconds",
-        "every_hours",
         "every_minutes",
+        "every_hours",
         "every_days",
         "every_months",
       ],
@@ -47,18 +47,27 @@ export const BlocklyCalendar = {
       colour: "210",
       elements: [
         {
-          name: "Get Values",
+          name: {
+            domainElem: "SmartObject",
+          },
           type: "Category",
           colour: "60",
-          elements: [
-            {
-              name: {
-                domainElem: "SmartObject",
-                item: "getter",
-              },
-              type: "Element",
-            }
-          ],
+          elements: "ALL",
+        },
+      ],
+    },
+    {
+      name: "Smart Groups",
+      type: "Category",
+      colour: "210",
+      elements: [
+        {
+          name: {
+            domainElem: "SmartGroup",
+          },
+          type: "Category",
+          colour: "60",
+          elements: "ALL",
         },
       ],
     },

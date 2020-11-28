@@ -58,9 +58,14 @@ export class SmartObjectVPLEditor extends Editor {
 
   @ExportedFunction
   loadComponentDataOfProject(projectId: string, componentsData: any) {
-    alert(this.name+'method loadComponentDataOfProject not implemented yet!');
+    // no action is required on loading project
   }
 
+  getRegisteredDevices(projectId: string) {
+    return this.getProjectComponentData(projectId);
+  }
+
+  @ExportedSignal("create-smart-group", ["so-data"])
   @ExportedFunction
   public open(selector: string, pitem: PItemView, config: any): void {
     let editorData = pitem.pi.editorsData.items[selector];
@@ -72,6 +77,16 @@ export class SmartObjectVPLEditor extends Editor {
     );
     if (this._groupDataOnCreate) {
       editorData.details = this._groupDataOnCreate;
+
+      let domainElementId = editorData.editorId;
+      editorData.domainElementId = domainElementId;
+      editorData.domainElementType = "SmartGroup";
+
+      ComponentsCommunication.postSignal(
+        this.name,
+        "create-smart-group",
+        editorData
+      );
     }
 
     if (!this.instancesMap.hasOwnProperty(editorData.editorId)) {
@@ -238,7 +253,7 @@ export class SmartObjectVPLEditor extends Editor {
         // required fields:
         let domainElementId = data.elemData.editorData.editorId;
         data.elemData.editorData.domainElementId = domainElementId;
-        data.elemData.editorData.domainElementType = 'SmartObject';
+        data.elemData.editorData.domainElementType = "SmartObject";
         // required field: data.elemData.editorData.projectID
         //TODO: domainelementtype
         //
@@ -357,90 +372,96 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedSignal("delete-smart-group", ["so-data"])
   @ExportedSignal("rename-smart-object", ["so-data"])
   @ExportedSignal("rename-smart-group", ["so-data"])
-  private onAskToDeleteSmartElementWithDependencies (
+  private onAskToDeleteSmartElementWithDependencies(
     type,
     pelem,
     smartElement,
     projectID,
     visualSources,
-    onSuccess) {
-      let sources = [];
-      
-      visualSources.blocks.forEach(block => {
-        if (!sources.includes(block.pelemName)) {
-          sources.push (block.pelemName);
-        }});
-      let pluralText = sources.length > 1 ? 's' : '';
-      
-      (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
-          this,
-          [{
-            type: 'simple',
-            data: {
-              title: 'Delete '+type+': ' + smartElement.title,
-              body: {
-                text: 'The smart object "<b>' + smartElement.title + '</b>" has been used from project element'
-                + pluralText
-                + ':<br/><b><div style="max-height: 6rem; margin-bottom: 0.8rem; overflow-y: auto;"><li>'
-                + sources.join('</li><li>')
-                + '</li></div></b>'
-                + 'Do you want to delete <b>"'
-                + smartElement.title
-                + '</b>" and the respective <b>blocks</b> from the <br/>above project element'
-                + pluralText
-                + '?'
+    onSuccess
+  ) {
+    let sources = [];
+
+    visualSources.blocks.forEach((block) => {
+      if (!sources.includes(block.pelemName)) {
+        sources.push(block.pelemName);
+      }
+    });
+    let pluralText = sources.length > 1 ? "s" : "";
+
+    (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
+      this,
+      [
+        {
+          type: "simple",
+          data: {
+            title: "Delete " + type + ": " + smartElement.title,
+            body: {
+              text:
+                'The smart object "<b>' +
+                smartElement.title +
+                '</b>" has been used from project element' +
+                pluralText +
+                ':<br/><b><div style="max-height: 6rem; margin-bottom: 0.8rem; overflow-y: auto;"><li>' +
+                sources.join("</li><li>") +
+                "</li></div></b>" +
+                'Do you want to delete <b>"' +
+                smartElement.title +
+                '</b>" and the respective <b>blocks</b> from the <br/>above project element' +
+                pluralText +
+                "?",
+            },
+            actions: [
+              {
+                choice: "Cancel",
+                type: "button",
+                providedBy: "self",
               },
-              actions: [
-                  {
-                      choice:"Cancel",
-                      type: "button",
-                      providedBy:"self"
-                  },
-                  {
-                      choice: "Delete",
-                      type: "submit",
-                      providedBy: "creator",
-                      callback: () => {
-                        // notify to delete defined blocks and the designed blocks from the wsps
-                        ComponentsCommunication.postSignal(
-                          this.name,
-                          "delete-" + pelem._jstreeNode.type.split('pi-')[1],
-                          smartElement
-                        );
-                        // delete project element
-                        onSuccess.exec_action();
-                      }
-                  }
-              ]
-            }
-          }]
-      )).open();
+              {
+                choice: "Delete",
+                type: "submit",
+                providedBy: "creator",
+                callback: () => {
+                  // notify to delete defined blocks and the designed blocks from the wsps
+                  ComponentsCommunication.postSignal(
+                    this.name,
+                    "delete-" + pelem._jstreeNode.type.split("pi-")[1],
+                    smartElement
+                  );
+                  // delete project element
+                  onSuccess.exec_action();
+                },
+              },
+            ],
+          },
+        },
+      ]
+    )).open();
   }
 
-  private onRenameReferencedBlocks () {
-
-  }
+  private onRenameReferencedBlocks() {}
 
   @RequiredFunction("BlocklyVPL", "getVisualSourcesUseDomainElementInstaceById")
   onProjectElementActionsHandling(type, action, pelem, onSuccess) {
     let projectID = pelem._editorsData.projectID;
-        let smartElement = pelem._editorsData.items[Object.keys(pelem._editorsData.items)[0]];
-        let domainElementId = smartElement.domainElementId;
+    let smartElement =
+      pelem._editorsData.items[Object.keys(pelem._editorsData.items)[0]];
+    let domainElementId = smartElement.domainElementId;
 
-        let visualSources = ComponentsCommunication.functionRequest(
-          this.name,
-          "BlocklyVPL",
-          "getVisualSourcesUseDomainElementInstaceById",
-          [
-            projectID,
-            domainElementId,
-            smartElement.domainElementType
-          ]
-        ).value;
+    let visualSources = ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "getVisualSourcesUseDomainElementInstaceById",
+      [projectID, domainElementId, smartElement.domainElementType]
+    ).value;
 
-    switch(action) {
-      case 'delete-previous':
-        if (visualSources && Array.isArray(visualSources.blocks) && visualSources.blocks.length > 0) {
+    switch (action) {
+      case "delete-previous":
+        if (
+          visualSources &&
+          Array.isArray(visualSources.blocks) &&
+          visualSources.blocks.length > 0
+        ) {
           this.onAskToDeleteSmartElementWithDependencies(
             type,
             pelem,
@@ -449,24 +470,23 @@ export class SmartObjectVPLEditor extends Editor {
             visualSources,
             onSuccess
           );
-        }
-        else {
+        } else {
           onSuccess.exec_open_dialogue();
         }
         // TODO: check to delete
         // in case it is ok, delete signal for the element + call on success
         break;
-      case 'delete-after':
+      case "delete-after":
         onSuccess.exec_action();
         break;
-      case 'rename-after':
+      case "rename-after":
         smartElement.title = pelem._jstreeNode.text;
         smartElement.img = pelem._jstreeNode.icon;
         smartElement.colour = pelem._jstreeNode.color;
-        
+
         ComponentsCommunication.postSignal(
           this.name,
-          'rename-' + pelem._jstreeNode.type.split('pi-')[1],
+          "rename-" + pelem._jstreeNode.type.split("pi-")[1],
           smartElement
         );
         break;
@@ -481,7 +501,7 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @ExportedFunction
-  public generateCodeDataForExecution (data: any) {
-    alert("Not implemented generateCodeDataForExecution in " + this.name);     
+  public generateCodeDataForExecution(data: any) {
+    alert("Not implemented generateCodeDataForExecution in " + this.name);
   }
 }

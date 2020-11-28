@@ -19,18 +19,27 @@ export const AutomationTask = {
       colour: "210",
       elements: [
         {
-          name: "Get Values",
+          name: {
+            domainElem: "SmartObject",
+          },
           type: "Category",
           colour: "60",
-          elements: [
-            {
-              name: {
-                domainElem: "SmartObject",
-                item: "getter",
-              },
-              type: "Element",
-            },
-          ],
+          elements: "ALL",
+        },
+      ],
+    },
+    {
+      name: "Smart Groups",
+      type: "Category",
+      colour: "210",
+      elements: [
+        {
+          name: {
+            domainElem: "SmartGroup",
+          },
+          type: "Category",
+          colour: "60",
+          elements: "ALL",
         },
       ],
     },
