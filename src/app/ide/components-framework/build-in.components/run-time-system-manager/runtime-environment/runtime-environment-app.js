@@ -1,34 +1,34 @@
 /**
  * 
  */
+
+import { RuntimeEnvironmentMessageHandler } from "./runtime-environment-message-handler";
 import { RuntimeEnvironmentRelease } from "./runtime-environment-release";
 import { RuntimeEnvironmentDebug } from "./runtime-environment-debug";
 
 
-class RuntimeEnvironmentApp {
+class RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
     constructor(parentApp) {
-        this.parentApp = parentApp;
-        this.name = "RuntimeEnvironmentApp";
-        this.callbackFuncId = 1;
-        this.callbackFuncMap = {};
-        this.callbackSignalId = 1;
-        this.callbackSignalMap = {};
+        super(
+            "RuntimeEnvironmentApp",
+            parentApp,
+            (msg) => window.top.postMessage(msg, "*"),
+            (func) => window.onmessage = func
+        );
 
-        this.listenMsg();
-        this.connectApp();
+        this.initialize();
     }
 
-    connectApp () {
+    initialize() {
         this.functionRequest(
-            this.name,
-            this.destComp,
+            this.myApp,
+            this.connectedApp,
             "getEnvironmentRunData",
             [],
-            this.createMsg(
-                "RuntimeEnvironmentApp",
-                "loadEnvironmentRunData"
-            ),
-            (data) => this.loadEnvironmentRunData(data)
+            {
+                type: 'sync',
+                func: (data) => loadEnvironmentRunData(data)
+            }
         );
     }
 
@@ -152,11 +152,11 @@ class RuntimeEnvironmentApp {
         delete this.callbackFuncMap[callbackFuncId];
     }
 
-    dispatchFunctionRequest(compName, funcName, data, callbackData) {
+    dispatchFunctionRequest(srcName, destName, funcName, data, callbackData) {
         let resp;
         
-        switch(compName) {
-            case 'RuntimeEnvironmentApp':
+        switch(destName) {
+            case this.name:
                 resp = this[funcName] (data);
                 break;
             case 'Runtime':

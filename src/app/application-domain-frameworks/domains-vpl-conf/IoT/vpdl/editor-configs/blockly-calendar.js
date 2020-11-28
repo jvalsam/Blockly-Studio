@@ -57,7 +57,7 @@ export const BlocklyCalendar = {
                 item: "getter",
               },
               type: "Element",
-            },
+            }
           ],
         },
       ],
