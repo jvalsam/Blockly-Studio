@@ -333,7 +333,7 @@ export class SOVPLElemInstance {
     // clear selector
     document.getElementById(this.selector).innerHTML = "";
     let domSel = document.getElementById(this.selector);
-    let componentData = this.parent.getProjectComponentData(
+    let componentData = this.parent.getRegisteredDevices(
       this.elemData.editorData.projectID
     );
     switch (this.elemData.editorData.type) {

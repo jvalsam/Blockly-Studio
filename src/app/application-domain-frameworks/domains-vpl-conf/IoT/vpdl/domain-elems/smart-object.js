@@ -214,7 +214,7 @@ export const SmartObject = {
                   flipRtl: "FALSE",
                 })
               )
-              .appendField(data.title)
+              .appendField(data.title + ":")
               .appendField(" set")
               .appendField(
                 new Blockly.FieldDropdown(dropdownSel, this.validate),
