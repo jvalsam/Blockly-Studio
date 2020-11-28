@@ -330,6 +330,58 @@ export const SmartObject = {
         return code;
       },
     },
+    {
+      name: "action",
+      uniqueInstance: false,
+      blockDef: (data) => {
+        // Here we need to parse actions and modify blocks dynamically
+
+        return {
+          updateConnections: function (newValue) {},
+          validate: function (newValue) {
+            this.getSourceBlock().updateConnections(newValue);
+            return newValue;
+          },
+          init: function () {
+            this.appendDummyInput()
+              .appendField(
+                new Blockly.FieldImage(data.img, 20, 20, {
+                  alt: "*",
+                  flipRtl: "FALSE",
+                })
+              )
+              .appendField(data.title)
+              .appendField(
+                new Blockly.FieldDropdown([["Change temperature", "SWING"]]),
+                "METHODS"
+              )
+              .appendField("with:");
+            this.appendValueInput("Args").setCheck([
+              "Boolean",
+              "Number",
+              "String",
+            ]);
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(135);
+            this.setTooltip("");
+            this.setHelpUrl("");
+          },
+        };
+      },
+      codeGen: (data) => {
+        var dropdown_methods = block.getFieldValue("METHODS");
+        var value_args = Blockly.JavaScript.valueToCode(
+          block,
+          "Args",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+        // TODO: Assemble JavaScript into code variable.
+        var code = "...;\n";
+        return code;
+      },
+    },
   ],
   signals: [
     {
