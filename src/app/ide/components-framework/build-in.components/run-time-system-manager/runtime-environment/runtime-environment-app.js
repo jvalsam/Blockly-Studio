@@ -83,4 +83,4 @@ class RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
 
 }
 
-const runtimeEnvironment = new RuntimeEnvironmentApp("RuntimeSystem");
+export const RuntimeEnvironmentApp = new RuntimeEnvironmentApp("RuntimeSystem");
