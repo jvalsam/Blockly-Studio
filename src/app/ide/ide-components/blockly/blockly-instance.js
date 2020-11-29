@@ -297,4 +297,8 @@ export class BlocklyInstance {
     deleteBlockById(blockId) {
         this.getBlockById(blockId).dispose();
     }
+
+    generateJavaScriptCode() {
+        return Blockly.JavaScript.workspaceToCode(this.wsp);
+    }
 }

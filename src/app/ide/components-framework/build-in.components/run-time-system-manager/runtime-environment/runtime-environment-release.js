@@ -8,11 +8,11 @@ export class RuntimeEnvironmentRelease {
         this._executionScript = RuntimeEnvironmentScriptsHolder
             .executionDomainFunctions(this._envData.domainType);
         
-        this.start();
+        this.start(this._envData);
     }
 
-    start() {
-        this._executionScript.StartApplication();
+    start(applicationData) {
+        this._executionScript.StartApplication(applicationData);
     }
 
     stop() {

@@ -505,7 +505,7 @@ export class BlocklyVPL extends Editor {
 
   @ExportedFunction
   public generateCodeDataForExecution (data: any) {
-    alert("Not implemented generateCodeDataForExecution in " + this.name);     
+    return this.instancesMap[data.editorId].generateJavaScriptCode();
   }
 
 }

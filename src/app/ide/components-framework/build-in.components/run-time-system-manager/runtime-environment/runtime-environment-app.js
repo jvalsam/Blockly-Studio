@@ -15,6 +15,7 @@ class RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
             (msg) => window.top.postMessage(msg, "*"),
             (func) => window.onmessage = func
         );
+        this.registeredComponents = {};
 
         this.initialize();
     }
@@ -30,6 +31,14 @@ class RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
                 func: (data) => this.loadEnvironmentRunData(data)
             }
         );
+    }
+
+    registerComponent(compName, compInst) {
+        this.registerComponent[compName] = compInst;
+    }
+
+    unregisterComponent(compName) {
+        delete this.registerComponent[compName];
     }
 
     loadEnvironmentRunData(data) {
