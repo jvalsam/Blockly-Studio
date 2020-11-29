@@ -104,6 +104,7 @@
     background-color: #eeeeee;
     -webkit-mask-image: url(https://image.flaticon.com/icons/svg/545/545705.svg);
     mask-image: url(https://image.flaticon.com/icons/svg/545/545705.svg);
+    cursor: pointer;
 }
 
 /****************************************************************************

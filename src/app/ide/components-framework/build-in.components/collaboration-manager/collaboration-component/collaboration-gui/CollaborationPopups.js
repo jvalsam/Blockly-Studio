@@ -417,11 +417,11 @@ class SuggestionPopup extends CollaborationPopup{
                         </div>\
                         <div class="suggestion-annotation-x"> </div>\
                     </div>\
-                    <div class="suggestion-vpl-editor">\
+                    <div class="suggestion-vpl-editor suggestion-vpl-editor-left">\
                     </div>\
                 </div>\
                 <div class="suggestion-editor-area">\
-                    <div class="suggestion-vpl-editor">\
+                    <div class="suggestion-vpl-editor suggestion-vpl-editor-right">\
                     </div>\
                 </div>\
             </div>\
@@ -491,6 +491,14 @@ class SuggestionPopup extends CollaborationPopup{
     showWarning(){
         $(".suggestion-annotation-warning").show();
     }
+
+    getLeftContainer(){
+        return $(".suggestion-vpl-editor-left");
+    }
+
+    getRightContainer(){
+        return $(".suggestion-vpl-editor-right");
+    }
 }
 
 class AuthorSuggestionPopup extends SuggestionPopup {
@@ -544,6 +552,10 @@ class ViewSuggestionPopup extends SuggestionPopup {
     addMembers(members){
         for (let member of members)
             this.addMember(member);
+    }
+
+    clearMembers(){
+        $('.suggestion-users-container').empty();
     }
 }
 

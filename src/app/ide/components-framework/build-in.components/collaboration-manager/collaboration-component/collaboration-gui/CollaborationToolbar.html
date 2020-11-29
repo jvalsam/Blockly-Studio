@@ -70,8 +70,9 @@
 <script>
     $(document).ready(function () {
         
-        // toolbar = new CollaborationUI('testDiv');
+        toolbar = new CollaborationUI('testDiv');
 
+        examples = new CollaborationUI_API_Examples(toolbar);
         // popup = new ViewSuggestionPopup(
         //     "testDiv",
         //     "Alarm Clock Rings",
@@ -165,20 +166,20 @@
         //     console.log(settings);
         // });
 
-        // let node = {
+        // node = {
         //     id: 'node143563',
         //     icon: '../../Icons/clock.png',
-        //     name: 'Personal Files - Mary',
+        //     name: 'File0',
         //     children: [
         //         {
         //             id: 'node234561235',
-        //             name: 'Personal Files - Mary',
+        //             name: 'File1',
         //             icon: '../../Icons/clock.png',
-        //             color: 'blue',
+        //             color: 'red',
         //             children: [
         //                 {
         //                     id: 'node345631235',
-        //                     name: 'Personal Files - Mary',
+        //                     name: 'File2',
         //                     icon: '../../Icons/clock.png',
         //                     color: 'blue',
         //                     state : {
@@ -187,9 +188,9 @@
         //                 },
         //                 {
         //                     id: 'node471325',
-        //                     name: 'Personal',
+        //                     name: 'File3',
         //                     icon: '../../Icons/clock.png',
-        //                     color: 'blue',
+        //                     color: 'black',
         //                     state : {
         //                         'opened' : true,
         //                     },
