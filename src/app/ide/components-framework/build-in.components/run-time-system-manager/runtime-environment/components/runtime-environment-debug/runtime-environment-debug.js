@@ -1,4 +1,4 @@
-import { RuntimeEnvironmentScriptsHolder } from "./runtime-environment-scripts-holder.js"
+import { RuntimeEnvironmentScriptsHolder } from "../../runtime-environment-scripts-holder.js"
 
 export class RuntimeEnvironmentDebug {
     constructor(runtimeEnv, envData) {

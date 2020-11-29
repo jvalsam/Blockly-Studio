@@ -30,6 +30,7 @@ import {
   ITool
 } from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
 import { domain } from "process";
+import { ProjectItem } from "../../components-framework/build-in.components/project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -146,7 +147,7 @@ export class BlocklyVPL extends Editor {
         (config) => this.getToolbox(config),
         (event) => this.handleInstanceChange(
           id,
-          pitem,
+          pitem.pi,
           event),
         text
       );
@@ -164,9 +165,9 @@ export class BlocklyVPL extends Editor {
   @RequiredFunction("ProjectManager", "getComponentData")
   @RequiredFunction("ProjectManager", "saveComponentData")
   // save is used for Collaboration purposes
-  private handleBlocksTracker(id, pitem, event, save: boolean =false) {
+  private handleBlocksTracker(id, pi, event, save: boolean =false) {
     if (event.type === 'create' || event.type === 'delete') {
-      let projectId = pitem._pi.editorsData.projectID;
+      let projectId = pi.editorsData.projectID;
       let blocklyInst = this.instancesMap[id];
       let block = blocklyInst.getBlockById(event.blockId);
       let type;
@@ -184,7 +185,7 @@ export class BlocklyVPL extends Editor {
       }
       let elemName = this.getBlockTypesToDomainElementsMap(projectId)[type];
       if (elemName) {
-        let confName = pitem.pi._editorsData.items[id].confName;
+        let confName = pi._editorsData.items[id].confName;
         this.fixBlocksTrackerInit(projectId, elemName);
         this.domainElementTracker[projectId][elemName]
           .createBlockId(
@@ -192,8 +193,8 @@ export class BlocklyVPL extends Editor {
             block.type,
             confName,
             id,
-            pitem.pi.systemId,
-            pitem.pi._jstreeNode.text);
+            pi.systemId,
+            pi._jstreeNode.text);
         if (save) {
           let data = this.getProjectComponentData(projectId);
           data.domainElementTracker = this.domainElementTracker[projectId];
@@ -217,15 +218,15 @@ export class BlocklyVPL extends Editor {
     }
   }
 
-  private handleInstanceChange(id, pitem, event) {
+  private handleInstanceChange(id, pi, event) {
     this.save(
       id,
-      pitem.pi,
+      pi,
       (mode) => mode === "SHARED"
         ? event
         : this.getEditorData(id));
     
-    this.handleBlocksTracker(id, pitem, event, true);
+    this.handleBlocksTracker(id, pi, event, true);
   }
 
   @ExportedFunction
@@ -246,7 +247,7 @@ export class BlocklyVPL extends Editor {
       console.warn("Blockly instance not implement. Has to mark that visual src is not updated");
     }
 
-    this.handleBlocksTracker(id, pitem, event);
+    this.handleBlocksTracker(id, pitem.pi, event);
   }
 
   @ExportedFunction
@@ -508,4 +509,23 @@ export class BlocklyVPL extends Editor {
     return this.instancesMap[data.editorId].generateJavaScriptCode();
   }
 
+  @ExportedFunction
+  public loadSource(editorData: any, pitem: ProjectItem) {
+    // load data by creating instance of the visual domain element
+    let text = editorData ? editorData.src : null;
+    this.instancesMap[editorData.editorId] = new BlocklyInstance(
+        pitem,
+        editorData.editorId,
+        editorData.editorId,
+        editorData.confName,
+        this.configsMap[editorData.confName],
+        (config) => this.getToolbox(config),
+        (event) => this.handleInstanceChange(
+          editorData.editorId,
+          pitem,
+          event),
+        text
+      );
+      this.instancesMap[editorData.editorId].load();
+  }
 }

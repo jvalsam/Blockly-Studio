@@ -13,6 +13,7 @@ import iotivity_communication from "../../../../../domains-libs/IoT/iotivity_com
 import create_smart_object_registration_form from "./smart_object_registration_form.js";
 import "./../../shared/upload-files";
 import { upload_files } from "./../../shared/upload-files";
+import { ProjectItem } from '../../components-framework/build-in.components/project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item';
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -381,5 +382,10 @@ export class ViSmaOE extends Editor {
 
     public generateCodeDataForExecution (data: any) {
         
+    }
+
+    @ExportedFunction
+    public loadSource(editorData: any, pitem: ProjectItem) {
+        // load data by creating instance of the visual domain element
     }
 }

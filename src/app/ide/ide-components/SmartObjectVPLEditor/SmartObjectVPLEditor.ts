@@ -504,4 +504,9 @@ export class SmartObjectVPLEditor extends Editor {
   public generateCodeDataForExecution(data: any) {
     alert("Not implemented generateCodeDataForExecution in " + this.name);
   }
+
+  @ExportedFunction
+  public loadSource(editorData: any, pitem: ProjectItem) {
+    // load data by creating instance of the visual domain element
+  }
 }

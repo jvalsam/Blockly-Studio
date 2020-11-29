@@ -1,5 +1,4 @@
 import { RuntimeEnvironmentMessageHandler } from "./runtime-environment/runtime-environment-message-handler";
-import { RuntimeEnvironmentRelease } from "./runtime-environment/runtime-environment-release";
 
 export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
     constructor(parent, connectedApp, postMessage, onMessage) {

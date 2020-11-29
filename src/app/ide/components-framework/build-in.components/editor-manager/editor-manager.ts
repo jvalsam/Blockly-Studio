@@ -144,6 +144,21 @@ export class EditorManager extends IDEUIComponent {
         });
     }
 
+    public loadEditorInstances(project, pitems: Array<ProjectItem>) {
+        project.projectItems.forEach(pitem => {
+            let pitemInst = pitems.find(x => x["_jstreeNode"].id === pitem.id);
+            let editorItems = pitem.editorsData.items;
+            for(const key in editorItems) {
+                ComponentsCommunication.functionRequest(
+                    this.name,
+                    editorItems[key].editorName,
+                    "loadSource",
+                    [editorItems[key], pitemInst]
+                );
+            }
+        });
+    }
+
     public totalEditorsOpen(): number {
         return Object.keys(this.projectItemsMap).length;
     }

@@ -318,6 +318,10 @@ export class ProjectManager extends IDEUIComponent {
             project.editorsState.onFocusPItems
         ]);
         editorManager.initializeEditorsView();
+        editorManager.loadEditorInstances(
+            projView["data"].project,
+            <Array<ProjectItem>>projView.getProjectElements("ALL")
+        );
 
         if (project.componentsData && project.componentsData.collaborationData) {
             this.shareProject(project);

@@ -140,6 +140,18 @@ export class BlocklyInstance {
         this._blocklyArea = document.getElementById(this.id);
     }
 
+    load() {
+        let blocklySel = "blockly_" + this.id;
+        $(".blockly-editors-area")
+                .append(
+                    "<div id=\""
+                    + blocklySel
+                    + "\" style=\"position: absolute\"></div>");
+        this._blocklyDiv = document.getElementById(blocklySel);
+
+        this.wsp = Blockly.inject(this._blocklyDiv, { readOnly: true });
+    }
+
     open() {
         if (this.state === InstStateEnum.OPEN) {
             return;
