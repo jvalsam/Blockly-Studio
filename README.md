@@ -19,6 +19,8 @@ Domain authors are able to design the application domain in the context of:
 
 - Build and run the project:
 
+git clone --recurse-submodules url_blocklystudio_repo
+
 1. Install MongoDB, python 2.7, latest npm and node
 2. Start DB: mongod --port=3032 --dbpath="path of the DB/data" #default port is 27017
 3. npm install #in the folder includes webpack
