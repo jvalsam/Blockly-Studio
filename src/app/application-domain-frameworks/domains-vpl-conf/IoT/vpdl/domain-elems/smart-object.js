@@ -334,16 +334,83 @@ export const SmartObject = {
       name: "action",
       uniqueInstance: false,
       blockDef: (data) => {
+        const actions = [];
+        const argsOfActions = {};
+
         // Here we need to parse actions and modify blocks dynamically
+        data.details.actions.forEach((action) => {
+          // initialize args for every action
+          argsOfActions[action.name.toUpperCase()] = { args: [] };
+
+          action.parameters.forEach((parameter) => {
+            let argType = typeof parameter.type;
+            let arg = {
+              type: argType.charAt(0).toUpperCase() + argType.slice(1),
+              name: parameter.name,
+            };
+            // check for relation of property
+            // take possible values if it has
+            if (parameter._UI.relation) {
+              // if relation is enumerated
+              let property = data.details.properties.find(
+                (x) => x.name === parameter._UI.relation
+              );
+              if (property.type === "enumerated") {
+                arg.possibleValues = [];
+                property.options.possible_values.forEach((value) => {
+                  arg.possibleValues.push([value, value.toUpperCase()]);
+                });
+              }
+            }
+            argsOfActions[action.name.toUpperCase()].args.push(arg);
+          });
+
+          actions.push([action.name, action.name.toUpperCase()]);
+        });
 
         return {
-          updateConnections: function (newValue) {},
+          updateConnections: function (newValue) {
+            let inputs = [].concat(this.inputList);
+            // we need only first input, remove the other inputs
+            inputs.forEach((input) => {
+              if (input.name !== "MAIN") {
+                this.removeInput(input.name);
+              }
+            });
+            if (argsOfActions[newValue].args.length !== 0) {
+              for (let i = 0; i < argsOfActions[newValue].args.length; ++i) {
+                let arg = argsOfActions[newValue].args[i];
+                let input;
+                if (arg.possibleValues) {
+                  input = this.appendDummyInput("INPUT" + i);
+                  if (i !== 0) input.appendField(",");
+                  else input.appendField(" with  (");
+                  input
+                    .appendField(arg.name + ": ")
+                    .appendField(
+                      new Blockly.FieldDropdown(arg.possibleValues),
+                      "ARG" + i
+                    );
+                } else {
+                  input = this.appendValueInput("INPUT" + i).setCheck(arg.type);
+                  if (i !== 0) input.appendField(",");
+                  else input.appendField(" with  (");
+                  input.appendField(arg.name + ":");
+                }
+                if (i === argsOfActions[newValue].args.length - 1)
+                  input.appendField(" ) ");
+              }
+            }
+            // this.appendValueInput("Args")
+            //   .setCheck(["Boolean", "Number", "String"])
+            //   .appendField("with:");
+          },
           validate: function (newValue) {
             this.getSourceBlock().updateConnections(newValue);
             return newValue;
           },
           init: function () {
-            this.appendDummyInput()
+            this.appendDummyInput("MAIN")
               .appendField(
                 new Blockly.FieldImage(data.img, 20, 20, {
                   alt: "*",
@@ -352,15 +419,9 @@ export const SmartObject = {
               )
               .appendField(data.title)
               .appendField(
-                new Blockly.FieldDropdown([["Change temperature", "SWING"]]),
-                "METHODS"
-              )
-              .appendField("with:");
-            this.appendValueInput("Args").setCheck([
-              "Boolean",
-              "Number",
-              "String",
-            ]);
+                new Blockly.FieldDropdown(actions, this.validate),
+                "ACTIONS"
+              );
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
@@ -371,7 +432,7 @@ export const SmartObject = {
         };
       },
       codeGen: (data) => {
-        var dropdown_methods = block.getFieldValue("METHODS");
+        var dropdown_actions = block.getFieldValue("ACTIONS");
         var value_args = Blockly.JavaScript.valueToCode(
           block,
           "Args",
