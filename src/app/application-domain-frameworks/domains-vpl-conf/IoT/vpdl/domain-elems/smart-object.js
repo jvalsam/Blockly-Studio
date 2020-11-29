@@ -343,7 +343,7 @@ export const SmartObject = {
           argsOfActions[action.name.toUpperCase()] = { args: [] };
 
           action.parameters.forEach((parameter) => {
-            let argType = typeof parameter.type;
+            let argType = parameter.type;
             let arg = {
               type: argType.charAt(0).toUpperCase() + argType.slice(1),
               name: parameter.name,
@@ -432,12 +432,19 @@ export const SmartObject = {
         };
       },
       codeGen: (data) => {
-        var dropdown_actions = block.getFieldValue("ACTIONS");
-        var value_args = Blockly.JavaScript.valueToCode(
-          block,
-          "Args",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+        var dropdown_methods = block.getFieldValue("ACTIONS");
+        // must check how many args do we have and get code
+
+        // FOR ValueInput
+        // var value_arg1 = Blockly.JavaScript.valueToCode(
+        //   block,
+        //   "INPUT1",
+        //   Blockly.JavaScript.ORDER_ATOMIC
+        // );
+
+        // FOR DummyInput get field
+        // var dropdown_arg1 = block.getFieldValue("ARG1");
+
         // TODO: Assemble JavaScript into code variable.
         var code = "...;\n";
         return code;
