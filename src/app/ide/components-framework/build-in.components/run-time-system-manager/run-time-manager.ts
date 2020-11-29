@@ -13,6 +13,7 @@ import {
 import { IDEUIComponent } from '../../component/ide-ui-component';
 import { IConsoleOutputMsg } from './run-time-manager-view/run-time-manager-output-view/run-time-manager-output-view';
 import { ComponentsCommunication } from '../../component/components-communication';
+import { RuntimeSystem } from "./runtime-system";
 
 // initialize the metadata of the project manager component for registration in the platform
 RuntimeManagerDataHolder.initialize();
@@ -202,11 +203,6 @@ export class RuntimeManager extends IDEUIComponent {
         this.AddDefaultMessage("init");
     }
 
-    private runDataGen(appData): any {
-        // request from all responsible editors to code generate each item
-        return appData;
-    }
-
     private getDomainRunScript(domain: String, callback): void {
         let domainPath = "../../../domains/" + domain + "/execution/run-app.js";
         var domScript;
@@ -227,13 +223,25 @@ export class RuntimeManager extends IDEUIComponent {
 
     @ExportedFunction
     getEnvironmentRunData() {
-        
+        let appData = ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getRunApplicationData"
+        ).value;
+
+        return {
+            execType: RuntimeManager.getMode(),
+            domainType: appData.domain,
+            execData: appData
+        };
     }
 
     private _startMsgHookId: String;
 
     @RequiredFunction("ProjectManager", "getRunApplicationData")
     private onStartRunApplicationBtn(): void {
+        RuntimeManager.currentMode = 0;
+
         let toolbarView = this._viewElems.RuntimeManagerToolbarView[0].elem;
         toolbarView.disableButtons();
         toolbarView.activateStopBtn();
@@ -241,41 +249,34 @@ export class RuntimeManager extends IDEUIComponent {
         // this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
-        let appData = ComponentsCommunication.functionRequest(
-            this.name,
-            "ProjectManager",
-            "getRunApplicationData"
-        ).value;
-
-        var file_src = "/runtime-environment-app.html";
-        $('<iframe>')
-            .attr('src',file_src)
-            .attr('height',500)
-            .attr('width',500)
-            .appendTo('.runtime-environment-area');
-
-        // connect the runtime application with IDE
-        window.onmessage = (event) => this.listenRuntimeEnvironmentMessages(event);
-
-        let runData = this.runDataGen(appData);
-
-        this.getDomainRunScript(
-            appData.domain,
-            (domainScript) => {
-                let runPromise = domainScript.Run(runData);
-                runPromise.then((completeMessage) => {
-                    //stop button
-                });
-                runPromise.catch(function (error) {
-                    if (error === "StopApplication") {
-
-                    }
-                });
-
-                // this.ClearMessages();
-                this.AddDefaultMessage("start");
-            }
+        RuntimeSystem.initialize("BlocklyStudioIDE_MainRuntimeEnvironment");
+        let cw = RuntimeSystem
+            .getIframe("BlocklyStudioIDE_MainRuntimeEnvironment")
+            ['contentWindow'];
+        let runtimeSystemInst = new RuntimeSystem(
+            this,
+            "RuntimeEnvironmentApp",
+            cw.postMessage,
+            (func) => window.onmessage = func
         );
+
+        // this.getDomainRunScript(
+        //     appData.domain,
+        //     (domainScript) => {
+        //         let runPromise = domainScript.Run(runData);
+        //         runPromise.then((completeMessage) => {
+        //             //stop button
+        //         });
+        //         runPromise.catch(function (error) {
+        //             if (error === "StopApplication") {
+
+        //             }
+        //         });
+
+        //         // this.ClearMessages();
+        //         this.AddDefaultMessage("start");
+        //     }
+        // );
     }
 
     @ExportedFunction

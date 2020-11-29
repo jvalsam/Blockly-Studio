@@ -2,16 +2,16 @@
  * 
  */
 
-import { RuntimeEnvironmentMessageHandler } from "./runtime-environment-message-handler";
-import { RuntimeEnvironmentRelease } from "./runtime-environment-release";
-import { RuntimeEnvironmentDebug } from "./runtime-environment-debug";
+import { RuntimeEnvironmentMessageHandler } from "./runtime-environment-message-handler.js";
+import { RuntimeEnvironmentRelease } from "./runtime-environment-release.js";
+import { RuntimeEnvironmentDebug } from "./runtime-environment-debug.js";
 
 
 class RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
-    constructor(parentApp) {
+    constructor(connectedApp) {
         super(
             "RuntimeEnvironmentApp",
-            parentApp,
+            connectedApp,
             (msg) => window.top.postMessage(msg, "*"),
             (func) => window.onmessage = func
         );
@@ -27,13 +27,13 @@ class RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
             [],
             {
                 type: 'sync',
-                func: (data) => loadEnvironmentRunData(data)
+                func: (data) => this.loadEnvironmentRunData(data)
             }
         );
     }
 
     loadEnvironmentRunData(data) {
-        if (this.environmentRunData.execType === 'Debug') {
+        if (data.execType === 'DEBUG') {
             this.environment = new RuntimeEnvironmentDebug(this, data);
         }
         else {
@@ -42,14 +42,14 @@ class RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
     }
 
     dispatchFunctionRequest(srcName, destName, funcName, data, callback) {
-        let resp;
+        let func;
         
         switch(destName) {
-            case this.name:
-                resp = this[funcName] (data);
+            case this.myApp:
+                func = (...data) => this[funcName](...data);
                 break;
             case 'Runtime':
-                
+
                 break;
             case 'VisualDebugger':
 
@@ -64,9 +64,14 @@ class RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
                 throw new Error(compName + " does not exist in Runtime Envrionment Application");
         }
 
-        this.responseMsg(resp, callbackData);
+        if (callback) {
+            func (...data, callback);
+        }
+        else {
+            return func (...data);
+        }
     }
 
 }
 
-const runtimeEnvironment = new RuntimeEnvironmentApp("RuntimeManager");
+const runtimeEnvironment = new RuntimeEnvironmentApp("RuntimeSystem");

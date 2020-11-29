@@ -4,23 +4,23 @@ export class RuntimeEnvironmentMessageHandler {
         this.myApp = myApp;
         this.connectedApp = connectedApp;
 
-        this.#callbackFuncId = 1;
-        this.#callbackFuncMap = {};
-        this.#callbackSignalId = 1;
-        this.#callbackSignalMap = {};
+        this._callbackFuncId = 1;
+        this._callbackFuncMap = {};
+        this._callbackSignalId = 1;
+        this._callbackSignalMap = {};
 
-        this.#myAppPostMessage = postMessage;
-        this.#myAppOnMessage = onMessage;
+        this._myAppPostMessage = postMessage;
+        this._myAppOnMessage = onMessage;
 
-        this.#listenMsg();
+        this._listenMsg();
     }
 
-    #listenMsg() {
-        this.#myAppOnMessage(
+    _listenMsg() {
+        this._myAppOnMessage(
             (event) => {
-                let msg = this.#encodingMsg(event.data);
+                let msg = this._encodingMsg(event.data);
     
-                this.#receiveFunctionRequest(
+                this._receiveFunctionRequest(
                     msg.srcComp,
                     msg.destComp,
                     msg.funcName,
@@ -30,18 +30,18 @@ export class RuntimeEnvironmentMessageHandler {
         );
     }
 
-    #postMsg(srcComp, destComp, funcName, data, callbackData) {
-        let msg = this.#codingMsg(
+    _postMsg(srcComp, destComp, funcName, data, callbackData) {
+        let msg = this._codingMsg(
             srcComp,
             destComp,
             funcName,
             data,
             callbackData);
         
-        this.#myAppPostMessage(msg);
+        this._myAppPostMessage(msg);
     }
 
-    #createMsg(srcComp, destComp, funcName, data, callbackData) {
+    _createMsg(srcComp, destComp, funcName, data, callbackData) {
         return {
             srcComp: srcComp,
             destComp: destComp,
@@ -51,9 +51,9 @@ export class RuntimeEnvironmentMessageHandler {
         };
     }
 
-    #codingMsg(srcComp, destComp, funcName, data, callbackData) {
+    _codingMsg(srcComp, destComp, funcName, data, callbackData) {
         return JSON.stringify(
-            this.#createMsg(
+            this._createMsg(
                 srcComp,
                 destComp,
                 funcName,
@@ -62,7 +62,7 @@ export class RuntimeEnvironmentMessageHandler {
             ));
     }
 
-    #encodingMsg(msg) {
+    _encodingMsg(msg) {
         return JSON.parse(msg);
     }
 
@@ -72,41 +72,42 @@ export class RuntimeEnvironmentMessageHandler {
                 destComp: this.myApp,
                 funcName: "receiveResponseCallback",
                 data: {
-                    id: this.#callbackFuncId,
+                    id: this._callbackFuncId,
                     type: callback.type
                 }
             };
-            this.#callbackFuncMap[this.#callbackFuncId++] = (data) => callback.func(data);
+            this._callbackFuncMap[this._callbackFuncId++] = (data) => callback.func(data);
 
-            this.#postMsg(srcComp, destComp, funcName, args, callbackData);
+            this._postMsg(srcComp, destComp, funcName, args, callbackData);
         }
         else {
-            this.#postMsg(srcComp, destComp, funcName, args);
+            this._postMsg(srcComp, destComp, funcName, args);
         }
     }
     
-    #handleResponseCallback (resp, id) {
+    _handleResponseCallback (resp, callback) {
         if (typeof resp === 'object' && 'type' in resp && 'func' in resp) {
-            // TODO: add functionality to convert it and add it in the map all functions are given as args
+            // TODO: add functionality to convert it and add it in the map all 
+            // functions are given as args
         }
 
         this.functionRequest(
             this.myApp,
             this.connectedApp,
             "receiveResponseCallback",
-            [id, resp]);
+            [callback.data.id, resp]);
     }
 
-    #receiveFunctionRequest(srcComp, destComp, funcName, args, callback) {
+    _receiveFunctionRequest(srcComp, destComp, funcName, args, callback) {
         if (callback) {
-            if (callback.type === 'sync') {
+            if (callback.data.type === 'sync') {
                 let resp = this.dispatchFunctionRequest(
                     srcComp,
                     destComp,
                     funcName,
                     args);
                 
-                this.#handleResponseCallback(resp, callback.id);
+                this._handleResponseCallback(resp, callback);
             }
             else { // async
                 this.dispatchFunctionRequest(
@@ -114,23 +115,23 @@ export class RuntimeEnvironmentMessageHandler {
                     destComp,
                     funcName,
                     args,
-                    (resp) => this.#handleFunctionRequest(resp, callback.id));
+                    (resp) => this._handleResponseCallback(resp, callback));
             }
         }
         else {
-            this.dispatchFunctionRequest(srcComp, destComp, funcName, data);
+            this.dispatchFunctionRequest(srcComp, destComp, funcName, args);
         }
     }
 
     receiveResponseCallback(callbackFuncId, data) {
-        this.#callbackFuncMap[callbackFuncId] (data);
+        this._callbackFuncMap[callbackFuncId] (data);
 
         // free completed callback function request
-        delete this.#callbackFuncMap[callbackFuncId];
+        delete this._callbackFuncMap[callbackFuncId];
     }
 
     dispatchFunctionRequest(srcComp, destComp, funcName, data, callback) {
-        if (destComp === this.name) {
+        if (destComp === this.myApp) {
             if (callback) {
                 this[funcName] (data, callback);
             }
@@ -139,7 +140,9 @@ export class RuntimeEnvironmentMessageHandler {
             }
         }
         else {
-            throw new Error("Not impletemented function dispatchFunctionRequest in " + this.name);
+            throw new Error(
+                "Not impletemented function dispatchFunctionRequest in "
+                + this.myApp);
         }
     }
 
@@ -156,8 +159,8 @@ export class RuntimeEnvironmentMessageHandler {
         this._addSignal(signal, callback);
 
         this.postMsg(
-            this.name,
-            this.parentApp,
+            this.myApp,
+            this.connectedApp,
             "addListenSignals",
             [signal]
         );
@@ -167,8 +170,8 @@ export class RuntimeEnvironmentMessageHandler {
         signals.forEach(elem => this._addSignal(elem.signal, elem.callback));
 
         this.postMsg(
-            this.name,
-            this.parentApp,
+            this.myApp,
+            this.connectedApp,
             "addListenSignals",
             signals
         );
