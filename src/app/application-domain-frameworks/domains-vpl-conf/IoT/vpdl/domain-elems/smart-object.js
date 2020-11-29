@@ -80,6 +80,7 @@ export const SmartObject = {
             propertyType.charAt(0).toUpperCase() + propertyType.slice(1);
         });
 
+        if (dropdownSel.length === 0) return null;
         return {
           updateConnections: function (newValue) {
             this.setOutput(true, propertiesValueType[newValue]);
@@ -137,9 +138,7 @@ export const SmartObject = {
         });
 
         // check if we have properties for these blocks
-        if (dropdownSel.length === 0) {
-          return null;
-        }
+        if (dropdownSel.length === 0) return null;
 
         return {
           init: function () {
@@ -191,9 +190,7 @@ export const SmartObject = {
         });
 
         // check if we have properties for these blocks
-        if (dropdownSel.length === 0) {
-          return null;
-        }
+        if (dropdownSel.length === 0) return null;
 
         return {
           updateConnections: function (newValue) {
@@ -273,6 +270,8 @@ export const SmartObject = {
             });
           }
         });
+
+        if (enumeratedProps.length === 0) return null;
 
         return {
           updateConnections: function (newValue) {
@@ -367,6 +366,8 @@ export const SmartObject = {
 
           actions.push([action.name, action.name.toUpperCase()]);
         });
+
+        if (actions.length === 0) return null;
 
         return {
           updateConnections: function (newValue) {
