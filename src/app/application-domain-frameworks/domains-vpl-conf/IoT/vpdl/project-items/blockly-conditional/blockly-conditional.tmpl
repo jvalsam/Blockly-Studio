@@ -37,9 +37,7 @@
             style="margin-top: 0.25em;margin-right: 8px;"></i>
         <% } else { %>
         <i class="jstree-icon jstree-themeicon jstree-themeicon-custom" role="presentation"
-            style="background-image: url(" <%= jstree.icon %>");
-                   background-position: center center;
-                   background-size: auto;">
+            style="background-image: url(&quot;<%=jstree.icon.replaceAll("/", "\\")%>&quot;); background-position: center center; background-size: auto;">
         </i>
         <% } %>
             <%= jstree.text %>

@@ -39,7 +39,9 @@ export class PItemView extends View {
             style,
             hookSelector
         );
-        this.pitemTmpl = _.template(this.view.template);
+        this.pitemTmpl = _.template(
+            this.view.template
+        );
         this.editorsMap = {};
         this._focusState = false;
         this.focusEditor = null;
