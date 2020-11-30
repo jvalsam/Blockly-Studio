@@ -300,6 +300,8 @@ export class BlocklyVPL extends Editor {
     visualSources.blocks.forEach(block => {
       this.instancesMap[block.editorId].deleteBlockById(block.blockId);
     });
+
+    visualSources.blocks.splice(0, visualSources.blocks.length);
   }
 
   @ExportedFunction
