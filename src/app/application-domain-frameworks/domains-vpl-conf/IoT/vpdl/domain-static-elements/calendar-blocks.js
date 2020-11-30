@@ -1,4 +1,42 @@
 import * as Blockly from "blockly";
+import * as dayjs from "dayjs";
+dayjs().format();
+
+let takeDifferenceFromSpecificTime = function (hour, minute, second) {
+  let futureDate = dayjs().day(intDay);
+  //let day = moment().day("Tuesday");
+  let ms = futureDate.diff(dayjs());
+  //var duration = moment.duration(ms).format("yy-MM-dd hh:mm:ss");
+  if (ms <= 0) {
+    futureDate = dayjs().day(7 + intDay);
+    ms = futureDate.diff(dayjs());
+  }
+  return ms;
+};
+
+let takeDifferenceFromSpecificDay = function (intDay) {
+  let futureDate = dayjs().day(intDay);
+  //let day = moment().day("Tuesday");
+  let ms = futureDate.diff(dayjs());
+  //var duration = moment.duration(ms).format("yy-MM-dd hh:mm:ss");
+  if (ms <= 0) {
+    futureDate = dayjs().day(7 + intDay);
+    ms = futureDate.diff(dayjs());
+  }
+  return ms;
+};
+
+let takeDifferenceFromSpecificMonth = function (intMonth) {
+  let futureDate = dayjs().month(intMonth);
+  //let day = moment().day("Tuesday");
+  let ms = futureDate.diff(dayjs());
+  //var duration = moment.duration(ms).format("yy-MM-dd hh:mm:ss");
+  if (ms <= 0) {
+    futureDate = dayjs().day(12 + intMonth);
+    ms = futureDate.diff(dayjs());
+  }
+  return ms;
+};
 
 export const CalendarStaticBlocks = [
   {
