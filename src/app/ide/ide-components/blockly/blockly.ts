@@ -152,6 +152,10 @@ export class BlocklyVPL extends Editor {
         text
       );
     }
+    // lazy update for the text of the existing wsp 
+    else {
+      this.instancesMap[editorData.editorId].text = editorData.src;
+    }
     this.instancesMap[editorData.editorId].open();
   }
 
