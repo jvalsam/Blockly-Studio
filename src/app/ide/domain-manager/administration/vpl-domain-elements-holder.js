@@ -62,7 +62,9 @@ class _VPLDomainElementsHolder {
     }
 
     deleteDefinedBlock(projectId, blockType) {
-        delete this._VPLElemsHandlingBlocksMap[projectId][blockType];
+        if (this._VPLElemsHandlingBlocksMap[projectId][blockType]) {
+            delete this._VPLElemsHandlingBlocksMap[projectId][blockType];
+        }
     }
 
     deleteDefinedBlocks(projectId, blockTypes) {

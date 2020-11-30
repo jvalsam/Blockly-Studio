@@ -346,16 +346,20 @@ export class VPLDomainElementHandler {
         let delBlockElems = [];
 
         for (let blocklyElem in this._vplBlocklyElems) {
-                let bElems = delItem.elements[blocklyElem];
+            let bElems = delItem.elements[blocklyElem];
 
+            if (bElems) {
                 this._vplBlocklyElems[blocklyElem].onDelete(data.projectID, bElems);
-
                 delBlockElems = [...delBlockElems, ...bElems];
+            }
         }
 
         for (let blocklyElem in this._vplBlocklyElems) {
-            delItem.elements[blocklyElem].length = 0;
-            delete delItem.elements[blocklyElem];
+            let bElem = delItem.elements[blocklyElem];
+            if (bElem) {
+                bElem.length = 0;
+                delete delItem.elements[blocklyElem];
+            }
         }
         delete this._items[data.id];
 
