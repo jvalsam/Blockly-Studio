@@ -33,7 +33,14 @@ export const TimeAndDateStaticBlocks = [
         var number_minute = block.getFieldValue("MINUTE");
         var number_second = block.getFieldValue("SECOND");
         // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+        var code =
+          "JSON.stringify({ hour: " +
+          number_hour +
+          ",minute:" +
+          number_minute +
+          ", second:" +
+          number_second +
+          ",})";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },

@@ -150,6 +150,11 @@ export class BlocklyInstance {
         this._blocklyDiv = document.getElementById(blocklySel);
 
         this.wsp = Blockly.inject(this._blocklyDiv, { readOnly: true });
+         
+        if (this.text) {
+           var xml = Blockly.Xml.textToDom(this.text);
+           Blockly.Xml.domToWorkspace(xml, this.wsp);
+         }
     }
 
     open() {

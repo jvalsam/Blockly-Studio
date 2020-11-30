@@ -1,6 +1,5 @@
-
 export class RuntimeSmartAutomationsLivePreview {
-    constructor(runtimeEnv) {
-        this._runtimeEnv = runtimeEnv;
-    }
+  constructor(runtimeEnv) {
+    this._runtimeEnv = runtimeEnv;
+  }
 }
