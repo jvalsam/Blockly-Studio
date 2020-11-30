@@ -1,42 +1,4 @@
 import * as Blockly from "blockly";
-import * as dayjs from "dayjs";
-dayjs().format();
-
-let takeDifferenceFromSpecificTime = function (hour, minute, second) {
-  let futureDate = dayjs().day(intDay);
-  //let day = moment().day("Tuesday");
-  let ms = futureDate.diff(dayjs());
-  //var duration = moment.duration(ms).format("yy-MM-dd hh:mm:ss");
-  if (ms <= 0) {
-    futureDate = dayjs().day(7 + intDay);
-    ms = futureDate.diff(dayjs());
-  }
-  return ms;
-};
-
-let takeDifferenceFromSpecificDay = function (intDay) {
-  let futureDate = dayjs().day(intDay);
-  //let day = moment().day("Tuesday");
-  let ms = futureDate.diff(dayjs());
-  //var duration = moment.duration(ms).format("yy-MM-dd hh:mm:ss");
-  if (ms <= 0) {
-    futureDate = dayjs().day(7 + intDay);
-    ms = futureDate.diff(dayjs());
-  }
-  return ms;
-};
-
-let takeDifferenceFromSpecificMonth = function (intMonth) {
-  let futureDate = dayjs().month(intMonth);
-  //let day = moment().day("Tuesday");
-  let ms = futureDate.diff(dayjs());
-  //var duration = moment.duration(ms).format("yy-MM-dd hh:mm:ss");
-  if (ms <= 0) {
-    futureDate = dayjs().day(12 + intMonth);
-    ms = futureDate.diff(dayjs());
-  }
-  return ms;
-};
 
 export const CalendarStaticBlocks = [
   {
@@ -68,21 +30,11 @@ export const CalendarStaticBlocks = [
           block,
           "STATEMENT"
         );
-        // TODO: Assemble JavaScript into code variable.
-        // setTimeout(function () {
-        //   alert("malaka");
-        // }, 3000);
 
         let strBuilder = "";
         strBuilder += "let valueObj = JSON.parse(" + value_time + ");";
-        strBuilder += "let total = 0;";
-        strBuilder += "if (valueObj.hour !== undefined) {";
-        strBuilder += "total = valueObj.hour * 3600000;";
-        strBuilder += "total += valueObj.minute * 60000;";
-        strBuilder += "total += valueObj.second * 1000;";
-        strBuilder += "} else if (valueObj.day !== undefined) {";
-        strBuilder += "} else if (valueObj.month !== undefined){";
-        strBuilder += "}";
+        strBuilder +=
+          "let total = differencesDispatch[valueObj.type](valueObj);";
         strBuilder += "setTimeout(function () {";
         strBuilder += 'alert("hi");';
         strBuilder += statements_statement;

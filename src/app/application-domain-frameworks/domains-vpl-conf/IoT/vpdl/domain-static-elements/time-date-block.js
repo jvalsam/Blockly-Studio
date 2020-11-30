@@ -34,7 +34,7 @@ export const TimeAndDateStaticBlocks = [
         var number_second = block.getFieldValue("SECOND");
         // TODO: Assemble JavaScript into code variable.
         var code =
-          "JSON.stringify({ hour: " +
+          'JSON.stringify({ type: "specificTime", hour: ' +
           number_hour +
           ",minute:" +
           number_minute +
@@ -51,15 +51,15 @@ export const TimeAndDateStaticBlocks = [
       init: function () {
         this.appendDummyInput().appendField(
           new Blockly.FieldDropdown([
-            ["Monday", "MONDAY"],
-            ["Tuesday", "TUESDAY"],
-            ["Wednesday", "WEDNESDAY"],
-            ["Thursday", "THURSDAY"],
-            ["Friday", "FRIDAY"],
-            ["Saturday", "SATURDAY"],
-            ["Sunday", "SUNDAY"],
+            ["Monday", "Monday"],
+            ["Tuesday", "Tuesday"],
+            ["Wednesday", "Wednesday"],
+            ["Thursday", "Thursday"],
+            ["Friday", "Friday"],
+            ["Saturday", "Saturday"],
+            ["Sunday", "Sunday"],
           ]),
-          "NAME"
+          "DAYS"
         );
         this.setInputsInline(true);
         this.setOutput(true, "specific_day");
@@ -70,9 +70,12 @@ export const TimeAndDateStaticBlocks = [
     }),
     codeGen: () =>
       function (block) {
-        var dropdown_name = block.getFieldValue("NAME");
+        var dropdown_days = block.getFieldValue("DAYS");
         // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+        var code =
+          'JSON.stringify({ type: "specificDay", day: \'' +
+          dropdown_days +
+          "' })";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
@@ -83,20 +86,20 @@ export const TimeAndDateStaticBlocks = [
       init: function () {
         this.appendDummyInput().appendField(
           new Blockly.FieldDropdown([
-            ["January", "JANUARY"],
-            ["February", "FEBRUARY"],
-            ["March", "MARCH"],
-            ["April", "APRIL"],
-            ["May", "MAY"],
-            ["June", "JUNE"],
-            ["July", "JULY"],
-            ["August", "AUGUST"],
-            ["September", "SEPTEMBER"],
-            ["October", "OCTOBER"],
-            ["November", "NOVEMBER"],
-            ["December", "DECEMBER"],
+            ["January", "January"],
+            ["February", "February"],
+            ["March", "March"],
+            ["April", "April"],
+            ["May", "May"],
+            ["June", "June"],
+            ["July", "July"],
+            ["August", "August"],
+            ["September", "September"],
+            ["October", "October"],
+            ["November", "November"],
+            ["December", "December"],
           ]),
-          "MONTH"
+          "MONTHS"
         );
         this.setOutput(true, "specific_month");
         this.setColour(330);
@@ -106,9 +109,12 @@ export const TimeAndDateStaticBlocks = [
     }),
     codeGen: () =>
       function (block) {
-        var dropdown_month = block.getFieldValue("MONTH");
+        var dropdown_months = block.getFieldValue("MONTHS");
         // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+        var code =
+          'JSON.stringify({ type: "specificMonth", month: \'' +
+          dropdown_months +
+          "' })";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
