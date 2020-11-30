@@ -31,7 +31,26 @@ export const CalendarStaticBlocks = [
           "STATEMENT"
         );
         // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+        // setTimeout(function () {
+        //   alert("malaka");
+        // }, 3000);
+
+        let strBuilder = "";
+        strBuilder += "let valueObj = JSON.parse(" + value_time + ");";
+        strBuilder += "let total = 0;";
+        strBuilder += "if (valueObj.hour !== undefined) {";
+        strBuilder += "total = valueObj.hour * 3600000;";
+        strBuilder += "total += valueObj.minute * 60000;";
+        strBuilder += "total += valueObj.second * 1000;";
+        strBuilder += "} else if (valueObj.day !== undefined) {";
+        strBuilder += "} else if (valueObj.month !== undefined){";
+        strBuilder += "}";
+        strBuilder += "setTimeout(function () {";
+        strBuilder += 'alert("hi");';
+        strBuilder += statements_statement;
+        strBuilder += "}, total);";
+
+        var code = strBuilder;
         return code;
       },
   },
