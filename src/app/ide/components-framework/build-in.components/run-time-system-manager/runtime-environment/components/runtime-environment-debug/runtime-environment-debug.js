@@ -1,18 +1,33 @@
 import { RuntimeEnvironmentScriptsHolder } from "../../runtime-environment-scripts-holder.js"
 
+export const EnvironmentState = {
+    INIT: "init",
+    RUNNING: "running",
+    STOPPED: "stopped",
+    PAUSED: "paused"
+};
+
 export class RuntimeEnvironmentDebug {
-    constructor(runtimeEnv, envData) {
+    constructor(runtimeEnv) {
         this._runtimeEnv = runtimeEnv;
+        this.state = EnvironmentState.INIT;
+    }
+
+    loadEnvironmentData(envData) {
+        this.state = EnvironmentState.RUNNING;
         this._envData = envData;
 
         this._executionScript = RuntimeEnvironmentScriptsHolder
             .executionDomainFunctions(this._envData.domainType);
         
-        this.start();
+        // pin callback that checks runtime environment state
+        this._envData.checkRuntimeEnvironment = () => this._handleRuntime();
+
+        this.start(this._envData);
     }
 
-    start() {
-        this._executionScript.StartApplication();
+    start(envData) {
+        this._executionScript.StartApplication(envData);
     }
 
     stop() {
