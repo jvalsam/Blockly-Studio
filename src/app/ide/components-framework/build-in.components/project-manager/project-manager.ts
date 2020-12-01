@@ -130,8 +130,10 @@ export class ProjectManager extends IDEUIComponent {
     public initialize(): void {
         let metadata = ProjectManagerMetaDataHolder
             .getWSPDomainMetaData(this.domainType);
-        metadata.style = ProjectManagerMetaDataHolder
-            .getWSPDomainStyle(metadata.style);
+        if (typeof metadata.style === 'string') {
+            metadata.style = ProjectManagerMetaDataHolder
+                .getWSPDomainStyle(metadata.style);
+        }
         this.projManagerDescr = metadata;
         this._view.setRenderData(metadata);
         this._view.initialize();
@@ -1543,10 +1545,37 @@ export class ProjectManager extends IDEUIComponent {
         return response.value;
     }
 
+    @ExportedFunction
+    public closeProject(projectId: string): void {
+        (<ProjectManagerJSTreeView>this._view).closeProject(projectId);
+    }
+
+    @ExportedFunction
+    public closeAllProjects(): void {
+        (<ProjectManagerJSTreeView>this._view).closeAllProjects();
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "closeAllPItems",
+            []
+        );
+    }
+
+    @ExportedFunction
+    public hideAllProjects(): void {
+        (<ProjectManagerJSTreeView>this._view).closeAllProjects();
+    }
+
+    @ExportedFunction
+    public showAllProjects(): void {
+        // (<ProjectManagerJSTreeView>this._view).openProject();
+    }
+
     // Support for Collaborative Debugging
     @ExportedFunction
     public onCloseCollaborationDebuggingSession(projectId: String): void {
         // look for previous project in order to close requested and then load previous
         // in case there was not previous project has to go to the home page
     }
+
 }

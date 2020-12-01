@@ -21,9 +21,21 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
             }
         }
         else {
-            throw new Error(
-                "Not impletemented function dispatchFunctionRequest in "
-                + this.myApp);
+            if (callback) {
+                this.parent.dispatchFunctionRequest(
+                    srcComp,
+                    destComp,
+                    funcName,
+                    data,
+                    callback);
+            }
+            else {
+                return this.parent.dispatchFunctionRequest(
+                    srcComp,
+                    destComp,
+                    funcName,
+                    data);
+            }
         }
     }
 

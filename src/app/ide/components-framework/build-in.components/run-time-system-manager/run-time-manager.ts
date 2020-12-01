@@ -35,9 +35,13 @@ var configJson = RuntimeManagerDataHolder.getDomainsConfigJSON();
     version: "1.0"
 })
 export class RuntimeManager extends IDEUIComponent {
-    private static readonly modes: Array<string> = ["RELEASE", "DEBUG"];
+    private static readonly modes: Array<string> = [
+        "RELEASE",
+        "DEBUG"
+    ];
     private static currentMode: number;
     private isOpen: Boolean;
+    private runtimeSystemInst: RuntimeSystem;
 
     constructor(
         name: string,
@@ -49,6 +53,7 @@ export class RuntimeManager extends IDEUIComponent {
         super(name, description, componentView, hookSelector);
         this.isOpen = false;
         RuntimeManager.currentMode = 0;
+        this.runtimeSystemInst = null;
     }
 
     public registerEvents(): void { ; }
@@ -259,24 +264,6 @@ export class RuntimeManager extends IDEUIComponent {
             cw.postMessage,
             (func) => window.onmessage = func
         );
-
-        // this.getDomainRunScript(
-        //     appData.domain,
-        //     (domainScript) => {
-        //         let runPromise = domainScript.Run(runData);
-        //         runPromise.then((completeMessage) => {
-        //             //stop button
-        //         });
-        //         runPromise.catch(function (error) {
-        //             if (error === "StopApplication") {
-
-        //             }
-        //         });
-
-        //         // this.ClearMessages();
-        //         this.AddDefaultMessage("start");
-        //     }
-        // );
     }
 
     @ExportedFunction
@@ -358,5 +345,58 @@ export class RuntimeManager extends IDEUIComponent {
     // @ExportedStaticFunction
     public static getMode(): string {
         return RuntimeManager.modes[RuntimeManager.currentMode];
+    }
+
+    @ExportedFunction
+    public functionRequest(
+        srcComp: string,
+        destComp: string,
+        funcName: string,
+        args: Array<any>,
+        callback: Function =null) {
+            this.runtimeSystemInst.functionRequest(
+                srcComp,
+                destComp,
+                funcName,
+                args,
+                callback);
+    }
+
+    private dispatchFunctionRequest(
+        srcComp: string,
+        destComp: string,
+        funcName: string,
+        data: Array<any>,
+        callback: Function =null) {
+            try {
+                if (callback) {
+                    ComponentsCommunication.functionRequest(
+                        this.name,
+                        destComp,
+                        funcName,
+                        [
+                            ...data,
+                            callback
+                        ]
+                    );
+                }
+                else {
+                    return ComponentsCommunication.functionRequest(
+                        this.name,
+                        destComp,
+                        funcName,
+                        [...data]
+                    ).value;
+                }
+            }
+            catch(e) {
+                throw new Error(
+                    "Error in Runtime Environment: "
+                    + srcComp
+                    + "requested "
+                    + funcName
+                    + ".\n"
+                    + e.message);
+            }
     }
 }

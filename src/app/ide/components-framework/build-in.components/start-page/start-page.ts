@@ -136,5 +136,8 @@ export class StartPageComponent extends IDEUIComponent {
         );
     }
 
-
+    @ExportedFunction
+    public render() {
+        this._view.render();
+    }
 }

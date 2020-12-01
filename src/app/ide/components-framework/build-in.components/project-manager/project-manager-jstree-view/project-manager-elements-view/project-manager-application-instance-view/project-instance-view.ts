@@ -670,9 +670,8 @@ export class ProjectInstanceView extends View {
     }
 
     public destroy(): void {
-        this.treeview.jstree("destroy").empty();
-        $(this.categoriesViewSelector).empty();
-        super.destroy();
+        $(this.categoriesViewSelector)["jstree"]("destroy").empty();
+        $("#"+this.id).remove();
     }
 
     // on remove element has to ask logic deps etc.

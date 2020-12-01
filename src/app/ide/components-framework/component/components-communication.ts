@@ -181,7 +181,8 @@ class _ComponentsCommunication {
     "Toolbar",
     "ApplicationWSPManager",
     "ProjectManager",
-    "EditorManager"
+    "EditorManager",
+    "RuntimeManager"
   ];
   private readonly specialFunctionRequests: ISpecialFunctionRequestMap = {
     "open" : this.specialFuncRequestOpen,

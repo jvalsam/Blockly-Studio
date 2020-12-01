@@ -35,6 +35,7 @@ var confJson: any = require("./conf_props.json");
       date: "October 2020",
     },
   ],
+  isUnique: true,
   componentView: "SmartObjectVPLEditorView",
   menuDef: menuJson,
   configDef: confJson,

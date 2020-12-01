@@ -44,6 +44,7 @@ var confJson: any = require("./conf_props.json");
       date: "April 2020"
     }
   ],
+  isUnique: true,
   componentView: "BlocklyView",
   menuDef: menuJson,
   configDef: confJson,

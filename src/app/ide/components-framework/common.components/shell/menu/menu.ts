@@ -5,6 +5,7 @@ import { UIComponentMetadata, ExportedFunction } from "../../../component/compon
 import { ComponentRegistry } from "../../../component/component-entry";
 
 import * as _ from "lodash";
+import { ComponentsCommunication } from "../../../component/components-communication";
 
 var basicMenuJson = require("./basic_menu.json");
 var configJson = require("./conf_props.json");
@@ -316,7 +317,18 @@ export class Menu extends IDEUIComponent {
      */
     @ExportedFunction
     public onClickHomePage(): void {
-        alert ("Go Home is not implemented yet!");
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "closeAllProjects",
+            []
+        );
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "StartPageComponent",
+            "render",
+            []
+        );
     }
 
     // 1st statement sets 

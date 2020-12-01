@@ -62,7 +62,10 @@ export class EditorManager extends IDEUIComponent {
         private initialPItemsFocused?: Array<string> // 1 or 2 pitemIds
     ) {
         super(name, description, compViewName, selector);
+        this.initData();
+    }
 
+    public initData() {
         this.projectItemsMap = {};
         this.pitemOnFocusIds = [];
         this.focusPrevStackEditorID = [];
@@ -386,6 +389,14 @@ export class EditorManager extends IDEUIComponent {
             this.focusPrevStackEditorID.push(this.pitemOnFocusIds[this.locationOfPItemArea(pitemArea)]);
             pitem.destroy();
         }
+    }
+
+    @ExportedFunction
+    public closeAllPItems(): void {
+        for (const systemId in this.projectItemsMap) {
+            this.projectItemsMap[systemId].destroy();
+        }
+        this.initData();
     }
 
     @ExportedSignal("editor-manager-open-pitem-completed")
