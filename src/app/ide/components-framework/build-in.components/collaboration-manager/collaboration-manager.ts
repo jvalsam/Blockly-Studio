@@ -359,6 +359,21 @@ export class CollaborationManager extends IDEUIComponent {
         return true;
     }
 
+    @ExportedFunction
+    public onCloseCollaborativeDebuggingSession(
+        projectId: string,
+        correctionSuggestions: Array<any>,
+        callback: Function): void {
+        // find session of the project (in case there are more than one instances)
+
+        // update correction suggestions to the project
+        // as suggestions from the collab debugging session?
+        // users may not participate in the collab session?
+        
+        // communicate and update all the member project
+
+        // on finish call callback
+    }
 
     /** Blockly Studio provided functionality */
     @RequiredFunction("EditorManager", "open")
