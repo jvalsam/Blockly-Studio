@@ -14,7 +14,7 @@ export const TimeAndDateStaticBlocks = [
               { alt: "*", flipRtl: "FALSE" }
             )
           )
-          .appendField(new Blockly.FieldNumber(0, 0, 11, 1), "HOUR")
+          .appendField(new Blockly.FieldNumber(0, 0, 23, 1), "HOUR")
           .appendField("hour :")
           .appendField(new Blockly.FieldNumber(0, 0, 59, 1), "MINUTE")
           .appendField("minute :")
@@ -32,7 +32,7 @@ export const TimeAndDateStaticBlocks = [
         var number_hour = block.getFieldValue("HOUR");
         var number_minute = block.getFieldValue("MINUTE");
         var number_second = block.getFieldValue("SECOND");
-        // TODO: Assemble JavaScript into code variable.
+
         var code =
           'JSON.stringify({ type: "specificTime", hour: ' +
           number_hour +
@@ -71,11 +71,12 @@ export const TimeAndDateStaticBlocks = [
     codeGen: () =>
       function (block) {
         var dropdown_days = block.getFieldValue("DAYS");
-        // TODO: Assemble JavaScript into code variable.
+
         var code =
           'JSON.stringify({ type: "specificDay", day: \'' +
           dropdown_days +
           "' })";
+
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
@@ -124,7 +125,7 @@ export const TimeAndDateStaticBlocks = [
     blockDef: () => ({
       init: function () {
         this.appendDummyInput()
-          .appendField(new Blockly.FieldNumber(0, 0, Infinity, 1), "SECONDS")
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "SECONDS")
           .appendField("second(s)");
         this.setOutput(true, "every_seconds");
         this.setColour(330);
@@ -135,30 +136,10 @@ export const TimeAndDateStaticBlocks = [
     codeGen: () =>
       function (block) {
         var number_seconds = block.getFieldValue("SECONDS");
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
-        // TODO: Change ORDER_NONE to the correct strength.
-        return [code, Blockly.JavaScript.ORDER_NONE];
-      },
-  },
-  {
-    name: "every_hours",
-    blockDef: () => ({
-      init: function () {
-        this.appendDummyInput()
-          .appendField(new Blockly.FieldNumber(0, 0, Infinity, 1), "HOUR")
-          .appendField("hour(s)");
-        this.setOutput(true, "every_hours");
-        this.setColour(330);
-        this.setTooltip("");
-        this.setHelpUrl("");
-      },
-    }),
-    codeGen: () =>
-      function (block) {
-        var number_hour = block.getFieldValue("HOUR");
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+        var code =
+          'JSON.stringify({ type: "everySecond", second: ' +
+          number_seconds +
+          " })";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
@@ -168,7 +149,7 @@ export const TimeAndDateStaticBlocks = [
     blockDef: () => ({
       init: function () {
         this.appendDummyInput()
-          .appendField(new Blockly.FieldNumber(0, 0, Infinity, 1), "MINUTE")
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "MINUTE")
           .appendField("minute(s)");
         this.setOutput(true, "every_minutes");
         this.setColour(330);
@@ -179,8 +160,34 @@ export const TimeAndDateStaticBlocks = [
     codeGen: () =>
       function (block) {
         var number_minute = block.getFieldValue("MINUTE");
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+
+        var code =
+          'JSON.stringify({ type: "everyMinute", minute: ' +
+          number_minute +
+          " })";
+        // TODO: Change ORDER_NONE to the correct strength.
+        return [code, Blockly.JavaScript.ORDER_NONE];
+      },
+  },
+  {
+    name: "every_hours",
+    blockDef: () => ({
+      init: function () {
+        this.appendDummyInput()
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "HOUR")
+          .appendField("hour(s)");
+        this.setOutput(true, "every_hours");
+        this.setColour(330);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var number_hour = block.getFieldValue("HOUR");
+
+        var code =
+          'JSON.stringify({ type: "everyHour", hour: ' + number_hour + " })";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
@@ -190,7 +197,7 @@ export const TimeAndDateStaticBlocks = [
     blockDef: () => ({
       init: function () {
         this.appendDummyInput()
-          .appendField(new Blockly.FieldNumber(0, 0, Infinity, 1), "DAY")
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "DAY")
           .appendField("day(s)");
         this.setOutput(true, "every_days");
         this.setColour(330);
@@ -201,8 +208,9 @@ export const TimeAndDateStaticBlocks = [
     codeGen: () =>
       function (block) {
         var number_day = block.getFieldValue("DAY");
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+
+        var code =
+          'JSON.stringify({ type: "everyDay", day: ' + number_day + " })";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
@@ -212,7 +220,7 @@ export const TimeAndDateStaticBlocks = [
     blockDef: () => ({
       init: function () {
         this.appendDummyInput()
-          .appendField(new Blockly.FieldNumber(0, 0, Infinity, 1), "MONTH")
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "MONTH")
           .appendField("month(s)");
         this.setOutput(true, "every_months");
         this.setColour(330);
@@ -223,8 +231,9 @@ export const TimeAndDateStaticBlocks = [
     codeGen: () =>
       function (block) {
         var number_month = block.getFieldValue("MONTH");
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+
+        var code =
+          'JSON.stringify({ type: "everyMonth", month: ' + number_month + " })";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },

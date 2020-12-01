@@ -26,21 +26,24 @@ export const CalendarStaticBlocks = [
           "TIME",
           Blockly.JavaScript.ORDER_ATOMIC
         );
+
         var statements_statement = Blockly.JavaScript.statementToCode(
           block,
           "STATEMENT"
         );
 
         let strBuilder = "";
-        strBuilder += "let valueObj = JSON.parse(" + value_time + ");";
-        strBuilder +=
-          "let total = differencesDispatch[valueObj.type](valueObj);";
         strBuilder += "setTimeout(function () {";
-        strBuilder += 'alert("hi");';
+        strBuilder += "alert('hi');";
         strBuilder += statements_statement;
-        strBuilder += "}, total);";
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          ")));";
 
-        var code = strBuilder;
+        var code = strBuilder + "\n";
         return code;
       },
   },
@@ -71,12 +74,24 @@ export const CalendarStaticBlocks = [
           "TIME",
           Blockly.JavaScript.ORDER_ATOMIC
         );
+
         var statements_statement = Blockly.JavaScript.statementToCode(
           block,
           "STATEMENT"
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+
+        let strBuilder = "";
+        strBuilder += "setTimeout(function () {";
+        strBuilder += "alert('hi');";
+        strBuilder += statements_statement;
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          ")));";
+
+        var code = strBuilder + "\n";
         return code;
       },
   },
@@ -113,8 +128,39 @@ export const CalendarStaticBlocks = [
           block,
           "STATEMENT"
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+
+        // (function () {
+        //   let index = arrayIntervals.length;
+        //   let f = () => {
+        //     setTimeout(() => {
+        //       alert("hi");
+        //       arrayIntervals[index]();
+        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
+        //   };
+        //   arrayIntervals.push(f);
+        //   arrayIntervals[index]();
+        // })();
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let index = arrayIntervals.length;";
+        strBuilder += "let f = () => {";
+        strBuilder += "setTimeout(() => {";
+        strBuilder += 'alert("hi");';
+        strBuilder += statements_statement;
+        strBuilder += "arrayIntervals[index]();";
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          ")));";
+        strBuilder += "};";
+        strBuilder += "arrayIntervals.push(f);";
+        strBuilder += "arrayIntervals[index]();";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
         return code;
       },
   },
@@ -149,12 +195,44 @@ export const CalendarStaticBlocks = [
           "TIME",
           Blockly.JavaScript.ORDER_ATOMIC
         );
+
         var statements_statement = Blockly.JavaScript.statementToCode(
           block,
           "STATEMENT"
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+
+        // (function () {
+        //   let index = arrayIntervals.length;
+        //   let f = () => {
+        //     setTimeout(() => {
+        //       alert("hi");
+        //       arrayIntervals[index]();
+        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
+        //   };
+        //   arrayIntervals.push(f);
+        //   arrayIntervals[index]();
+        // })();
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let index = arrayIntervals.length;";
+        strBuilder += "let f = () => {";
+        strBuilder += "setTimeout(() => {";
+        strBuilder += 'alert("hi");';
+        strBuilder += statements_statement;
+        strBuilder += "arrayIntervals[index]();";
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          ")));";
+        strBuilder += "};";
+        strBuilder += "arrayIntervals.push(f);";
+        strBuilder += "arrayIntervals[index]();";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
         return code;
       },
   },
@@ -185,12 +263,28 @@ export const CalendarStaticBlocks = [
           "TIME",
           Blockly.JavaScript.ORDER_ATOMIC
         );
+
         var statements_statement = Blockly.JavaScript.statementToCode(
           block,
           "STATEMENT"
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+
+        // setTimeout(() => {
+        //   alert("hi");
+        // }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
+
+        let strBuilder = "";
+        strBuilder += "setTimeout(() => {";
+        strBuilder += 'alert("hi");';
+        strBuilder += statements_statement;
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          ")));";
+
+        var code = strBuilder + "\n";
         return code;
       },
   },
@@ -223,12 +317,28 @@ export const CalendarStaticBlocks = [
           "TIME",
           Blockly.JavaScript.ORDER_ATOMIC
         );
+
         var statements_statement = Blockly.JavaScript.statementToCode(
           block,
           "STATEMENT"
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+
+        // setTimeout(() => {
+        //   alert("hi");
+        // }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
+
+        let strBuilder = "";
+        strBuilder += "setTimeout(() => {";
+        strBuilder += 'alert("hi");';
+        strBuilder += statements_statement;
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          ")));";
+
+        var code = strBuilder + "\n";
         return code;
       },
   },
