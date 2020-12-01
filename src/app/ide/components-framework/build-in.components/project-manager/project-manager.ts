@@ -1542,4 +1542,11 @@ export class ProjectManager extends IDEUIComponent {
         );
         return response.value;
     }
+
+    // Support for Collaborative Debugging
+    @ExportedFunction
+    public onCloseCollaborationDebuggingSession(projectId: String): void {
+        // look for previous project in order to close requested and then load previous
+        // in case there was not previous project has to go to the home page
+    }
 }
