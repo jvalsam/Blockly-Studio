@@ -11,7 +11,6 @@ export const ConditionalStaticBlocks = [
           "logical_operators",
           "changes",
           "Boolean",
-          //   "getter_boolean",
         ]);
         this.appendDummyInput().appendField("then");
         this.appendStatementInput("statements").setCheck(null);
@@ -28,12 +27,31 @@ export const ConditionalStaticBlocks = [
           "condition",
           Blockly.JavaScript.ORDER_ATOMIC
         );
+
         var statements_statements = Blockly.JavaScript.statementToCode(
           block,
           "statements"
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+
+        // while(1){
+        //   if(){
+        //     break;
+        //   }
+        // }
+
+        var code = "";
+        if (value_condition) {
+          let strBuilder = "";
+          strBuilder += "while(1){";
+          strBuilder += "if(" + value_condition + " === true){";
+          strBuilder += statements_statements;
+          strBuilder += "break;";
+          strBuilder += "}";
+          strBuilder += "}";
+
+          code = strBuilder + "\n";
+        }
+
         return code;
       },
   },
@@ -84,11 +102,12 @@ export const ConditionalStaticBlocks = [
         this.appendValueInput("LEFT").setCheck([
           "relational_operators",
           "logical_operators",
+          "Boolean",
         ]);
         this.appendDummyInput().appendField(
           new Blockly.FieldDropdown([
-            ["and", "AND"],
-            ["or", "OR"],
+            ["and", "&&"],
+            ["or", "||"],
           ]),
           "OPERATORS"
         );
@@ -96,7 +115,6 @@ export const ConditionalStaticBlocks = [
           "relational_operators",
           "logical_operators",
           "Boolean",
-          //   "getter_boolean",
         ]);
         this.setInputsInline(true);
         this.setOutput(true, "logical_operators");
@@ -118,8 +136,12 @@ export const ConditionalStaticBlocks = [
           "RIGHT",
           Blockly.JavaScript.ORDER_ATOMIC
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+
+        var code = "";
+        // TODO: I don't know if it needs check
+        if (value_left && value_right)
+          code = "(" + value_left + dropdown_operators + value_right + ")";
+
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
@@ -133,17 +155,15 @@ export const ConditionalStaticBlocks = [
           "String",
           "Boolean",
           "Number",
-          // "getter",
-          // "getter_boolean",
         ]);
         this.appendDummyInput().appendField(
           new Blockly.FieldDropdown([
-            ["=", "EQUAL"],
-            ["≠", "NOTEQUAL"],
-            [">", "GREATER"],
-            ["<", "LESS"],
-            ["≥", "GREATERTHAN"],
-            ["≤", "LESSTHAN"],
+            ["=", "==="],
+            ["≠", "!=="],
+            [">", ">"],
+            ["<", "<"],
+            ["≥", ">="],
+            ["≤", "<="],
           ]),
           "OPERATORS"
         );
@@ -151,8 +171,6 @@ export const ConditionalStaticBlocks = [
           "String",
           "Boolean",
           "Number",
-          // "getter",
-          // "getter_boolean",
         ]);
         this.setInputsInline(true);
         this.setOutput(true, "relational_operators");
@@ -168,14 +186,18 @@ export const ConditionalStaticBlocks = [
           "left_value",
           Blockly.JavaScript.ORDER_ATOMIC
         );
+
         var dropdown_operators = block.getFieldValue("OPERATORS");
+
         var value_right_value = Blockly.JavaScript.valueToCode(
           block,
           "right_value",
           Blockly.JavaScript.ORDER_ATOMIC
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+        var code = "";
+        if (value_left_value && value_right_value)
+          code = value_left_value + dropdown_operators + value_right_value;
+
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
