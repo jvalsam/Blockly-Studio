@@ -3,17 +3,7 @@ dayjs().format();
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
 const WhenCondData = [];
-
-const StartWhenTimeout = function () {
-  arrayIntervals.push({
-    type: "when_cond",
-    time: setTimeout(() => {
-      WhenCondData.forEach((cond) => {
-        cond();
-      });
-    }, 200),
-  });
-};
+const EveryCalendarData = {};
 
 const weekDays = [
   "Sunday",
@@ -120,19 +110,11 @@ const timeDispatch = {
 };
 
 export async function StartApplication(data) {
+  //   alert("run my application");
+  // data.execData.project{AutomationTasks[], CalendarEvents[].editorsData[].generated, ConditionalEvents[]}
   try {
-    // calendar tasks
-    data.execData.project.CalendarEvents.forEach((events) => {
-      eval(events.editorsData[0].generated);
-    });
-
-    // conditional tasks
-    data.execData.project.ConditionalEvents.forEach((events) => {
-      eval(events.editorsData[0].generated);
-    });
-
-    // Start whenConditions
-    StartWhenTimeout();
+    eval(data.execData.project.CalendarEvents[0].editorsData[0].generated);
+    // eval(data.execData.project.ConditionalEvents[0].editorsData[0].generated);
   } catch (e) {
     alert(e);
   }
@@ -140,8 +122,8 @@ export async function StartApplication(data) {
 
 export async function StopApplication(execData) {
   alert("stop my application");
-  arrayIntervals.forEach((elem) => {
-    clearTimeout(elem.time);
+  arrayIntervals.forEach((interval) => {
+    clearTimeout(interval.time);
   });
 }
 

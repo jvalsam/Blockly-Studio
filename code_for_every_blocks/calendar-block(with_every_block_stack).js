@@ -1,5 +1,12 @@
 import * as Blockly from "blockly";
 
+let id = 0;
+const stackEveryBlocks = [];
+
+let CreateID = function () {
+  return id++;
+};
+
 export const CalendarStaticBlocks = [
   {
     name: "calendar_at",
@@ -136,10 +143,11 @@ export const CalendarStaticBlocks = [
 
         // (function () {
         //   let index = arrayIntervals.length;
-        //   arrayIntervals.push({type: 'calendar_every'});
+        //   arrayIntervals.push({ type: "calendar_every" });
         //   let f = function () {
         //     arrayIntervals[index].time = setTimeout(() => {
-        //       alert(index);
+        //       // alert(index);
+        //       statements_statement;
         //       arrayIntervals[index].func();
         //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
         //   };
@@ -197,6 +205,8 @@ export const CalendarStaticBlocks = [
     }),
     codeGen: () =>
       function (block) {
+        let strBuilder = "";
+
         var value_time = Blockly.JavaScript.valueToCode(
           block,
           "TIME",
@@ -207,6 +217,23 @@ export const CalendarStaticBlocks = [
           block,
           "STATEMENT"
         );
+
+        // create and push id
+        let _id = CreateID();
+        stackEveryBlocks.push(_id);
+        // if there is stack refer there else init
+        // if there is a parent with every block
+        if (stackEveryBlocks.length > 0) {
+          stackEveryBlocks.forEach((p) => {
+            strBuilder +=
+              "EveryCalendarData[" + p + "].children.push(" + _id + ");";
+          });
+        } else {
+          strBuilder +=
+            "EveryCalendarData[" +
+            _id +
+            "] = { children: [], timeoutID: null };";
+        }
 
         // (function () {
         //   let index = arrayIntervals.length;
@@ -221,13 +248,15 @@ export const CalendarStaticBlocks = [
         //   arrayIntervals[index].func();
         // })();
 
-        let strBuilder = "";
         strBuilder += "(function () {";
         strBuilder += "let index = arrayIntervals.length;";
         strBuilder +=
           "arrayIntervals.push({type: 'calendar_every_top_bottom'});";
         strBuilder += "let f = function () {";
-        strBuilder += "arrayIntervals[index].time = setTimeout(() => {";
+        strBuilder +=
+          "arrayIntervals[index].time = EveryCalendarData[" +
+          _id +
+          "].timeoutID = setTimeout(() => {";
         strBuilder += "alert(index);";
         strBuilder += statements_statement;
         strBuilder += "arrayIntervals[index].func();";
