@@ -84,6 +84,7 @@ export class ProjectManager extends IDEUIComponent {
     private loadedProjects: {[projectID: string]: any};
     private mainProject: string;
     private isOpen: Boolean;
+    private projectLoadAfterCollabSession: any;
 
     constructor(
         name: string,
@@ -201,9 +202,11 @@ export class ProjectManager extends IDEUIComponent {
                 "getEditors"
             ).value;
             editorComponents.forEach(name => {
-                let editor = <Editor>(ComponentRegistry.getEntry(name).create([
-                    ".modal-platform-container"
-                ]));
+                let editor = <Editor>(ComponentRegistry
+                    .getEntry(name)
+                    .create([
+                        ".modal-platform-container"
+                    ]));
 
                 if (editor.name === "BlocklyVPL" || editor.name === "ReteVPL") {
                     editor["loadDomain"](this.domainType);
@@ -282,8 +285,8 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public loadProject(project): void {
-        project.saveMode = "DB";
+    public loadProject(project, saveMode: string ="DB"): void {
+        project.saveMode = saveMode;
         this.loadedProjects[project._id] = project;
         this.mainProject = project._id;
         let projView = (<ProjectManagerJSTreeView>this._view).loadProject(project);
@@ -1567,11 +1570,47 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
-    // Support for Collaborative Debugging
+    /**
+     *  Functionality to support Collaborative Debugging
+     **/
+    
+    @ExportedFunction
+    public onStartCollaborationDebuggingSession(project: any): void {
+        // suport for only one project
+        if (this.mainProject) {
+            this.projectLoadAfterCollabSession = this.loadedProjects[this.mainProject];
+        }
+        this.closeAllProjects();
+
+        this.loadProject(project, "COLLAB_DEBUG");
+    }
+
     @ExportedFunction
     public onCloseCollaborationDebuggingSession(projectId: String): void {
         // look for previous project in order to close requested and then load previous
         // in case there was not previous project has to go to the home page
     }
 
+    private saveEditorData_COLLAB_DEBUG(
+        editorId: string,
+        pitem: ProjectItem,
+        project: any,
+        editor: string,
+        event: any
+    ): void {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborativeDebugging",
+            "pitemUpdated",
+            [
+                pitem.systemID,
+                "src",
+                {
+                    editorId: editorId,
+                    editor: editor,
+                    event: event
+                }
+            ]
+        );
+    }
 }
