@@ -177,6 +177,12 @@ export class ProjectManager extends IDEUIComponent {
 
             ComponentsCommunication.functionRequest(
                 this.name,
+                "Toolbar",
+                "show"
+            );
+
+            ComponentsCommunication.functionRequest(
+                this.name,
                 "Shell",
                 "openComponent",
                 [this]);
@@ -1559,16 +1565,6 @@ export class ProjectManager extends IDEUIComponent {
             "closeAllPItems",
             []
         );
-    }
-
-    @ExportedFunction
-    public hideAllProjects(): void {
-        (<ProjectManagerJSTreeView>this._view).closeAllProjects();
-    }
-
-    @ExportedFunction
-    public showAllProjects(): void {
-        // (<ProjectManagerJSTreeView>this._view).openProject();
     }
 
     // Support for Collaborative Debugging

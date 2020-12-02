@@ -325,6 +325,11 @@ export class Menu extends IDEUIComponent {
         );
         ComponentsCommunication.functionRequest(
             this.name,
+            "Toolbar",
+            "hide"
+        );
+        ComponentsCommunication.functionRequest(
+            this.name,
             "StartPageComponent",
             "render",
             []
