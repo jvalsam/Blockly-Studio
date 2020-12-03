@@ -1,5 +1,16 @@
 import * as Blockly from "blockly";
 
+let whenCondCounter = 1;
+let changesIDCounter = 1;
+
+const CreateWhenID = function () {
+  return whenCondCounter++;
+};
+
+const CreateChangesID = function () {
+  return changesIDCounter++;
+};
+
 export const ConditionalStaticBlocks = [
   {
     name: "conditional_when",
@@ -33,17 +44,33 @@ export const ConditionalStaticBlocks = [
           "statements"
         );
 
-        // WhenCondData.push(() => {
-        //   if (value_condition) {
-        //     statements_statements;
-        //   }
+        let whenCondID = CreateWhenID();
+
+        // whenCondData.push({
+        //   key: whenCondID,
+        //   func: () => {
+        //     if (value_condition) {
+        //       let removedindex = whenCondData.findIndex(
+        //         (x) => x.key === whenCondID
+        //       );
+        //       whenCondData.splice(removedindex, 1);
+        //       statements_statements;
+        //     }
+        //   },
         // });
 
         let strBuilder = "";
-        strBuilder += "WhenCondData.push(() => {";
+        strBuilder += "whenCondData.push({";
+        strBuilder += "key: " + whenCondID + ",";
+        strBuilder += "func: () => {";
         strBuilder += "if (" + value_condition + ") {";
+        strBuilder += "let removedindex = whenCondData.findIndex(";
+        strBuilder += "(x) => x.key === " + whenCondID + "";
+        strBuilder += ");";
+        strBuilder += "whenCondData.splice(removedindex, 1);";
         strBuilder += statements_statements;
         strBuilder += "}";
+        strBuilder += "},";
         strBuilder += "});";
 
         var code = strBuilder + "\n";
@@ -61,7 +88,6 @@ export const ConditionalStaticBlocks = [
           "logical_operators",
           "changes",
           "Boolean",
-          //   "getter_boolean",
         ]);
         this.appendDummyInput().appendField("then");
         this.appendStatementInput("statements").setCheck(null);
@@ -86,17 +112,585 @@ export const ConditionalStaticBlocks = [
           "statements"
         );
 
-        // WhenCondData.push(() => {
-        //   if (value_condition) {
-        //     statements_statements;
-        //   }
+        let whenCondID = CreateWhenID();
+
+        // whenCondData.push({
+        //   key: whenCondID,
+        //   func: () => {
+        //     if (value_condition) {
+        //       let removedindex = whenCondData.findIndex(
+        //         (x) => x.key === whenCondID
+        //       );
+        //       whenCondData.splice(removedindex, 1);
+        //       statements_statements;
+        //     }
+        //   },
         // });
 
         let strBuilder = "";
-        strBuilder += "WhenCondData.push(() => {";
+        strBuilder += "whenCondData.push({";
+        strBuilder += "key: " + whenCondID + ",";
+        strBuilder += "func: () => {";
         strBuilder += "if (" + value_condition + ") {";
+        strBuilder += "let removedindex = whenCondData.findIndex(";
+        strBuilder += "(x) => x.key === " + whenCondID + "";
+        strBuilder += ");";
+        strBuilder += "whenCondData.splice(removedindex, 1);";
         strBuilder += statements_statements;
         strBuilder += "}";
+        strBuilder += "},";
+        strBuilder += "});";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+  },
+  {
+    name: "when_times",
+    uniqueInstance: true,
+    blockDef: () => ({
+      init: function () {
+        this.appendDummyInput()
+          .appendField("For")
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "TIMES")
+          .appendField("times(s):")
+          .appendField("When");
+        this.appendValueInput("CONDITION").setCheck([
+          "relational_operators",
+          "logical_operators",
+          "changes",
+          "Boolean",
+        ]);
+        this.appendDummyInput().appendField("then");
+        this.appendStatementInput("STATEMENTS").setCheck(null);
+        this.setInputsInline(true);
+        this.setColour(75);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var number_times = block.getFieldValue("TIMES");
+
+        var value_condition = Blockly.JavaScript.valueToCode(
+          block,
+          "CONDITION",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statements = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENTS"
+        );
+
+        let whenCondID = CreateWhenID();
+
+        // whenCondData.push({
+        //   key: whenCondID,
+        //   triggerFlag: false,
+        //   totalTimes: number_times,
+        //   triggerTimes: 0,
+        //   func: () => {
+        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+        //     if (value_condition && !whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = true;
+        //       whenCondData[index].triggerTimes++;
+        //       if (
+        //         whenCondData[index].triggerTimes ===
+        //         whenCondData[index].totalTimes
+        //       ) {
+        //         whenCondData.splice(index, 1);
+        //       }
+        //       statements_statements;
+        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = false;
+        //     }
+        //   },
+        // });
+
+        let strBuilder = "";
+        strBuilder += "whenCondData.push({";
+        strBuilder += "key: " + whenCondID + ",";
+        strBuilder += "triggerFlag: false,";
+        strBuilder += "totalTimes: " + number_times + ",";
+        strBuilder += "triggerTimes: 0,";
+        strBuilder += "func: () => {";
+        strBuilder +=
+          "let index = whenCondData.findIndex((x) => x.key === " +
+          whenCondID +
+          ");";
+        strBuilder +=
+          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = true;";
+        strBuilder += "whenCondData[index].triggerTimes++;";
+        strBuilder += "if (";
+        strBuilder += "whenCondData[index].triggerTimes ===";
+        strBuilder += "whenCondData[index].totalTimes";
+        strBuilder += ") {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "}";
+        strBuilder += statements_statements;
+        strBuilder +=
+          "} else if (!" +
+          value_condition +
+          " && whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = false;";
+        strBuilder += "}";
+        strBuilder += "},";
+        strBuilder += "});";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+  },
+  {
+    name: "when_times_top_bottom",
+    uniqueInstance: true,
+    blockDef: () => ({
+      init: function () {
+        this.appendDummyInput()
+          .appendField("For")
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "TIMES")
+          .appendField("times(s):")
+          .appendField("When");
+        this.appendValueInput("CONDITION").setCheck([
+          "relational_operators",
+          "logical_operators",
+          "changes",
+          "Boolean",
+        ]);
+        this.appendDummyInput().appendField("then");
+        this.appendStatementInput("STATEMENTS").setCheck(null);
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(75);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var number_times = block.getFieldValue("TIMES");
+
+        var value_condition = Blockly.JavaScript.valueToCode(
+          block,
+          "CONDITION",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statements = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENTS"
+        );
+
+        let whenCondID = CreateWhenID();
+
+        // whenCondData.push({
+        //   key: whenCondID,
+        //   triggerFlag: false,
+        //   totalTimes: number_times,
+        //   triggerTimes: 0,
+        //   func: () => {
+        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+        //     if (value_condition && !whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = true;
+        //       whenCondData[index].triggerTimes++;
+        //       if (
+        //         whenCondData[index].triggerTimes ===
+        //         whenCondData[index].totalTimes
+        //       ) {
+        //         whenCondData.splice(index, 1);
+        //       }
+        //       statements_statements;
+        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = false;
+        //     }
+        //   },
+        // });
+
+        let strBuilder = "";
+        strBuilder += "whenCondData.push({";
+        strBuilder += "key: " + whenCondID + ",";
+        strBuilder += "triggerFlag: false,";
+        strBuilder += "totalTimes: " + number_times + ",";
+        strBuilder += "triggerTimes: 0,";
+        strBuilder += "func: () => {";
+        strBuilder +=
+          "let index = whenCondData.findIndex((x) => x.key === " +
+          whenCondID +
+          ");";
+        strBuilder +=
+          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = true;";
+        strBuilder += "whenCondData[index].triggerTimes++;";
+        strBuilder += "if (";
+        strBuilder += "whenCondData[index].triggerTimes ===";
+        strBuilder += "whenCondData[index].totalTimes";
+        strBuilder += ") {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "}";
+        strBuilder += statements_statements;
+        strBuilder +=
+          "} else if (!" +
+          value_condition +
+          " && whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = false;";
+        strBuilder += "}";
+        strBuilder += "},";
+        strBuilder += "});";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+  },
+  {
+    name: "when_after",
+    uniqueInstance: true,
+    blockDef: () => ({
+      init: function () {
+        this.appendDummyInput()
+          .appendField("After")
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "TIMES")
+          .appendField("times(s)")
+          .appendField("that");
+        this.appendValueInput("CONDITION").setCheck([
+          "relational_operators",
+          "logical_operators",
+          "changes",
+          "Boolean",
+        ]);
+        this.appendDummyInput().appendField("then");
+        this.appendStatementInput("STATEMENTS").setCheck(null);
+        this.setInputsInline(true);
+        this.setColour(75);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var number_times = block.getFieldValue("TIMES");
+
+        var value_condition = Blockly.JavaScript.valueToCode(
+          block,
+          "CONDITION",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statements = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENTS"
+        );
+
+        let whenCondID = CreateWhenID();
+
+        // whenCondData.push({
+        //   key: whenCondID,
+        //   triggerFlag: false,
+        //   afterTimes: number_times,
+        //   triggerTimes: 0,
+        //   func: () => {
+        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+        //     if (value_condition && !whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = true;
+        //       whenCondData[index].triggerTimes++;
+        //       if (
+        //         whenCondData[index].triggerTimes ===
+        //         whenCondData[index].afterTimes
+        //       ) {
+        //         whenCondData.splice(index, 1);
+        //         statements_statements;
+        //       }
+        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = false;
+        //     }
+        //   },
+        // });
+
+        let strBuilder = "";
+        strBuilder += "whenCondData.push({";
+        strBuilder += "key: " + whenCondID + ",";
+        strBuilder += "triggerFlag: false,";
+        strBuilder += "afterTimes: " + number_times + ",";
+        strBuilder += "triggerTimes: 0,";
+        strBuilder += "func: () => {";
+        strBuilder +=
+          "let index = whenCondData.findIndex((x) => x.key === " +
+          whenCondID +
+          ");";
+        strBuilder +=
+          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = true;";
+        strBuilder += "whenCondData[index].triggerTimes++;";
+        strBuilder += "if (";
+        strBuilder += "whenCondData[index].triggerTimes ===";
+        strBuilder += "whenCondData[index].afterTimes";
+        strBuilder += ") {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += statements_statements;
+        strBuilder += "}";
+        strBuilder +=
+          "} else if (!" +
+          value_condition +
+          " && whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = false;";
+        strBuilder += "}";
+        strBuilder += "},";
+        strBuilder += "});";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+  },
+  {
+    name: "when_after_top_bottom",
+    uniqueInstance: true,
+    blockDef: () => ({
+      init: function () {
+        this.appendDummyInput()
+          .appendField("After")
+          .appendField(new Blockly.FieldNumber(0, 1, Infinity, 1), "TIMES")
+          .appendField("times(s)")
+          .appendField("that");
+        this.appendValueInput("CONDITION").setCheck([
+          "relational_operators",
+          "logical_operators",
+          "changes",
+          "Boolean",
+        ]);
+        this.appendDummyInput().appendField("then");
+        this.appendStatementInput("STATEMENTS").setCheck(null);
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(75);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var number_times = block.getFieldValue("TIMES");
+
+        var value_condition = Blockly.JavaScript.valueToCode(
+          block,
+          "CONDITION",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statements = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENTS"
+        );
+
+        let whenCondID = CreateWhenID();
+
+        // whenCondData.push({
+        //   key: whenCondID,
+        //   triggerFlag: false,
+        //   afterTimes: number_times,
+        //   triggerTimes: 0,
+        //   func: () => {
+        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+        //     if (value_condition && !whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = true;
+        //       whenCondData[index].triggerTimes++;
+        //       if (
+        //         whenCondData[index].triggerTimes ===
+        //         whenCondData[index].afterTimes
+        //       ) {
+        //         whenCondData.splice(index, 1);
+        //         statements_statements;
+        //       }
+        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = false;
+        //     }
+        //   },
+        // });
+
+        let strBuilder = "";
+        strBuilder += "whenCondData.push({";
+        strBuilder += "key: " + whenCondID + ",";
+        strBuilder += "triggerFlag: false,";
+        strBuilder += "afterTimes: " + number_times + ",";
+        strBuilder += "triggerTimes: 0,";
+        strBuilder += "func: () => {";
+        strBuilder +=
+          "let index = whenCondData.findIndex((x) => x.key === " +
+          whenCondID +
+          ");";
+        strBuilder +=
+          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = true;";
+        strBuilder += "whenCondData[index].triggerTimes++;";
+        strBuilder += "if (";
+        strBuilder += "whenCondData[index].triggerTimes ===";
+        strBuilder += "whenCondData[index].afterTimes";
+        strBuilder += ") {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += statements_statements;
+        strBuilder += "}";
+        strBuilder +=
+          "} else if (!" +
+          value_condition +
+          " && whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = false;";
+        strBuilder += "}";
+        strBuilder += "},";
+        strBuilder += "});";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+  },
+  {
+    name: "when_forever",
+    uniqueInstance: true,
+    blockDef: () => ({
+      init: function () {
+        this.appendDummyInput().appendField("Forever:").appendField("When");
+        this.appendValueInput("CONDITION").setCheck([
+          "relational_operators",
+          "logical_operators",
+          "changes",
+          "Boolean",
+        ]);
+        this.appendDummyInput().appendField("then");
+        this.appendStatementInput("STATEMENTS").setCheck(null);
+        this.setInputsInline(true);
+        this.setColour(75);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var value_condition = Blockly.JavaScript.valueToCode(
+          block,
+          "CONDITION",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statements = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENTS"
+        );
+
+        let whenCondID = CreateWhenID();
+
+        // whenCondData.push({
+        //   key: whenCondID,
+        //   triggerFlag: false,
+        //   func: () => {
+        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+        //     if (value_condition && !whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = true;
+        //       statements_statements;
+        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = false;
+        //     }
+        //   },
+        // });
+
+        let strBuilder = "";
+        strBuilder += "whenCondData.push({";
+        strBuilder += "key: " + whenCondID + ",";
+        strBuilder += "triggerFlag: false,";
+        strBuilder += "func: () => {";
+        strBuilder +=
+          "let index = whenCondData.findIndex((x) => x.key === " +
+          whenCondID +
+          ");";
+        strBuilder +=
+          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = true;";
+        strBuilder += statements_statements;
+        strBuilder +=
+          "} else if (!" +
+          value_condition +
+          " && whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = false;";
+        strBuilder += "}";
+        strBuilder += "},";
+        strBuilder += "});";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+  },
+  {
+    name: "when_forever_top_bottom",
+    uniqueInstance: true,
+    blockDef: () => ({
+      init: function () {
+        this.appendDummyInput().appendField("Forever:").appendField("When");
+        this.appendValueInput("CONDITION").setCheck([
+          "relational_operators",
+          "logical_operators",
+          "changes",
+          "Boolean",
+        ]);
+        this.appendDummyInput().appendField("then");
+        this.appendStatementInput("STATEMENTS").setCheck(null);
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(75);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var value_condition = Blockly.JavaScript.valueToCode(
+          block,
+          "CONDITION",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statements = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENTS"
+        );
+
+        let whenCondID = CreateWhenID();
+
+        // whenCondData.push({
+        //   key: whenCondID,
+        //   triggerFlag: false,
+        //   func: () => {
+        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+        //     if (value_condition && !whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = true;
+        //       statements_statements;
+        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+        //       whenCondData[index].triggerFlag = false;
+        //     }
+        //   },
+        // });
+
+        let strBuilder = "";
+        strBuilder += "whenCondData.push({";
+        strBuilder += "key: " + whenCondID + ",";
+        strBuilder += "triggerFlag: false,";
+        strBuilder += "func: () => {";
+        strBuilder +=
+          "let index = whenCondData.findIndex((x) => x.key === " +
+          whenCondID +
+          ");";
+        strBuilder +=
+          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = true;";
+        strBuilder += statements_statements;
+        strBuilder +=
+          "} else if (!" +
+          value_condition +
+          " && whenCondData[index].triggerFlag) {";
+        strBuilder += "whenCondData[index].triggerFlag = false;";
+        strBuilder += "}";
+        strBuilder += "},";
         strBuilder += "});";
 
         var code = strBuilder + "\n";
@@ -146,7 +740,7 @@ export const ConditionalStaticBlocks = [
           Blockly.JavaScript.ORDER_ATOMIC
         );
 
-        var code = "";
+        var code = "false";
         // TODO: I don't know if it needs check
         if (value_left && value_right)
           code = "(" + value_left + dropdown_operators + value_right + ")";
@@ -203,7 +797,7 @@ export const ConditionalStaticBlocks = [
           "right_value",
           Blockly.JavaScript.ORDER_ATOMIC
         );
-        var code = "";
+        var code = "false";
         if (value_left_value && value_right_value)
           code = value_left_value + dropdown_operators + value_right_value;
 
@@ -216,7 +810,11 @@ export const ConditionalStaticBlocks = [
     uniqueInstance: true,
     blockDef: () => ({
       init: function () {
-        this.appendValueInput("NAME").setCheck(["String", "Boolean", "Number"]);
+        this.appendValueInput("VALUE").setCheck([
+          "Boolean",
+          "Number",
+          "String",
+        ]);
         this.appendDummyInput().appendField("changes");
         this.setInputsInline(true);
         this.setOutput(true, "changes");
@@ -227,13 +825,51 @@ export const ConditionalStaticBlocks = [
     }),
     codeGen: () =>
       function (block) {
-        var value_name = Blockly.JavaScript.valueToCode(
+        var value_value = Blockly.JavaScript.valueToCode(
           block,
-          "NAME",
+          "VALUE",
           Blockly.JavaScript.ORDER_ATOMIC
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+
+        let changesID = CreateWhenID();
+
+        // (function () {
+        //   let index = changesData.findIndex((data) => {
+        //     data.key === changesID;
+        //   });
+        //   if (index === -1) {
+        //     changesData.push({ key: changesID, value: value_value });
+        //   } else {
+        //     if (changesData[index].value !== value_value) {
+        //       changesData[index].value = value_value;
+        //       return true;
+        //     }
+        //     return false;
+        //   }
+        // })()
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let index = changesData.findIndex((data) => {";
+        strBuilder += "data.key === " + changesID + ";";
+        strBuilder += "});";
+        strBuilder += "if (index === -1) {";
+        strBuilder +=
+          "changesData.push({ key: " +
+          changesID +
+          ", value: " +
+          value_value +
+          " });";
+        strBuilder += "} else {";
+        strBuilder += "if (changesData[index].value !== " + value_value + ") {";
+        strBuilder += "changesData[index].value = " + value_value + ";";
+        strBuilder += "return true;";
+        strBuilder += "}";
+        strBuilder += "return false;";
+        strBuilder += "}";
+        strBuilder += "})()";
+
+        var code = strBuilder + "\n";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },

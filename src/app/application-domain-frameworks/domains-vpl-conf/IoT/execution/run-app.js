@@ -2,17 +2,26 @@ dayjs().format();
 
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
-const WhenCondData = [];
+const whenCondData = [];
+
+const changesData = [];
 
 const StartWhenTimeout = function () {
-  arrayIntervals.push({
-    type: "when_cond",
-    time: setTimeout(() => {
-      WhenCondData.forEach((cond) => {
-        cond();
+  let index = arrayIntervals.length;
+  arrayIntervals.push({ type: "when_cond" });
+  let f = function () {
+    arrayIntervals[index].time = setTimeout(() => {
+      if (whenCondData.length === 0) {
+        return;
+      }
+      whenCondData.forEach((cond) => {
+        cond.func();
       });
-    }, 200),
-  });
+      arrayIntervals[index].func();
+    }, 400);
+  };
+  arrayIntervals[index].func = f;
+  arrayIntervals[index].func();
 };
 
 const weekDays = [

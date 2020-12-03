@@ -27,6 +27,20 @@ export const BlocklyCalendar = {
       ],
     },
     {
+      name: "Conditional",
+      type: "DomainStatic",
+      colour: "75",
+      elements: [
+        "conditional_when_top_bottom",
+        "when_times_top_bottom",
+        "when_after_top_bottom",
+        "when_forever_top_bottom",
+        "logical_operators",
+        "relational_operators",
+        "changes",
+      ],
+    },
+    {
       name: "Time/Date",
       type: "DomainStatic",
       colour: "75",

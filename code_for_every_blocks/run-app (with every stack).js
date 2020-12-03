@@ -2,7 +2,7 @@ dayjs().format();
 
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
-const WhenCondData = [];
+const whenCondData = [];
 const EveryCalendarData = {};
 
 const weekDays = [
