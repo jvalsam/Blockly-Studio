@@ -33,25 +33,20 @@ export const ConditionalStaticBlocks = [
           "statements"
         );
 
-        // while(1){
-        //   if(){
-        //     break;
+        // WhenCondData.push(() => {
+        //   if (value_condition) {
+        //     statements_statements;
         //   }
-        // }
+        // });
 
-        var code = "";
-        if (value_condition) {
-          let strBuilder = "";
-          strBuilder += "while(1){";
-          strBuilder += "if(" + value_condition + " === true){";
-          strBuilder += statements_statements;
-          strBuilder += "break;";
-          strBuilder += "}";
-          strBuilder += "}";
+        let strBuilder = "";
+        strBuilder += "WhenCondData.push(() => {";
+        strBuilder += "if (" + value_condition + ") {";
+        strBuilder += statements_statements;
+        strBuilder += "}";
+        strBuilder += "});";
 
-          code = strBuilder + "\n";
-        }
-
+        var code = strBuilder + "\n";
         return code;
       },
   },
@@ -85,12 +80,26 @@ export const ConditionalStaticBlocks = [
           "condition",
           Blockly.JavaScript.ORDER_ATOMIC
         );
+
         var statements_statements = Blockly.JavaScript.statementToCode(
           block,
           "statements"
         );
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+
+        // WhenCondData.push(() => {
+        //   if (value_condition) {
+        //     statements_statements;
+        //   }
+        // });
+
+        let strBuilder = "";
+        strBuilder += "WhenCondData.push(() => {";
+        strBuilder += "if (" + value_condition + ") {";
+        strBuilder += statements_statements;
+        strBuilder += "}";
+        strBuilder += "});";
+
+        var code = strBuilder + "\n";
         return code;
       },
   },
