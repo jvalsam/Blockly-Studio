@@ -546,29 +546,39 @@ export class ProjectManager extends IDEUIComponent {
 
     // callback function of project manager view actions are provided by outer Components
     private onOuterFunctionRequest (event: IEventData, concerned: any): void {
-        if (event.providedBy === "EditorManager") {
-            ComponentsCommunication.functionRequest(
-                this.name,
-                event.providedBy,
-                "onRequestAction",
-                [event, concerned]
-            );
+        // in case of collab debug
+        if (this.loadedProjects[concerned
+            ._editorsData
+            .projectID]
+            .saveMode === "COLLAB_DEBUG") {
+                this.onProjectItemAction_COLLAB_DEBUG(event, concerned);
         }
+        // default project functionality
         else {
-            let evtData = {
-                mission: event.data.mission
-            };
-            if (event.data) {
-                evtData["data"] = event.data;
+            if (event.providedBy === "EditorManager") {
+                ComponentsCommunication.functionRequest(
+                    this.name,
+                    event.providedBy,
+                    "onRequestAction",
+                    [event, concerned]
+                );
             }
-            ComponentsCommunication.functionRequest(
-                this.name,
-                event.providedBy,
-                <string>event.action,
-                [
-                    evtData,
-                    concerned
-                ]);
+            else {
+                let evtData = {
+                    mission: event.data.mission
+                };
+                if (event.data) {
+                    evtData["data"] = event.data;
+                }
+                ComponentsCommunication.functionRequest(
+                    this.name,
+                    event.providedBy,
+                    <string>event.action,
+                    [
+                        evtData,
+                        concerned
+                    ]);
+            }
         }
     }
 
@@ -1612,5 +1622,38 @@ export class ProjectManager extends IDEUIComponent {
                 }
             ]
         );
+    }
+
+    private onProjectItem_click_COLLAB_DEBUG(data: any, concerned: any) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "CollaborativeDebugging",
+            "onClickProjectElement",
+            [concerned.systemId]
+        );
+    }
+
+    private onProjectItemAction_COLLAB_DEBUG(event: IEventData, concerned: any): void {
+        this["onProjectItem_" + event.type + "_COLLAB_DEBUG"] (event.data, concerned);
+    }
+
+    @ExportedFunction
+    public openProjectItem_COLLAB_DEBUG(pitemId: string, editorsData) {
+        let pitem = this.getProjectItem(pitemId);
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "open",
+            [
+                pitem,
+                null,
+                editorsData
+            ]
+        );
+    }
+
+    @ExportedFunction
+    public createReplicaOfPItemEditorsData (pitemId: string): any {
+        return this.getProjectItem(pitemId).createReplica();
     }
 }

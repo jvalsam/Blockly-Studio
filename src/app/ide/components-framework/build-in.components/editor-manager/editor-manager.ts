@@ -401,7 +401,7 @@ export class EditorManager extends IDEUIComponent {
 
     @ExportedSignal("editor-manager-open-pitem-completed")
     @ExportedFunction
-    public open(pi: ProjectItem, pitemArea: number =1): void {
+    public open(pi: ProjectItem, pitemArea: number =1, editorsData?: any): void {
         let pitemData = ComponentsCommunication.functionRequest(
             this.name,
             "DomainsManager",

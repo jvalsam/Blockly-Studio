@@ -26,6 +26,10 @@ export class ProjectItem extends ProjectElement {
         return this._componentsData;
     }
 
+    public createReplica(): any {
+        return JSON.parse(JSON.stringify(this._editorsData));
+    }
+
     private getRender_img(rimg) {
         let value =
             this.jstreeNode.icon

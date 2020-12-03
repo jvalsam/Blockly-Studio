@@ -12,8 +12,8 @@ import {
     openJoinSessionDialogue
 } from "./collaborative-debugging-component/collaborative-debugging-gui/dialogs";
 import {
-    collaborationFilter
-} from "./collaborative-debugging-component/collaborative-debugging-core/utilities";
+    CollaborativeDebuggingComponent
+} from "./collaborative-debugging-component/collaborative-debugging-core/collaborative-debugging-session";
 
 
 var menuJson;
@@ -59,6 +59,7 @@ export class CollaborativeDebugging extends IDEUIComponent {
     private shProject: any;
     private collabUI: any;
     private isMaster: boolean;
+    private collabDebugInst: CollaborativeDebuggingComponent;
 
     /**
      * Handle start of the collaborative debugging session
@@ -88,7 +89,9 @@ export class CollaborativeDebugging extends IDEUIComponent {
                 //     )
                 // );
             },
-            () => { failure(); }
+            () => {
+                failure();
+            }
         );
     }
 
@@ -162,6 +165,20 @@ export class CollaborativeDebugging extends IDEUIComponent {
                 [ this.shProject._id ]
             );
         }
+    }
+
+    @ExportedFunction
+    public onClickProjectElement(pitemId: string) {
+        // request to open the pitem with specific view of the correction suggestion...
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "openProjectItem_COLLAB_DEBUG",
+            [
+                pitemId,
+                this.collabDebugInst.getPItemCorrectionSuggestionData(pitemId)
+            ]
+        );
     }
 
     /**
