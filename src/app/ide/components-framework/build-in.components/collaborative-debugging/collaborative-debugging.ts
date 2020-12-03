@@ -181,6 +181,14 @@ export class CollaborativeDebugging extends IDEUIComponent {
         );
     }
 
+    @ExportedFunction
+    public pitemUpdated(pitemId: string, type: string, data: any) {
+        // notifiled by the project manager that changed data
+        // is type usefu? only src update are available
+        // update works for the current view of correction suggestion
+
+    }
+
     /**
      * Handle debugging rooms of the collaborative debugging session
      */

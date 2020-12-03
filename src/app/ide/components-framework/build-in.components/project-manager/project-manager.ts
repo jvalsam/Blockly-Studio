@@ -1597,8 +1597,25 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public onCloseCollaborationDebuggingSession(projectId: String): void {
-        // look for previous project in order to close requested and then load previous
-        // in case there was not previous project has to go to the home page
+        this.closeAllProjects();
+
+        if (this.projectLoadAfterCollabSession) {
+            let project = this.projectLoadAfterCollabSession;
+            this.loadProject(project, project.saveMode);
+        }
+        else {
+            ComponentsCommunication.functionRequest(
+                this.name,
+                "Toolbar",
+                "hide"
+            );
+            ComponentsCommunication.functionRequest(
+                this.name,
+                "StartPageComponent",
+                "render",
+                []
+            );
+        }
     }
 
     private saveEditorData_COLLAB_DEBUG(

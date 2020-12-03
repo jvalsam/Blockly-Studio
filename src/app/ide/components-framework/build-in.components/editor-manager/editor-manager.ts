@@ -444,8 +444,10 @@ export class EditorManager extends IDEUIComponent {
             tools.push("separator");
         }
 
-        for (const key in pi.editorsData.items) {
-            let item = pi.editorsData.items[key];
+        let _editorsData = editorsData || pi.editorsData;
+
+        for (const key in _editorsData.items) {
+            let item = _editorsData.items[key];
 
             // only one editor is supported
             // if domain author give more

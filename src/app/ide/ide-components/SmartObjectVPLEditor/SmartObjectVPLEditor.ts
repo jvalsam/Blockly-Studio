@@ -34,6 +34,11 @@ var confJson: any = require("./conf_props.json");
       email: "jvalsam@ics.forth.gr",
       date: "October 2020",
     },
+    {
+      name: "Dimitris Linatiris",
+      email: "dimilin@csd.uoc.gr",
+      date: "November 2020",
+    },
   ],
   isUnique: true,
   componentView: "SmartObjectVPLEditorView",
