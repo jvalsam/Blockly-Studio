@@ -9,7 +9,7 @@ export class CollaborativeDebuggingComponent {
         this.peerCommunication = PeerCommunication(memberInfo, settings, this);
 
         this.debuggingRooms = [];
-        this.correctionSuggestions = [];
+        this.correctionSuggestions = {};
     }
 
     onMemberJoin(memberInfo) {
@@ -20,5 +20,7 @@ export class CollaborativeDebuggingComponent {
 
     }
 
-
+    getPItemCorrectionSuggestionData(pitemId) {
+        return this.correctionSuggestions[pitemId].getCurrentEditorsData();
+    }
 }
