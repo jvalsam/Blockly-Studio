@@ -1,30 +1,52 @@
 import { PeerCommunication } from "./peer-communication";
 
 
-export class CollaborativeDebuggingComponent {
+export function CollaborativeDebuggingComponent (
+    memberInfo,
+    project,
+    isMaster,
+    plugin,
+) {
+    this.plugin = plugin;
+    this.memberInfo = memberInfo;
+    this.isMaster = isMaster;
+
+    this.peerCommunication = new PeerCommunication(memberInfo, settings, this);
     
-    constructor(memberInfo, plugin) {
-        this.plugin = plugin;
-        this.masterInfo = memberInfo;
-        this.peerCommunication = PeerCommunication(memberInfo, settings, this);
+    this.debuggingRooms = [];
+    // each pitem has correction suggestions handling
+    this.projectItemsCSH = {};
 
-        this.debuggingRooms = [];
-        this.correctionSuggestions = {};
-    }
-
-    onMemberJoin(memberInfo) {
+    //
+    this.onMemberJoin = (memberInfo) => {
 
     }
 
-    onMemberExit(memberInfo) {
+    this.onMemberExit = (memberInfo) => {
 
     }
 
-    getPItemCorrectionSuggestionData(pitemId) {
+    this.getPItemCorrectionSuggestionData = (pitemId) => {
         return this.correctionSuggestions[pitemId].getCurrentEditorsData();
     }
 
-    onChangePItem(pitemId, data) {
-        
+    this.onChangePItem = (pitemId, data) => {
+        this.correctionSuggestions[pitemId].onChangeEditorData(data);
     }
+
+    /**
+     * peer communicate updates on correction suggestions 
+     */
+    this.correctionSuggestionUpdated = (pitemId, type, data) => {
+        this.peerCommunication.sendToAll({
+            receiver: "onCorrectionSuggestionUpdated",
+            args: [
+                pitemId,
+                type,
+                data
+            ]});
+    };
+    this.onCorrectionSuggestionUpdated = (pitemId, type, data) => {
+        this.correctionSuggestions[pitemId].onReceiveUpdate(type, data);
+    };
 }
