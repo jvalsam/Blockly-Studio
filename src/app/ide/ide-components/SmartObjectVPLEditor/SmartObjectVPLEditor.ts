@@ -48,7 +48,7 @@ var confJson: any = require("./conf_props.json");
 })
 export class SmartObjectVPLEditor extends Editor {
   private _groupDataOnCreate: any;
-  private instancesMap: { [id: string]: any };
+  private instancesMap: { [id: string]: SOVPLElemInstance };
 
   constructor(
     name: string,
@@ -71,10 +71,21 @@ export class SmartObjectVPLEditor extends Editor {
     return this.getProjectComponentData(projectId);
   }
 
+  private handleClearCashData(editorData) {
+    if (this.instancesMap.hasOwnProperty(editorData.editorId)) {
+      this.instancesMap[editorData.editorId].destroy();
+      delete this.instancesMap[editorData.editorId];
+    }
+  }
+
   @ExportedSignal("create-smart-group", ["so-data"])
   @ExportedFunction
-  public open(selector: string, pitem: PItemView, config: any): void {
-    let editorData = pitem.pi.editorsData.items[selector];
+  public open(
+    editorData: any,
+    pitem: PItemView,
+    config: any,
+    cachedData: boolean
+    ): void {
     let img = pitem.pi["_jstreeNode"].icon;
     editorData.img = img;
     assert(
@@ -95,6 +106,10 @@ export class SmartObjectVPLEditor extends Editor {
       );
     }
 
+    if (!cachedData) {
+      this.handleClearCashData(editorData);
+    }
+
     if (!this.instancesMap.hasOwnProperty(editorData.editorId)) {
       this.instancesMap[editorData.editorId] = new SOVPLElemInstance(
         this,
@@ -105,7 +120,7 @@ export class SmartObjectVPLEditor extends Editor {
           editorData: editorData,
         },
         pitem,
-        selector,
+        editorData.editorId,
         pitem.pi.getPrivileges(),
         this.config
       );
@@ -120,7 +135,7 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedFunction
   public closeSRC(srcId: string): void {
     assert(
-      this.instancesMap[srcId],
+      srcId in this.instancesMap,
       "Request to close not existing source ID in Blockly Editor!"
     );
     this.instancesMap[srcId].close();

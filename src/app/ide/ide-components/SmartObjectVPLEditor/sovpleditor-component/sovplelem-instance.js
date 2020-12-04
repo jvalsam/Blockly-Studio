@@ -399,4 +399,8 @@ export class SOVPLElemInstance {
   sync(data, pitem) {
     this.render(this.selector, this.elemData);
   }
+
+  destroy() {
+    alert("destroy of SmartObjectVPLEditor instance is not developed yet!");
+  }
 }

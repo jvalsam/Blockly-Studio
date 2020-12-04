@@ -1628,10 +1628,9 @@ export class ProjectManager extends IDEUIComponent {
         ComponentsCommunication.functionRequest(
             this.name,
             "CollaborativeDebugging",
-            "pitemUpdated",
+            "onPItemChange",
             [
                 pitem.systemID,
-                "src",
                 {
                     editorId: editorId,
                     editor: editor,

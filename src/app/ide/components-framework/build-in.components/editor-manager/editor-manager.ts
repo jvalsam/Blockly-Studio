@@ -402,6 +402,8 @@ export class EditorManager extends IDEUIComponent {
     @ExportedSignal("editor-manager-open-pitem-completed")
     @ExportedFunction
     public open(pi: ProjectItem, pitemArea: number =1, editorsData?: any): void {
+        let project = pi.project["data"].project;
+
         let pitemData = ComponentsCommunication.functionRequest(
             this.name,
             "DomainsManager",
@@ -455,15 +457,19 @@ export class EditorManager extends IDEUIComponent {
             let confName = item.confName;
             let econfig = pitemData.editorConfigs[confName][0];
 
+            let args = [
+                item,
+                pitemView,
+                this.convertEconf(confName),
+                // deactivate caching data mechanism of the VPL Editor
+                project.saveMode !== "COLLAB_DEBUG" 
+            ];
+
             ComponentsCommunication.functionRequest(
                 this.name,
                 econfig.name,
                 "open",
-                [
-                    item.editorId,
-                    pitemView,
-                    this.convertEconf(confName)
-                ]
+                args
             );
             pitemView.addEditor(item.editorId, econfig.name);
         }

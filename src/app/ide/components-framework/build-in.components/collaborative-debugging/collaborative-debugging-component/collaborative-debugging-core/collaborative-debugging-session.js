@@ -23,4 +23,8 @@ export class CollaborativeDebuggingComponent {
     getPItemCorrectionSuggestionData(pitemId) {
         return this.correctionSuggestions[pitemId].getCurrentEditorsData();
     }
+
+    onChangePItem(pitemId, data) {
+        
+    }
 }

@@ -70,9 +70,18 @@ class _RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
         }
     }
 
-    // methods to handle components are loaded in the runtime environment app
-    // and would like to communicate with the Blockly Studio IDE
-    
+    importJSLib(url) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        document.head.appendChild(script);
+    }
+
+    /** 
+     * Methods to handle components are loaded in the runtime environment app
+    /* and would like to communicate with the Blockly Studio IDE.
+    **/
+
     registerComponent(compName, compInst) {
         this.registeredComponents[compName] = compInst;
     }
@@ -111,7 +120,6 @@ class _RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
 
     // TODO: support of signals for the registered components
     // in case it will be required
-
 }
 
 export const RuntimeEnvironmentApp = new _RuntimeEnvironmentApp("RuntimeSystem");

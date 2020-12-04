@@ -51,7 +51,7 @@ var confJson: any = require("./conf_props.json");
   version: "1.1"
 })
 export class BlocklyVPL extends Editor {
-  private instancesMap: {[id: string]: any};
+  private instancesMap: {[id: string]: BlocklyInstance};
   private configsMap: {[name: string]: BlocklyConfig};
 
   private domainElementTracker: {
@@ -126,28 +126,37 @@ export class BlocklyVPL extends Editor {
     ).value;
   }
 
+  private handleClearCashData(editorData) {
+    if (this.instancesMap.hasOwnProperty(editorData.editorId)) {
+      this.instancesMap[editorData.editorId].destroy();
+      delete this.instancesMap[editorData.editorId];
+    }
+  }
+
   @RequiredFunction("ProjectManager", "saveEditorData")
   @RequiredFunction("Shell", "addTools")
   @ExportedFunction
   public open(
-    id: string,
+    editorData: any,
     pitem: PItemView,
-    config: string
+    config: string,
+    cachedData: boolean
   ): void {
-    let editorData = pitem.pi.editorsData.items[id];
-    assert(editorData, "Source with id not found in Blockly editor.");
+    if (!cachedData) {
+      this.handleClearCashData(editorData);
+    }
 
     if (!this.instancesMap.hasOwnProperty(editorData.editorId)) {
       let text = editorData ? editorData.src : null;
       this.instancesMap[editorData.editorId] = new BlocklyInstance(
         pitem.pi,
         editorData.editorId,
-        id,
+        editorData.editorId, // selector has to be unique (injected in DOM, not in pitem template)
         config,
         this.configsMap[config],
         (config) => this.getToolbox(config),
         (event) => this.handleInstanceChange(
-          id,
+          editorData.editorId,
           pitem.pi,
           event),
         text
@@ -236,7 +245,7 @@ export class BlocklyVPL extends Editor {
 
   @ExportedFunction
   public closeSRC(srcId: string): void {
-    assert(this.instancesMap[srcId], "Request to close not existing source ID in Blockly Editor!");
+    assert(srcId in this.instancesMap, "Request to close not existing source ID in Blockly Editor!");
     this.instancesMap[srcId].close();
   }
 

@@ -136,6 +136,13 @@ export class BlocklyInstance {
         event.run(true);
     }
 
+    destroy() {
+        this.wsp.dispose();
+        delete this.wsp;
+        this._blocklyDiv.remove();
+        delete this._blocklyDiv;
+    }
+
     calcPItemBlocklyArea() {
         this._blocklyArea = document.getElementById(this.id);
     }
