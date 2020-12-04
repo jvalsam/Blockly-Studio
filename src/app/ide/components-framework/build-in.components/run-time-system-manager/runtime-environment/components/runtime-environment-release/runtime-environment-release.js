@@ -22,6 +22,7 @@ export class RuntimeEnvironmentRelease {
         
         // pin callback that checks runtime environment state
         this._envData.checkRuntimeEnvironment = () => this._handleRuntime();
+        this._envData.runtimeEnvironment = this._runtimeEnv;
 
         this.start(this._envData);
     }

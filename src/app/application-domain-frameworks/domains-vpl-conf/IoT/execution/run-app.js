@@ -1,4 +1,15 @@
-dayjs().format();
+const AddThirdPartyLibs = function (environment) {
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/dayjs.min.js"
+  );
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/superagent.min.js"
+  );
+};
+
+const InitializeData = function () {
+  dayjs().format();
+};
 
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
@@ -130,6 +141,9 @@ const timeDispatch = {
 
 export async function StartApplication(data) {
   try {
+    AddThirdPartyLibs(data.runtimeEnvironment);
+    InitializeData();
+
     // calendar tasks
     data.execData.project.CalendarEvents.forEach((events) => {
       eval(events.editorsData[0].generated);
