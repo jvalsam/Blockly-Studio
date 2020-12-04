@@ -398,32 +398,63 @@ export function CreateAndRenderSelectGroupsModal(
     "select-group"
   );
 
-  const applySignal = { onApply: false };
+  let fromApply = false;
 
   const eventsForModal = {};
   eventsForModal[sovplelemInst.selector] = [];
 
   let oldAliases = sovplelemInst.elemData.editorData.details.mapPropsAlias;
 
+  let onApply = (comparedArray, updatedAliases) => {
+    let groups = [];
+
+    if (
+      document.getElementById("select-all-groups") &&
+      document.getElementById("select-all-groups").checked
+    ) {
+      for (const matchedGroup of comparedArray.matched) {
+        groups.push({ id: matchedGroup._sgID, name: matchedGroup._sgName });
+      }
+    } else {
+      for (const matchedGroup of comparedArray.matched) {
+        if (
+          document.getElementById(
+            "mathced-group-" + matchedGroup._sgName.replace(/\s/g, "")
+          ).checked
+        ) {
+          groups.push({
+            id: matchedGroup._sgID,
+            name: matchedGroup._sgName,
+          });
+        }
+      }
+    }
+
+    onSuccess(groups, updatedAliases);
+
+    fromApply = true;
+    $("#select-group-modal").modal("hide");
+  };
+
   RenderSelectGroupsModal(
     document.getElementById("select-group-modal"),
     sovplelemInst,
     groupsVPLElements,
-    onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+    onApply, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
     eventsForModal,
-    oldAliases,
-    applySignal
+    oldAliases
   );
 
   // Destroy on close
   $("#select-group-modal").on("hidden.bs.modal", function () {
     // Check if the apply button has been clicked
-    if (!applySignal.onApply) onSkip();
+    if (!fromApply) onSkip();
 
     // Remove listeners from modal
     eventsForModal[sovplelemInst.selector].forEach((elem) => {
       elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
     });
+    eventsForModal[sovplelemInst.selector] = [];
 
     document.getElementsByClassName("modal-platform-container")[0].innerHTML =
       "";
@@ -436,10 +467,9 @@ function RenderSelectGroupsModal(
   domSelector,
   sovplelemInst,
   groupsVPLElements,
-  onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+  onApply, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
   eventsForModal,
-  oldAliases,
-  applySignal
+  oldAliases
 ) {
   // on re-render remove listeners
   if (
@@ -786,10 +816,9 @@ function RenderSelectGroupsModal(
           domSelector,
           sovplelemInst,
           groupsVPLElements,
-          onSuccess,
+          onApply,
           eventsForModal,
-          oldAliases,
-          applySignal
+          oldAliases
         );
       };
 
@@ -862,36 +891,7 @@ function RenderSelectGroupsModal(
     "Apply";
 
   let applyListener = () => {
-    let groups = [];
-
-    if (
-      document.getElementById("select-all-groups") &&
-      document.getElementById("select-all-groups").checked
-    ) {
-      for (const matchedGroup of comparedArray.matched) {
-        groups.push({ id: matchedGroup._sgID, name: matchedGroup._sgName });
-      }
-    } else {
-      for (const matchedGroup of comparedArray.matched) {
-        if (
-          document.getElementById(
-            "mathced-group-" + matchedGroup._sgName.replace(/\s/g, "")
-          ).checked
-        ) {
-          groups.push({ id: matchedGroup._sgID, name: matchedGroup._sgName });
-        }
-      }
-    }
-
-    onSuccess(groups, updatedAliases);
-
-    // Remove listeners from modal
-    eventsForModal[sovplelemInst.selector].forEach((elem) => {
-      elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
-    });
-
-    applySignal.onApply = true;
-    $("#select-group-modal").modal("hide");
+    onApply(comparedArray, updatedAliases);
   };
 
   document
