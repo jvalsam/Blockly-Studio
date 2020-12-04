@@ -2,6 +2,7 @@ import {
   RenderSmartObject,
   RenderSmartGroup,
   CreateAndRenderSelectGroupsModal,
+  DeleteEventsFromEventsManager,
 } from "./sovplelem-view";
 
 export const VPLElemNames = Object.freeze({
@@ -292,7 +293,7 @@ export class SOVPLElemInstance {
 
   onSGReset() {
     let mapActive = this.elemData.editorData.details.mapPropsActive;
-    for (prop of Object.keys(mapActive)) {
+    for (const prop of Object.keys(mapActive)) {
       mapActive[prop] = true;
     }
   }
@@ -402,5 +403,12 @@ export class SOVPLElemInstance {
 
   destroy() {
     alert("destroy of SmartObjectVPLEditor instance is not developed yet!");
+    if (
+      eventsManager[this.selector.id] &&
+      eventsManager[this.selector.id].length > 0
+    ) {
+      DeleteEventsFromEventsManager(this.selector);
+    }
+    document.getElementById(this.selector).remove();
   }
 }

@@ -5,6 +5,23 @@ import { RenderSmartObject } from "./sovplelem-view";
 
 import { RequestScanResources } from "../request";
 
+const eventsManager = {}; //smartElementSelector: [{dom, eventType, eventFunc}]
+
+export const DeleteEventsFromEventsManager = function (smartElemSelector) {
+  eventsManager[smartElemSelector.id].forEach((elem) => {
+    elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
+  });
+};
+
+const CheckAndDeleteEventsOnRender = function (selector) {
+  // Check if there are events to remove them
+  if (!eventsManager[selector.id]) {
+    eventsManager[selector.id] = [];
+  } else if (eventsManager[selector.id].length > 0) {
+    DeleteEventsFromEventsManager(selector);
+  }
+};
+
 let CreateDOMElement = function (type, options) {
   let element = document.createElement(type);
 
@@ -863,14 +880,24 @@ let BuildPropertiesArea = function (dom, smartElem) {
   return propertiesContainer;
 };
 
-const bubbleEvents = {};
-
 // detach events for bubbles
-let DetachEventsOnBubble = function (smartElementId) {
-  document.getElementById("bubble-click-" + smartElementId).onclick = null;
-  document.getElementById("bubble-delete-" + smartElementId).onclick = null;
-  delete bubbleEvents["bubble-click-" + smartElementId];
-  delete bubbleEvents["bubble-delete-" + smartElementId];
+let DetachEventsOnBubble = function (selectors, smartElementSelector) {
+  selectors.forEach((sel) => {
+    let index = eventsManager[smartElementSelector.id].findIndex(
+      (elem) => elem.dom.id === sel
+    );
+    if (index !== -1) {
+      let eventOfElem = eventsManager[smartElementSelector.id][index];
+      document
+        .getElementById(sel)
+        .removeEventListener(
+          eventOfElem.eventType,
+          eventOfElem.eventFunc,
+          false
+        );
+      delete eventsManager[smartElementSelector.id][index];
+    }
+  });
 };
 
 let BuildBubblesArea = function (dom, htmlForHeading) {
@@ -893,7 +920,13 @@ let BuildBubblesArea = function (dom, htmlForHeading) {
   return bubblesDiv;
 };
 
-let RenderBubbles = function (selector, smartElements, onClick, onDelete) {
+let RenderBubbles = function (
+  selector,
+  smartElements,
+  onClick,
+  onDelete,
+  smartElementSelector
+) {
   if (smartElements.length === 0) {
     let span = CreateDOMElement("div", {
       classList: ["h6"],
@@ -905,7 +938,13 @@ let RenderBubbles = function (selector, smartElements, onClick, onDelete) {
     span.style.marginTop = "1rem";
   }
   for (const smartElement of smartElements) {
-    RenderBubble(selector, smartElement, onClick, onDelete);
+    RenderBubble(
+      selector,
+      smartElement,
+      onClick,
+      onDelete,
+      smartElementSelector
+    );
   }
 };
 
@@ -913,29 +952,50 @@ let RenderBubble = function (
   selector,
   smartElement,
   onClickAtElement,
-  onDeleteSmartElement
+  onDeleteSmartElement,
+  smartElementSelector
 ) {
   let button = CreateDOMElement("span", {
     classList: ["badge", "badge-pill", "badge-secondary", "bubble"],
     id: "bubble-click-" + smartElement.id,
     innerHtml: smartElement.name,
   });
-  button.onclick = () => {
+
+  let eventFunc = () => {
     onClickAtElement(smartElement.id);
   };
-  bubbleEvents["bubble-click-" + smartElement.id] = "onClick";
+
+  button.addEventListener("click", eventFunc, false);
+
+  eventsManager[smartElementSelector.id].push({
+    dom: button,
+    eventType: "click",
+    eventFunc: eventFunc,
+  });
+
   selector.appendChild(button);
 
   let buttonIconSpan = CreateDOMElement("span", {
     classList: ["times", "delete-bubble"],
     id: "bubble-delete-" + smartElement.id,
   });
+
   let onDeleteHandler = () => {
-    DetachEventsOnBubble(smartElement.id);
+    DetachEventsOnBubble(
+      ["bubble-delete-" + smartElement.id, "bubble-click-" + smartElement.id],
+      smartElementSelector
+    );
     onDeleteSmartElement(smartElement.id);
   };
-  buttonIconSpan.onclick = onDeleteHandler;
-  bubbleEvents["bubble-delete-" + smartElement.id] = "onDelete";
+
+  buttonIconSpan.addEventListener("click", onDeleteHandler, false);
+
+  eventsManager[smartElementSelector.id].push({
+    dom: buttonIconSpan,
+    eventType: "click",
+    eventFunc: onDeleteHandler,
+  });
+
   selector.appendChild(buttonIconSpan);
 
   let buttonIcon = CreateDOMElement("i", {
@@ -1039,7 +1099,8 @@ let RenderSmartObjectRegistered = function (
     bubblesDiv,
     soData.editorData.details.groups,
     callbacksMap.onClickSmartGroup,
-    callbacksMap.onDeleteSmartGroup
+    callbacksMap.onDeleteSmartGroup,
+    selector
   );
 
   let buttonsRow = CreateDOMElement("div", { classList: ["row"] });
@@ -1056,7 +1117,8 @@ let RenderSmartObjectRegistered = function (
     classList: ["btn", "btn-info"],
     innerHtml: "Create Group",
   });
-  createGroupsButtonCol.onclick = () => {
+
+  let eventFunc = () => {
     callbacksMap.onCreateSmartGroup({
       properties: soData.editorData.details.properties,
       mapPropsAlias: soData.editorData.details.mapPropsAlias,
@@ -1064,6 +1126,15 @@ let RenderSmartObjectRegistered = function (
       soName: soData.name,
     });
   };
+
+  eventsManager[selector.id].push({
+    dom: createGroupsButtonCol,
+    eventType: "click",
+    eventFunc: eventFunc,
+  });
+
+  createGroupsButtonCol.addEventListener("click", eventFunc, false);
+
   createGroupsButtonCol.appendChild(createGroupsButton);
 };
 
@@ -1172,6 +1243,9 @@ export function RenderSmartObject(
   projectComponentsData,
   callbacksMap
 ) {
+  // Check if there are events to remove them
+  CheckAndDeleteEventsOnRender(selector);
+
   RenderSmartObjectDispatchFunc[soData.editorData.details.state](
     selector,
     soData,
@@ -1205,6 +1279,9 @@ export function RenderSmartGroup(
   projectComponentsData,
   callbacksMap
 ) {
+  // Check if there are events to remove them
+  CheckAndDeleteEventsOnRender(selector);
+
   let cardDiv = soUIGenerator.RenderCard({
     selector: selector,
     id: sgData.editorData.editorId,
@@ -1244,9 +1321,19 @@ export function RenderSmartGroup(
     classList: ["btn", "btn-outline-secondary"],
     innerHtml: "Reset",
   });
-  resetButton.onclick = () => {
+
+  let eventFunc = () => {
     callbacksMap.onReset(sgData.editorData.details.properties);
   };
+
+  eventsManager[selector.id].push({
+    dom: resetButton,
+    eventType: "click",
+    eventFunc: eventFunc,
+  });
+
+  resetButton.addEventListener("click", eventFunc, false);
+
   resetButton.style.cssFloat = "right";
   resetButton.style.marginRight = "2rem";
   resetRow.appendChild(resetButton);
@@ -1257,6 +1344,7 @@ export function RenderSmartGroup(
     bubblesDiv,
     sgData.editorData.details.smartObjects,
     callbacksMap.onClickSmartObject,
-    callbacksMap.onDeleteSmartObject
+    callbacksMap.onDeleteSmartObject,
+    selector
   );
 }
