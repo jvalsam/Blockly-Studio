@@ -140,10 +140,22 @@ export class SOVPLElemInstance {
   }
 
   onApplySelectGroupsForRegistration(groups, listUpdatedAliases, callback) {
+    // update smart groups array on smart object
     this.elemData.editorData.details.groups = groups;
     listUpdatedAliases.forEach((aliasElem) => {
       this.elemData.editorData.details.mapPropsAlias[aliasElem.old] =
         aliasElem.new;
+    });
+
+    // update smart objects array in smart group
+    groups.forEach((group) => {
+      let projectElement = this.parent.getSmartElement(group.id);
+      let firtItem = Object.keys(projectElement._editorsData.items)[0];
+      let bubbleID = this.id.split("_ec-smart-object")[0];
+      projectElement._editorsData.items[firtItem].details.smartObjects.push({
+        id: bubbleID,
+        name: this.elemData.name,
+      });
     });
 
     this.onCompletingSORegistration(callback);

@@ -11,6 +11,7 @@ export const DeleteEventsFromEventsManager = function (smartElemSelector) {
   eventsManager[smartElemSelector.id].forEach((elem) => {
     elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
   });
+  eventsManager[smartElemSelector.id] = [];
 };
 
 const CheckAndDeleteEventsOnRender = function (selector) {
@@ -397,18 +398,35 @@ export function CreateAndRenderSelectGroupsModal(
     "select-group"
   );
 
+  const applySignal = { onApply: false };
+
+  const eventsForModal = {};
+  eventsForModal[sovplelemInst.selector] = [];
+
+  let oldAliases = sovplelemInst.elemData.editorData.details.mapPropsAlias;
+
   RenderSelectGroupsModal(
     document.getElementById("select-group-modal"),
     sovplelemInst,
     groupsVPLElements,
-    onSuccess // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+    onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+    eventsForModal,
+    oldAliases,
+    applySignal
   );
 
   // Destroy on close
   $("#select-group-modal").on("hidden.bs.modal", function () {
+    // Check if the apply button has been clicked
+    if (!applySignal.onApply) onSkip();
+
+    // Remove listeners from modal
+    eventsForModal[sovplelemInst.selector].forEach((elem) => {
+      elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
+    });
+
     document.getElementsByClassName("modal-platform-container")[0].innerHTML =
       "";
-    onSkip();
   });
 
   $("#select-group-modal").modal("show");
@@ -418,8 +436,22 @@ function RenderSelectGroupsModal(
   domSelector,
   sovplelemInst,
   groupsVPLElements,
-  onSuccess // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+  onSuccess, // (groups: Array<String>, updatedAliases: Array<{old: string, new: string}>)
+  eventsForModal,
+  oldAliases,
+  applySignal
 ) {
+  // on re-render remove listeners
+  if (
+    eventsForModal[sovplelemInst.selector] &&
+    eventsForModal[sovplelemInst.selector].length > 0
+  ) {
+    eventsForModal[sovplelemInst.selector].forEach((elem) => {
+      elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
+    });
+    eventsForModal[sovplelemInst.selector] = [];
+  }
+
   let updatedAliases = [];
 
   // clear Modal
@@ -440,7 +472,8 @@ function RenderSelectGroupsModal(
 
   let foldPropertiesSpanForIcon = CreateDOMElement("span");
   foldPropertiesSpanForIcon.style.cursor = "pointer";
-  foldPropertiesSpanForIcon.onclick = () => {
+
+  let eventFunc = () => {
     if (
       document
         .getElementById("fold-so-properties-icon")
@@ -463,6 +496,14 @@ function RenderSelectGroupsModal(
       propertiesArea.style.display = "block";
     }
   };
+
+  eventsForModal[sovplelemInst.selector].push({
+    dom: foldPropertiesSpanForIcon,
+    eventType: "click",
+    eventFunc: eventFunc,
+  });
+
+  foldPropertiesSpanForIcon.addEventListener("click", eventFunc, false);
   soPropertiesDiv.appendChild(foldPropertiesSpanForIcon);
 
   let foldPropertiesIcon = CreateDOMElement("i", {
@@ -533,7 +574,7 @@ function RenderSelectGroupsModal(
 
     // init updated alliases for smart object
     updatedAliases.push({
-      old: mapPropsAlias[property.name],
+      old: oldAliases[property.name],
       new: mapPropsAlias[property.name],
       property: property.name,
     });
@@ -731,7 +772,8 @@ function RenderSelectGroupsModal(
         classList: ["btn", "btn-info", "float-right"],
         innerHtml: "Update",
       });
-      matchButton.onclick = () => {
+
+      let eventListener = () => {
         // update mapPropAlias of smartobject to re-render modal
         for (const aliasPair of updatedAliases) {
           sovplelemInst.elemData.editorData.details.mapPropsAlias[
@@ -744,9 +786,21 @@ function RenderSelectGroupsModal(
           domSelector,
           sovplelemInst,
           groupsVPLElements,
-          onSuccess
+          onSuccess,
+          eventsForModal,
+          oldAliases,
+          applySignal
         );
       };
+
+      matchButton.addEventListener("click", eventListener, false);
+
+      eventsForModal[sovplelemInst.selector].push({
+        dom: matchButton,
+        eventType: "click",
+        eventFunc: eventListener,
+      });
+
       secondTableCol.appendChild(matchButton);
 
       if (i === 0) {
@@ -804,11 +858,12 @@ function RenderSelectGroupsModal(
   }
   /* End Groups that dont match with so */
 
-  // onclick confirm Button
   document.getElementById("select-group-modal-confirm-button").innerHTML =
     "Apply";
-  document.getElementById("select-group-modal-confirm-button").onclick = () => {
+
+  let applyListener = () => {
     let groups = [];
+
     if (
       document.getElementById("select-all-groups") &&
       document.getElementById("select-all-groups").checked
@@ -829,10 +884,25 @@ function RenderSelectGroupsModal(
     }
 
     onSuccess(groups, updatedAliases);
-    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-      "";
-    document.getElementsByClassName("modal-backdrop")[0].remove();
+
+    // Remove listeners from modal
+    eventsForModal[sovplelemInst.selector].forEach((elem) => {
+      elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
+    });
+
+    applySignal.onApply = true;
+    $("#select-group-modal").modal("hide");
   };
+
+  document
+    .getElementById("select-group-modal-confirm-button")
+    .addEventListener("click", applyListener, false);
+
+  eventsForModal[sovplelemInst.selector].push({
+    dom: document.getElementById("select-group-modal-confirm-button"),
+    eventType: "click",
+    eventFunc: applyListener,
+  });
 
   // Update cancel button
   document.getElementById("select-group-modal-cancel-button").innerHTML =
@@ -1272,7 +1342,6 @@ let RenderSmartGroupProperty = function (
   );
 };
 
-// TODO: same code with render smart object need refactor
 export function RenderSmartGroup(
   selector,
   sgData,
