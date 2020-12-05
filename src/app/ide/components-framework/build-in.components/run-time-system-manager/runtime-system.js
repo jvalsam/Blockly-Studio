@@ -14,10 +14,20 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
     dispatchFunctionRequest(srcComp, destComp, funcName, data, callback) {
         if (destComp === this.myApp) {
             if (callback) {
-                this.parent[funcName] (data, callback);
+                if (this[funcName]) {
+                    this[funcName] (...data, callback);
+                }
+                else {
+                    this.parent[funcName] (...data, callback);
+                }
             }
             else {
-                return this.parent[funcName] (data);
+                if (this[funcName]) {
+                    return this[funcName] (...data);
+                }
+                else {
+                    return this.parent[funcName] (...data);
+                }
             }
         }
         else {
@@ -59,6 +69,4 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
         // on callback of these actions we have to add this line
         $('.runtime-environment-area').empty();
     }
-
-
 }

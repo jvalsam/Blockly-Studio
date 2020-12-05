@@ -161,30 +161,35 @@ const timeDispatch = {
 };
 
 export async function StartApplication(data) {
-  try {
-    // get info for smart objects
-    // data.execData.project.SmartObjects;
-    // data.execData.project.SmartObjects[0].editorsData[0].generated.details
-    //   .iotivityResourceID;
+  // try {
+  //   // get info for smart objects
+  //   // data.execData.project.SmartObjects;
+  //   // data.execData.project.SmartObjects[0].editorsData[0].generated.details
+  //   //   .iotivityResourceID;
 
-    AddThirdPartyLibs(data.runtimeEnvironment);
-    InitializeData();
+  //   AddThirdPartyLibs(data.runtimeEnvironment);
+  //   InitializeData();
 
-    // calendar tasks
-    data.execData.project.CalendarEvents.forEach((events) => {
-      eval(events.editorsData[0].generated);
-    });
+  //   // calendar tasks
+  //   data.execData.project.CalendarEvents.forEach((events) => {
+  //     eval(events.editorsData[0].generated);
+  //   });
 
-    // conditional tasks
-    data.execData.project.ConditionalEvents.forEach((events) => {
-      eval(events.editorsData[0].generated);
-    });
+  //   // conditional tasks
+  //   data.execData.project.ConditionalEvents.forEach((events) => {
+  //     eval(events.editorsData[0].generated);
+  //   });
 
-    // Start whenConditions
-    StartWhenTimeout();
-  } catch (e) {
-    alert(e);
-  }
+  //   // Start whenConditions
+  //   StartWhenTimeout();
+  // } catch (e) {
+  //   alert(e);
+  // }
+
+  setInterval(() => {
+    console.log("execution...\n");
+    data.checkRuntimeEnvironment();
+  }, 1000);
 }
 
 export async function StopApplication(execData) {
