@@ -7,22 +7,6 @@ import { RequestScanResources } from "../request";
 
 const eventsManager = {}; //smartElementSelector: [{dom, eventType, eventFunc}]
 
-export const DeleteEventsFromEventsManager = function (smartElemSelector) {
-  eventsManager[smartElemSelector.id].forEach((elem) => {
-    elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
-  });
-  eventsManager[smartElemSelector.id] = [];
-};
-
-const CheckAndDeleteEventsOnRender = function (selector) {
-  // Check if there are events to remove them
-  if (!eventsManager[selector.id]) {
-    eventsManager[selector.id] = [];
-  } else if (eventsManager[selector.id].length > 0) {
-    DeleteEventsFromEventsManager(selector);
-  }
-};
-
 let CreateDOMElement = function (type, options) {
   let element = document.createElement(type);
 
@@ -38,45 +22,25 @@ let CreateDOMElement = function (type, options) {
   return element;
 };
 
-// functions for dialogues
-
-// ...
-
-let CreateInputForModal = function (
-  selector,
-  inputName,
-  inputType,
-  inputId,
-  inputWidth
-) {
-  let inputGroup = CreateDOMElement("div", {
-    classList: ["input-group", "mb-3"],
+/* Start event manager functions */
+export const DeleteEventsFromEventsManager = function (smartElemSelector) {
+  eventsManager[smartElemSelector.id].forEach((elem) => {
+    elem.dom.removeEventListener(elem.eventType, elem.eventFunc, false);
   });
-  inputGroup.style.width = inputWidth;
-  selector.appendChild(inputGroup);
-
-  let inputGroupPrepend = CreateDOMElement("div", {
-    classList: ["input-group-prepend"],
-  });
-  inputGroup.appendChild(inputGroupPrepend);
-
-  let span = CreateDOMElement("span", {
-    classList: ["input-group-text"],
-    id: "inputGroup-sizing-default",
-    innerHtml: inputName,
-  });
-  inputGroupPrepend.appendChild(span);
-
-  let input = CreateDOMElement("input", {
-    classList: ["form-control"],
-    id: inputId,
-  });
-  input.setAttribute("type", inputType);
-  input.setAttribute("aria-label", inputName);
-  input.setAttribute("aria-describedby", "inputGroup-sizing-default");
-  inputGroup.appendChild(input);
+  eventsManager[smartElemSelector.id] = [];
 };
 
+const CheckAndDeleteEventsOnRender = function (selector) {
+  // Check if there are events to remove them
+  if (!eventsManager[selector.id]) {
+    eventsManager[selector.id] = [];
+  } else if (eventsManager[selector.id].length > 0) {
+    DeleteEventsFromEventsManager(selector);
+  }
+};
+/* End event manager functions */
+
+/* Start functions for modal */
 let CreateModal = function (dom, idPrefix) {
   let modal = CreateDOMElement("div", {
     classList: ["modal", "fade"],
@@ -158,6 +122,7 @@ let ClearModal = function (idPrefix) {
   document.getElementById(idPrefix + "-modal-confirm-button").innerHTML =
     "Confirm";
 };
+/* End functions for modal */
 
 /* Start functions for selection group modal */
 let CheckAndGetUnmatchedProperties = function (
@@ -920,7 +885,6 @@ let FilterRegisteredDevicesForScan = function (
   return result;
 };
 
-// functions for rendering parts
 let BuildPropertiesArea = function (dom, smartElem) {
   // Properties
   let propertiesRow = CreateDOMElement("div", { classList: ["row"] });
@@ -950,7 +914,7 @@ let BuildPropertiesArea = function (dom, smartElem) {
   return propertiesContainer;
 };
 
-// detach events for bubbles
+/* Start functions for bubbles at smart elements */
 let DetachEventsOnBubble = function (selectors, smartElementSelector) {
   selectors.forEach((sel) => {
     let index = eventsManager[smartElementSelector.id].findIndex(
@@ -1074,8 +1038,9 @@ let RenderBubble = function (
   buttonIcon.style.fontSize = "small";
   buttonIconSpan.appendChild(buttonIcon);
 };
+/* End functions for bubbles at smart elements */
 
-// Smart Object Renderer
+/* Start functions for smart objects */
 let RenderSmartObjectProperty = function (
   selector,
   id,
@@ -1323,8 +1288,9 @@ export function RenderSmartObject(
     callbacksMap
   );
 }
+/* End functions for smart objects */
 
-// Smart Group Renderer
+/* Start functions for smart group */
 let RenderSmartGroupProperty = function (
   selector,
   id,
@@ -1417,3 +1383,4 @@ export function RenderSmartGroup(
     selector
   );
 }
+/* End functions for smart group */
