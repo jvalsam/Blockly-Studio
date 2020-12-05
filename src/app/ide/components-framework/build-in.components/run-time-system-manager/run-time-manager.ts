@@ -29,6 +29,7 @@ var configJson = RuntimeManagerDataHolder.getDomainsConfigJSON();
             email: "jvalsam@ics.forth.gr"
         }
     ],
+    isUnique: true,
     componentView: "RuntimeManagerView",
     menuDef: menuJson,
     configDef: configJson,
