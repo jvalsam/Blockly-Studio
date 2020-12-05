@@ -51,9 +51,22 @@ export function CollaborativeDebuggingComponent (
     };
 
     /**
-     * All messages received by other peers
+     * Send and receive all messages from these two functions for other peers
      */
-    this.functionRequest = (data, conn) => {
-        this[data.receiver] (data, conn);
+    this.receiveFunctionRequest = (data, conn) => {
+        if (data.compName === CollaborativeDebuggingComponent.name) {
+            this[data.funcName] (data, conn);
+        }
+        else {
+            this[data.compName][data.funcName] (data, conn);
+        }
+    }
+
+    this.sendFunctionRequest = (destComp, funcName, data) => {
+        this.peerCommunication.sendToAll({
+            compName: destComp,
+            funcName: funcName,
+            args: data
+        });
     }
 }

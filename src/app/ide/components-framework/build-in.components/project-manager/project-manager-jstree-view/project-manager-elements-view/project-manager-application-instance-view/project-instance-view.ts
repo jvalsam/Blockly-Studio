@@ -80,6 +80,8 @@ export class ProjectInstanceView extends View {
     private treeview;
     private bgRenderItems: Array<string>;
 
+    private pitemMessagesMap: { [pitemId: string]: string };
+
     private constructor(
         parent: IDEUIComponent,
         name: string,
@@ -110,6 +112,8 @@ export class ProjectInstanceView extends View {
             },
             defaultDomainImg: data.meta.defaultDomainImg
         };
+
+        this.pitemMessagesMap = {};
 
         this.foldingView = <PageFoldingView>ViewRegistry
             .getEntry("PageFoldingView")
@@ -543,6 +547,13 @@ export class ProjectInstanceView extends View {
         });
         this.treeview = $["jstree"].reference(this.categoriesViewSelector);
         this.registerItemClick("ALL");
+        // register events for extra messages rendering of the pitems
+        $(this.categoriesViewSelector).bind(
+            "open_node.jstree",
+            () => this.onRefreshJSTree());
+        $(this.categoriesViewSelector).bind(
+            "redraw.jstree",
+            () => this.onRefreshJSTree());    
     }
 
     public render(): void {
@@ -697,5 +708,49 @@ export class ProjectInstanceView extends View {
         $("#"+elem.jstreeNode.id)["jstree"]().deselect_all(true);
         this.treeview/*.jstree()*/.select_node(elem.jstreeNode.id);
         $("#"+elem.jstreeNode.id).trigger(evt, elem);
+    }
+
+    /**
+     * Handling extra injected messages of the project items
+     */
+    private getExtraPItemSelector(pitemId: string) {
+        return "extra-pitem-area-" + pitemId;
+    }
+
+    private clearMsgPItemJSTree(pitemId: string) {
+        $("#"+this.getExtraPItemSelector(pitemId)).remove();
+    }
+
+    private addMsgPItemJSTree(pitemId: string, msg: string) {
+        let selector = this.getExtraPItemSelector(pitemId);
+
+        $(`<span id="${selector}" style="margin-left:5px;">${msg}</span>`)
+            .insertBefore("#options_" + pitemId);
+    }
+
+    private onRefreshJSTree() {
+        for(const pitemId in this.pitemMessagesMap) {
+            this.clearMsgPItemJSTree(pitemId);
+            this.addMsgNextToItem(pitemId, this.pitemMessagesMap[pitemId]);
+        }
+    }
+
+    public addMsgNextToItem(pitemId, msg) {
+        this.addMsgPItemJSTree(pitemId, msg);
+        this.pitemMessagesMap[pitemId] = msg;
+    }
+
+    public updateMsgNextToItem(pitemId, msg) {
+        $("#"+this.getExtraPItemSelector(pitemId)).html(msg);
+        this.pitemMessagesMap[pitemId] = msg;
+    }
+
+    public removeMsgNextToItem(pitemId) {
+        this.clearMsgPItemJSTree(pitemId);
+        delete this.pitemMessagesMap[pitemId];
+    }
+
+    public getMsgNextToItem(pitemId) {
+        return this.pitemMessagesMap[pitemId];
     }
 }

@@ -45,6 +45,7 @@ import {
     getTitleValueofRenderParts,
     getTitleOfRenderParts
 } from "../../common-views/sequential-dialogues-modal-view/dialogue-data";
+import { ProjectInstanceView } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-instance-view";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -351,9 +352,7 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public getProjectItem(pitemId: string): ProjectItem {
-        let projectId = pitemId.split("_")[0];
-        let projView = (<ProjectManagerJSTreeView>this.view)
-            .getProject(projectId);
+        let projView = this.getProjectInstanceView(pitemId);
         if (projView) {
             return <ProjectItem>projView.getProjectElement(pitemId);
         }
@@ -362,13 +361,18 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public getProjectItemView(pitemId: string): ProjectItem {
-        let projectId = pitemId.split("_")[0];
-        let projView = (<ProjectManagerJSTreeView>this.view)
-            .getProject(projectId);
+        let projView = this.getProjectInstanceView(pitemId);
         if (projView) {
             return <ProjectItem>projView.getProjectElement(pitemId);
         }
         return null;
+    }
+
+    @ExportedFunction
+    public getProjectInstanceView(pitemId: string): ProjectInstanceView {
+        let projectId = pitemId.split("_")[0];
+        return (<ProjectManagerJSTreeView>this.view)
+            .getProject(projectId);
     }
 
     @ExportedFunction
@@ -1671,5 +1675,25 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public createReplicaOfPItemEditorsData (pitemId: string): any {
         return this.getProjectItem(pitemId).createReplica();
+    }
+
+    @ExportedFunction
+    public addMsgNextToPItem(pitemId: string, msg: string): any {
+        return this.getProjectInstanceView(pitemId).addMsgNextToItem(pitemId, msg);
+    }
+
+    @ExportedFunction
+    public removeMsgNextToPItem(pitemId: string): any {
+        this.getProjectInstanceView(pitemId).removeMsgNextToItem(pitemId);
+    }
+
+    @ExportedFunction
+    public getMsgNextToPItem(pitemId: string): any {
+        this.getProjectInstanceView(pitemId).getMsgNextToItem(pitemId);
+    }
+
+    @ExportedFunction
+    public updateMsgNextToPItem(pitemId: string, msg: string): any {
+        this.getProjectInstanceView(pitemId).updateMsgNextToItem(pitemId, msg);
     }
 }

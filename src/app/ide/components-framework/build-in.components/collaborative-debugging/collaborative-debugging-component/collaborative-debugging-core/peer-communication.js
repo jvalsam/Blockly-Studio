@@ -54,6 +54,6 @@ export function PeerCommunication (
 
     //
     this.receiveHandler = (msg, conn) => {
-        this.collabDebugComp[msg.receiver] (msg.args, conn);
+        this.collabDebugComp.receiveFunctionRequest(msg, conn);
     }
 }
