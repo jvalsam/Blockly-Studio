@@ -1,10 +1,31 @@
+import { urlInfo } from "../../../../ide/ide-components/SmartObjectVPLEditor/iotivity-server-conf.js";
+
 const AddThirdPartyLibs = function (environment) {
   environment.importJSLib(
     "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/dayjs.min.js"
   );
+
+  environment.importJSLib(
+    "https://polyfill.io/v3/polyfill.min.js?features=Array.from,Promise,Symbol,Object.setPrototypeOf,Object.getOwnPropertySymbols,Set"
+  );
+
   environment.importJSLib(
     "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/superagent.min.js"
   );
+};
+
+/**
+ * @param {string} url
+ * @param {callback} callback
+ * @description GET Request
+ */
+const GetRequest = (url, callback) => {
+  superagent
+    .get(url)
+    .set("accept", "json")
+    .end((err, res) => {
+      return callback(err, res);
+    });
 };
 
 const InitializeData = function () {
@@ -141,6 +162,11 @@ const timeDispatch = {
 
 export async function StartApplication(data) {
   try {
+    // get info for smart objects
+    // data.execData.project.SmartObjects;
+    // data.execData.project.SmartObjects[0].editorsData[0].generated.details
+    //   .iotivityResourceID;
+
     AddThirdPartyLibs(data.runtimeEnvironment);
     InitializeData();
 

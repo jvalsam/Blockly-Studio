@@ -111,7 +111,7 @@ export const SmartGroup = {
           },
         };
       },
-      codeGen: (data) => {
+      codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         var value_value = Blockly.JavaScript.valueToCode(
           block,
@@ -193,7 +193,7 @@ export const SmartGroup = {
           },
         };
       },
-      codeGen: (data) => {
+      codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         var dropdown_possible_values = block.getFieldValue("POSSIBLE_VALUES");
 

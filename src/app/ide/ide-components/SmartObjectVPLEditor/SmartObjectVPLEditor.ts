@@ -85,7 +85,7 @@ export class SmartObjectVPLEditor extends Editor {
     pitem: PItemView,
     config: any,
     cachedData: boolean
-    ): void {
+  ): void {
     let img = pitem.pi["_jstreeNode"].icon;
     editorData.img = img;
     assert(
@@ -523,7 +523,8 @@ export class SmartObjectVPLEditor extends Editor {
 
   @ExportedFunction
   public generateCodeDataForExecution(data: any) {
-    alert("Not implemented generateCodeDataForExecution in " + this.name);
+    // alert("Not implemented generateCodeDataForExecution in " + this.name);
+    return data;
   }
 
   @ExportedFunction

@@ -1,8 +1,5 @@
 import superagent from "superagent";
-
-const urlInfo = Object.freeze({
-  iotivityUrl: "http://147.52.17.129:3030",
-});
+import { urlInfo } from "./iotivity-server-conf";
 
 /**
  * @param {string} url
