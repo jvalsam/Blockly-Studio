@@ -49,4 +49,11 @@ export function CollaborativeDebuggingComponent (
     this.onCorrectionSuggestionUpdated = (pitemId, type, data) => {
         this.correctionSuggestions[pitemId].onReceiveUpdate(type, data);
     };
+
+    /**
+     * All messages received by other peers
+     */
+    this.functionRequest = (data, conn) => {
+        this[data.receiver] (data, conn);
+    }
 }

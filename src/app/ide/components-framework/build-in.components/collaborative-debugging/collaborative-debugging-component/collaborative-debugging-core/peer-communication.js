@@ -1,3 +1,6 @@
+import {
+    generateRandom as generateRandomURL
+} from "../../../collaboration-manager/collaboration-component/collaboration-core/utilities";
 import { settings } from "cluster";
 
 var CollabDebugSession = null;
@@ -10,7 +13,27 @@ export function PeerCommunication (
     this.collabDebugComp = collabDebugComp;
     this.users = [];
     this.collaborativeDebuggingSession = collabDebugSession;
-    this.url = ""; // TODO: use the library peerjs
+    this.url = "";
+
+    this.initialize = () => {
+        this.url = generateRandomURL(20);
+        let peer = new Peer();
+        peer.on('open', (id) => {
+            // TODO: call UI Lib to add member
+        });
+        
+        peer.on('connection', (conn) => {
+            conn.on('open', () => {
+                conn.on('data', (data) => {
+                    this.receiveHandler(data, conn);
+                });
+            });
+            
+            conn.on('close', () => {
+                
+            });
+        });
+    };
 
     this.startCommunicationUser = (
         myInfo,
@@ -30,8 +53,7 @@ export function PeerCommunication (
     };
 
     //
-    this.receive = (msg) => {
-        this.collabDebugComp[msg.receiver](...msg.args);
-    };
-
+    this.receiveHandler = (msg, conn) => {
+        this.collabDebugComp[msg.receiver] (msg.args, conn);
+    }
 }
