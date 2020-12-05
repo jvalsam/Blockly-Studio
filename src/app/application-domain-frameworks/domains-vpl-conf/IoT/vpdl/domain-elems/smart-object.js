@@ -113,7 +113,7 @@ export const SmartObject = {
           },
         };
       },
-      codeGen: (data) => {
+      codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
 
         data.details.properties.forEach((property) => {
@@ -162,7 +162,7 @@ export const SmartObject = {
           },
         };
       },
-      codeGen: (data) => {
+      codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         // TODO: Assemble JavaScript into code variable.
         data.details.properties.forEach((property) => {
@@ -232,7 +232,7 @@ export const SmartObject = {
           },
         };
       },
-      codeGen: (data) => {
+      codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         var value_value = Blockly.JavaScript.valueToCode(
           block,
@@ -316,16 +316,12 @@ export const SmartObject = {
           },
         };
       },
-      codeGen: (data) => {
+      codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         var dropdown_possible_values = block.getFieldValue("POSSIBLE_VALUES");
 
-        data.details.properties.forEach((property) => {
-          //code generation based on the choice
-        });
-
         // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+        var code = "";
         return code;
       },
     },
@@ -432,7 +428,7 @@ export const SmartObject = {
           },
         };
       },
-      codeGen: (data) => {
+      codeGen: (block) => {
         var dropdown_methods = block.getFieldValue("ACTIONS");
         // must check how many args do we have and get code
 
