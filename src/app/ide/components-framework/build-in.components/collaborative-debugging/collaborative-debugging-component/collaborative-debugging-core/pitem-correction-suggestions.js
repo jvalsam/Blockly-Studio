@@ -1,5 +1,5 @@
 
-export function ProjectItemCorrectionSuggestionHandling(
+export function PItemCorrectionSuggestions(
     pitemId,
     editorsData,
     collabDebugInst
@@ -54,7 +54,7 @@ export function ProjectItemCorrectionSuggestionHandling(
         }
     };
 
-    this.onChangeEditorData = (editorsData) => {
+    this.onChangeEditorDataLocal = (editorsData) => {
         switch(this.currentCOSUName) {
             case 'ORIGINAL':
                 break;
@@ -72,6 +72,8 @@ export function ProjectItemCorrectionSuggestionHandling(
         }
     }
 
+    this.onChangeEditorsData
+
     this.onReceiveUpdate = (type, data) => {
         switch(type) {
             case "src":
@@ -81,4 +83,17 @@ export function ProjectItemCorrectionSuggestionHandling(
                 break;
         }
     }
+    
+
+    this.createCorrectionSuggestion = () => {
+
+    };
+
+    this.deleteCorrectionSuggestion = () => {
+
+    };
+
+    this.updateCorrectionSuggestion = () => {
+
+    };
 }

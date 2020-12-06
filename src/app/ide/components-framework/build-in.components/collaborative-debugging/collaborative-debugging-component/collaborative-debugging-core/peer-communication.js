@@ -1,7 +1,6 @@
 import {
     generateRandom as generateRandomURL
 } from "../../../collaboration-manager/collaboration-component/collaboration-core/utilities";
-import { settings } from "cluster";
 
 var CollabDebugSession = null;
 

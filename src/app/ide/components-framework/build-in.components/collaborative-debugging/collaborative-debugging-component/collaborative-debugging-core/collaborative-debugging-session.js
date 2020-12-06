@@ -3,19 +3,27 @@ import { PeerCommunication } from "./peer-communication";
 
 export function CollaborativeDebuggingComponent (
     memberInfo,
-    project,
     isMaster,
     plugin,
+    project
 ) {
     this.plugin = plugin;
     this.memberInfo = memberInfo;
     this.isMaster = isMaster;
 
-    this.peerCommunication = new PeerCommunication(memberInfo, settings, this);
+    this.initialize = (onSuccess) => {
+        this.peerCommunication = new PeerCommunication(memberInfo, settings, this);
+
+        if (isMaster) {
+
+        }
+        else {
+
+        }
+    };
     
     this.debuggingRooms = [];
-    // each pitem has correction suggestions handling
-    this.projectItemsCSH = {};
+    this.projectItemsHandler = new ProjectItemsHandler(project);
 
     //
     this.onMemberJoin = (memberInfo) => {

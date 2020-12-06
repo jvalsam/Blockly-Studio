@@ -78,16 +78,12 @@ export class CollaborativeDebugging extends IDEUIComponent {
             $popupContainer,
             $toolbarContainer,
             (memberInfo, settings) => {
-                // communicationInitialize(memberInfo, settings, this);
-                // this.isMaster = true;
-
-                // success(
-                //     collaborationFilter(
-                //         projectObj,
-                //         memberInfo,
-                //         settings
-                //     )
-                // );
+                this.collabDebugInst = new CollaborativeDebuggingComponent(
+                    memberInfo,
+                    true,
+                    this,
+                    projectObj
+                );
             },
             () => {
                 failure();
@@ -106,8 +102,12 @@ export class CollaborativeDebugging extends IDEUIComponent {
             selDialog,
             $toolbarSel,
             (memberInfo, externalLink, cbUI) => {
-                // startCommunicationUser(memberInfo, externalLink, this, success, cbUI);
-                // this.isMaster = false;
+                this.collabDebugInst = new CollaborativeDebuggingComponent(
+                    memberInfo,
+                    true,
+                    this,
+                    externalLink
+                );
             },
             ()=>{console.log('closed join session');}
         );
@@ -182,47 +182,11 @@ export class CollaborativeDebugging extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public onChangePItem(pitemId: string, data: any) {
-        // notifiled by the project manager that changed data
-        // is type usefu? only src update are available
-        // update works for the current view of correction suggestion
-
-    }
-
-    /**
-     * Handle debugging rooms of the collaborative debugging session
-     */
-
-    private createDebuggingRoom () {
-
-    }
-
-    private joinDebuggingRoom () {
-
-    }
-
-    private deleteDebuggingRoom () {
-
-    }
-
-    private renameDebuggingRoom () {
-
-    }
-
-    /**
-     * Handle debugging rooms of the collaborative debugging session
-     */
-
-    private createCorrectionSuggestion () {
-
-    }
-
-    private deleteCorrectionSuggestion () {
-
-    }
-
-    private updateCorrectionSuggestion () {
-
+    public onPItemChange(pitemId: string, data: any) {
+        this.collabDebugInst.projectItemsHandler.onPItemChange(
+            pitemId,
+            data
+        );
     }
 
     // functions for IDE UI components
