@@ -14,7 +14,7 @@ import {
 import {
     CollaborativeDebuggingComponent
 } from "./collaborative-debugging-component/collaborative-debugging-core/collaborative-debugging-session";
-
+import { BlocklyWSPSync } from "../../../ide-components/blockly/blockly-wsp-sync";
 
 var menuJson;
 var configJson;
@@ -186,6 +186,13 @@ export class CollaborativeDebugging extends IDEUIComponent {
         this.collabDebugInst.projectItemsHandler.onPItemChange(
             pitemId,
             data
+        );
+    }
+
+    private loadBlocklySources(sources: Array<any>): void {
+        // use on load to cache the blockly wsps in order to be synced
+        sources.forEach(elem =>
+            BlocklyWSPSync.loadWSP(elem.id, elem.data)
         );
     }
 

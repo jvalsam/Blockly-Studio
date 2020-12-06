@@ -34,13 +34,8 @@ export function PeerCommunication (
         });
     };
 
-    this.startCommunicationUser = (
-        myInfo,
-        externalLink,
-        CollabManager,
-        loadProject,
-        cbUI) => {
-
+    this.startCommunicationUser = (myInfo, externalLink) => {
+        // onLoadCollabDebugSessionData
     };
 
     //

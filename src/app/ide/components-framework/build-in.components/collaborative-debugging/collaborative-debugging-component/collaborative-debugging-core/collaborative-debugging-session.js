@@ -11,19 +11,23 @@ export function CollaborativeDebuggingComponent (
     this.memberInfo = memberInfo;
     this.isMaster = isMaster;
 
-    this.initialize = (onSuccess) => {
-        this.peerCommunication = new PeerCommunication(memberInfo, settings, this);
-
-        if (isMaster) {
-
-        }
-        else {
-
-        }
-    };
+    this.peerCommunication = new PeerCommunication(memberInfo, settings, this);
     
-    this.debuggingRooms = [];
-    this.projectItemsHandler = new ProjectItemsHandler(project);
+    if (this.isMaster) {
+        this.debuggingRooms = new DebuggingRoomsManager();
+        this.projectItemsHandler = new ProjectItemsHandler(project);
+        this.peerCommunication.initialize();
+    }
+    else {
+        this.peerCommunication.startCommunicationUser(
+            memberInfo,
+            project);
+    }
+
+    // called by the peer communication to load data on connection established
+    this.onLoadCollabDebugSessionData = (data) => {
+        
+    }
 
     //
     this.onMemberJoin = (memberInfo) => {
