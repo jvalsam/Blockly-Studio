@@ -162,17 +162,16 @@ export class SOVPLElemInstance {
   }
 
   // --- Start SmartObject Actions ---
-  onSORegister(props, methods, iotivityResourceID) {
+  onSORegister(props, actions, methods, iotivityResourceID) {
     this.elemData.editorData.details.state = SmartObjectState.REGISTERED;
     this.elemData.editorData.details.properties = props;
     this.elemData.editorData.details.actions = [];
     this.elemData.editorData.details.methods = [];
     for (const method of methods) {
-      if (method.id.startsWith("action")) {
-        this.elemData.editorData.details.actions.push(method);
-      } else {
-        this.elemData.editorData.details.methods.push(method);
-      }
+      this.elemData.editorData.details.methods.push(method);
+    }
+    for (const action of actions) {
+      this.elemData.editorData.details.actions.push(action);
     }
     this.elemData.editorData.details.iotivityResourceID = iotivityResourceID;
 
@@ -361,8 +360,8 @@ export class SOVPLElemInstance {
     switch (this.elemData.editorData.type) {
       case VPLElemNames.SMART_OBJECT:
         RenderSmartObject(domSel, this.elemData, componentData, {
-          onRegister: (props, methods, iotivityResourceID) =>
-            this.onSORegister(props, methods, iotivityResourceID),
+          onRegister: (props, actions, methods, iotivityResourceID) =>
+            this.onSORegister(props, actions, methods, iotivityResourceID),
           onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),

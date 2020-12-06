@@ -1,4 +1,5 @@
 import * as Blockly from "blockly";
+import { property } from "lodash";
 
 var definedOnce = false;
 
@@ -74,9 +75,9 @@ export const SmartObject = {
         let propertiesValueType = {};
 
         data.details.properties.forEach((property) => {
-          dropdownSel.push([property.name, property.name.toUpperCase()]);
+          dropdownSel.push([property.name, property.name]);
           let propertyType = typeof property.value;
-          propertiesValueType[property.name.toUpperCase()] =
+          propertiesValueType[property.name] =
             propertyType.charAt(0).toUpperCase() + propertyType.slice(1);
         });
 
@@ -110,17 +111,40 @@ export const SmartObject = {
               "Output type: " + propertiesValueType[dropdownSel[0][1]]
             );
             this.setHelpUrl("");
+            // pass data to codeGen
+            this.soData = data;
           },
         };
       },
       codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
 
-        data.details.properties.forEach((property) => {
-          //code generation based on the choice
-        });
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...";
+        // (function () {
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   return property.value;
+        // })()
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === '" +
+          block.soData.details.iotivityResourceID +
+          "'";
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === '" +
+          dropdown_properties +
+          "');";
+        strBuilder += "return property.value;";
+        strBuilder += "})()";
+
+        var code = strBuilder + "\n";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
@@ -133,7 +157,7 @@ export const SmartObject = {
 
         data.details.properties.forEach((property) => {
           if (property.type === "boolean") {
-            dropdownSel.push([property.name, property.name.toUpperCase()]);
+            dropdownSel.push([property.name, property.name]);
           }
         });
 
@@ -159,16 +183,40 @@ export const SmartObject = {
             this.setColour(230);
             this.setTooltip("Output type: Boolean");
             this.setHelpUrl("");
+            // pass data to codeGen
+            this.soData = data;
           },
         };
       },
       codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
-        // TODO: Assemble JavaScript into code variable.
-        data.details.properties.forEach((property) => {
-          //code generation based on the choice
-        });
-        var code = "...";
+
+        // (function () {
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   return property.value ? true : false;
+        // })()
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === '" +
+          block.soData.details.iotivityResourceID +
+          "'";
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === '" +
+          dropdown_properties +
+          "');\n";
+        strBuilder += "return property.value;";
+        strBuilder += "})()";
+
+        var code = strBuilder + "\n";
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
       },
@@ -182,9 +230,9 @@ export const SmartObject = {
 
         data.details.properties.forEach((property) => {
           if (property.type !== "enumerated" && !property.read_only) {
-            dropdownSel.push([property.name, property.name.toUpperCase()]);
+            dropdownSel.push([property.name, property.name]);
             let propertyType = typeof property.value;
-            propertiesValueType[property.name.toUpperCase()] =
+            propertiesValueType[property.name] =
               propertyType.charAt(0).toUpperCase() + propertyType.slice(1);
           }
         });
@@ -229,23 +277,116 @@ export const SmartObject = {
               "Input type: " + propertiesValueType[dropdownSel[0][1]]
             );
             this.setHelpUrl("");
+            // pass data to codeGen
+            this.soData = data;
           },
         };
       },
       codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
+
         var value_value = Blockly.JavaScript.valueToCode(
           block,
-          "VALUE",
+          "VALUE_INPUT",
           Blockly.JavaScript.ORDER_ATOMIC
         );
 
-        data.details.properties.forEach((property) => {
-          //code generation based on the choice
-        });
+        let checkArray = block.getInput("VALUE_INPUT").connection.getCheck();
 
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+        // TODO: console warning when the value is number and < minimum or > maximum
+
+        // (function () {
+        //   let args = [];
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   if (checkArray[0] === "Number") {
+        //     let number = parseFloat(value_value);
+        //     // check for minimum and maximum values
+        //     if (
+        //       property.options.minimum_value &&
+        //       number < property.options.minimum_value
+        //     ) {
+        //       args.push(property.options.minimum_value);
+        //     } else if (
+        //       property.options.maximum_value &&
+        //       number > property.options.maximum_value
+        //     ) {
+        //       args.push(property.options.maximum_value);
+        //     } else {
+        //       args.push(number);
+        //     }
+        //   } else if (checkArray[0] === "Boolean") {
+        //     args.push(value_value === "true" ? true : false);
+        //   } else if (checkArray[0] === "String") {
+        //     args.push(value_value);
+        //   }
+        //   // change value in data and then send request
+        //   property.value = args[0];
+        //   PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {
+        //     resourceId: block.soData.details.iotivityResourceID,
+        //     methodId:
+        //       "method-" +
+        //       block.soData.details.iotivityResourceID +
+        //       "-set-" +
+        //       dropdown_properties,
+        //     arguments: JSON.stringify(args),
+        //   });
+        // })();
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let args = [];\n";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === '" +
+          block.soData.details.iotivityResourceID +
+          "'";
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === '" +
+          dropdown_properties +
+          "');\n";
+        strBuilder += "if ('" + checkArray[0] + '\' === "Number") {';
+        strBuilder += "let number = parseFloat(" + value_value + ");\n";
+        strBuilder += "if (";
+        strBuilder += "property.options.minimum_value && ";
+        strBuilder += "number < property.options.minimum_value";
+        strBuilder += ") {";
+        strBuilder += "args.push(property.options.minimum_value);\n";
+        strBuilder += "} else if (";
+        strBuilder += "property.options.maximum_value && ";
+        strBuilder += "number > property.options.maximum_value";
+        strBuilder += ") {";
+        strBuilder += "args.push(property.options.maximum_value);\n";
+        strBuilder += "} else {";
+        strBuilder += "args.push(number);\n";
+        strBuilder += "}\n";
+        strBuilder += "} else if ('" + checkArray[0] + '\' === "Boolean") {';
+        strBuilder +=
+          "args.push(" + value_value + ' === "true" ? true : false);\n';
+        strBuilder += "} else if ('" + checkArray[0] + '\' === "String") {';
+        strBuilder += "args.push(" + value_value + ");\n";
+        strBuilder += "}";
+        strBuilder += "property.value = args[0];\n";
+        strBuilder +=
+          'PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {';
+        strBuilder +=
+          "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
+        strBuilder +=
+          "methodId: 'method-" +
+          block.soData.details.iotivityResourceID +
+          "-set-" +
+          dropdown_properties +
+          "',\n";
+        strBuilder += "arguments: JSON.stringify(args),";
+        strBuilder += "});\n";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
         return code;
       },
     },
@@ -259,13 +400,13 @@ export const SmartObject = {
         data.details.properties.forEach((property) => {
           if (property.type === "enumerated" && !property.read_only) {
             // build enumerated properties
-            enumeratedProps.push([property.name, property.name.toUpperCase()]);
-            enumeratedPossibleValues[property.name.toUpperCase()] = [];
+            enumeratedProps.push([property.name, property.name]);
+            enumeratedPossibleValues[property.name] = [];
             // build poosible_values for each property
             property.options.possible_values.forEach((possibleValue) => {
-              enumeratedPossibleValues[property.name.toUpperCase()].push([
+              enumeratedPossibleValues[property.name].push([
                 possibleValue,
-                possibleValue.toUpperCase(),
+                possibleValue,
               ]);
             });
           }
@@ -313,6 +454,8 @@ export const SmartObject = {
             this.setColour(240);
             this.setTooltip("");
             this.setHelpUrl("");
+            // pass data to codeGen
+            this.soData = data;
           },
         };
       },
@@ -320,8 +463,55 @@ export const SmartObject = {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         var dropdown_possible_values = block.getFieldValue("POSSIBLE_VALUES");
 
-        // TODO: Assemble JavaScript into code variable.
-        var code = "";
+        // (function () {
+        //   let args = [dropdown_possible_values];
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   property.value = args[0];
+        //   PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {
+        //     resourceId: block.soData.details.iotivityResourceID,
+        //     methodId:
+        //       "method-" +
+        //       data.details.iotivityResourceID +
+        //       "-set-" +
+        //       dropdown_properties,
+        //     arguments: JSON.stringify(args),
+        //   });
+        // })();
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let args = ['" + dropdown_possible_values + "'];\n";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === '" +
+          block.soData.details.iotivityResourceID +
+          "'";
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === '" +
+          dropdown_properties +
+          "');\n";
+        strBuilder += "property.value = args[0];\n";
+        strBuilder +=
+          'PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {';
+        strBuilder +=
+          "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
+        strBuilder +=
+          "methodId: 'method-" +
+          block.soData.details.iotivityResourceID +
+          "-set-" +
+          dropdown_properties +
+          "',\n";
+        strBuilder += "arguments: JSON.stringify(args)\n";
+        strBuilder += "});";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
         return code;
       },
     },
