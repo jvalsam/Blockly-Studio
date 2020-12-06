@@ -28,44 +28,46 @@ export class RuntimeEnvironmentRelease {
     }
 
     start(applicationData) {
-        try {
+        const promise = new Promise((resolve, reject) => {
+            this.promiseStopApp = reject;
+            applicationData.onFinish = resolve;
             this._executionScript.StartApplication(applicationData);
-        }
-        catch (e) {
-            this._handleError(e);
-        }
+        });
+        promise
+            .then(finish => console.log("run app finished"))
+            .catch (stopAction => this._handleStopAction(stopAction));
     }
 
-    _handleError(e) {
-        if (e.message === "StopApplication") {
+    _handleStopAction(action) {
+        if (action === "StopApplication") {
             this.onStop();
         }
-        else if (e.message === "PauseApplication") {
+        else if (action === "PauseApplication") {
             this.onPause();
         }
         else {
-            throw e;
+            throw "Runtime Environment Error: Not supported action: " + e;
         }
     }
 
     // has to be executed per visual programming statement
     _handleRuntime() {
         if (this.state === EnvironmentState.STOPPED) {
-            throw new Error("StopApplication");
+            this.promiseStopApp("StopApplication");
         }
         else if (this.state === EnvironmentState.PAUSED) {
-            throw new Error("PauseApplication");
+            this.promiseStopApp("PauseApplication");
         }
     }
 
-    stop() {
+    stop(onSuccess) {
         this.state = EnvironmentState.STOPPED;
+        this.callbackOnStop = onSuccess;
     }
 
     onStop() {
         this._executionScript.StopApplication();
-        // TODO: send message to refresh the UI of the IDE
-        // and output consolse message bubble
+        this.callbackOnStop();
     }
 
     pause() {

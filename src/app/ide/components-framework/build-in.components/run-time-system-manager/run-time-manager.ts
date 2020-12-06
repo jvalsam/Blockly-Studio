@@ -259,7 +259,7 @@ export class RuntimeManager extends IDEUIComponent {
         let cw = RuntimeSystem
             .getIframe("BlocklyStudioIDE_MainRuntimeEnvironment")
             ['contentWindow'];
-        let runtimeSystemInst = new RuntimeSystem(
+        this.runtimeSystemInst = new RuntimeSystem(
             this,
             "RuntimeEnvironmentApp",
             cw.postMessage,
@@ -309,19 +309,29 @@ export class RuntimeManager extends IDEUIComponent {
     }
 
     private onStopApplicationBtn(): void {
-        this._viewElems.RuntimeManagerToolbarView[0].elem
-            .onClickStopApplicationBtn();
-        throw new StopProjectAppError('user');
+        this.runtimeSystemInst.functionRequest(
+            this.name,
+            "RuntimeEnvironmentApp",
+            "stopApplication",
+            [],
+            {
+                type: 'async',
+                func: () => this.StopApplication()
+            });
     }
 
     @ExportedFunction
     public StopApplication(): void {
-        this.onStopApplicationBtn();
+        RuntimeSystem.close();
+        //
+        let toolbarView = this._viewElems.RuntimeManagerToolbarView[0].elem;
+        toolbarView.disableButtons();
+        toolbarView.activateRunDebugBtns();
     }
 
     @ExportedFunction
     public StopDebugApplication(): void {
-        this.onStopApplicationBtn();
+        
     }
 
     // console input

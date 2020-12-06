@@ -347,7 +347,9 @@ export abstract class View {
 
     public detachEvent(eventId): void {
         const eventInfo: IViewEventData = this._events[eventId];
-        eventInfo.$target.unbind(eventInfo.type, eventInfo.handler);
+        
+        eventInfo.$target.get(0).removeEventListener(eventInfo.type, eventInfo.handler, false);
+
         _.unset(this._events, [eventId]);
     }
 

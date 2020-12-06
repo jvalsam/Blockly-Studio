@@ -30,8 +30,14 @@ export class RuntimeEnvironmentDebug {
         this._executionScript.StartApplication(envData);
     }
 
-    stop() {
+    stop(onSuccess) {
+        this.state = EnvironmentState.STOPPED;
+        this.callbackOnStop = onSuccess;
+    }
+
+    onStop() {
         this._executionScript.StopApplication();
+        this.this.callbackOnStop();
     }
 
     pause() {

@@ -17,6 +17,7 @@ class _RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
             (msg) => window.top.postMessage(msg, "*"),
             (func) => window.onmessage = func
         );
+        this.runtimeEnvironmentComp = null;
         this.registeredComponents = {};
         RuntimeEnvironmentComponents.registration(this);
 
@@ -38,10 +39,12 @@ class _RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
 
     loadEnvironmentRunData(data) {
         if (data.execType === 'DEBUG') {
+            this.runtimeEnvironmentComp = "RuntimeEnvironmentDebug";
             this.registeredComponents["RuntimeEnvironmentDebug"]
                 .loadEnvironmentData(data);
         }
         else {
+            this.runtimeEnvironmentComp = "RuntimeEnvironmentRelease";
             this.registeredComponents["RuntimeEnvironmentRelease"]
                 .loadEnvironmentData(data);
         }
@@ -116,6 +119,11 @@ class _RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
 
     getComponentInst(comp) {
         return this.registeredComponents[comp];
+    }
+
+    stopApplication(onSuccess) {
+        this.registeredComponents[this.runtimeEnvironmentComp]
+            .stop(onSuccess);
     }
 
     // TODO: support of signals for the registered components
