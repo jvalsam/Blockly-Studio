@@ -368,7 +368,7 @@ export class ProjectInstanceView extends View {
             componentsData
         );
 
-        if (this._firstPItemId === null) {
+        if (!this._firstPItemId) {
             this._firstPItemId = projectItem.systemID;
         }
 

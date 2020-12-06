@@ -119,7 +119,7 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @RequiredFunction("ProjectManager", "getProjectItem")
-    public initializeEditorsView() {
+    public initializeEditorsView(firstPItem) {
         this.view.render();
         let className =
             this.pitemEditorsSel.substr(1)
@@ -134,17 +134,31 @@ export class EditorManager extends IDEUIComponent {
             "invalid number of initial focused pitems in Editor Manager"
         );
 
-        this.initialPItemsFocused.forEach((pitemId, index) => {
-            let pitem = ComponentsCommunication.functionRequest(
-                this.name,
-                "ProjectManager",
-                "getProjectItem",
-                [pitemId]
-            ).value;
+        if (this.initialPItemsFocused.length > 0) {
+            this.initialPItemsFocused.forEach((pitemId, index) => {
+                let pitem = ComponentsCommunication.functionRequest(
+                    this.name,
+                    "ProjectManager",
+                    "getProjectItem",
+                    [pitemId]
+                ).value;
 
-            this.onFocusLocation = index;
-            this.open(pitem, this.focusPItemArea());
-        });
+                this.onFocusLocation = index;
+                this.open(pitem, this.focusPItemArea());
+            });
+        }
+        else {
+            if (firstPItem) {
+                let pitem = ComponentsCommunication.functionRequest(
+                    this.name,
+                    "ProjectManager",
+                    "getProjectItem",
+                    [firstPItem.systemID]
+                ).value;
+
+                this.open(pitem);
+            }
+        }
     }
 
     public loadEditorInstances(project, pitems: Array<ProjectItem>) {

@@ -1216,6 +1216,7 @@ let RenderSmartObjectUnregistered = function (
           // Save data
           callbacksMap.onRegister(
             resource.properties,
+            resource.actions,
             resource.methods,
             resource.id
           );

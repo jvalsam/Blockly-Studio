@@ -5,31 +5,57 @@ const AddThirdPartyLibs = function (environment) {
     "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/dayjs.min.js"
   );
 
-  environment.importJSLib(
-    "https://polyfill.io/v3/polyfill.min.js?features=Array.from,Promise,Symbol,Object.setPrototypeOf,Object.getOwnPropertySymbols,Set"
-  );
+  // environment.importJSLib(
+  //   "https://polyfill.io/v3/polyfill.min.js?features=Array.from,Promise,Symbol,Object.setPrototypeOf,Object.getOwnPropertySymbols,Set"
+  // );
 
-  environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/superagent.min.js"
-  );
+  // environment.importJSLib("https://cdn.jsdelivr.net/npm/superagent");
 };
 
-/**
- * @param {string} url
- * @param {callback} callback
- * @description GET Request
- */
-const GetRequest = (url, callback) => {
-  superagent
-    .get(url)
-    .set("accept", "json")
-    .end((err, res) => {
-      return callback(err, res);
-    });
-};
+async function GetRequest(url = "") {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+  });
+  return response.json(); // parses JSON response into native JavaScript objects
+}
 
-const InitializeData = function () {
+async function PostRequest(url = "", data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+  });
+  return response.json(); // parses JSON response into native JavaScript objects
+}
+
+const Initialize = function (smartObjects, resourcesIDs) {
   dayjs().format();
+
+  smartObjects.forEach((so) => {
+    resourcesIDs.push([
+      so.editorsData[0].generated.details.iotivityResourceID,
+      "",
+    ]);
+  });
 };
 
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
@@ -161,35 +187,36 @@ const timeDispatch = {
 };
 
 export async function StartApplication(data) {
-  // try {
-  //   // get info for smart objects
-  //   // data.execData.project.SmartObjects;
-  //   // data.execData.project.SmartObjects[0].editorsData[0].generated.details
-  //   //   .iotivityResourceID;
+  try {
+    AddThirdPartyLibs(data.runtimeEnvironment);
 
-  //   AddThirdPartyLibs(data.runtimeEnvironment);
-  //   InitializeData();
+    let resourcesIDs = [];
 
-  //   // calendar tasks
-  //   data.execData.project.CalendarEvents.forEach((events) => {
-  //     eval(events.editorsData[0].generated);
-  //   });
+    Initialize(data.execData.project.SmartObjects, resourcesIDs);
 
-  //   // conditional tasks
-  //   data.execData.project.ConditionalEvents.forEach((events) => {
-  //     eval(events.editorsData[0].generated);
-  //   });
+    var url = new URL(urlInfo.iotivityUrl + "/resources");
+    url.search = new URLSearchParams(resourcesIDs).toString();
 
-  //   // Start whenConditions
-  //   StartWhenTimeout();
-  // } catch (e) {
-  //   alert(e);
-  // }
+    GetRequest(url).then((responseData) => {
+      // data.resources
+      const devicesOnAutomations = responseData.resources;
 
-  setInterval(() => {
-    console.log("execution...\n");
-    data.checkRuntimeEnvironment();
-  }, 1000);
+      // calendar tasks
+      data.execData.project.CalendarEvents.forEach((events) => {
+        eval(events.editorsData[0].generated);
+      });
+
+      // conditional tasks
+      data.execData.project.ConditionalEvents.forEach((events) => {
+        eval(events.editorsData[0].generated);
+      });
+
+      // Start whenConditions
+      StartWhenTimeout();
+    });
+  } catch (e) {
+    alert(e);
+  }
 }
 
 export async function StopApplication(execData) {
