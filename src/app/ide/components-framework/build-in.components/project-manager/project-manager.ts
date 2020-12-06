@@ -291,53 +291,57 @@ export class ProjectManager extends IDEUIComponent {
         this.loadedProjects[project._id] = project;
         this.mainProject = project._id;
         let projView = (<ProjectManagerJSTreeView>this._view).loadProject(project);
-
-        // load componentsData of the project
-        for (const compName in project.componentsData) {
+            // load componentsData of the project
+            for (const compName in project.componentsData) {
             ComponentsCommunication.functionRequest(
                 this.name,
                 compName,
                 "loadComponentDataOfProject",
                 [project._id, project.componentsData[compName]]
             );
-        }
+            }
 
-        // TODO: remove on completion
-        project.componentsData = project.componentsData || {};
-        if (!("DomainsManager" in project.componentsData)) {
+            // TODO: remove on completion
+            project.componentsData = project.componentsData || {};
+            if (!("DomainsManager" in project.componentsData)) {
             ComponentsCommunication.functionRequest(
                 this.name,
                 "DomainsManager",
                 "initComponentDataOfProject",
                 [project._id]
             );
-        }
-
-        // set default values if there is no state
-        if (!project.editorsState) {
-            project.editorsState = {
-                viewState: "normal",
-                onFocusPItems: []
-            };
-            if (projView.firstPItemID) {
-                project.editorsState.onFocusPItems[0] = projView.firstPItemID;
             }
-        }
 
-        let editorManager = <EditorManager>ComponentRegistry.getEntry("EditorManager").create([
-            ".project-manager-visual-editors-area",
-            project.editorsState.viewState,
-            project.editorsState.onFocusPItems
-        ]);
-        editorManager.initializeEditorsView();
-        editorManager.loadEditorInstances(
+            // set default values if there is no state
+            if (!project.editorsState) {
+                project.editorsState = {
+                    viewState: "normal",
+                    onFocusPItems: [],
+                };
+                if (projView.firstPItemID) {
+                    project.editorsState.onFocusPItems[0] = projView.firstPItemID;
+                }
+            }
+
+            let editorManager = <EditorManager>(
+            ComponentRegistry.getEntry("EditorManager").create([
+                ".project-manager-visual-editors-area",
+                project.editorsState.viewState,
+                project.editorsState.onFocusPItems,
+            ])
+            );
+            editorManager.loadEditorInstances(
             projView["data"].project,
             <Array<ProjectItem>>projView.getProjectElements("ALL")
-        );
+            );
+            editorManager.initializeEditorsView(project.projectItems[0]);
 
-        if (project.componentsData && project.componentsData.collaborationData) {
+            if (
+            project.componentsData &&
+            project.componentsData.collaborationData
+            ) {
             this.shareProject(project);
-        }
+            }
     }
 
     @ExportedFunction
@@ -639,15 +643,15 @@ export class ProjectManager extends IDEUIComponent {
                     collabProject.saveMode = "SHARED";
                     this.loadedProjects[collabProject._id] = collabProject;
                     (<ProjectManagerJSTreeView>this.view).updateProject(collabProject);
-                    let projView = (<ProjectManagerJSTreeView>this.view).getProject(collabProject._id);
+                    let projView = (<ProjectManagerJSTreeView>(
+                      this.view
+                    )).getProject(collabProject._id);
                     ComponentsCommunication.functionRequest(
-                        this.name,
-                        "EditorManager",
-                        "refresh",
-                        [
-                            projView
-                        ]
-                    )
+                      this.name,
+                      "EditorManager",
+                      "refresh",
+                      [projView]
+                    );
                 },
                 () => {
                     console.log("Shared action canceled by user.");
@@ -763,9 +767,6 @@ export class ProjectManager extends IDEUIComponent {
                         }]
                     );
                 }
-                else {
-                    this.saveProject(concerned.project.dbID);
-                }
 
                 // callback to give information of the created project element
                 if (onAdded) {
@@ -774,6 +775,11 @@ export class ProjectManager extends IDEUIComponent {
 
                 this.onClickProjectElement(elem);
                 project.projectItems.push(this.pitemviewtoData(elem));
+                
+                if (project.saveMode === "DB") {
+                    this.saveProject(concerned.project.dbID);
+                }
+                    
                 elem.trigger("click");
             }
         );

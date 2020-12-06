@@ -86,12 +86,6 @@ export class SmartObjectVPLEditor extends Editor {
     config: any,
     cachedData: boolean
   ): void {
-    let img = pitem.pi["_jstreeNode"].icon;
-    editorData.img = img;
-    assert(
-      editorData,
-      "Source with id not found in SmartObject visual editor."
-    );
     if (this._groupDataOnCreate) {
       editorData.details = this._groupDataOnCreate;
 
@@ -115,11 +109,11 @@ export class SmartObjectVPLEditor extends Editor {
         this,
         {
           name: pitem.pi["_jstreeNode"].text,
-          img: img,
+          img: editorData.img,
           color: pitem.pi["_jstreeNode"].color,
           editorData: editorData,
         },
-        pitem,
+        pitem.pi,
         editorData.editorId,
         pitem.pi.getPrivileges(),
         this.config
@@ -144,9 +138,11 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedFunction
   public update_src(data: any, pitem: any, focus: boolean = false): void {
     let id = data.editorId;
-    if (this.instancesMap[id] && focus) {
-      this.instancesMap[id].sync(data, pitem);
-    }
+    assert(
+      id in this.instancesMap,
+      "Not found instance of Smart Object VPL Editor"
+    );
+    this.instancesMap[id].sync(data.details, pitem, focus);
   }
 
   @ExportedFunction
@@ -246,7 +242,7 @@ export class SmartObjectVPLEditor extends Editor {
 
   @RequiredFunction("ProjectManager", "saveEditorData")
   private saveElement(element) {
-    this.save(element.id, element.pitem.pi, (mode) =>
+    this.save(element.id, element.pitem, (mode) =>
       mode === "SHARED"
         ? this.filterToSave(element.data.editorData)
         : this.filterToSave(element.data.editorData)
@@ -529,6 +525,21 @@ export class SmartObjectVPLEditor extends Editor {
 
   @ExportedFunction
   public loadSource(editorData: any, pitem: ProjectItem) {
-    // load data by creating instance of the visual domain element
+    let img = pitem["_jstreeNode"].icon;
+    editorData.img = img;
+
+    this.instancesMap[editorData.editorId] = new SOVPLElemInstance(
+      this,
+      {
+        name: pitem["_jstreeNode"].text,
+        img: img,
+        color: pitem["_jstreeNode"].color,
+        editorData: editorData,
+      },
+      pitem,
+      editorData.editorId,
+      pitem.getPrivileges(),
+      this.config
+    );
   }
 }

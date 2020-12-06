@@ -190,9 +190,9 @@ export class BlocklyVPL extends Editor {
       }
       else {
         for (const elem in this.domainElementTracker[projectId]) {
-          let block = this.domainElementTracker[projectId][elem].getBlockById(event.blockId);
+          block = this.domainElementTracker[projectId][elem].getBlockById(event.blockId);
           if (block) {
-            type = block.blockType;
+            type = block["blockType"];
             break;
           }
         }
@@ -204,7 +204,7 @@ export class BlocklyVPL extends Editor {
         this.domainElementTracker[projectId][elemName]
           .createBlockId(
             event.blockId,
-            block.type,
+            type,
             confName,
             id,
             pi.systemId,

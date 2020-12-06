@@ -51,7 +51,8 @@ export class SOVPLElemInstance {
     pitem,
     selector,
     privillege,
-    config
+    config,
+    syncWSP
   ) {
     this.parent = SOVPLEditorComponent = parent;
     this.pitem = pitem;
@@ -60,6 +61,7 @@ export class SOVPLElemInstance {
     this.elemData = elemData;
     this.privillege = privillege;
     this.config = config;
+    this.syncWSP = syncWSP;
 
     this.state = InstStateEnum.INIT;
 
@@ -408,12 +410,16 @@ export class SOVPLElemInstance {
     //this.render(this.selector, this.elemData);
   }
 
-  sync(data, pitem) {
-    this.render(this.selector, this.elemData);
+  sync(details, pitem, focus) {
+    this.elemData.editorData.details = details;
+
+    if (focus) {
+      this.render(this.selector, this.elemData);
+    }
   }
 
   destroy() {
-    alert("destroy of SmartObjectVPLEditor instance is not developed yet!");
+    // alert("destroy of SmartObjectVPLEditor instance is not developed yet!");
     if (
       eventsManager[this.selector.id] &&
       eventsManager[this.selector.id].length > 0
