@@ -203,12 +203,12 @@ export async function StartApplication(data) {
 
       // calendar tasks
       data.execData.project.CalendarEvents.forEach((events) => {
-        eval(events.editorsData[0].generated);
+        eval("(async () => {" + events.editorsData[0].generated + "})()");
       });
 
       // conditional tasks
       data.execData.project.ConditionalEvents.forEach((events) => {
-        eval(events.editorsData[0].generated);
+        eval("(async () => {" + events.editorsData[0].generated + "})()");
       });
 
       // Start whenConditions

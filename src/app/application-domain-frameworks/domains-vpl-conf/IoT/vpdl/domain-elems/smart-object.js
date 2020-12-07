@@ -1,5 +1,4 @@
 import * as Blockly from "blockly";
-import { property } from "lodash";
 
 var definedOnce = false;
 
@@ -525,7 +524,7 @@ export const SmartObject = {
         // Here we need to parse actions and modify blocks dynamically
         data.details.actions.forEach((action) => {
           // initialize args for every action
-          argsOfActions[action.name.toUpperCase()] = { args: [] };
+          argsOfActions[action.name] = { args: [] };
 
           action.parameters.forEach((parameter) => {
             let argType = parameter.type;
@@ -543,14 +542,13 @@ export const SmartObject = {
               if (property.type === "enumerated") {
                 arg.possibleValues = [];
                 property.options.possible_values.forEach((value) => {
-                  arg.possibleValues.push([value, value.toUpperCase()]);
+                  arg.possibleValues.push([value, value]);
                 });
               }
             }
-            argsOfActions[action.name.toUpperCase()].args.push(arg);
+            argsOfActions[action.name].args.push(arg);
           });
-
-          actions.push([action.name, action.name.toUpperCase()]);
+          actions.push([action.name, action.name]);
         });
 
         if (actions.length === 0) return null;
@@ -576,7 +574,7 @@ export const SmartObject = {
                     .appendField(arg.name + ": ")
                     .appendField(
                       new Blockly.FieldDropdown(arg.possibleValues),
-                      "ARG" + i
+                      "ENUM" + i
                     );
                 } else {
                   input = this.appendValueInput("INPUT" + i).setCheck(arg.type);
@@ -615,25 +613,108 @@ export const SmartObject = {
             this.setColour(135);
             this.setTooltip("");
             this.setHelpUrl("");
+            // pass data to codeGen
+            this.soData = data;
           },
         };
       },
       codeGen: (block) => {
-        var dropdown_methods = block.getFieldValue("ACTIONS");
-        // must check how many args do we have and get code
+        var dropdown_actions = block.getFieldValue("ACTIONS");
 
-        // FOR ValueInput
-        // var value_arg1 = Blockly.JavaScript.valueToCode(
-        //   block,
-        //   "INPUT1",
-        //   Blockly.JavaScript.ORDER_ATOMIC
-        // );
+        // get parameters to check the length
+        let parametersLength = block.soData.details.actions.find(
+          (elem) => elem.name === "Configure"
+        ).parameters.length;
 
-        // FOR DummyInput get field
-        // var dropdown_arg1 = block.getFieldValue("ARG1");
+        let inputsToCode = [];
+        let checksArray = {};
 
-        // TODO: Assemble JavaScript into code variable.
-        var code = "...;\n";
+        // get code and type from every input
+        for (let i = 0; i < parametersLength; ++i) {
+          if (block.getInput("INPUT" + i).type === 1) {
+            // type 1
+            inputsToCode.push(
+              Blockly.JavaScript.valueToCode(
+                block,
+                "INPUT" + i,
+                Blockly.JavaScript.ORDER_ATOMIC
+              )
+            );
+            checksArray["INPUT" + i] = block
+              .getInput("INPUT" + i)
+              .connection.getCheck();
+          } else if (block.getInput("INPUT" + i).type === 5) {
+            // type 5
+            inputsToCode.push(block.getFieldValue("ENUM" + i));
+            checksArray["INPUT" + i] = ["String"];
+          }
+        }
+
+        // await(function () {
+        //   new Promise((resolve) => {
+        //     let args = [];
+        //     for (let i = 0; i < parametersLength; ++i) {
+        //       if (checksArray["INPUT" + i][0] === "Number") {
+        //         let number = parseFloat(inputsToCode[i]);
+        //         args.push(number);
+        //       } else if (checksArray["INPUT" + i][0] === "Boolean") {
+        //         args.push(inputsToCode[i] === "true" ? true : false);
+        //       } else if (checksArray["INPUT" + i][0] === "String") {
+        //         args.push(inputsToCode[i]);
+        //       }
+        //     }
+        //     PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {
+        //       resourceId: block.soData.details.iotivityResourceID,
+        //       methodId:
+        //         "action-" +
+        //         data.details.iotivityResourceID +
+        //         "-" +
+        //         dropdown_actions,
+        //       arguments: JSON.stringify(args),
+        //     }).then(resolve());
+        //   });
+        // })();
+
+        let strBuilder = "";
+        strBuilder += "await(function () {\n";
+        strBuilder += "new Promise((resolve) => {\n";
+        strBuilder += "let args = [];\n";
+        strBuilder +=
+          "let inputsToCode = JSON.parse('" +
+          JSON.stringify(inputsToCode) +
+          "');\n";
+        strBuilder +=
+          "let checksArray = JSON.parse('" +
+          JSON.stringify(checksArray) +
+          "');\n";
+        strBuilder += "for (let i = 0; i < " + parametersLength + "; ++i) {\n";
+        strBuilder += 'if (checksArray["INPUT" + i][0] === "Number") {\n';
+        strBuilder += "let number = parseFloat(inputsToCode[i]);\n";
+        strBuilder += "args.push(number);\n";
+        strBuilder +=
+          '} else if (checksArray["INPUT" + i][0] === "Boolean") {\n';
+        strBuilder += 'args.push(inputsToCode[i] === "true" ? true : false);\n';
+        strBuilder +=
+          '} else if (checksArray["INPUT" + i][0] === "String") {\n';
+        strBuilder += "args.push(inputsToCode[i]);\n";
+        strBuilder += "}\n";
+        strBuilder += "}\n";
+        strBuilder +=
+          'PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {\n';
+        strBuilder +=
+          "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
+        strBuilder +=
+          "methodId: 'action-" +
+          block.soData.details.iotivityResourceID +
+          "-" +
+          dropdown_actions +
+          "',\n";
+        strBuilder += "arguments: JSON.stringify(args)\n";
+        strBuilder += "}).then(() => resolve());\n";
+        strBuilder += "});\n";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
         return code;
       },
     },
