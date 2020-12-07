@@ -290,17 +290,25 @@ export class RuntimeManager extends IDEUIComponent {
     }
 
     private onStartDebugApplicationBtn(): void {
-        try {
-            this.prepareStartApplication();
-            this.StartApplication();
-        } catch (error) {
-            if (error instanceof StopProjectAppError) {
-                this.StopDebugApplication();
-            }
-            else {
-                throw error;
-            }
-        }
+        RuntimeManager.currentMode = 1;
+
+        let toolbarView = this._viewElems.RuntimeManagerToolbarView[0].elem;
+        toolbarView.disableButtons();
+        toolbarView.activateStopBtn();
+
+        this.ClearMessages();
+        this.AddDefaultMessage("prepare");
+
+        RuntimeSystem.initialize("BlocklyStudioIDE_MainRuntimeEnvironment");
+        let cw = RuntimeSystem
+            .getIframe("BlocklyStudioIDE_MainRuntimeEnvironment")
+            ['contentWindow'];
+        this.runtimeSystemInst = new RuntimeSystem(
+            this,
+            "RuntimeEnvironmentApp",
+            cw.postMessage,
+            (func) => window.onmessage = func
+        );
     }
 
     @ExportedFunction

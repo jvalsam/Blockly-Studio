@@ -1,4 +1,7 @@
-import { RuntimeEnvironmentScriptsHolder } from "../../runtime-environment-scripts-holder.js"
+import {
+    RuntimeEnvironmentScriptsHolder
+} from "../../runtime-environment-scripts-holder.js"
+
 
 export const EnvironmentState = {
     INIT: "init",
@@ -26,8 +29,37 @@ export class RuntimeEnvironmentDebug {
         this.start(this._envData);
     }
 
-    start(envData) {
-        this._executionScript.StartApplication(envData);
+    // has to be executed per visual programming statement
+    _handleRuntime() {
+        if (this.state === EnvironmentState.STOPPED) {
+            this.promiseStopApp("StopApplication");
+        }
+        else if (this.state === EnvironmentState.PAUSED) {
+            this.promiseStopApp("PauseApplication");
+        }
+    }
+
+    _handleStopAction(action) {
+        if (action === "StopApplication") {
+            this.onStop();
+        }
+        else if (action === "PauseApplication") {
+            this.onPause();
+        }
+        else {
+            throw "Runtime Environment Error: Not supported action: " + e;
+        }
+    }
+
+    start(applicationData) {
+        const promise = new Promise((resolve, reject) => {
+            this.promiseStopApp = reject;
+            applicationData.onFinish = resolve;
+            this._executionScript.StartApplication(applicationData);
+        });
+        promise
+            .then(finish => console.log("run app finished"))
+            .catch (stopAction => this._handleStopAction(stopAction));
     }
 
     stop(onSuccess) {

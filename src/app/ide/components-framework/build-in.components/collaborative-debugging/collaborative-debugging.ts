@@ -183,7 +183,7 @@ export class CollaborativeDebugging extends IDEUIComponent {
 
     @ExportedFunction
     public onPItemChange(pitemId: string, data: any) {
-        this.collabDebugInst.projectItemsHandler.onPItemChange(
+        this.collabDebugInst.correctionSuggestionsManager.onPItemChangeLocal(
             pitemId,
             data
         );

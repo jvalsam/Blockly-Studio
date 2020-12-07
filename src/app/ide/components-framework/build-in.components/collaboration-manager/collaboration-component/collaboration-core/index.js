@@ -32,12 +32,12 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   // console.log(collabInfo.plugin.shProject);
   console.log(collabInfo.UI);
   let randomId = generateRandom(20);
-  // let peer = new Peer(randomId, {
-  //   host: '147.52.17.129',
-  //   port: 9000,
-  //   path: '/myapp'
-  // });
-  var peer = new Peer(randomId);
+  let peer = new Peer(randomId, {
+    host: '147.52.17.129',
+    port: 9000,
+    path: '/myapp'
+  });
+  // var peer = new Peer(randomId);
   peer.on('open', (id) => {
     console.log('My peer ID is: ' + id);
     collabInfo.UI.addMemberMe(myInfo);
@@ -98,12 +98,12 @@ export function startCommunicationUser(myInfo, externalLink, CollabManager, load
   collabInfo.plugin = CollabManager;
   collabInfo.myInfo = myInfo;
   // externalLink = "akatsarakis1234a";
-  // var peer = new Peer({
-  //   host: '147.52.17.129',
-  //   port: 9000,
-  //   path: '/myapp'
-  // });
-  var peer = new Peer();
+  var peer = new Peer({
+    host: '147.52.17.129',
+    port: 9000,
+    path: '/myapp'
+  });
+  // var peer = new Peer();
   peer.on('error', function(err) { console.log(err); });
   console.log(myInfo,"trying to connect to "+externalLink);
   var conn = peer.connect(externalLink);
