@@ -5,11 +5,10 @@ export function PItemCorrectionSuggestions(
     collabDebugInst
 ) {
     this.pitemId = pitemId;
+    
     this.originalEditorsData = editorsData;
-    this.temporaryEditorsData = null;
-    this.correctionSuggestions = [
-
-    ];
+    this.temporaryEditorsData = editorsData;
+    this.correctionSuggestions = [];
 
     // latest correction suggestion asked to render
     this.currentCOSUName = null;
@@ -29,18 +28,28 @@ export function PItemCorrectionSuggestions(
             editorsData: editorsData});
     };
 
+    this.addCorrections = (corrections) => {
+        corrections.forEach(correction => this.addCorrection(
+            correction.name,
+            correction.description,
+            correction.memberInfo,
+            correction.date,
+            correction.editorsData
+        ));
+    };
+
     this.removeCorrection = (name) => {
         this.correctionSuggestions.remove(cs => cs.name === name);
     };
 
-    this.updateCorrectionSuggestion = (correctionSuggestion) => {
+    this.updateCorrection = (correction) => {
         const index = this.correctionSuggestions.findIndex(
-            cosu => cosu.name === correctionSuggestion.name);
+            cosu => cosu.name === correction.name);
         
-        this.correctionSuggestions[index] = correctionSuggestion;
+        this.correctionSuggestions[index] = correction;
     };
 
-    this.openCorrectionSuggestion = (name) => {
+    this.openCorrection = (name) => {
         this.currentCOSUName = name;
         return this.getCurrentEditorsData();
     };
@@ -50,8 +59,24 @@ export function PItemCorrectionSuggestions(
             return this.correctionSuggestions.find(this.currentCOSUName);
         }
         else {
-            return this.originalEditorsData;
+            return this.temporaryEditorsData;
         }
+    };
+
+    this.getOriginalEditorsData = () => {
+        return this.originalEditorsData;
+    };
+
+    this.onCreateCorrection = (name, description, authorInfo) => {
+        this.addCorrection(
+            name,
+            description,
+            authorInfo,
+            Date.now(),
+            JSON.parse(JSON.stringify(this.temporaryEditorsData)));
+        
+        this.temporaryEditorsData = JSON.parse(JSON.stringify(this.originalEditorsData));
+        this.currentCOSUName = name;
     };
 
     this.onChangeEditorDataLocal = (editorsData) => {

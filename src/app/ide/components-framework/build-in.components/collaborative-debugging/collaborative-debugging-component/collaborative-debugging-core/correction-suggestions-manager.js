@@ -18,7 +18,9 @@ export function CorrectionSuggestionsManager(project, collabDebugInst) {
     });
 
     this.loadCorrectionSuggestions = (correctionSuggestions) => {
-        correctionSuggestions.forEach();
+        correctionSuggestions.forEach(correction => {
+            
+        });
     }
 
     if (project.componentsData
@@ -38,5 +40,12 @@ export function CorrectionSuggestionsManager(project, collabDebugInst) {
         //handling based on the onFocusPItem
 
         this.projectItemsCSM[pitemId].onChangeEditorsDataLocal(data);
+    };
+
+    this.onCreateCorrection = (pitemId, name, description, authorInfo) => {
+        this.projectItemsCSM[pitemId].onCreateCorrection(
+            name,
+            description,
+            authorInfo);
     };
 }

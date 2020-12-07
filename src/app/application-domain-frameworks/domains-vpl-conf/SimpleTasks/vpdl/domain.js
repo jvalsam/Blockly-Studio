@@ -30,6 +30,7 @@ export function InitializeVPDL() {
             domainElements: [
                 BlocklyTaskElem
             ],
+            domainStaticElements: [],
             editorConfigs: [
                 BlocklyTask
             ],
