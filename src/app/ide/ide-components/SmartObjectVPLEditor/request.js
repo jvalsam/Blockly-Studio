@@ -19,7 +19,7 @@ const GetRequest = (url, callback) => {
  * @description Request scan resources
  */
 export function RequestScanResources(onSuccess, onFail) {
-  GetRequest(urlInfo.iotivityUrl + "/scan", function (err, res) {
+  GetRequest("http://" + urlInfo.iotivityUrl + "/scan", function (err, res) {
     if (err) {
       onFail();
     } else {

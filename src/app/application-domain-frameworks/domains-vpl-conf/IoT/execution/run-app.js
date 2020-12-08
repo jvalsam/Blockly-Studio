@@ -47,17 +47,55 @@ async function PostRequest(url = "", data = {}) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
-const Initialize = function (smartObjects, resourcesIDs) {
-  dayjs().format();
+const CollectRegisteredDevices = function (smartObjects) {
+  const returnObject = { devicesIDsForGetRequest: [], devicesIDs: [] };
 
   smartObjects.forEach((so) => {
-    resourcesIDs.push([
+    // for GET query
+    returnObject.devicesIDsForGetRequest.push([
       so.editorsData[0].generated.details.iotivityResourceID,
       "",
     ]);
+
+    // for registered devices
+    returnObject.devicesIDs.push(
+      so.editorsData[0].generated.details.iotivityResourceID
+    );
+  });
+
+  return returnObject;
+};
+
+const InitializeSocketConnection = function (onSuccess) {
+  // Create WebSocket connection.
+  const socket = new WebSocket("ws://" + urlInfo.iotivityUrl);
+
+  /* Add function for validate JSON.parse */
+  socket.isJsonString = function (str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  };
+
+  // Connection opened
+  socket.addEventListener("open", function (event) {
+    onSuccess(socket);
   });
 };
 
+const StartObserving = function (socket, devicesIDs) {
+  let dataToSend = { type: "start_observe", resources: devicesIDs };
+  socket.send(JSON.stringify(dataToSend));
+};
+
+const Initialize = function () {
+  dayjs().format();
+};
+
+/* Start data and functions for calendar - conditional blocks */
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
 const whenCondData = [];
@@ -185,34 +223,67 @@ const timeDispatch = {
   everyDay: EveryDay,
   everyMonth: EveryMonth,
 };
+/* End data and functions for calendar - conditional blocks */
 
 export async function StartApplication(data) {
   try {
     AddThirdPartyLibs(data.runtimeEnvironment);
 
-    let resourcesIDs = [];
+    // return {devicesIDsForGetRequest, devicesIDs} the first to construct Get query
+    let devicesIDsObject = CollectRegisteredDevices(
+      data.execData.project.SmartObjects
+    );
 
-    Initialize(data.execData.project.SmartObjects, resourcesIDs);
+    // Open socket connection with iotivity
+    Initialize();
 
-    var url = new URL(urlInfo.iotivityUrl + "/resources");
-    url.search = new URLSearchParams(resourcesIDs).toString();
+    // Construct request to get the registered devices
+    var url = new URL("http://" + urlInfo.iotivityUrl + "/resources");
+    url.search = new URLSearchParams(
+      devicesIDsObject.devicesIDsForGetRequest
+    ).toString();
 
+    // Get registered devices from iotivity
     GetRequest(url).then((responseData) => {
       // data.resources
       const devicesOnAutomations = responseData.resources;
 
-      // calendar tasks
-      data.execData.project.CalendarEvents.forEach((events) => {
-        eval("(async () => {" + events.editorsData[0].generated + "})()");
-      });
+      // open socket connection
+      InitializeSocketConnection((socket) => {
+        // Start Observing
+        StartObserving(socket, devicesIDsObject.devicesIDs);
 
-      // conditional tasks
-      data.execData.project.ConditionalEvents.forEach((events) => {
-        eval("(async () => {" + events.editorsData[0].generated + "})()");
-      });
+        // Listen for messages
+        socket.addEventListener("message", function (event) {
+          if (socket.isJsonString(event.data)) {
+            let data = JSON.parse(event.data);
+            switch (data.type) {
+              case "update":
+                // TODO: replace new resource with the old one
 
-      // Start whenConditions
-      StartWhenTimeout();
+                break;
+
+              default:
+                break;
+            }
+
+            console.log(data.resource);
+          }
+        });
+
+        // calendar tasks
+        data.execData.project.CalendarEvents.forEach((events) => {
+          eval("(async () => {" + events.editorsData[0].generated + "})()");
+        });
+
+        // conditional tasks
+        data.execData.project.ConditionalEvents.forEach((events) => {
+          eval("(async () => {" + events.editorsData[0].generated + "})()");
+        });
+
+        // Start whenConditions
+        StartWhenTimeout();
+      });
     });
   } catch (e) {
     alert(e);
