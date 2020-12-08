@@ -18,7 +18,7 @@ export function CorrectionSuggestionsManager(project, collabDebugInst) {
     });
 
     this.loadCorrectionSuggestions = (correctionSuggestions) => {
-        correctionSuggestions.forEach(correction => {
+        correctionSuggestions.forEach(pitemCorrectionSuggestions => {
             
         });
     }

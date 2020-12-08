@@ -1,4 +1,7 @@
 import { PeerCommunication } from "./peer-communication";
+import {
+    CorrectionSuggestionsManager
+} from "./correction-suggestions-manager";
 
 
 export function CollaborativeDebuggingComponent (
@@ -15,7 +18,9 @@ export function CollaborativeDebuggingComponent (
     
     if (this.isMaster) {
         this.debuggingRooms = new DebuggingRoomsManager();
-        this.projectItemsHandler = new ProjectItemsHandler(project);
+        this.correctionSuggestionsManager = new CorrectionSuggestionsManager(
+            project,
+            this);
         this.peerCommunication.initialize();
     }
     else {
@@ -24,10 +29,25 @@ export function CollaborativeDebuggingComponent (
             project);
     }
 
-    // called by the peer communication to load data on connection established
-    this.onLoadCollabDebugSessionData = (data) => {
+    // 
+    this.sendSessionData = (user, data) => {
+        this.peerCommunication.sendToUser(
+            user,
+            {
+                project: project,
+                CollaborativeDebugging: {
+                    correctionSuggestions: "",
+                    debuggingRooms: ""
+                    // userActions: 
+                }
+            }
+        );
+    };
+
+    this.loadSessionData = (data) => {
         
     }
+
 
     //
     this.onMemberJoin = (memberInfo) => {
