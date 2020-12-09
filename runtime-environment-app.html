@@ -2,8 +2,8 @@
   <head>
     <meta charset="utf-8" />
     <title>Runtime Environment of Blockly Studio</title>
-    <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="shortcut icon" type="image/png" href="/images/blocks.png" />
     <link
       href="/src/app/ide/components-framework/build-in.components/run-time-system-manager/runtime-environment/runtime-environment-app.css"
@@ -13,8 +13,17 @@
       type="module"
       src="/src/app/ide/components-framework/build-in.components/run-time-system-manager/runtime-environment/runtime-environment-app.js"
     ></script>
+    <link
+      href="https://cdn.rawgit.com/nizarmah/calendar-javascript-lib/master/calendarorganizer.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.rawgit.com/nizarmah/calendar-javascript-lib/master/calendarorganizer.min.js"></script>
+    <script
+      type="module"
+      src="./domains-libs/IoT/AutoIoTGen/iot-interfaces/dist/iot-ui.js"
+    ></script>
   </head>
   <body>
-    <div id="run-application-view-container"></div>
+    <div class="container-fluid" id="run-application-view-container"></div>
   </body>
 </html>

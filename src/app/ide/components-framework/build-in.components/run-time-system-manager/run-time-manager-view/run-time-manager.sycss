@@ -26,11 +26,17 @@
   width: 100%;
   margin: 0;
   padding: 10px;
+  height: 90%;
 }
 
 #runtime-modal .modal-content {
-  width: fit-content;
+  height: 100%; /* = 100% of the .modal-dialog block */
+  background-color: #f4f5f5 !important;
 }
+
+/* #runtime-modal .modal-content {
+  width: fit-content;
+} */
 
 .output-console {
   display: flex;

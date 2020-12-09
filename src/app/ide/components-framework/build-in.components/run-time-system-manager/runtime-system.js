@@ -54,9 +54,12 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
         $('<iframe>')
             .attr('id', id)
             .attr('src',file_src)
-            .attr('height',500)
-            .attr('width', 500)
+            .css("overflow", "hidden")
+            .css("height", "100%")
+            .css("width", "100%")
             .css("border","none")
+            .height("100%")
+            .width("100%")
             .appendTo('#runtime-iframe-container');
     }
 

@@ -1,6 +1,18 @@
 import { urlInfo } from "../../../../ide/ide-components/SmartObjectVPLEditor/iotivity-server-conf.js";
 
 const AddThirdPartyLibs = function (environment) {
+  environment.importCSSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/bootstrap.min.css"
+  );
+
+  // environment.importCSSLib(
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/fullcalendar.min.css"
+  // );
+
+  // environment.importJSLib(
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/fullcalendar.min.js"
+  // );
+
   environment.importJSLib(
     "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/jquery-3.4.1.slim.min.js"
   );
@@ -16,18 +28,11 @@ const AddThirdPartyLibs = function (environment) {
   environment.importJSLib(
     "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/dayjs.min.js"
   );
+
   environment.importJS(" dayjs().format();");
 
   environment.importJSLib(
     "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/lodash.min.js"
-  );
-
-  environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/fullcalendar.min.js"
-  );
-
-  environment.importCSSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/bootstrap.min.css"
   );
 };
 
@@ -112,7 +117,10 @@ const StartObserving = function (socket, devicesIDs) {
 
 const Initialize = function (selector) {
   InitializeClock(selector);
-  // dayjs.extend(window.dayjs_plugin_utc);
+
+  InitializeCalendar(selector);
+
+  InitializeSmartDevicesContainer(selector);
 };
 
 /* Start data and functions for calendar - conditional blocks */
@@ -249,28 +257,101 @@ const timeDispatch = {
 const InitializeClock = function (selector) {
   let clockDiv = document.createElement("div");
   clockDiv.id = "runtime-clock";
-  clockDiv.style.display = "inline-grid";
+  clockDiv.style.fontSize = "larger";
   selector.appendChild(clockDiv);
 
   let date = document.createElement("span");
   date.id = "runtime-date";
+  date.innerHTML = "Time: ";
   clockDiv.appendChild(date);
 
   let hour = document.createElement("span");
   hour.id = "runtime-hour";
   clockDiv.appendChild(hour);
+
+  let calendarButtonSpan = document.createElement("span");
+  clockDiv.appendChild(hour);
+
+  let calendarFoldButton = document.createElement("button");
+  clockDiv.appendChild(hour);
 };
 
 const RenderClock = function (selector) {
-  document.getElementById("runtime-date").innerHTML = dayjs().format(
-    "dddd, DD MMMM YYYY"
-  );
+  // document.getElementById("runtime-date").innerHTML = dayjs().format(
+  //   "dddd, DD MMMM YYYY"
+  // );
 
   document.getElementById("runtime-hour").innerHTML = dayjs().format(
     "hh:mm:ss"
   );
 };
 
+const InitializeCalendar = function (selector) {
+  let calendarDiv = document.createElement("div");
+  calendarDiv.id = "calendar-container";
+  selector.appendChild(calendarDiv);
+
+  var calendar = new Calendar(
+    "calendar-container",
+    "small",
+    ["Monday", 3],
+    ["#ffc107", "#ffa000", "#ffffff", "#ffecb3"],
+    {
+      days: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+      months: [
+        "January",
+        "Feburary",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ],
+      indicator: true,
+      indicator_type: 1,
+      indicator_pos: "top",
+      placeholder: "<span>Custom Placeholder</span>",
+    }
+  );
+
+  var data = {
+    2017: {
+      12: {
+        25: [
+          {
+            startTime: "00:00",
+            endTime: "24:00",
+            text: "Christmas Day",
+          },
+        ],
+      },
+    },
+  };
+};
+
+const InitializeSmartDevicesContainer = function (selector) {
+  let smartDevicesDiv = document.createElement("div");
+  smartDevicesDiv.classList.add("container-fluid");
+  smartDevicesDiv.id = "runtime-smart-devices-container";
+  selector.appendChild(smartDevicesDiv);
+};
+
+const RenderSmartDevices = function () {
+  console.log(Automatic_IoT_UI_Generator);
+};
 /* End UI for runtime environment */
 
 export async function StartApplication(runTimeData) {
@@ -324,6 +405,9 @@ export async function StartApplication(runTimeData) {
               case "start_observe_response":
                 RenderClock();
                 setInterval(RenderClock, 1000);
+
+                // Render Smart Devices
+                RenderSmartDevices();
 
                 // calendar tasks
                 runTimeData.execData.project.CalendarEvents.forEach(

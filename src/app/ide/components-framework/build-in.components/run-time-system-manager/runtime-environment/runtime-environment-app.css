@@ -1,0 +1,18 @@
+body {
+  background-color: #f4f5f5 !important;
+}
+
+/* For calendar */
+.cjslib-year {
+  width: 100% !important;
+  background-color: #3d314a !important;
+}
+
+.cjslib-month {
+  width: 100% !important;
+  background-color: #292a2b !important;
+}
+
+.cjslib-labels {
+  background-color: #3d314a !important;
+}
