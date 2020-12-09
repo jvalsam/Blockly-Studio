@@ -55,8 +55,9 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
             .attr('id', id)
             .attr('src',file_src)
             .attr('height',500)
-            .attr('width',500)
-            .appendTo('.runtime-environment-area');
+            .attr('width', 500)
+            .css("border","none")
+            .appendTo('#runtime-iframe-container');
     }
 
     static getIframe(id) {

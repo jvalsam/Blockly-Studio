@@ -14,6 +14,7 @@ import { IDEUIComponent } from '../../component/ide-ui-component';
 import { IConsoleOutputMsg } from './run-time-manager-view/run-time-manager-output-view/run-time-manager-output-view';
 import { ComponentsCommunication } from '../../component/components-communication';
 import { RuntimeSystem } from "./runtime-system";
+import { RuntimeManagerView } from './run-time-manager-view/run-time-manager-view';
 
 // initialize the metadata of the project manager component for registration in the platform
 RuntimeManagerDataHolder.initialize();
@@ -255,6 +256,7 @@ export class RuntimeManager extends IDEUIComponent {
         // this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
+        (<RuntimeManagerView>this._view).openRuntimeEnvironmentDialogue();
         RuntimeSystem.initialize("BlocklyStudioIDE_MainRuntimeEnvironment");
         let cw = RuntimeSystem
             .getIframe("BlocklyStudioIDE_MainRuntimeEnvironment")

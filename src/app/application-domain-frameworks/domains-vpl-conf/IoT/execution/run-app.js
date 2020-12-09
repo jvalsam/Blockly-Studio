@@ -2,11 +2,32 @@ import { urlInfo } from "../../../../ide/ide-components/SmartObjectVPLEditor/iot
 
 const AddThirdPartyLibs = function (environment) {
   environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/dayjs.min.js"
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/jquery-3.4.1.slim.min.js"
   );
 
   environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/lodash.min.js"
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/popper.min.js"
+  );
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/bootstrap.min.js"
+  );
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/dayjs.min.js"
+  );
+  environment.importJS(" dayjs().format();");
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/lodash.min.js"
+  );
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/fullcalendar.min.js"
+  );
+
+  environment.importCSSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/bootstrap.min.css"
   );
 };
 
@@ -89,8 +110,9 @@ const StartObserving = function (socket, devicesIDs) {
   socket.send(JSON.stringify(dataToSend));
 };
 
-const Initialize = function () {
-  dayjs().format();
+const Initialize = function (selector) {
+  InitializeClock(selector);
+  // dayjs.extend(window.dayjs_plugin_utc);
 };
 
 /* Start data and functions for calendar - conditional blocks */
@@ -223,6 +245,34 @@ const timeDispatch = {
 };
 /* End data and functions for calendar - conditional blocks */
 
+/* Start UI for runtime environment */
+const InitializeClock = function (selector) {
+  let clockDiv = document.createElement("div");
+  clockDiv.id = "runtime-clock";
+  clockDiv.style.display = "inline-grid";
+  selector.appendChild(clockDiv);
+
+  let date = document.createElement("span");
+  date.id = "runtime-date";
+  clockDiv.appendChild(date);
+
+  let hour = document.createElement("span");
+  hour.id = "runtime-hour";
+  clockDiv.appendChild(hour);
+};
+
+const RenderClock = function (selector) {
+  document.getElementById("runtime-date").innerHTML = dayjs().format(
+    "dddd, DD MMMM YYYY"
+  );
+
+  document.getElementById("runtime-hour").innerHTML = dayjs().format(
+    "hh:mm:ss"
+  );
+};
+
+/* End UI for runtime environment */
+
 export async function StartApplication(runTimeData) {
   try {
     AddThirdPartyLibs(runTimeData.runtimeEnvironment);
@@ -232,8 +282,7 @@ export async function StartApplication(runTimeData) {
       runTimeData.execData.project.SmartObjects
     );
 
-    // Open socket connection with iotivity
-    Initialize();
+    Initialize(runTimeData.UISelector);
 
     // Construct request to get the registered devices
     var url = new URL("http://" + urlInfo.iotivityUrl + "/resources");
@@ -260,6 +309,8 @@ export async function StartApplication(runTimeData) {
                 let oldDeviceIndex = devicesOnAutomations.findIndex(
                   (elem) => elem.id === socketData.resource.id
                 );
+
+                // replace old resource with the new one
                 if (
                   !_.isEqual(
                     socketData.resource,
@@ -267,9 +318,13 @@ export async function StartApplication(runTimeData) {
                   )
                 )
                   devicesOnAutomations[oldDeviceIndex] = socketData.resource;
+
                 break;
 
               case "start_observe_response":
+                RenderClock();
+                setInterval(RenderClock, 1000);
+
                 // calendar tasks
                 runTimeData.execData.project.CalendarEvents.forEach(
                   (events) => {

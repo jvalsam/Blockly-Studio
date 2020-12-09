@@ -80,6 +80,20 @@ class _RuntimeEnvironmentApp extends RuntimeEnvironmentMessageHandler {
         document.head.appendChild(script);
     }
 
+    importCSSLib(url) {
+        var link = document.createElement("link");
+        link.href = url;
+        link.rel = "stylesheet";
+        document.head.appendChild(link);
+    }
+
+    importJS(code) { 
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.onload = code;
+        document.head.appendChild(script);
+    }
+
     /** 
      * Methods to handle components are loaded in the runtime environment app
     /* and would like to communicate with the Blockly Studio IDE.
