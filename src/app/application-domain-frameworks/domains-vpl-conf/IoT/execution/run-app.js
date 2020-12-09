@@ -6,10 +6,8 @@ const AddThirdPartyLibs = function (environment) {
   );
 
   // environment.importJSLib(
-  //   "https://polyfill.io/v3/polyfill.min.js?features=Array.from,Promise,Symbol,Object.setPrototypeOf,Object.getOwnPropertySymbols,Set"
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/lodash.min.js"
   // );
-
-  // environment.importJSLib("https://cdn.jsdelivr.net/npm/superagent");
 };
 
 async function GetRequest(url = "") {
@@ -260,7 +258,10 @@ export async function StartApplication(data) {
             switch (data.type) {
               case "update":
                 // TODO: replace new resource with the old one
-
+                let oldDeviceIndex = devicesOnAutomations.findIndex(
+                  (elem) => elem.id === data.resource.id
+                );
+                _.isEqual(data.resource, devicesOnAutomations[oldDeviceIndex]);
                 break;
 
               default:
