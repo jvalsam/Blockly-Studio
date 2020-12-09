@@ -35,7 +35,6 @@ export const CalendarStaticBlocks = [
         let strBuilder = "";
         strBuilder +=
           "arrayIntervals.push({type: 'calendar_at', time: setTimeout(function () {";
-        strBuilder += "alert('hi');";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -85,7 +84,6 @@ export const CalendarStaticBlocks = [
         let strBuilder = "";
         strBuilder +=
           "arrayIntervals.push({type: 'calendar_at_top_bottom', time: setTimeout(function () {";
-        strBuilder += "alert('hi');";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +

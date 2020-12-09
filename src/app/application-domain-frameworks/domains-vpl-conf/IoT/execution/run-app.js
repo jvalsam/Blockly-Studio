@@ -5,9 +5,9 @@ const AddThirdPartyLibs = function (environment) {
     "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/dayjs.min.js"
   );
 
-  // environment.importJSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/lodash.min.js"
-  // );
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/lodash.min.js"
+  );
 };
 
 async function GetRequest(url = "") {
@@ -223,13 +223,13 @@ const timeDispatch = {
 };
 /* End data and functions for calendar - conditional blocks */
 
-export async function StartApplication(data) {
+export async function StartApplication(runTimeData) {
   try {
-    AddThirdPartyLibs(data.runtimeEnvironment);
+    AddThirdPartyLibs(runTimeData.runtimeEnvironment);
 
     // return {devicesIDsForGetRequest, devicesIDs} the first to construct Get query
     let devicesIDsObject = CollectRegisteredDevices(
-      data.execData.project.SmartObjects
+      runTimeData.execData.project.SmartObjects
     );
 
     // Open socket connection with iotivity
@@ -254,36 +254,53 @@ export async function StartApplication(data) {
         // Listen for messages
         socket.addEventListener("message", function (event) {
           if (socket.isJsonString(event.data)) {
-            let data = JSON.parse(event.data);
-            switch (data.type) {
+            let socketData = JSON.parse(event.data);
+            switch (socketData.type) {
               case "update":
-                // TODO: replace new resource with the old one
                 let oldDeviceIndex = devicesOnAutomations.findIndex(
-                  (elem) => elem.id === data.resource.id
+                  (elem) => elem.id === socketData.resource.id
                 );
-                _.isEqual(data.resource, devicesOnAutomations[oldDeviceIndex]);
+                if (
+                  !_.isEqual(
+                    socketData.resource,
+                    devicesOnAutomations[oldDeviceIndex]
+                  )
+                )
+                  devicesOnAutomations[oldDeviceIndex] = socketData.resource;
+                break;
+
+              case "start_observe_response":
+                // calendar tasks
+                runTimeData.execData.project.CalendarEvents.forEach(
+                  (events) => {
+                    eval(
+                      "(async () => {" +
+                        events.editorsData[0].generated +
+                        "})()"
+                    );
+                  }
+                );
+
+                // conditional tasks
+                runTimeData.execData.project.ConditionalEvents.forEach(
+                  (events) => {
+                    eval(
+                      "(async () => {" +
+                        events.editorsData[0].generated +
+                        "})()"
+                    );
+                  }
+                );
+
+                // Start whenConditions
+                StartWhenTimeout();
                 break;
 
               default:
                 break;
             }
-
-            console.log(data.resource);
           }
         });
-
-        // calendar tasks
-        data.execData.project.CalendarEvents.forEach((events) => {
-          eval("(async () => {" + events.editorsData[0].generated + "})()");
-        });
-
-        // conditional tasks
-        data.execData.project.ConditionalEvents.forEach((events) => {
-          eval("(async () => {" + events.editorsData[0].generated + "})()");
-        });
-
-        // Start whenConditions
-        StartWhenTimeout();
       });
     });
   } catch (e) {
