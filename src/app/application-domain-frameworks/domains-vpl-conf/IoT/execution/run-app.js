@@ -118,7 +118,7 @@ const StartObserving = function (socket, devicesIDs) {
 const Initialize = function (selector) {
   InitializeClock(selector);
 
-  InitializeCalendar(selector);
+  // InitializeCalendar(selector);
 
   InitializeSmartDevicesContainer(selector);
 };
@@ -344,13 +344,22 @@ const InitializeCalendar = function (selector) {
 
 const InitializeSmartDevicesContainer = function (selector) {
   let smartDevicesDiv = document.createElement("div");
-  smartDevicesDiv.classList.add("container-fluid");
   smartDevicesDiv.id = "runtime-smart-devices-container";
+  smartDevicesDiv.style.display = "flex";
+  smartDevicesDiv.style.backgroundColor = "#f1f1f1";
   selector.appendChild(smartDevicesDiv);
 };
 
-const RenderSmartDevices = function () {
-  console.log(Automatic_IoT_UI_Generator);
+const RenderSmartDevices = function (devicesOnAutomations) {
+  let smartDeviceSelector = document.getElementById(
+    "runtime-smart-devices-container"
+  );
+  devicesOnAutomations.forEach((device) => {
+    Automatic_IoT_UI_Generator.RenderReadOnlyResource(
+      smartDeviceSelector,
+      device
+    );
+  });
 };
 /* End UI for runtime environment */
 
@@ -407,7 +416,7 @@ export async function StartApplication(runTimeData) {
                 setInterval(RenderClock, 1000);
 
                 // Render Smart Devices
-                RenderSmartDevices();
+                RenderSmartDevices(devicesOnAutomations);
 
                 // calendar tasks
                 runTimeData.execData.project.CalendarEvents.forEach(

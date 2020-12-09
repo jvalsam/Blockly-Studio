@@ -16,3 +16,15 @@ body {
 .cjslib-labels {
   background-color: #3d314a !important;
 }
+
+/* Smart Devices Preview */
+.resource-card {
+  width: 22rem !important;
+  /* margin-left: 0 !important; */
+  max-height: 24rem !important;
+}
+
+.property-value-string,
+.property-value-number {
+  max-width: 6rem !important;
+}
