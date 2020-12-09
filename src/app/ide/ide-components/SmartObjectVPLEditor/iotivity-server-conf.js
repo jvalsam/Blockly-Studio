@@ -1,3 +1,3 @@
 export const urlInfo = Object.freeze({
-  iotivityUrl: "localhost:3030",
+  iotivityUrl: "147.52.17.129:3030",
 });
