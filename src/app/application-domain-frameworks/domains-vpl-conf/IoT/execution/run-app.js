@@ -1,39 +1,34 @@
 import { urlInfo } from "../../../../ide/ide-components/SmartObjectVPLEditor/iotivity-server-conf.js";
 
 const AddThirdPartyLibs = function (environment) {
-  environment.importCSSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/bootstrap.min.css"
-  );
-
   // environment.importCSSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/fullcalendar.min.css"
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/bootstrap.min.css"
   // );
-
   // environment.importJSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/fullcalendar.min.js"
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/jquery-3.4.1.slim.min.js"
   // );
-
-  environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/jquery-3.4.1.slim.min.js"
-  );
-
-  environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/popper.min.js"
-  );
-
-  environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/bootstrap.min.js"
-  );
-
-  environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/dayjs.min.js"
-  );
-
-  environment.importJS(" dayjs().format();");
-
-  environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/lodash.min.js"
-  );
+  // environment.importJSLib(
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/popper.min.js"
+  // );
+  // environment.importJSLib(
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/bootstrap.min.js"
+  // );
+  // environment.importJSLib(
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/dayjs.min.js"
+  // );
+  // environment.importJS(" dayjs().format();");
+  // environment.importJSLib(
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/lodash.min.js"
+  // );
+  // // <link
+  // //     href="https://cdn.rawgit.com/nizarmah/calendar-javascript-lib/master/calendarorganizer.min.css"
+  // //     rel="stylesheet"
+  // //   />
+  // //   <script src="https://cdn.rawgit.com/nizarmah/calendar-javascript-lib/master/calendarorganizer.min.js"></script>
+  // //   <script
+  // //     type="module"
+  // //     src="./domains-libs/IoT/AutoIoTGen/iot-interfaces/dist/iot-ui.js"
+  // //   ></script>
 };
 
 async function GetRequest(url = "") {
@@ -116,6 +111,7 @@ const StartObserving = function (socket, devicesIDs) {
 };
 
 const Initialize = function (selector) {
+  dayjs().format();
   InitializeClock(selector);
 
   InitializeCalendar(selector);

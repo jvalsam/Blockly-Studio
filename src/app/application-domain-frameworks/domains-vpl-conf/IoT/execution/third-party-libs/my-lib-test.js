@@ -1,2 +1,0 @@
-
-alert("testing libraries loading");

@@ -1,5 +1,5 @@
 body {
-  background-color: #f4f5f5 !important;
+  background-color: #e8e7e7 !important;
   /* overflow-y: hidden; */
 }
 
@@ -26,14 +26,25 @@ body {
 
 /* Smart Devices Preview */
 .resource-card {
-  width: 22rem !important;
+  width: 16rem !important;
   /* margin-left: 0 !important; */
-  max-height: 24rem !important;
+  max-height: 18rem !important;
+}
+.resource-card .card-body {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0 !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
 }
 
 .property-value-string,
 .property-value-number {
   max-width: 6rem !important;
+  height: 2rem !important;
+}
+.resource-card .hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .cjslib-date {

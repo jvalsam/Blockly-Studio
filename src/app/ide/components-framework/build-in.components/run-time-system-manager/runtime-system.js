@@ -68,6 +68,9 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
             $envApp.append(link);
         });
         return '<html lang="en"><head>'
+            + "<link href=\"/src/app/ide/components-framework/build-in.components/run-time-system-manager/runtime-environment/runtime-environment-app.css\" rel=\"stylesheet\"/>"
+            + "<script type=\"module\" "
+            + "src=\"/src/app/ide/components-framework/build-in.components/run-time-system-manager/runtime-environment/runtime-environment-app.js\"></script>"
             + $envApp.html()
             + '</head><body>'
             + '<div class="container-fluid" id="run-application-view-container"></div>'
