@@ -1,36 +1,5 @@
 import { urlInfo } from "../../../../ide/ide-components/SmartObjectVPLEditor/iotivity-server-conf.js";
 
-const AddThirdPartyLibs = function (environment) {
-  // environment.importCSSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/bootstrap.min.css"
-  // );
-  // environment.importJSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/jquery-3.4.1.slim.min.js"
-  // );
-  // environment.importJSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/popper.min.js"
-  // );
-  // environment.importJSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/bootstrap.min.js"
-  // );
-  // environment.importJSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/dayjs.min.js"
-  // );
-  // environment.importJS(" dayjs().format();");
-  // environment.importJSLib(
-  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/lodash.min.js"
-  // );
-  // // <link
-  // //     href="https://cdn.rawgit.com/nizarmah/calendar-javascript-lib/master/calendarorganizer.min.css"
-  // //     rel="stylesheet"
-  // //   />
-  // //   <script src="https://cdn.rawgit.com/nizarmah/calendar-javascript-lib/master/calendarorganizer.min.js"></script>
-  // //   <script
-  // //     type="module"
-  // //     src="./domains-libs/IoT/AutoIoTGen/iot-interfaces/dist/iot-ui.js"
-  // //   ></script>
-};
-
 async function GetRequest(url = "") {
   // Default options are marked with *
   const response = await fetch(url, {
@@ -112,7 +81,7 @@ const StartObserving = function (socket, devicesIDs) {
 
 const Initialize = function (selector) {
   dayjs().format();
-  InitializeClock(selector);
+  InitializeClocks(selector);
 
   InitializeCalendar(selector);
 
@@ -250,7 +219,7 @@ const timeDispatch = {
 /* End data and functions for calendar - conditional blocks */
 
 /* Start UI for runtime environment */
-const InitializeClock = function (selector) {
+const InitializeClocks = function (selector) {
   let outterClockDiv = document.createElement("div");
   outterClockDiv.style.cssFloat = "right";
   selector.appendChild(outterClockDiv);
@@ -260,6 +229,10 @@ const InitializeClock = function (selector) {
   fill.style.width = "130px";
   fill.style.height = "130px";
   outterClockDiv.appendChild(fill);
+
+  let digitalClock = document.createElement("div");
+  digitalClock.id = "digital-clock";
+  outterClockDiv.appendChild(digitalClock);
 
   let utility_clock = document.createElement("div");
   utility_clock.id = "utility-clock";
@@ -436,10 +409,37 @@ function autoResize(element, nativeSize) {
   window.addEventListener("resize", update);
 }
 
-const RenderClock = function () {
+const RenderAnalogClock = function () {
   var clock = document.getElementById("utility-clock");
   utilityClock(clock);
   autoResize(clock, 295 + 32);
+};
+
+const RenderDigitalClock = function () {
+  var date = new Date();
+  var h = date.getHours(); // 0 - 23
+  var m = date.getMinutes(); // 0 - 59
+  var s = date.getSeconds(); // 0 - 59
+  var session = "AM";
+
+  if (h == 0) {
+    h = 12;
+  }
+
+  if (h > 12) {
+    h = h - 12;
+    session = "PM";
+  }
+
+  h = h < 10 ? "0" + h : h;
+  m = m < 10 ? "0" + m : m;
+  s = s < 10 ? "0" + s : s;
+
+  var time = h + ":" + m + ":" + s + " " + session;
+  document.getElementById("digital-clock").innerText = time;
+  document.getElementById("digital-clock").textContent = time;
+
+  setTimeout(RenderDigitalClock, 1000);
 };
 
 const InitializeCalendar = function (selector) {
@@ -531,18 +531,43 @@ const RenderSmartDevices = function (devicesOnAutomations) {
     let cardOutter = document.createElement("div");
     cardOutter.classList.add("ml-2");
     cardOutter.classList.add("mr-2");
+    cardOutter.classList.add("runtime-cards");
     cardOutter.id = device.id + "-runtime-card";
     smartDeviceSelector.appendChild(cardOutter);
 
     Automatic_IoT_UI_Generator.RenderReadOnlyResource(cardOutter, device);
   });
 };
+
+const FocusOnUpdatedDevice = function (selector) {
+  selector.classList.add("runtime-cards-update");
+  setTimeout(function () {
+    selector.classList.remove("runtime-cards-update");
+  }, 3000);
+};
 /* End UI for runtime environment */
+
+/* Start functionality for smart devices */
+let MergeSmartObjectWithResource = function (so, resource) {
+  // Merge all we need
+  resource.name = so.editorsData[0].generated.title;
+};
+
+let MergeSmartObjectsWithResources = function (smartObjects, resources) {
+  smartObjects.forEach((so) => {
+    // find resource
+    let device = resources.find(
+      (resource) =>
+        resource.id === so.editorsData[0].generated.details.iotivityResourceID
+    );
+
+    device.name = so.editorsData[0].generated.title;
+  });
+};
+/* End functionality for smart devices */
 
 export async function StartApplication(runTimeData) {
   try {
-    AddThirdPartyLibs(runTimeData.runtimeEnvironment);
-
     // return {devicesIDsForGetRequest, devicesIDs} the first to construct Get query
     let devicesIDsObject = CollectRegisteredDevices(
       runTimeData.execData.project.SmartObjects
@@ -575,6 +600,14 @@ export async function StartApplication(runTimeData) {
                 let oldDeviceIndex = devicesOnAutomations.findIndex(
                   (elem) => elem.id === socketData.resource.id
                 );
+                // find smart object
+                let smartObject = runTimeData.execData.project.SmartObjects.find(
+                  (so) =>
+                    devicesOnAutomations[oldDeviceIndex].id ===
+                    so.editorsData[0].generated.details.iotivityResourceID
+                );
+                // merge smart object with resource to avoid update
+                MergeSmartObjectWithResource(smartObject, socketData.resource);
 
                 // replace old resource with the new one
                 if (
@@ -584,6 +617,14 @@ export async function StartApplication(runTimeData) {
                   )
                 ) {
                   devicesOnAutomations[oldDeviceIndex] = socketData.resource;
+
+                  // Merge name into resource for rendering
+
+                  MergeSmartObjectWithResource(
+                    smartObject,
+                    devicesOnAutomations[oldDeviceIndex]
+                  );
+
                   // render device
                   let deviceCol = document.getElementById(
                     socketData.resource.id + "-runtime-card"
@@ -593,13 +634,20 @@ export async function StartApplication(runTimeData) {
                     deviceCol,
                     devicesOnAutomations[oldDeviceIndex]
                   );
-                }
 
+                  FocusOnUpdatedDevice(deviceCol);
+                }
                 break;
 
               case "start_observe_response":
-                RenderClock();
-                // setInterval(RenderClock, 1000);
+                RenderAnalogClock();
+
+                RenderDigitalClock();
+
+                MergeSmartObjectsWithResources(
+                  runTimeData.execData.project.SmartObjects,
+                  devicesOnAutomations
+                );
 
                 // Render Smart Devices
                 RenderSmartDevices(devicesOnAutomations);
@@ -625,7 +673,6 @@ export async function StartApplication(runTimeData) {
                     );
                   }
                 );
-
                 // Start whenConditions
                 StartWhenTimeout();
                 break;
