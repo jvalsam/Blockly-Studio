@@ -526,11 +526,15 @@ const RenderSmartDevices = function (devicesOnAutomations) {
   let smartDeviceSelector = document.getElementById(
     "runtime-smart-devices-container"
   );
+
   devicesOnAutomations.forEach((device) => {
-    Automatic_IoT_UI_Generator.RenderReadOnlyResource(
-      smartDeviceSelector,
-      device
-    );
+    let cardOutter = document.createElement("div");
+    cardOutter.classList.add("ml-2");
+    cardOutter.classList.add("mr-2");
+    cardOutter.id = device.id + "-runtime-card";
+    smartDeviceSelector.appendChild(cardOutter);
+
+    Automatic_IoT_UI_Generator.RenderReadOnlyResource(cardOutter, device);
   });
 };
 /* End UI for runtime environment */
@@ -578,8 +582,18 @@ export async function StartApplication(runTimeData) {
                     socketData.resource,
                     devicesOnAutomations[oldDeviceIndex]
                   )
-                )
+                ) {
                   devicesOnAutomations[oldDeviceIndex] = socketData.resource;
+                  // render device
+                  let deviceCol = document.getElementById(
+                    socketData.resource.id + "-runtime-card"
+                  );
+                  deviceCol.innerHTML = "";
+                  Automatic_IoT_UI_Generator.RenderReadOnlyResource(
+                    deviceCol,
+                    devicesOnAutomations[oldDeviceIndex]
+                  );
+                }
 
                 break;
 

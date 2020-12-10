@@ -30,11 +30,26 @@ body {
   /* margin-left: 0 !important; */
   max-height: 18rem !important;
 }
+
+.resource-card .card-header {
+  padding: 0 !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.resource-card .card-header span {
+  font-size: small !important;
+}
+
 .resource-card .card-body {
   padding-top: 0.5rem !important;
   padding-bottom: 0 !important;
   padding-left: 1.25rem !important;
   padding-right: 1.25rem !important;
+}
+
+.resource-card .property-title {
+  font-size: small;
 }
 
 .property-value-string,
