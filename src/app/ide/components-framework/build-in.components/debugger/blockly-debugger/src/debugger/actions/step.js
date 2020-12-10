@@ -1,26 +1,46 @@
-import {Debuggee_Worker, Blockly_Debugger} from '../init.js';
+import {Debuggee_Worker, Blockly_Debugger} from '../debugger.js';
 
-Blockly_Debugger.actions["StepIn"] = {}; 
-Blockly_Debugger.actions["StepOver"] = {};
-Blockly_Debugger.actions["StepParent"] = {};
-Blockly_Debugger.actions["StepOut"] = {}; 
 
-Blockly_Debugger.actions["StepIn"].handler = () => {
-    if(!Debuggee_Worker.hasInstance()) return; 
-    Debuggee_Worker.Instance().postMessage({"type":"stepIn"});
+export function RegisterStepInDebuggerAction(selector) {
+    Blockly_Debugger.actions["StepIn"] = {}; 
+    Blockly_Debugger.actions["StepIn"].handler = () => {
+        if(!Debuggee_Worker.hasInstance()) return; 
+        Debuggee_Worker.Instance().postMessage({"type":"stepIn"});
+    }
+    Blockly_Debugger.addDebuggerAction(
+        selector,
+        Blockly_Debugger.actions["StepIn"].handler);
 }
 
-Blockly_Debugger.actions["StepOver"].handler = () => {
-    if(!Debuggee_Worker.hasInstance()) return; 
-    Debuggee_Worker.Instance().postMessage({"type":"stepOver"});
+export function RegisterStepOverDebuggerAction(selector) {
+    Blockly_Debugger.actions["StepOver"] = {};
+    Blockly_Debugger.actions["StepOver"].handler = () => {
+        if(!Debuggee_Worker.hasInstance()) return; 
+        Debuggee_Worker.Instance().postMessage({"type":"stepOver"});
+    }
+    Blockly_Debugger.addDebuggerAction(
+        selector,
+        Blockly_Debugger.actions["StepOver"].handler);
 }
 
-Blockly_Debugger.actions["StepParent"].handler = () => {
-    if(!Debuggee_Worker.hasInstance()) return; 
-    Debuggee_Worker.Instance().postMessage({"type":"stepParent"});
+export function RegisterStepParentDebuggerAction(selector) {
+    Blockly_Debugger.actions["StepParent"] = {};
+    Blockly_Debugger.actions["StepParent"].handler = () => {
+        if(!Debuggee_Worker.hasInstance()) return; 
+        Debuggee_Worker.Instance().postMessage({"type":"stepParent"});
+    }
+    Blockly_Debugger.addDebuggerAction(
+        selector,
+        Blockly_Debugger.actions["StepParent"].handler);
 }
 
-Blockly_Debugger.actions["StepOut"].handler = () => {
-    if(!Debuggee_Worker.hasInstance()) return; 
-    Debuggee_Worker.Instance().postMessage({"type":"stepOut"});
+export function RegisterStepOutDebuggerAction(selector) {
+    Blockly_Debugger.actions["StepOut"] = {}; 
+    Blockly_Debugger.actions["StepOut"].handler = () => {
+        if(!Debuggee_Worker.hasInstance()) return; 
+        Debuggee_Worker.Instance().postMessage({"type":"stepOut"});
+    }
+    Blockly_Debugger.addDebuggerAction(
+        selector,
+        Blockly_Debugger.actions["StepOut"].handler);
 }

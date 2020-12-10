@@ -26,6 +26,8 @@ export class RuntimeEnvironmentDebug {
         // pin callback that checks runtime environment state
         this._envData.checkRuntimeEnvironment = () => this._handleRuntime();
 
+        // TODO: find debugger back-end and request for the front-end debugger to start view
+
         this.start(this._envData);
     }
 
@@ -51,6 +53,11 @@ export class RuntimeEnvironmentDebug {
         }
     }
 
+    handleOnError(message) {
+        alert("stop action failed by run-time system.\n" + message);
+        this.callbackOnStop();
+    }
+
     start(applicationData) {
         const promise = new Promise((resolve, reject) => {
             this.promiseStopApp = reject;
@@ -58,7 +65,7 @@ export class RuntimeEnvironmentDebug {
             this._executionScript.StartApplication(applicationData);
         });
         promise
-            .then(finish => console.log("run app finished"))
+            .then(finish => this._handleStopAction("StopApplication"))
             .catch (stopAction => this._handleStopAction(stopAction));
     }
 
@@ -68,8 +75,13 @@ export class RuntimeEnvironmentDebug {
     }
 
     onStop() {
-        this._executionScript.StopApplication();
-        this.this.callbackOnStop();
+        const promise = new Promise((resolve, reject) => {
+            // TODO: stop the backend-debugger
+            this._executionScript.StopApplication(resolve, reject);
+        });
+        promise
+            .then(finish => this.callbackOnStop())
+            .catch(message => this.handleOnError(message));
     }
 
     pause() {
@@ -78,5 +90,9 @@ export class RuntimeEnvironmentDebug {
 
     continue() {
         this._executionScript.ContinueApplication();
+    }
+
+    receiveFrontendMessage(message, callback) {
+        
     }
 }

@@ -20,6 +20,7 @@ RuntimeManagerDataHolder.initialize();
 var menuJson = RuntimeManagerDataHolder.getDomainsMenuJSON();
 var configJson = RuntimeManagerDataHolder.getDomainsConfigJSON();
 
+
 @UIComponentMetadata({
     description: "Runtime Manager of the IDE",
     authors: [
@@ -43,6 +44,7 @@ export class RuntimeManager extends IDEUIComponent {
     private static currentMode: number;
     private isOpen: Boolean;
     private runtimeSystemInst: RuntimeSystem;
+    private _environmentData: any;
 
     constructor(
         name: string,
@@ -55,6 +57,7 @@ export class RuntimeManager extends IDEUIComponent {
         this.isOpen = false;
         RuntimeManager.currentMode = 0;
         this.runtimeSystemInst = null;
+        this._environmentData = null;
     }
 
     public registerEvents(): void { ; }
@@ -227,19 +230,23 @@ export class RuntimeManager extends IDEUIComponent {
         }
     }
 
-    @ExportedFunction
-    getEnvironmentRunData() {
+    private setEnvironmentRunData(): void {
         let appData = ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
             "getRunApplicationData"
         ).value;
 
-        return {
+        this._environmentData = {
             execType: RuntimeManager.getMode(),
             domainType: appData.domain,
             execData: appData
         };
+    }
+
+    @ExportedFunction
+    public getEnvironmentRunData() {
+        return this._environmentData;
     }
 
     private _startMsgHookId: String;
@@ -255,7 +262,11 @@ export class RuntimeManager extends IDEUIComponent {
         // this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
-        RuntimeSystem.initialize("BlocklyStudioIDE_MainRuntimeEnvironment");
+        this.setEnvironmentRunData();
+
+        RuntimeSystem.initialize(
+            "BlocklyStudioIDE_MainRuntimeEnvironment",
+            this._environmentData.domainType);
         let cw = RuntimeSystem
             .getIframe("BlocklyStudioIDE_MainRuntimeEnvironment")
             ['contentWindow'];

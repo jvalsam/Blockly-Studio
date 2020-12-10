@@ -1,10 +1,4 @@
-/**
- * 
- */
-
 import { RuntimeEnvironmentMessageHandler } from "./runtime-environment-message-handler.js";
-import { RuntimeEnvironmentRelease } from "./components/runtime-environment-release/runtime-environment-release.js";
-import { RuntimeEnvironmentDebug } from "./components/runtime-environment-debug/runtime-environment-debug.js";
 import {
     RuntimeEnvironmentComponents
 } from "./runtime-environment-components-registration.js"

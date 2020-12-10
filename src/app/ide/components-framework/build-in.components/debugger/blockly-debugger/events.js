@@ -1,5 +1,3 @@
-import './src/debugger/debugger.js';
-import './src/generator/blockly/blockly.js';
 import { Blockly_Debugger } from './src/debugger/debugger.js';
 
 
@@ -16,7 +14,6 @@ addEventListener("updateTable", function () {
                                                           </tr>`;
     }
 });
-
 
 addEventListener("updateWatchesTable", function () {
     let watches = Blockly_Debugger.actions["Watch"].getWatches();
@@ -49,21 +46,3 @@ addEventListener('keydown', (event) => {
             break;
     }
 });
-
-
-
-// const data = new Uint8Array(Buffer.from('Hello Node.js'));
-// fs.writeFile('message.txt', data, (err) => {
-//   if (err) throw err;
-//   console.log('The file has been saved!');
-// });
-
-// const fs = require('fs');
-// fs.writeFile('test.txt', 'Hello content!', function (err) {
-//     if (err) throw err;
-//     console.log('Saved!');
-//   });
-
-
-// fs.writeFile('message.txt', 'Hello Node.js', 'utf8', callback);
-

@@ -1,6 +1,5 @@
 import './events.js';
-import './src/generator/blockly/blockly.js';
-import { Blockly_Debugger } from './src/debugger/debugger.js';
+
 import * as Blockly from 'blockly';
 
 window.workspace = {};
@@ -36,5 +35,3 @@ addEventListener("loadStartingBlocks", function () {
         window.workspace["blockly2"]
     );
 });
-
-//Blockly_Debugger.actions["Variables"].init();
