@@ -1,5 +1,6 @@
 body {
   background-color: #f4f5f5 !important;
+  /* overflow-y: hidden; */
 }
 
 /* For calendar */

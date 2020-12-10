@@ -344,9 +344,10 @@ const InitializeCalendar = function (selector) {
 
 const InitializeSmartDevicesContainer = function (selector) {
   let smartDevicesDiv = document.createElement("div");
+  smartDevicesDiv.classList.add("row");
   smartDevicesDiv.id = "runtime-smart-devices-container";
-  smartDevicesDiv.style.display = "flex";
   smartDevicesDiv.style.backgroundColor = "#f1f1f1";
+  smartDevicesDiv.style.overflowY = "auto";
   selector.appendChild(smartDevicesDiv);
 };
 
