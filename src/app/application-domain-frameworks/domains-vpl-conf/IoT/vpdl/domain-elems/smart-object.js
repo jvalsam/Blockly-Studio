@@ -324,7 +324,7 @@ export const SmartObject = {
         //   }
         //   // change value in data and then send request
         //   property.value = args[0];
-        //   PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {
+        //   PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {
         //     resourceId: block.soData.details.iotivityResourceID,
         //     methodId:
         //       "method-" +
@@ -372,7 +372,7 @@ export const SmartObject = {
         strBuilder += "}";
         strBuilder += "property.value = args[0];\n";
         strBuilder +=
-          'PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {';
+          'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {';
         strBuilder +=
           "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
         strBuilder +=
@@ -470,7 +470,7 @@ export const SmartObject = {
         //     )
         //     .properties.find((prop) => prop.name === dropdown_properties);
         //   property.value = args[0];
-        //   PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {
+        //   PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {
         //     resourceId: block.soData.details.iotivityResourceID,
         //     methodId:
         //       "method-" +
@@ -497,7 +497,7 @@ export const SmartObject = {
           "');\n";
         strBuilder += "property.value = args[0];\n";
         strBuilder +=
-          'PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {';
+          'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {';
         strBuilder +=
           "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
         strBuilder +=
@@ -663,7 +663,7 @@ export const SmartObject = {
         //         args.push(inputsToCode[i]);
         //       }
         //     }
-        //     PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {
+        //     PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {
         //       resourceId: block.soData.details.iotivityResourceID,
         //       methodId:
         //         "action-" +
@@ -700,7 +700,7 @@ export const SmartObject = {
         strBuilder += "}\n";
         strBuilder += "}\n";
         strBuilder +=
-          'PostRequest(urlInfo.iotivityUrl + "/resource/execute-method", {\n';
+          'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {\n';
         strBuilder +=
           "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
         strBuilder +=

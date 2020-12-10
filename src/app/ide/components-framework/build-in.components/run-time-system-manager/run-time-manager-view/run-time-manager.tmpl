@@ -1,25 +1,54 @@
 <div class="run-time-manager-container">
-    <section class="output-console">
-        <div class="output-console-header">
-            <span class="output-console-header-title">
-                <i class="fab fa-stack-exchange"></i>
-                <span class="output-console-header-text">Application Run-time Console:</span>
-            </span>
-            <span class="output-console-header-close">
-                <i class="fas fa-times"></i>
-            </span>
-            <span class="output-console-header-fold">
-                <i class="fas fa-chevron-down"></i>
-            </span>
-            <span class="output-console-header-options">
-                <i class="fas fa-cog"></i>
-            </span>
-        </div>
-        <div class="output-view-area">
-        </div>
-        <div class="input-view-area">
-        </div>
-    </section>
-    <div class="runtime-environment-area">
+  <section class="output-console">
+    <div class="output-console-header">
+      <span class="output-console-header-title">
+        <i class="fab fa-stack-exchange"></i>
+        <span class="output-console-header-text"
+          >Application Run-time Console:</span
+        >
+      </span>
+      <span class="output-console-header-close">
+        <i class="fas fa-times"></i>
+      </span>
+      <span class="output-console-header-fold">
+        <i class="fas fa-chevron-down"></i>
+      </span>
+      <span class="output-console-header-options">
+        <i class="fas fa-cog"></i>
+      </span>
     </div>
+    <div class="output-view-area"></div>
+    <div class="input-view-area"></div>
+  </section>
+  <div class="runtime-environment-area">
+    <div class="modal" id="runtime-modal" tabindex="-1" role="dialog">
+      <div
+        class="modal-dialog modal-xl"
+        id="runtime-modal-dialog"
+        role="document"
+      >
+        <div class="modal-content">
+          <div class="modal-header" id="runtime-modal-header">
+            <h5 class="modal-title">Live Preview</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- <p>Modal body text goes here.</p> -->
+            <div id="runtime-iframe-container" style="height: 100%"></div>
+          </div>
+          <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

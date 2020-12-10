@@ -69,7 +69,9 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
         });
         return '<html lang="en"><head>'
             + $envApp.html()
-            + '</head><body>iframe ui loaded...</body></html>';
+            + '</head><body>'
+            + '<div class="container-fluid" id="run-application-view-container"></div>'
+            + '</body></html>';
     }
 
     static initialize(id, domainType) {
@@ -77,9 +79,13 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
         $('<iframe>')
             .attr('id', id)
             .attr('srcdoc', envHtml)
-            .attr('height',500)
-            .attr('width',500)
-            .appendTo('.runtime-environment-area');
+            .css("overflow", "hidden")
+            .css("height", "100%")
+            .css("width", "100%")
+            .css("border","none")
+            .height("100%")
+            .width("100%")
+            .appendTo('#runtime-iframe-container');
     }
 
     static getIframe(id) {

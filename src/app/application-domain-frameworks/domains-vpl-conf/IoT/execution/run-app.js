@@ -1,15 +1,39 @@
 import { urlInfo } from "../../../../ide/ide-components/SmartObjectVPLEditor/iotivity-server-conf.js";
 
 const AddThirdPartyLibs = function (environment) {
-  environment.importJSLib(
-    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/dayjs.min.js"
+  environment.importCSSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/bootstrap.min.css"
   );
 
-  // environment.importJSLib(
-  //   "https://polyfill.io/v3/polyfill.min.js?features=Array.from,Promise,Symbol,Object.setPrototypeOf,Object.getOwnPropertySymbols,Set"
+  // environment.importCSSLib(
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/css/fullcalendar.min.css"
   // );
 
-  // environment.importJSLib("https://cdn.jsdelivr.net/npm/superagent");
+  // environment.importJSLib(
+  //   "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/fullcalendar.min.js"
+  // );
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/jquery-3.4.1.slim.min.js"
+  );
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/popper.min.js"
+  );
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/bootstrap.min.js"
+  );
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/dayjs.min.js"
+  );
+
+  environment.importJS(" dayjs().format();");
+
+  environment.importJSLib(
+    "./src/app/application-domain-frameworks/domains-vpl-conf/IoT/third-party-libs/js/lodash.min.js"
+  );
 };
 
 async function GetRequest(url = "") {
@@ -47,17 +71,59 @@ async function PostRequest(url = "", data = {}) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
-const Initialize = function (smartObjects, resourcesIDs) {
-  dayjs().format();
+const CollectRegisteredDevices = function (smartObjects) {
+  const returnObject = { devicesIDsForGetRequest: [], devicesIDs: [] };
 
   smartObjects.forEach((so) => {
-    resourcesIDs.push([
+    // for GET query
+    returnObject.devicesIDsForGetRequest.push([
       so.editorsData[0].generated.details.iotivityResourceID,
       "",
     ]);
+
+    // for registered devices
+    returnObject.devicesIDs.push(
+      so.editorsData[0].generated.details.iotivityResourceID
+    );
+  });
+
+  return returnObject;
+};
+
+const InitializeSocketConnection = function (onSuccess) {
+  // Create WebSocket connection.
+  const socket = new WebSocket("ws://" + urlInfo.iotivityUrl);
+
+  /* Add function for validate JSON.parse */
+  socket.isJsonString = function (str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  };
+
+  // Connection opened
+  socket.addEventListener("open", function (event) {
+    onSuccess(socket);
   });
 };
 
+const StartObserving = function (socket, devicesIDs) {
+  let dataToSend = { type: "start_observe", resources: devicesIDs };
+  socket.send(JSON.stringify(dataToSend));
+};
+
+const Initialize = function (selector) {
+  InitializeClock(selector);
+
+  // InitializeCalendar(selector);
+
+  InitializeSmartDevicesContainer(selector);
+};
+
+/* Start data and functions for calendar - conditional blocks */
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
 const whenCondData = [];
@@ -185,34 +251,206 @@ const timeDispatch = {
   everyDay: EveryDay,
   everyMonth: EveryMonth,
 };
+/* End data and functions for calendar - conditional blocks */
 
-export async function StartApplication(data) {
+/* Start UI for runtime environment */
+const InitializeClock = function (selector) {
+  let clockDiv = document.createElement("div");
+  clockDiv.id = "runtime-clock";
+  clockDiv.style.fontSize = "larger";
+  selector.appendChild(clockDiv);
+
+  let date = document.createElement("span");
+  date.id = "runtime-date";
+  date.innerHTML = "Time: ";
+  clockDiv.appendChild(date);
+
+  let hour = document.createElement("span");
+  hour.id = "runtime-hour";
+  clockDiv.appendChild(hour);
+
+  let calendarButtonSpan = document.createElement("span");
+  clockDiv.appendChild(hour);
+
+  let calendarFoldButton = document.createElement("button");
+  clockDiv.appendChild(hour);
+};
+
+const RenderClock = function (selector) {
+  // document.getElementById("runtime-date").innerHTML = dayjs().format(
+  //   "dddd, DD MMMM YYYY"
+  // );
+
+  document.getElementById("runtime-hour").innerHTML = dayjs().format(
+    "hh:mm:ss"
+  );
+};
+
+const InitializeCalendar = function (selector) {
+  let calendarDiv = document.createElement("div");
+  calendarDiv.id = "calendar-container";
+  selector.appendChild(calendarDiv);
+
+  var calendar = new Calendar(
+    "calendar-container",
+    "small",
+    ["Monday", 3],
+    ["#ffc107", "#ffa000", "#ffffff", "#ffecb3"],
+    {
+      days: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+      months: [
+        "January",
+        "Feburary",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ],
+      indicator: true,
+      indicator_type: 1,
+      indicator_pos: "top",
+      placeholder: "<span>Custom Placeholder</span>",
+    }
+  );
+
+  var data = {
+    2017: {
+      12: {
+        25: [
+          {
+            startTime: "00:00",
+            endTime: "24:00",
+            text: "Christmas Day",
+          },
+        ],
+      },
+    },
+  };
+};
+
+const InitializeSmartDevicesContainer = function (selector) {
+  let smartDevicesDiv = document.createElement("div");
+  smartDevicesDiv.classList.add("row");
+  smartDevicesDiv.id = "runtime-smart-devices-container";
+  smartDevicesDiv.style.backgroundColor = "#f1f1f1";
+  smartDevicesDiv.style.overflowY = "auto";
+  selector.appendChild(smartDevicesDiv);
+};
+
+const RenderSmartDevices = function (devicesOnAutomations) {
+  let smartDeviceSelector = document.getElementById(
+    "runtime-smart-devices-container"
+  );
+  devicesOnAutomations.forEach((device) => {
+    Automatic_IoT_UI_Generator.RenderReadOnlyResource(
+      smartDeviceSelector,
+      device
+    );
+  });
+};
+/* End UI for runtime environment */
+
+export async function StartApplication(runTimeData) {
   try {
-    AddThirdPartyLibs(data.runtimeEnvironment);
+    AddThirdPartyLibs(runTimeData.runtimeEnvironment);
 
-    let resourcesIDs = [];
+    // return {devicesIDsForGetRequest, devicesIDs} the first to construct Get query
+    let devicesIDsObject = CollectRegisteredDevices(
+      runTimeData.execData.project.SmartObjects
+    );
 
-    Initialize(data.execData.project.SmartObjects, resourcesIDs);
+    Initialize(runTimeData.UISelector);
 
-    var url = new URL(urlInfo.iotivityUrl + "/resources");
-    url.search = new URLSearchParams(resourcesIDs).toString();
+    // Construct request to get the registered devices
+    var url = new URL("http://" + urlInfo.iotivityUrl + "/resources");
+    url.search = new URLSearchParams(
+      devicesIDsObject.devicesIDsForGetRequest
+    ).toString();
 
+    // Get registered devices from iotivity
     GetRequest(url).then((responseData) => {
       // data.resources
       const devicesOnAutomations = responseData.resources;
 
-      // calendar tasks
-      data.execData.project.CalendarEvents.forEach((events) => {
-        eval("(async () => {" + events.editorsData[0].generated + "})()");
-      });
+      // open socket connection
+      InitializeSocketConnection((socket) => {
+        // Start Observing
+        StartObserving(socket, devicesIDsObject.devicesIDs);
 
-      // conditional tasks
-      data.execData.project.ConditionalEvents.forEach((events) => {
-        eval("(async () => {" + events.editorsData[0].generated + "})()");
-      });
+        // Listen for messages
+        socket.addEventListener("message", function (event) {
+          if (socket.isJsonString(event.data)) {
+            let socketData = JSON.parse(event.data);
+            switch (socketData.type) {
+              case "update":
+                let oldDeviceIndex = devicesOnAutomations.findIndex(
+                  (elem) => elem.id === socketData.resource.id
+                );
 
-      // Start whenConditions
-      StartWhenTimeout();
+                // replace old resource with the new one
+                if (
+                  !_.isEqual(
+                    socketData.resource,
+                    devicesOnAutomations[oldDeviceIndex]
+                  )
+                )
+                  devicesOnAutomations[oldDeviceIndex] = socketData.resource;
+
+                break;
+
+              case "start_observe_response":
+                RenderClock();
+                setInterval(RenderClock, 1000);
+
+                // Render Smart Devices
+                RenderSmartDevices(devicesOnAutomations);
+
+                // calendar tasks
+                runTimeData.execData.project.CalendarEvents.forEach(
+                  (events) => {
+                    eval(
+                      "(async () => {" +
+                        events.editorsData[0].generated +
+                        "})()"
+                    );
+                  }
+                );
+
+                // conditional tasks
+                runTimeData.execData.project.ConditionalEvents.forEach(
+                  (events) => {
+                    eval(
+                      "(async () => {" +
+                        events.editorsData[0].generated +
+                        "})()"
+                    );
+                  }
+                );
+
+                // Start whenConditions
+                StartWhenTimeout();
+                break;
+
+              default:
+                break;
+            }
+          }
+        });
+      });
     });
   } catch (e) {
     alert(e);
