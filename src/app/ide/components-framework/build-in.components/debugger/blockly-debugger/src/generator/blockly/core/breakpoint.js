@@ -1,4 +1,4 @@
-import { Blockly_Debugger, Debuggee_Worker } from '../../../debugger/debugger.js';
+import { Blockly_Debugger } from '../../../debugger/debugger.js';
 import * as Blockly from 'blockly';
 
 export var Breakpoint_Icon = function (block) {

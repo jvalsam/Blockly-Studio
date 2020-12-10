@@ -21,6 +21,7 @@ RuntimeManagerDataHolder.initialize();
 var menuJson = RuntimeManagerDataHolder.getDomainsMenuJSON();
 var configJson = RuntimeManagerDataHolder.getDomainsConfigJSON();
 
+
 @UIComponentMetadata({
     description: "Runtime Manager of the IDE",
     authors: [
@@ -44,6 +45,7 @@ export class RuntimeManager extends IDEUIComponent {
     private static currentMode: number;
     private isOpen: Boolean;
     private runtimeSystemInst: RuntimeSystem;
+    private _environmentData: any;
 
     constructor(
         name: string,
@@ -56,6 +58,7 @@ export class RuntimeManager extends IDEUIComponent {
         this.isOpen = false;
         RuntimeManager.currentMode = 0;
         this.runtimeSystemInst = null;
+        this._environmentData = null;
     }
 
     public registerEvents(): void { ; }
@@ -228,19 +231,23 @@ export class RuntimeManager extends IDEUIComponent {
         }
     }
 
-    @ExportedFunction
-    getEnvironmentRunData() {
+    private setEnvironmentRunData(): void {
         let appData = ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
             "getRunApplicationData"
         ).value;
 
-        return {
+        this._environmentData = {
             execType: RuntimeManager.getMode(),
             domainType: appData.domain,
             execData: appData
         };
+    }
+
+    @ExportedFunction
+    public getEnvironmentRunData() {
+        return this._environmentData;
     }
 
     private _startMsgHookId: String;
@@ -256,8 +263,19 @@ export class RuntimeManager extends IDEUIComponent {
         // this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+        this.setEnvironmentRunData();
+
+        RuntimeSystem.initialize(
+            "BlocklyStudioIDE_MainRuntimeEnvironment",
+            this._environmentData.domainType);
+=======
+=======
+>>>>>>> 0d459f042060ca393061f33945f77ccc04a2bfb9
         (<RuntimeManagerView>this._view).openRuntimeEnvironmentDialogue();
         RuntimeSystem.initialize("BlocklyStudioIDE_MainRuntimeEnvironment");
+>>>>>>> 0d459f042060ca393061f33945f77ccc04a2bfb9
         let cw = RuntimeSystem
             .getIframe("BlocklyStudioIDE_MainRuntimeEnvironment")
             ['contentWindow'];

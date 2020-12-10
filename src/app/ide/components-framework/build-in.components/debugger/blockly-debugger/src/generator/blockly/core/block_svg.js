@@ -71,7 +71,9 @@ Blockly.BlockSvg.prototype.generateContextMenu = function () {
         menuOptions.push(Blockly.ContextMenu.blockDeleteOption(block));
 
         let breakpointOption = {
-            text: (!Blockly_Debugger.actions["Breakpoint"].breakpoints.map((obj) => { return obj.block_id; }).includes(block.id)) ? "Add Breakpoint" : "Remove Breakpoint",
+            text: (!Blockly_Debugger.actions["Breakpoint"]
+                .breakpoints.map((obj) => { return obj.block_id; })
+                .includes(block.id)) ? "Add Breakpoint" : "Remove Breakpoint",
             enabled: true,
             callback: function () {
                 if (!Blockly_Debugger.actions["Breakpoint"].breakpoints.map((obj) => { return obj.block_id; }).includes(block.id)) {
@@ -125,5 +127,3 @@ Blockly.BlockSvg.prototype.showContextMenu_ = function (e) {
         Blockly.ContextMenu.currentBlock = this;
     }
 };
-
-

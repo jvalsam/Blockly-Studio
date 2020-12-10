@@ -1,4 +1,7 @@
-import { RuntimeEnvironmentScriptsHolder } from "../../runtime-environment-scripts-holder.js"
+import {
+    RuntimeEnvironmentScriptsHolder
+} from "../../runtime-environment-scripts-holder.js"
+
 
 export const EnvironmentState = {
     INIT: "init",
@@ -6,6 +9,7 @@ export const EnvironmentState = {
     STOPPED: "stopped",
     PAUSED: "paused"
 };
+
 
 export class RuntimeEnvironmentRelease {
     constructor(runtimeEnv) {
@@ -30,6 +34,10 @@ export class RuntimeEnvironmentRelease {
         this.start(this._envData);
     }
 
+    _onApplicationFinish() {
+        alert("functionality on finish application is not implemented");
+    }
+
     start(applicationData) {
         const promise = new Promise((resolve, reject) => {
             this.promiseStopApp = reject;
@@ -37,8 +45,8 @@ export class RuntimeEnvironmentRelease {
             this._executionScript.StartApplication(applicationData);
         });
         promise
-            .then(finish => console.log("run app finished"))
-            .catch (stopAction => this._handleStopAction(stopAction));
+            .then(finish => this._onApplicationFinish())
+            .catch(stopAction => this._handleStopAction(stopAction));
     }
 
     _handleStopAction(action) {
@@ -63,33 +71,53 @@ export class RuntimeEnvironmentRelease {
         }
     }
 
+    handleOnError(message) {
+        alert("stop action failed by run-time system.\n" + message);
+        this.callbackOnStop();
+    }
+
+    // when user choose to stop the app
     stop(onSuccess) {
         this.state = EnvironmentState.STOPPED;
         this.callbackOnStop = onSuccess;
     }
 
     onStop() {
-        this._executionScript.StopApplication();
-        this.callbackOnStop();
+        const promise = new Promise((resolve, reject) => {
+            this._executionScript.StopApplication(resolve, reject);
+        });
+        promise
+            .then(finish => this.callbackOnStop())
+            .catch(message => this.handleOnError(message));
     }
 
-    pause() {
+    pause(onSuccess) {
         this.state = EnvironmentState.PAUSED;
-        // TODO: send message to refresh the UI of the IDE
-        // and output consolse message bubble
+        this.callbackOnPause = onSuccess;
     }
 
     onPause() {
-        this._executionScript.PauseApplication();
+        const promise = new Promise((resolve, reject) => {
+            this._executionScript.PauseApplication(resolve, reject);
+        });
+        promise
+            .then(finish => this.callbackOnStop())
+            .catch(message => this.handleOnError(message));
     }
 
-    continue() {
+    continue(onSuccess) {
         this.state = EnvironmentState.RUNNING;
-        try {
-            this._executionScript.ContinueApplication();
-        }
-        catch (e) {
-            this._handleError(e);
-        }
+        this.callbackOnContinue = onSuccess;
+    }
+
+    onContinue() {
+        const promise = new Promise((resolve, reject) => {
+            this.promiseStopApp = reject;
+            applicationData.onFinish = resolve;
+            this._executionScript.StartApplication(applicationData);
+        });
+        promise
+            .then(finish => console.log("run app finished"))
+            .catch(stopAction => this._handleStopAction(stopAction));
     }
 }
