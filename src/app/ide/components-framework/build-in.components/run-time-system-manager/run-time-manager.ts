@@ -264,12 +264,15 @@ export class RuntimeManager extends IDEUIComponent {
         this.AddDefaultMessage("prepare");
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.setEnvironmentRunData();
 
         RuntimeSystem.initialize(
             "BlocklyStudioIDE_MainRuntimeEnvironment",
             this._environmentData.domainType);
 =======
+=======
+>>>>>>> 0d459f042060ca393061f33945f77ccc04a2bfb9
         (<RuntimeManagerView>this._view).openRuntimeEnvironmentDialogue();
         RuntimeSystem.initialize("BlocklyStudioIDE_MainRuntimeEnvironment");
 >>>>>>> 0d459f042060ca393061f33945f77ccc04a2bfb9
