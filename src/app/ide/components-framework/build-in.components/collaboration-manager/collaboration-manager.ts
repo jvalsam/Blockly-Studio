@@ -114,7 +114,10 @@ export class CollaborationManager extends IDEUIComponent {
      * 
      */
 
-
+    @ExportedFunction
+    loadComponentDataOfProject(projectId: string, componentsData: any) {
+      // no action is required on loading project
+    }
 
     @ExportedFunction
     public startSession(
@@ -162,6 +165,31 @@ export class CollaborationManager extends IDEUIComponent {
             ()=>{console.log('closed join session');}
         );
     }
+
+    @RequiredFunction("ProjectManager", "saveComponentData")
+    private saveComponentData(data: any, id?: string){
+        this.saveProjectComponentData(id || this.shProject._id, data);
+    }
+
+    @RequiredFunction("ProjectManager", "getComponentData")
+    private getComponentData(id?: string) {
+        return this.getProjectComponentData(id || this.shProject._id);
+    }
+//   @RequiredFunction("ProjectManager", "saveComponentData")
+//   protected saveProjectComponentData(projectId: string, data: any) {
+//       this._componentsData[projectId] = data;
+
+//       ComponentsCommunication.functionRequest(
+//           this.name,
+//           "ProjectManager",
+//           "saveComponentData",
+//           [
+//               this.name,
+//               projectId,
+//               this._componentsData[projectId]
+//           ]
+//       );
+//   }
 
     public getCollabUI(){
         return this.collabUI["ui"];
@@ -216,7 +244,7 @@ export class CollaborationManager extends IDEUIComponent {
             icon: "../../../../../../images/collaboration/name.png",
             action: () => alert(pitem["renderParts"][1].value.text)
         });
-
+        return [];
         let settings = this.shProject.componentsData.collaborationData.projectInfo;
         let collabData = pitem.componentsData.collaborationData;
         if(settings.createPItem){ // Add Logic if "Allow members to create project item" was enabled
