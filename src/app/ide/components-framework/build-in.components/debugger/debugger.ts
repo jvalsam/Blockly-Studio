@@ -5,7 +5,7 @@ import {
 } from "../../component/component-loader";
 import { ComponentsCommunication } from "../../component/components-communication";
 import { IDEUIComponent } from "../../component/ide-ui-component";
-
+import { BlocklyDebugger } from "./blockly-debugger/index";
 
 
 var menuJson; // todo: define them
@@ -22,8 +22,10 @@ var configJson; // todo: define them
     version: "1.0"
 })
 export class Debugger extends IDEUIComponent {
+    private environmentData: any;
+    private blocklyDebugger: BlocklyDebugger;
 
-    private backendPostMessage(msg, callback?: Function) {
+    private postMessage(msg, callback?: Function) {
         ComponentsCommunication.functionRequest(
             this.name,
             "RuntimeManager",
@@ -39,15 +41,28 @@ export class Debugger extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public frontendReceiveMessage(msg) {
+    public frontendReceiveMessage(msg, callback?: Function) {
 
     }
 
-    private start() {
-        // render UI for the toolbars (IDE and sidebar)
+    @ExportedFunction
+    public initiate() {
+        this.blocklyDebugger = new BlocklyDebugger(this);
+    }
+
+    @ExportedFunction
+    public start(environmentData: any, onSuccess: Function) {
         alert("start debugging process...");
+        this.environmentData = environmentData;
+        
+        this.blocklyDebugger.initiateToolbar(
+            ".debugger-toolbar-container",
+            () => onSuccess("complete view of the debugger toolbar"),
+        );
+    }
 
-
+    private getEnvironmentData(): any {
+        return this.environmentData;
     }
 
     private stop() {

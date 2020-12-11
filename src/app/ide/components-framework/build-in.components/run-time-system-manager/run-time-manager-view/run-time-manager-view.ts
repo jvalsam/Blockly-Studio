@@ -44,7 +44,7 @@ export class RuntimeManagerView extends ComponentView {
   private readonly optionsBtnSel = ".output-console-header-options";
   private readonly foldingBtnSel = ".output-console-header-fold";
   private readonly closeBtnSel = ".output-console-header-close";
-
+  
   constructor(
     parent,
     name,

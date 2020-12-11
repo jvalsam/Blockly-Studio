@@ -15,14 +15,23 @@ import {
     InitializeDebuggeeWorker
 } from "./src/debugger/debugger";
 
+
 export function BlocklyDebugger (plugin) {
+    this.plugin = plugin;
+
     InitializeDebuggeeWorker(plugin);
     Debuggee_Worker.registerBreakpointsRunToCursorFunctionality();
 
-    this.initiateToolbar = (selector) => {
+    this.initiateToolbar = (selector, onReady) => {
         Debuggee_Worker.registerDebuggerActions();
         Debuggee_Worker.RegisterContinueDebuggerAction("ContinueButton");
-        Debuggee_Worker.RegisterStartDebuggerAction("StartButton", () => alert("actions on start"));
+
+        Debuggee_Worker.RegisterStartDebuggerAction(
+            "StartButton",
+            () => this.plugin.getEnvironmentData(),
+            () => alert("actions on start")
+        );
+        
         Debuggee_Worker.RegisterVariablesDebuggerAction("variables");
         Debuggee_Worker.RegisterWatchDebuggerAction("watches");
         Debuggee_Worker.RegisterStopDebuggerAction("StopButton");
@@ -30,8 +39,7 @@ export function BlocklyDebugger (plugin) {
         Debuggee_Worker.RegisterStepOutDebuggerAction("StepOutButton");
         Debuggee_Worker.RegisterStepOverDebuggerAction("StepOverButton");
         Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
+
+        onReady();
     };
 }
-
-let blocklyDebugger = new BlocklyDebugger("testing");
-blocklyDebugger.initiateToolbar(".blocklyToolbarArea");

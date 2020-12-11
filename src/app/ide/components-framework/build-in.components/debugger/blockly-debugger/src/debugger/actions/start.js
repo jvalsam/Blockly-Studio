@@ -2,7 +2,7 @@ import { Debuggee_Worker, Blockly_Debugger } from '../debugger.js';
 import './watches.js';
 import * as Blockly from 'blockly';
 
-export function RegisterStartDebuggerAction(selector, onClick) {
+export function RegisterStartDebuggerAction(selector, envDataGetter, onClick) {
     Blockly_Debugger.actions["Start"] = {};
 
     Blockly_Debugger.actions["Start"].handler = (cursorBreakpoint) => {

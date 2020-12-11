@@ -1,5 +1,6 @@
 ﻿import {
   BlocklyInstance,
+  InitiateBlocklyGenerator,
   BlocklyConfig,
   DomainBlockTracker
 } from "./blockly-instance";
@@ -543,5 +544,10 @@ export class BlocklyVPL extends Editor {
         text
       );
       this.instancesMap[editorData.editorId].load();
+  }
+
+  @ExportedFunction
+  public initiateCodeGenerator() {
+    InitiateBlocklyGenerator();
   }
 }

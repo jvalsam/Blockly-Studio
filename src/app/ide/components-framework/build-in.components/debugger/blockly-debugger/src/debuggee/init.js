@@ -35,7 +35,14 @@ export function InitializeBlocklyDebuggee (plugin) {
 
     Blockly_Debuggee.wait = (function () {
         function highlightBlock(id, currentSystemEditorId) {
-            /*plugin.*/postMessage({ "type": "highlightBlock", "data": { "id": id, "currentSystemEditorId": currentSystemEditorId } });
+            plugin.postMessage(
+                {
+                    "type": "highlightBlock",
+                    "data": {
+                        "id": id,
+                        "currentSystemEditorId": currentSystemEditorId
+                    }
+                });
         }
 
         function sleep(ms) {

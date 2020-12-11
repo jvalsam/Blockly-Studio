@@ -265,12 +265,19 @@ export class RuntimeManager extends IDEUIComponent {
         // this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
+        // initiate Blockly generator for the runtime environment
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "BlocklyVPL",
+            "initiateCodeGenerator",
+            []
+        );
+
         this.setEnvironmentRunData();
 
         RuntimeSystem.initialize(
             "BlocklyStudioIDE_MainRuntimeEnvironment",
             this._environmentData.domainType);
-
 
         let cw = RuntimeSystem
             .getIframe("BlocklyStudioIDE_MainRuntimeEnvironment")
@@ -308,6 +315,13 @@ export class RuntimeManager extends IDEUIComponent {
     private onStartDebugApplicationBtn(): void {
         RuntimeManager.currentMode = 1;
 
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "Debugger",
+            "initiate",
+            []
+        );
+
         let toolbarView = this._viewElems.RuntimeManagerToolbarView[0].elem;
         toolbarView.disableButtons();
         toolbarView.activateStopBtn();
@@ -315,7 +329,11 @@ export class RuntimeManager extends IDEUIComponent {
         this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
-        RuntimeSystem.initialize("BlocklyStudioIDE_MainRuntimeEnvironment");
+        this.setEnvironmentRunData();
+
+        RuntimeSystem.initialize(
+            "BlocklyStudioIDE_MainRuntimeEnvironment",
+            this._environmentData.domainType);
         let cw = RuntimeSystem
             .getIframe("BlocklyStudioIDE_MainRuntimeEnvironment")
             ['contentWindow'];
