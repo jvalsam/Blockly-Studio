@@ -17,6 +17,7 @@ export const CalendarStaticBlocks = [
         this.setColour(195);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("At Block");
       },
     }),
     codeGen: () =>
@@ -41,7 +42,9 @@ export const CalendarStaticBlocks = [
           value_time +
           ").type](JSON.parse(" +
           value_time +
-          ")))";
+          "),'" +
+          block.getCommentText() +
+          "'))";
         strBuilder += "});";
 
         var code = strBuilder + "\n";
@@ -66,6 +69,7 @@ export const CalendarStaticBlocks = [
         this.setColour(195);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("At Statement Block");
       },
     }),
     codeGen: () =>
@@ -90,7 +94,9 @@ export const CalendarStaticBlocks = [
           value_time +
           ").type](JSON.parse(" +
           value_time +
-          ")))";
+          "),'" +
+          block.getCommentText() +
+          "'))";
         strBuilder += "});";
 
         var code = strBuilder + "\n";
@@ -117,6 +123,7 @@ export const CalendarStaticBlocks = [
         this.setColour(290);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("Every Block");
       },
     }),
     codeGen: () =>
@@ -134,7 +141,7 @@ export const CalendarStaticBlocks = [
 
         // (function () {
         //   let index = arrayIntervals.length;
-        //   arrayIntervals.push({type: 'calendar_every'});
+        //   arrayIntervals.push({ type: "calendar_every" });
         //   let f = function () {
         //     arrayIntervals[index].time = setTimeout(() => {
         //       alert(index);
@@ -159,7 +166,9 @@ export const CalendarStaticBlocks = [
           value_time +
           ").type](JSON.parse(" +
           value_time +
-          ")));";
+          "), '" +
+          block.getCommentText() +
+          "'));";
         strBuilder += "};";
         strBuilder += "arrayIntervals[index].func = f;";
         strBuilder += "arrayIntervals[index].func();";
@@ -191,6 +200,7 @@ export const CalendarStaticBlocks = [
         this.setColour(290);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("Every Statement Block");
       },
     }),
     codeGen: () =>
@@ -234,7 +244,9 @@ export const CalendarStaticBlocks = [
           value_time +
           ").type](JSON.parse(" +
           value_time +
-          ")));";
+          "), '" +
+          block.getCommentText() +
+          "'));";
         strBuilder += "};";
         strBuilder += "arrayIntervals[index].func = f;";
         strBuilder += "arrayIntervals[index].func();";
@@ -262,6 +274,7 @@ export const CalendarStaticBlocks = [
         this.setColour(30);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("Wait Block");
       },
     }),
     codeGen: () =>
@@ -294,7 +307,9 @@ export const CalendarStaticBlocks = [
           value_time +
           ").type](JSON.parse(" +
           value_time +
-          ")))";
+          "),'" +
+          block.getCommentText() +
+          "'))";
         strBuilder += "});";
 
         var code = strBuilder + "\n";
@@ -321,6 +336,7 @@ export const CalendarStaticBlocks = [
         this.setColour(30);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("Wait Statement Block");
       },
     }),
     codeGen: () =>
@@ -337,23 +353,24 @@ export const CalendarStaticBlocks = [
         );
 
         // arrayIntervals.push({
-        //   type: 'calendar_wait_then_top_bottom',
+        //   type: "calendar_wait_then_top_bottom",
         //   time: setTimeout(() => {
         //     alert("hi");
-        //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time))),
+        //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText())),
         // });
 
         let strBuilder = "";
         strBuilder +=
           "arrayIntervals.push({type: 'calendar_wait_then_top_bottom', time: setTimeout(() => {";
-        strBuilder += 'alert("hi");';
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
           value_time +
           ").type](JSON.parse(" +
           value_time +
-          ")))";
+          "), '" +
+          block.getCommentText() +
+          "'))";
         strBuilder += "});";
 
         var code = strBuilder + "\n";

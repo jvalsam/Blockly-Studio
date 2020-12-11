@@ -1,5 +1,9 @@
 import { urlInfo } from "../../../../ide/ide-components/SmartObjectVPLEditor/iotivity-server-conf.js";
 
+let calendar,
+  organizer,
+  calendarData = {};
+
 async function GetRequest(url = "") {
   // Default options are marked with *
   const response = await fetch(url, {
@@ -84,7 +88,7 @@ const Initialize = function (selector) {
   InitializeClocks(selector);
 
   InitializeCalendar(selector);
-
+  InitializeOrganizerForCalendar();
   InitializeSmartDevicesContainer(selector);
 };
 
@@ -138,7 +142,7 @@ const months = [
   "December",
 ];
 
-const TakeDifferenceFromSpecificTime = function (time) {
+const TakeDifferenceFromSpecificTime = function (time, calendarInfo) {
   let futureTime = dayjs()
     .set("second", time.second)
     .set("minute", time.minute)
@@ -155,10 +159,13 @@ const TakeDifferenceFromSpecificTime = function (time) {
     ms = futureTime.diff(dayjs());
   }
 
+  // Pin in calendar
+  PinEventInCalendar(futureTime, calendarInfo);
+
   return ms;
 };
 
-const TakeDifferenceFromSpecificDay = function (time) {
+const TakeDifferenceFromSpecificDay = function (time, calendarInfo) {
   let intDay = weekDays.indexOf(time.day);
 
   let futureDate = dayjs().day(intDay);
@@ -169,10 +176,13 @@ const TakeDifferenceFromSpecificDay = function (time) {
     ms = futureDate.diff(dayjs());
   }
 
+  // Pin in calendar
+  PinEventInCalendar(futureDate, calendarInfo);
+
   return ms;
 };
 
-const TakeDifferenceFromSpecificMonth = function (time) {
+const TakeDifferenceFromSpecificMonth = function (time, calendarInfo) {
   let intMonth = months.indexOf(time.month);
 
   let futureDate = dayjs().month(intMonth);
@@ -183,26 +193,49 @@ const TakeDifferenceFromSpecificMonth = function (time) {
     ms = futureDate.diff(dayjs());
   }
 
+  // Pin in calendar
+  PinEventInCalendar(futureDate, calendarInfo);
+
   return ms;
 };
 
-const EverySecond = function (time) {
+const EverySecond = function (time, calendarInfo) {
   return time.second * 1000;
 };
 
-const EveryMinute = function (time) {
+const EveryMinute = function (time, calendarInfo) {
+  let futureDate = dayjs().minute(dayjs().minute() + time.minute);
+
+  // Pin in calendar
+  PinEventInCalendar(futureDate, calendarInfo);
+
   return time.minute * 60000;
 };
 
-const EveryHour = function (time) {
+const EveryHour = function (time, calendarInfo) {
+  let futureDate = dayjs().hour(dayjs().hour() + time.hour);
+
+  // Pin in calendar
+  PinEventInCalendar(futureDate, calendarInfo);
+
   return time.hour * 3600000;
 };
 
-const EveryDay = function (time) {
+const EveryDay = function (time, calendarInfo) {
+  let futureDate = dayjs().day(dayjs().day() + time.day);
+
+  // Pin in calendar
+  PinEventInCalendar(futureDate, calendarInfo);
+
   return time.day * 86400000;
 };
 
-const EveryMonth = function (time) {
+const EveryMonth = function (time, calendarInfo) {
+  let futureDate = dayjs().month(dayjs().month() + time.month);
+
+  // Pin in calendar
+  PinEventInCalendar(futureDate, calendarInfo);
+
   return time.month * 2592000000;
 };
 
@@ -215,6 +248,30 @@ const timeDispatch = {
   everyHour: EveryHour,
   everyDay: EveryDay,
   everyMonth: EveryMonth,
+};
+
+const PinEventInCalendar = function (futureTime, calendarInfo) {
+  let year = futureTime.year();
+  let month = futureTime.month() + 1;
+  let date = futureTime.date();
+
+  let data = {};
+  data[year] = {};
+  data[year][month] = {};
+  data[year][month][date] = [];
+  data[year][month][date].push({
+    startTime:
+      ("0" + futureTime.hour()).slice(-2) +
+      ":" +
+      ("0" + futureTime.minute()).slice(-2) +
+      ":" +
+      ("0" + futureTime.second()).slice(-2),
+    endTime: "end",
+    text: calendarInfo,
+  });
+
+  calendarData = deepmerge(calendarData, data); // => output
+  organizer.updateData(calendarData);
 };
 /* End data and functions for calendar - conditional blocks */
 
@@ -424,10 +481,10 @@ const RenderDigitalClock = function () {
 
   if (h == 0) {
     h = 12;
-  }
-
-  if (h > 12) {
+  } else if (h > 12) {
     h = h - 12;
+    session = "PM";
+  } else if (h === 12) {
     session = "PM";
   }
 
@@ -456,12 +513,7 @@ const InitializeCalendar = function (selector) {
   calendarDiv.id = "calendar-container";
   calendarRow.appendChild(calendarDiv);
 
-  let organizerDiv = document.createElement("span");
-  organizerDiv.classList.add("col");
-  organizerDiv.id = "organizer-container";
-  calendarRow.appendChild(organizerDiv);
-
-  var calendar = new Calendar(
+  calendar = new Calendar(
     "calendar-container",
     "small",
     ["Monday", 3],
@@ -496,21 +548,15 @@ const InitializeCalendar = function (selector) {
       // placeholder: "<span>Custom Placeholder</span>",
     }
   );
+};
 
-  var data = {
-    2017: {
-      12: {
-        25: [
-          {
-            startTime: "00:00",
-            endTime: "24:00",
-            text: "Christmas Day",
-          },
-        ],
-      },
-    },
-  };
-  var organizer = new Organizer("organizer-container", calendar, data);
+const InitializeOrganizerForCalendar = function () {
+  let organizerDiv = document.createElement("span");
+  organizerDiv.classList.add("col");
+  organizerDiv.id = "organizer-container";
+  document.getElementById("calendar-outter").appendChild(organizerDiv);
+
+  organizer = new Organizer("organizer-container", calendar, {});
 };
 
 const InitializeSmartDevicesContainer = function (selector) {
@@ -544,6 +590,14 @@ const FocusOnUpdatedDevice = function (selector) {
   setTimeout(function () {
     selector.classList.remove("runtime-cards-update");
   }, 3000);
+};
+
+const RerenderDevice = function (device) {
+  let deviceCol = document.getElementById(device.id + "-runtime-card");
+  deviceCol.innerHTML = "";
+  Automatic_IoT_UI_Generator.RenderReadOnlyResource(deviceCol, device);
+
+  FocusOnUpdatedDevice(deviceCol);
 };
 /* End UI for runtime environment */
 
@@ -619,23 +673,13 @@ export async function StartApplication(runTimeData) {
                   devicesOnAutomations[oldDeviceIndex] = socketData.resource;
 
                   // Merge name into resource for rendering
-
                   MergeSmartObjectWithResource(
                     smartObject,
                     devicesOnAutomations[oldDeviceIndex]
                   );
 
                   // render device
-                  let deviceCol = document.getElementById(
-                    socketData.resource.id + "-runtime-card"
-                  );
-                  deviceCol.innerHTML = "";
-                  Automatic_IoT_UI_Generator.RenderReadOnlyResource(
-                    deviceCol,
-                    devicesOnAutomations[oldDeviceIndex]
-                  );
-
-                  FocusOnUpdatedDevice(deviceCol);
+                  RerenderDevice(devicesOnAutomations[oldDeviceIndex]);
                 }
                 break;
 

@@ -12,23 +12,23 @@ body {
 /* For calendar */
 .cjslib-year {
   width: 100% !important;
-  background-color: #3d314a !important;
+  background-color: #4a81b1 !important;
 }
 
 .cjslib-month {
   width: 100% !important;
-  background-color: #292a2b !important;
+  background-color: #a2a2a2c2 !important;
   padding: 0.3rem !important;
   font-size: 19px !important;
 }
 
 .cjslib-labels {
-  background-color: #3d314a !important;
+  background-color: #4a81b1 !important;
 }
 
 .cjslib-date {
   width: 100% !important;
-  background-color: rgb(61 49 74) !important;
+  background-color: rgb(74 129 177) !important;
 }
 
 /* Smart Devices Preview */

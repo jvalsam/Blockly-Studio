@@ -9,6 +9,7 @@ export function ThirdPartyLibsList() {
     tpl_path + "js/dayjs.min.js",
     tpl_path + "js/lodash.min.js",
     tpl_path + "js/calendarorganizer.min.js",
+    tpl_path + "js/deepmerge.js",
     "./domains-libs/IoT/AutoIoTGen/iot-interfaces/dist/iot-ui.js",
   ];
 }

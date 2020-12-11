@@ -324,15 +324,22 @@ export const SmartObject = {
         //   }
         //   // change value in data and then send request
         //   property.value = args[0];
-        //   PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {
-        //     resourceId: block.soData.details.iotivityResourceID,
-        //     methodId:
-        //       "method-" +
-        //       block.soData.details.iotivityResourceID +
-        //       "-set-" +
-        //       dropdown_properties,
-        //     arguments: JSON.stringify(args),
-        //   });
+        //   let oldDeviceIndex = devicesOnAutomations.findIndex(
+        //     (elem) => elem.id === block.soData.details.iotivityResourceID
+        //   );
+        //   RerenderDevice(devicesOnAutomations[oldDeviceIndex]);
+        //   PostRequest(
+        //     "http://" + urlInfo.iotivityUrl + "/resource/execute-method",
+        //     {
+        //       resourceId: block.soData.details.iotivityResourceID,
+        //       methodId:
+        //         "method-" +
+        //         block.soData.details.iotivityResourceID +
+        //         "-set-" +
+        //         dropdown_properties,
+        //       arguments: JSON.stringify(args),
+        //     }
+        //   );
         // })();
 
         let strBuilder = "";
@@ -371,6 +378,12 @@ export const SmartObject = {
         strBuilder += "args.push(" + value_value + ");\n";
         strBuilder += "}";
         strBuilder += "property.value = args[0];\n";
+        strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
+        strBuilder += "(elem) =>";
+        strBuilder +=
+          "elem.id === '" + block.soData.details.iotivityResourceID + "'";
+        strBuilder += ");";
+        strBuilder += "RerenderDevice(devicesOnAutomations[oldDeviceIndex]);";
         strBuilder +=
           'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {';
         strBuilder +=
@@ -470,15 +483,22 @@ export const SmartObject = {
         //     )
         //     .properties.find((prop) => prop.name === dropdown_properties);
         //   property.value = args[0];
-        //   PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {
-        //     resourceId: block.soData.details.iotivityResourceID,
-        //     methodId:
-        //       "method-" +
-        //       data.details.iotivityResourceID +
-        //       "-set-" +
-        //       dropdown_properties,
-        //     arguments: JSON.stringify(args),
-        //   });
+        //   let oldDeviceIndex = devicesOnAutomations.findIndex(
+        //     (elem) => elem.id === block.soData.details.iotivityResourceID
+        //   );
+        //   RerenderDevice(devicesOnAutomations[oldDeviceIndex]);
+        //   PostRequest(
+        //     "http://" + urlInfo.iotivityUrl + "/resource/execute-method",
+        //     {
+        //       resourceId: block.soData.details.iotivityResourceID,
+        //       methodId:
+        //         "method-" +
+        //         data.details.iotivityResourceID +
+        //         "-set-" +
+        //         dropdown_properties,
+        //       arguments: JSON.stringify(args),
+        //     }
+        //   );
         // })();
 
         let strBuilder = "";
@@ -496,6 +516,13 @@ export const SmartObject = {
           dropdown_properties +
           "');\n";
         strBuilder += "property.value = args[0];\n";
+        strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
+        strBuilder +=
+          "(elem) => elem.id === '" +
+          block.soData.details.iotivityResourceID +
+          "'";
+        strBuilder += ");";
+        strBuilder += "RerenderDevice(devicesOnAutomations[oldDeviceIndex]);";
         strBuilder +=
           'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {';
         strBuilder +=
