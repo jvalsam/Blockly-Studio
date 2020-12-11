@@ -1,7 +1,9 @@
 import {
     RuntimeEnvironmentScriptsHolder
 } from "../../runtime-environment-scripts-holder.js"
-
+import {
+    BlocklyDebuggee
+} from "../../../../debugger/blockly-debugger/src/debuggee/debuggee.js"
 
 export const EnvironmentState = {
     INIT: "init",
@@ -26,9 +28,33 @@ export class RuntimeEnvironmentDebug {
         // pin callback that checks runtime environment state
         this._envData.checkRuntimeEnvironment = () => this._handleRuntime();
 
-        // TODO: find debugger back-end and request for the front-end debugger to start view
+        // request to start front-end debugger
+        this._runtimeEnv.functionRequest(
+            RuntimeEnvironmentDebug.name,
+            "Debugger",
+            "start",
+            [
+                this._envData
+            ],
+            { // on start debugger
+                func: (response) => {
+                    // initialize backend
+                    alert(response);
+                    this.blocklyDebuggee = new BlocklyDebuggee(this),
+                    this.start(this._envData);
+                },
+                type: 'async'
+            }
+        );
+    }
 
-        this.start(this._envData);
+    // post message to the debugger front end
+    postMessage(message) {
+
+    }
+
+    receiveMessage(message) {
+        
     }
 
     // has to be executed per visual programming statement
@@ -93,6 +119,6 @@ export class RuntimeEnvironmentDebug {
     }
 
     receiveFrontendMessage(message, callback) {
-        
+
     }
 }

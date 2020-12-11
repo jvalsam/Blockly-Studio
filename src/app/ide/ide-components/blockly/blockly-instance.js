@@ -326,3 +326,7 @@ export class BlocklyInstance {
         return Blockly.JavaScript.workspaceToCode(this.wsp);
     }
 }
+
+export function InitiateBlocklyGenerator() {
+    Blockly.JavaScript.STATEMENT_PREFIX = 'runTimeData.checkRuntimeEnvironment();\n';
+}
