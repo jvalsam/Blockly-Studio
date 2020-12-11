@@ -102,7 +102,7 @@ export function InitializeBlocklyDebuggee (plugin) {
     window.alert = async function (msg) {
         Blockly_Debuggee.actions["variables"].updateDebugger();     // gia na fainontai swsta kata to alert ta value pisw ston pinaka
         Blockly_Debuggee.actions["watch"].updateDebugger();
-        setTimeout(function () { /*plugin.*/postMessage({ "type": "alert", "data": msg }); }, 50);
+        setTimeout(function () { plugin.postMessage({ "type": "alert", "data": msg }); }, 50);
         while (!Blockly_Debuggee.state.alertFlag) {
             await (function () { return new Promise(resolve => setTimeout(resolve, 0)); })();         // next_message();
         }
@@ -111,7 +111,12 @@ export function InitializeBlocklyDebuggee (plugin) {
     window.prompt = async function (msg) {
         Blockly_Debuggee.actions["variables"].updateDebugger();     // gia na fainontai swsta kata to prompt ta value pisw ston pinaka
         Blockly_Debuggee.actions["watch"].updateDebugger();
-        setTimeout(function () { /*plugin.*/postMessage({ "type": "prompt", "data": msg }); }, 50);
+        setTimeout(
+            function () {
+                plugin.postMessage({ "type": "prompt", "data": msg });
+            },
+            50
+        );
         while (Blockly_Debuggee.state.promptMsg == undefined) {
             await (function () { return new Promise(resolve => setTimeout(resolve, 0)); })();         // next_message();
         }

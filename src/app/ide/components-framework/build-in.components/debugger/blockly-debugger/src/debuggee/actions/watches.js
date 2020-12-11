@@ -4,7 +4,7 @@ Blockly_Debuggee.actions["watch"] = {};
 Blockly_Debuggee.actions["variables"] = {};
 Blockly_Debuggee.actions["eval"] = {};
 
-export function BlocklyDebuggeeWatchAction() {
+export function BlocklyDebuggeeWatchAction(plugin) {
     Blockly_Debuggee.actions["watch"] = (function () {
         var watches = [];
         function handler(new_watches) {
@@ -37,7 +37,7 @@ export function BlocklyDebuggeeWatchAction() {
         }
 
         function updateDebugger() {
-            postMessage({ "type": "watches", "data": watches });
+            plugin.postMessage({ "type": "watches", "data": watches });
         }
 
 
@@ -74,7 +74,7 @@ export function BlocklyDebuggeeVariablesAction(plugin) {
         }
 
         function updateDebugger() {
-            /*plugin.*/postMessage({ "type": "variables", "data": variables });
+            plugin.postMessage({ "type": "variables", "data": variables });
         }
 
         function define_variables() {

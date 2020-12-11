@@ -19,12 +19,12 @@ export function BlocklyDebuggeeeBreakpointsAction(plugin) {
 
         function wait_view(block_id){
             if(includes_enable(block_id))
-                /*plugin.*/postMessage({"type": "breakpoint_wait_view", "data" : block_id});
+                plugin.postMessage({"type": "breakpoint_wait_view", "data" : block_id});
         }
 
         function reset_view(block_id){
             if(includes_enable(block_id))
-                /*plugin.*/postMessage({"type": "breakpoint_reset_view", "data" : block_id});
+                plugin.postMessage({"type": "breakpoint_reset_view", "data" : block_id});
         }
 
         return {

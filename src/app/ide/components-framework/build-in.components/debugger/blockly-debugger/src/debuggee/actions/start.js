@@ -23,7 +23,7 @@ export function BlocklyDebuggeeStartAction(plugin) {
                 var variablesWatches_code = "eval(update_values()); Blockly_Debuggee.actions[\"variables\"].updateDebugger(); Blockly_Debuggee.actions[\"watch\"].updateDebugger();";
                 await eval(def_variables_code + " function evalLocal(expr){eval(expr);} Blockly_Debuggee.actions[\"eval\"].evalLocal = evalLocal;" + "async function code(){ " + content.code + variablesWatches_code + "}; code(); ");
 
-                /*plugin.*/postMessage({ "type": "execution_finished" });
+                plugin.postMessage({ "type": "execution_finished" });
             } else {
                 window.alert("The content is undefined.");
             }

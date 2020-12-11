@@ -4,7 +4,7 @@ import {
 } from "./correction-suggestions-manager";
 
 
-export function CollaborativeDebuggingComponent (
+export function CollaborativeDebuggingComponent(
     memberInfo,
     isMaster,
     plugin,

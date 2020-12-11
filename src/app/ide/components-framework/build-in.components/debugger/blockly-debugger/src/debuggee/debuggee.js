@@ -19,10 +19,6 @@ import {
     BlocklyDebuggeeeRunToCursor
 } from "./actions/breakpoints";
 
-onmessage = function (msg) {
-    let obj = msg.data;
-    dispatcher[obj.type](obj.data);
-}
 
 export function BlocklyDebuggee (plugin) {
     InitializeBlocklyDebuggee(plugin);
@@ -41,13 +37,9 @@ export function BlocklyDebuggee (plugin) {
 
     BlocklyDebuggeeeBreakpointsAction(plugin);
     BlocklyDebuggeeeRunToCursor();
+
+    this.onmessage = (msg) => {
+        let obj = msg.data;
+        dispatcher[obj.type](obj.data);
+    };
 }
-
-/**
- * 
- */
-var plugin = {
-    postMessage: postMessage
-};
-
-BlocklyDebuggee(plugin);

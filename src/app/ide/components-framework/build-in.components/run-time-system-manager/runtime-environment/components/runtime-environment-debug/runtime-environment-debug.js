@@ -50,11 +50,16 @@ export class RuntimeEnvironmentDebug {
 
     // post message to the debugger front end
     postMessage(message) {
-
+        this._runtimeEnv.functionRequest(
+            RuntimeEnvironmentDebug.name,
+            "Debugger",
+            "frontendReceiveMessage",
+            [ message ]
+        );
     }
 
     receiveMessage(message) {
-        
+        this.blocklyDebuggee.onmessage(message);
     }
 
     // has to be executed per visual programming statement
