@@ -5,23 +5,30 @@ body {
 
 #runtime-smart-devices-container {
   margin-top: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 /* For calendar */
 .cjslib-year {
   width: 100% !important;
-  background-color: #3d314a !important;
+  background-color: #4a81b1 !important;
 }
 
 .cjslib-month {
   width: 100% !important;
-  background-color: #292a2b !important;
+  background-color: #a2a2a2c2 !important;
   padding: 0.3rem !important;
   font-size: 19px !important;
 }
 
 .cjslib-labels {
-  background-color: #3d314a !important;
+  background-color: #4a81b1 !important;
+}
+
+.cjslib-date {
+  width: 100% !important;
+  background-color: rgb(74 129 177) !important;
 }
 
 /* Smart Devices Preview */
@@ -30,11 +37,26 @@ body {
   /* margin-left: 0 !important; */
   max-height: 18rem !important;
 }
+
+.resource-card .card-header {
+  padding: 0 !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.resource-card .card-header span {
+  font-size: 14px !important;
+}
+
 .resource-card .card-body {
   padding-top: 0.5rem !important;
   padding-bottom: 0 !important;
   padding-left: 1.25rem !important;
   padding-right: 1.25rem !important;
+}
+
+.resource-card .property-title {
+  font-size: small;
 }
 
 .property-value-string,
@@ -47,12 +69,25 @@ body {
   margin-bottom: 1rem;
 }
 
-.cjslib-date {
-  width: 100% !important;
-  background-color: rgb(61 49 74) !important;
+.runtime-cards {
+  transition: all 200ms ease-out;
+  border-radius: 3px;
 }
 
-/* For clock */
+.runtime-cards-update {
+  box-shadow: 0 0 8px rgb(35 173 255);
+}
+
+/* For digital clock */
+#digital-clock {
+  color: #3d314a;
+  font-size: 18px;
+  font-family: Orbitron;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* For analog clock */
 .fill {
   position: relative;
 }

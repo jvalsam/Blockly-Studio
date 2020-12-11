@@ -19,7 +19,7 @@ import {
 export function receiveRegisterUser(data,conn){
     let DB = collabInfo.plugin.getProject();
     let info = data.info;
-    let members = DB.componentsData.collaborationData.members;
+    let members = collabInfo.plugin.getComponentData().collabInfo.members;
 	for(let item in members){
 		item = members[item];
 		if(item.name === info.name){
@@ -124,10 +124,14 @@ function acceptUser(conn,infom){
 
     conn.name = infom.name;
     collabInfo.connected_users.push(conn);
-	DB.componentsData.collaborationData.members.push({
+    
+    let toUpdate = collabInfo.plugin.getComponentData().collabInfo;
+	toUpdate.members.push({
         name: infom.name,
         icon: infom.icon
     });
+    collabInfo.plugin.saveComponentData(toUpdate);
+
     arg = {
         type: "acceptedUser",
         info: DB

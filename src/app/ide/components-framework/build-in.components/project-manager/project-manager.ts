@@ -756,6 +756,14 @@ export class ProjectManager extends IDEUIComponent {
             itemData,
             concerned, // parent - category of project item
             (elem) => {
+                // callback to give information of the created project element
+                if (onAdded) {
+                    onAdded(elem);
+                }
+
+                this.onClickProjectElement(elem);
+                project.projectItems.push(this.pitemviewtoData(elem));
+                
                 if (project.saveMode === "SHARED") {
                     ComponentsCommunication.functionRequest(
                         this.name,
@@ -767,19 +775,10 @@ export class ProjectManager extends IDEUIComponent {
                         }]
                     );
                 }
-
-                // callback to give information of the created project element
-                if (onAdded) {
-                    onAdded(elem);
-                }
-
-                this.onClickProjectElement(elem);
-                project.projectItems.push(this.pitemviewtoData(elem));
-                
-                if (project.saveMode === "DB") {
+                else if (project.saveMode === "DB") {
                     this.saveProject(concerned.project.dbID);
                 }
-                    
+
                 elem.trigger("click");
             }
         );
