@@ -376,7 +376,7 @@ export class ViSmaOE extends Editor {
         };
     }
 
-    public factoryNewItem(pitemName: string, econfigName: string, pitemInfo: any, editorConfig: any): any {
+    public factoryNewItem(pitemName: string, econfigName: string, pitemInfo: any, editorConfig: any, projectinfo: any): any {
         return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
     }
 

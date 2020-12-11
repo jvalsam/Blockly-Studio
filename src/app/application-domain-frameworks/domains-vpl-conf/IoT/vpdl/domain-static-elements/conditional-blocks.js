@@ -62,7 +62,7 @@ export const ConditionalStaticBlocks = [
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "func: () => {";
+        strBuilder += "func: async () => {";
         strBuilder += "if (" + value_condition + ") {";
         strBuilder += "let removedindex = whenCondData.findIndex(";
         strBuilder += "(x) => x.key === " + whenCondID + "";
@@ -130,7 +130,7 @@ export const ConditionalStaticBlocks = [
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "func: () => {";
+        strBuilder += "func: async () => {";
         strBuilder += "if (" + value_condition + ") {";
         strBuilder += "let removedindex = whenCondData.findIndex(";
         strBuilder += "(x) => x.key === " + whenCondID + "";
@@ -215,7 +215,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "triggerFlag: false,";
         strBuilder += "totalTimes: " + number_times + ",";
         strBuilder += "triggerTimes: 0,";
-        strBuilder += "func: () => {";
+        strBuilder += "func: async () => {";
         strBuilder +=
           "let index = whenCondData.findIndex((x) => x.key === " +
           whenCondID +
@@ -316,7 +316,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "triggerFlag: false,";
         strBuilder += "totalTimes: " + number_times + ",";
         strBuilder += "triggerTimes: 0,";
-        strBuilder += "func: () => {";
+        strBuilder += "func: async () => {";
         strBuilder +=
           "let index = whenCondData.findIndex((x) => x.key === " +
           whenCondID +
@@ -415,7 +415,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "triggerFlag: false,";
         strBuilder += "afterTimes: " + number_times + ",";
         strBuilder += "triggerTimes: 0,";
-        strBuilder += "func: () => {";
+        strBuilder += "func: async () => {";
         strBuilder +=
           "let index = whenCondData.findIndex((x) => x.key === " +
           whenCondID +
@@ -516,7 +516,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "triggerFlag: false,";
         strBuilder += "afterTimes: " + number_times + ",";
         strBuilder += "triggerTimes: 0,";
-        strBuilder += "func: () => {";
+        strBuilder += "func: async () => {";
         strBuilder +=
           "let index = whenCondData.findIndex((x) => x.key === " +
           whenCondID +
@@ -598,7 +598,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "triggerFlag: false,";
-        strBuilder += "func: () => {";
+        strBuilder += "func: async () => {";
         strBuilder +=
           "let index = whenCondData.findIndex((x) => x.key === " +
           whenCondID +
@@ -675,7 +675,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "triggerFlag: false,";
-        strBuilder += "func: () => {";
+        strBuilder += "func: async () => {";
         strBuilder +=
           "let index = whenCondData.findIndex((x) => x.key === " +
           whenCondID +

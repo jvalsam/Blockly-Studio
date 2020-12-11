@@ -650,7 +650,7 @@ export const SmartObject = {
 
         // get parameters to check the length
         let parametersLength = block.soData.details.actions.find(
-          (elem) => elem.name === "Configure"
+          (elem) => elem.name === dropdown_actions
         ).parameters.length;
 
         let inputsToCode = [];

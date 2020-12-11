@@ -367,7 +367,11 @@ export class EditorManager extends IDEUIComponent {
                     name,
                     ec.config,
                     args,
-                    editorConfig
+                    editorConfig,
+                    {
+                        editorId: editorId,
+                        projectId: projectID
+                    }
                 ]
             );
             

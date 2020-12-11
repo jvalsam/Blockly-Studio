@@ -161,7 +161,8 @@ export class SmartObjectVPLEditor extends Editor {
     pitemName: string,
     eConfName: string,
     pitemInfo: any,
-    editorConfig: any
+    editorConfig: any,
+    projectinfo: any
   ): any {
     let type = eConfName.split("ec-")[1];
     switch (type) {

@@ -515,8 +515,25 @@ export class BlocklyVPL extends Editor {
     return getDomainElementDataFunc(elem);
   }
 
+  @ExportedSignal("create-pi-blockly-calendar-event", ["pitem-data"])
+  @ExportedSignal("create-pi-blockly-conditional-event", ["pitem-data"])
+  @ExportedSignal("create-pi-blockly-automation-task", ["pitem-data"])
   @ExportedFunction
-  public factoryNewItem(pitemName: string, econfigName: string, pitemInfo: any, editorConfig: any): any {
+  public factoryNewItem(pitemName: string, econfigName: string, pitemInfo: any, editorConfig: any, projectinfo: any): any {
+    let data = JSON.parse(JSON.stringify(pitemInfo));
+    data.editorId = projectinfo.editorId;
+    data.pitemName = pitemName;
+    data.econfigName = econfigName;
+    data.projectID = projectinfo.projectId;
+    data.domainElementType = econfigName;
+    data.domainElementId = projectinfo.editorId;
+
+    ComponentsCommunication.postSignal(
+      this.name,
+      "create-" + pitemName,
+      data
+    );
+
     return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
   }
 

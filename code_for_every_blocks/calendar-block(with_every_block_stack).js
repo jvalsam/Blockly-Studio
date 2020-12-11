@@ -41,7 +41,7 @@ export const CalendarStaticBlocks = [
 
         let strBuilder = "";
         strBuilder +=
-          "arrayIntervals.push({type: 'calendar_at', time: setTimeout(function () {";
+          "arrayIntervals.push({type: 'calendar_at', time: setTimeout(async function () {";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -90,7 +90,7 @@ export const CalendarStaticBlocks = [
 
         let strBuilder = "";
         strBuilder +=
-          "arrayIntervals.push({type: 'calendar_at_top_bottom', time: setTimeout(function () {";
+          "arrayIntervals.push({type: 'calendar_at_top_bottom', time: setTimeout(async function () {";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -158,8 +158,7 @@ export const CalendarStaticBlocks = [
         strBuilder += "let index = arrayIntervals.length;";
         strBuilder += "arrayIntervals.push({type: 'calendar_every'});";
         strBuilder += "let f = function () {";
-        strBuilder += "arrayIntervals[index].time = setTimeout(() => {";
-        strBuilder += "alert(index);";
+        strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
         strBuilder += statements_statement;
         strBuilder += "arrayIntervals[index].func();";
         strBuilder +=
@@ -254,8 +253,7 @@ export const CalendarStaticBlocks = [
         strBuilder +=
           "arrayIntervals[index].time = EveryCalendarData[" +
           _id +
-          "].timeoutID = setTimeout(() => {";
-        strBuilder += "alert(index);";
+          "].timeoutID = setTimeout(async () => {";
         strBuilder += statements_statement;
         strBuilder += "arrayIntervals[index].func();";
         strBuilder +=
@@ -315,8 +313,7 @@ export const CalendarStaticBlocks = [
 
         let strBuilder = "";
         strBuilder +=
-          "arrayIntervals.push({type: 'calendar_wait_then', time: setTimeout(() => {";
-        strBuilder += 'alert("hi");';
+          "arrayIntervals.push({type: 'calendar_wait_then', time: setTimeout(async () => {";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -374,8 +371,7 @@ export const CalendarStaticBlocks = [
 
         let strBuilder = "";
         strBuilder +=
-          "arrayIntervals.push({type: 'calendar_wait_then_top_bottom', time: setTimeout(() => {";
-        strBuilder += 'alert("hi");';
+          "arrayIntervals.push({type: 'calendar_wait_then_top_bottom', time: setTimeout(async () => {";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
