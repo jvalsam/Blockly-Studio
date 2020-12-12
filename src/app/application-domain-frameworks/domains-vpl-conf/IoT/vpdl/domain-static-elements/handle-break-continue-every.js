@@ -1,4 +1,4 @@
-export const HanddleBreakContinue = function (event, wsp) {
+export const HandleBreakContinue = function (event, wsp) {
   let block = wsp.getBlockById(event.blockId);
 
   if (block) {
@@ -10,7 +10,7 @@ export const HanddleBreakContinue = function (event, wsp) {
         block.setWarningText(
           "Warning: The block has to be a child of when block"
         );
-        block.warning.setVisible(true);
+        if (block.warning) block.warning.setVisible(true);
         block.setDisabled(true);
       } else {
         block.setDisabled(false);
@@ -22,7 +22,19 @@ export const HanddleBreakContinue = function (event, wsp) {
         block.setWarningText(
           "Warning: The block has to be a child of every block"
         );
-        block.warning.setVisible(true);
+        if (block.warning) block.warning.setVisible(true);
+        block.setDisabled(true);
+      } else {
+        block.setDisabled(false);
+        block.setWarningText(null);
+      }
+    } else if (blockType === "calendar_every_top_bottom") {
+      if (block.isSurroundLoop()) {
+        //   Create new warning
+        block.setWarningText(
+          "Warning: The Every block cannot be in When / Every block"
+        );
+        if (block.warning) block.warning.setVisible(true);
         block.setDisabled(true);
       } else {
         block.setDisabled(false);

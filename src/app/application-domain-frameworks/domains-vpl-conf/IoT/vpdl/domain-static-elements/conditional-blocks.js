@@ -60,7 +60,11 @@ export const ConditionalStaticBlocks = [
         //         (x) => x.key === whenCondID
         //       );
         //       whenCondData.splice(removedindex, 1);
-        //       statements_statements;
+        //       try {
+        //         statements_statements;
+        //       } catch (e) {
+        //         return;
+        //       }
         //     }
         //   },
         // });
@@ -74,7 +78,11 @@ export const ConditionalStaticBlocks = [
         strBuilder += "(x) => x.key === " + whenCondID + "";
         strBuilder += ");";
         strBuilder += "whenCondData.splice(removedindex, 1);";
+        strBuilder += "try {";
         strBuilder += statements_statements;
+        strBuilder += "} catch (e) {";
+        strBuilder += "return;";
+        strBuilder += "}";
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
@@ -128,7 +136,11 @@ export const ConditionalStaticBlocks = [
         //         (x) => x.key === whenCondID
         //       );
         //       whenCondData.splice(removedindex, 1);
-        //       statements_statements;
+        //       try {
+        //         statements_statements;
+        //       } catch (e) {
+        //         return;
+        //       }
         //     }
         //   },
         // });
@@ -142,7 +154,11 @@ export const ConditionalStaticBlocks = [
         strBuilder += "(x) => x.key === " + whenCondID + "";
         strBuilder += ");";
         strBuilder += "whenCondData.splice(removedindex, 1);";
+        strBuilder += "try {";
         strBuilder += statements_statements;
+        strBuilder += "} catch (e) {";
+        strBuilder += "return;";
+        strBuilder += "}";
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
@@ -208,7 +224,15 @@ export const ConditionalStaticBlocks = [
         //       ) {
         //         whenCondData.splice(index, 1);
         //       }
-        //       statements_statements;
+        //       try {
+        //         statements_statements;
+        //       } catch (e) {
+        //         if (e === "break") {
+        //           whenCondData.splice(index, 1);
+        //           return;
+        //         } else if (e === "continue") {
+        //         }
+        //       }
         //     } else if (!value_condition && whenCondData[index].triggerFlag) {
         //       whenCondData[index].triggerFlag = false;
         //     }
@@ -236,7 +260,15 @@ export const ConditionalStaticBlocks = [
         strBuilder += ") {";
         strBuilder += "whenCondData.splice(index, 1);";
         strBuilder += "}";
+        strBuilder += "try {";
         strBuilder += statements_statements;
+        strBuilder += "} catch (e) {";
+        strBuilder += "if (e === 'break') {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += "} else if (e === 'continue') {";
+        strBuilder += "}";
+        strBuilder += "}";
         strBuilder +=
           "} else if (!" +
           value_condition +
@@ -309,7 +341,15 @@ export const ConditionalStaticBlocks = [
         //       ) {
         //         whenCondData.splice(index, 1);
         //       }
-        //       statements_statements;
+        //       try {
+        //         statements_statements;
+        //       } catch (e) {
+        //         if (e === "break") {
+        //           whenCondData.splice(index, 1);
+        //           return;
+        //         } else if (e === "continue") {
+        //         }
+        //       }
         //     } else if (!value_condition && whenCondData[index].triggerFlag) {
         //       whenCondData[index].triggerFlag = false;
         //     }
@@ -337,7 +377,15 @@ export const ConditionalStaticBlocks = [
         strBuilder += ") {";
         strBuilder += "whenCondData.splice(index, 1);";
         strBuilder += "}";
+        strBuilder += "try {";
         strBuilder += statements_statements;
+        strBuilder += "} catch (e) {";
+        strBuilder += "if (e === 'break') {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += "} else if (e === 'continue') {";
+        strBuilder += "}";
+        strBuilder += "}";
         strBuilder +=
           "} else if (!" +
           value_condition +
@@ -407,7 +455,15 @@ export const ConditionalStaticBlocks = [
         //         whenCondData[index].afterTimes
         //       ) {
         //         whenCondData.splice(index, 1);
-        //         statements_statements;
+        //         try {
+        //           statements_statements;
+        //         } catch (e) {
+        //           if (e === "break") {
+        //             whenCondData.splice(index, 1);
+        //             return;
+        //           } else if (e === "continue") {
+        //           }
+        //         }
         //       }
         //     } else if (!value_condition && whenCondData[index].triggerFlag) {
         //       whenCondData[index].triggerFlag = false;
@@ -435,7 +491,15 @@ export const ConditionalStaticBlocks = [
         strBuilder += "whenCondData[index].afterTimes";
         strBuilder += ") {";
         strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "try {";
         strBuilder += statements_statements;
+        strBuilder += "} catch (e) {";
+        strBuilder += "if (e === 'break') {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += "} else if (e === 'continue') {";
+        strBuilder += "}";
+        strBuilder += "}";
         strBuilder += "}";
         strBuilder +=
           "} else if (!" +
@@ -508,7 +572,15 @@ export const ConditionalStaticBlocks = [
         //         whenCondData[index].afterTimes
         //       ) {
         //         whenCondData.splice(index, 1);
-        //         statements_statements;
+        //         try {
+        //           statements_statements;
+        //         } catch (e) {
+        //           if (e === "break") {
+        //             whenCondData.splice(index, 1);
+        //             return;
+        //           } else if (e === "continue") {
+        //           }
+        //         }
         //       }
         //     } else if (!value_condition && whenCondData[index].triggerFlag) {
         //       whenCondData[index].triggerFlag = false;
@@ -536,7 +608,15 @@ export const ConditionalStaticBlocks = [
         strBuilder += "whenCondData[index].afterTimes";
         strBuilder += ") {";
         strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "try {";
         strBuilder += statements_statements;
+        strBuilder += "} catch (e) {";
+        strBuilder += "if (e === 'break') {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += "} else if (e === 'continue') {";
+        strBuilder += "}";
+        strBuilder += "}";
         strBuilder += "}";
         strBuilder +=
           "} else if (!" +
@@ -593,7 +673,15 @@ export const ConditionalStaticBlocks = [
         //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
         //     if (value_condition && !whenCondData[index].triggerFlag) {
         //       whenCondData[index].triggerFlag = true;
-        //       statements_statements;
+        //       try {
+        //         statements_statements;
+        //       } catch (e) {
+        //         if (e === "break") {
+        //           whenCondData.splice(index, 1);
+        //           return;
+        //         } else if (e === "continue") {
+        //         }
+        //       }
         //     } else if (!value_condition && whenCondData[index].triggerFlag) {
         //       whenCondData[index].triggerFlag = false;
         //     }
@@ -612,7 +700,15 @@ export const ConditionalStaticBlocks = [
         strBuilder +=
           "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
         strBuilder += "whenCondData[index].triggerFlag = true;";
+        strBuilder += "try {";
         strBuilder += statements_statements;
+        strBuilder += "} catch (e) {";
+        strBuilder += "if (e === 'break') {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += "} else if (e === 'continue') {";
+        strBuilder += "}";
+        strBuilder += "}";
         strBuilder +=
           "} else if (!" +
           value_condition +
@@ -670,7 +766,15 @@ export const ConditionalStaticBlocks = [
         //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
         //     if (value_condition && !whenCondData[index].triggerFlag) {
         //       whenCondData[index].triggerFlag = true;
-        //       statements_statements;
+        //       try {
+        //         statements_statements;
+        //       } catch (e) {
+        //         if (e === "break") {
+        //           whenCondData.splice(index, 1);
+        //           return;
+        //         } else if (e === "continue") {
+        //         }
+        //       }
         //     } else if (!value_condition && whenCondData[index].triggerFlag) {
         //       whenCondData[index].triggerFlag = false;
         //     }
@@ -689,7 +793,15 @@ export const ConditionalStaticBlocks = [
         strBuilder +=
           "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
         strBuilder += "whenCondData[index].triggerFlag = true;";
+        strBuilder += "try {";
         strBuilder += statements_statements;
+        strBuilder += "} catch (e) {";
+        strBuilder += "if (e === 'break') {";
+        strBuilder += "whenCondData.splice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += "} else if (e === 'continue') {";
+        strBuilder += "}";
+        strBuilder += "}";
         strBuilder +=
           "} else if (!" +
           value_condition +
