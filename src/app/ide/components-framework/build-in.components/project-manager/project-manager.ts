@@ -255,6 +255,7 @@ export class ProjectManager extends IDEUIComponent {
             
             pitems.forEach(pitem => {
                 let pitemData = {
+                    id: pitem.systemID,
                     type: pitem.type,
                     editorsData: []
                 };

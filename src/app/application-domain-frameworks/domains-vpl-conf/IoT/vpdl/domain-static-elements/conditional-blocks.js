@@ -11,6 +11,12 @@ const CreateChangesID = function () {
   return changesIDCounter++;
 };
 
+/**
+ * Is the given block enclosed (at any level) by an every block?
+ * @param {!Blockly.BlockSVG} block Current block.
+ * @return {Blockly.BlockSVG} The nearest surrounding loop, or null if none.
+ */
+
 export const ConditionalStaticBlocks = [
   {
     name: "conditional_when",
@@ -694,6 +700,95 @@ export const ConditionalStaticBlocks = [
         strBuilder += "});";
 
         var code = strBuilder + "\n";
+        return code;
+      },
+  },
+  {
+    name: "break_continue_when",
+    uniqueInstance: true,
+    blockDef: () => ({
+      isSurroundWhen: function () {
+        // Is the block nested in a loop?
+        let blockP = this.getParent();
+        while (blockP) {
+          if (
+            blockP.type === "conditional_when" ||
+            blockP.type === "conditional_when_top_bottom" ||
+            blockP.type === "when_times" ||
+            blockP.type === "when_times_top_bottom" ||
+            blockP.type === "when_after" ||
+            blockP.type === "when_after_top_bottom" ||
+            blockP.type === "when_forever" ||
+            blockP.type === "when_forever_top_bottom"
+          ) {
+            return true;
+          }
+          blockP = blockP.getParent();
+        }
+        return false;
+      },
+      updateImage: function (newValue) {
+        let image;
+        if (newValue === "break") {
+          image = new Blockly.FieldImage(
+            "https://img.icons8.com/office/2x/down2.png",
+            20,
+            20,
+            { alt: "*", flipRtl: "FALSE" }
+          );
+        } else if (newValue === "continue") {
+          image = new Blockly.FieldImage(
+            "https://img.icons8.com/office/2x/up3.png",
+            20,
+            20,
+            { alt: "*", flipRtl: "FALSE" }
+          );
+        }
+        // let imgField = this.getField("IMAGE");
+        let input = this.getInput("IMAGE-OUTTER");
+        input.removeField("IMAGE");
+        input.appendField(image, "IMAGE");
+      },
+      validate: function (newValue) {
+        this.getSourceBlock().updateImage(newValue);
+        return newValue;
+      },
+      init: function () {
+        this.appendDummyInput("IMAGE-OUTTER").appendField(
+          new Blockly.FieldImage(
+            "https://img.icons8.com/office/2x/down2.png",
+            20,
+            20,
+            { alt: "*", flipRtl: "FALSE" }
+          ),
+          "IMAGE"
+        );
+        this.appendDummyInput()
+          .appendField(
+            new Blockly.FieldDropdown(
+              [
+                ["break", "break"],
+                ["continue", "continue"],
+              ],
+              this.validate
+            ),
+            "ACTION"
+          )
+          .appendField("of  When / After");
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(75);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var dropdown_action = block.getFieldValue("ACTION");
+
+        // TODO: Assemble JavaScript into code variable.
+        var code = "throw '" + dropdown_action + "'";
         return code;
       },
   },

@@ -29,13 +29,16 @@ export const AutomationTask = {
           this.setColour(230);
           this.setTooltip("");
           this.setHelpUrl("");
+          this.pitemData = data;
         },
       }),
-      codeGen: (block) =>
-        function (block) {
-          var code = "tasks [" + data.taskName + "]();";
-          return [code, Blockly.JavaScript.ORDER_NONE];
-        },
+      codeGen: (block) => {
+        var code =
+          "runTimeData.execData.project.AutomationTasks.find(e => e.id === '" +
+          block.pitemData.pitemId +
+          "').editorsData[0].generated";
+        return code;
+      },
     },
   ],
   signals: [

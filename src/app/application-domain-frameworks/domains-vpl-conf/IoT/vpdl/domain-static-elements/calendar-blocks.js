@@ -255,6 +255,88 @@ export const CalendarStaticBlocks = [
       },
   },
   {
+    name: "break_continue_every",
+    blockDef: () => ({
+      isSurroundEvery: function () {
+        // Is the block nested in a loop?
+        let blockP = this.getParent();
+        while (blockP) {
+          if (
+            blockP.type === "calendar_every" ||
+            blockP.type === "calendar_every_top_bottom"
+          ) {
+            return true;
+          }
+          blockP = blockP.getParent();
+        }
+        return false;
+      },
+      updateImage: function (newValue) {
+        let image;
+        if (newValue === "break") {
+          image = new Blockly.FieldImage(
+            "https://img.icons8.com/office/2x/down2.png",
+            20,
+            20,
+            { alt: "*", flipRtl: "FALSE" }
+          );
+        } else if (newValue === "continue") {
+          image = new Blockly.FieldImage(
+            "https://img.icons8.com/office/2x/up3.png",
+            20,
+            20,
+            { alt: "*", flipRtl: "FALSE" }
+          );
+        }
+        // let imgField = this.getField("IMAGE");
+        let input = this.getInput("IMAGE-OUTTER");
+        input.removeField("IMAGE");
+        input.appendField(image, "IMAGE");
+      },
+      validate: function (newValue) {
+        this.getSourceBlock().updateImage(newValue);
+        return newValue;
+      },
+      init: function () {
+        this.appendDummyInput("IMAGE-OUTTER").appendField(
+          new Blockly.FieldImage(
+            "https://img.icons8.com/office/2x/down2.png",
+            20,
+            20,
+            { alt: "*", flipRtl: "FALSE" }
+          ),
+          "IMAGE"
+        );
+        this.appendDummyInput()
+          .appendField(
+            new Blockly.FieldDropdown(
+              [
+                ["break", "break"],
+                ["continue", "continue"],
+              ],
+              this.validate
+            ),
+            "ACTION"
+          )
+          .appendField("of  Every");
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(290);
+        this.setTooltip("");
+        this.setHelpUrl("");
+      },
+    }),
+    codeGen: () =>
+      function (block) {
+        var dropdown_action = block.getFieldValue("ACTION");
+
+        // TODO: Assemble JavaScript into code variable.
+        var code = "throw '" + dropdown_action + "'";
+        return code;
+      },
+  },
+  {
     name: "calendar_wait_then",
     blockDef: () => ({
       init: function () {

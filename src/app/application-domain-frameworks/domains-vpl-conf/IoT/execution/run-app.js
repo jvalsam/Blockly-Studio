@@ -270,6 +270,8 @@ const PinEventInCalendar = function (futureTime, calendarInfo) {
     text: calendarInfo,
   });
 
+  // get dom
+
   calendarData = deepmerge(calendarData, data); // => output
   organizer.updateData(calendarData);
 };
@@ -557,6 +559,16 @@ const InitializeOrganizerForCalendar = function () {
   document.getElementById("calendar-outter").appendChild(organizerDiv);
 
   organizer = new Organizer("organizer-container", calendar, {});
+  organizer.setOnClickListener(
+    "days-blocks",
+    // Called when a day block is long clicked
+    function () {
+      console.log("Day block long clicked");
+    }
+  );
+  $("body").on("DOMSubtreeModified", "#organizer-container-list", function () {
+    console.log("changed");
+  });
 };
 
 const InitializeSmartDevicesContainer = function (selector) {
@@ -615,7 +627,7 @@ let MergeSmartObjectsWithResources = function (smartObjects, resources) {
         resource.id === so.editorsData[0].generated.details.iotivityResourceID
     );
 
-    device.name = so.editorsData[0].generated.title;
+    if (device) device.name = so.editorsData[0].generated.title;
   });
 };
 /* End functionality for smart devices */
@@ -696,6 +708,17 @@ export async function StartApplication(runTimeData) {
                 // Render Smart Devices
                 RenderSmartDevices(devicesOnAutomations);
 
+                // automations tasks
+                runTimeData.execData.project.AutomationTasks.forEach(
+                  (events) => {
+                    eval(
+                      "(async () => {" +
+                        events.editorsData[0].generated +
+                        "})()"
+                    );
+                  }
+                );
+
                 // calendar tasks
                 runTimeData.execData.project.CalendarEvents.forEach(
                   (events) => {
@@ -717,6 +740,7 @@ export async function StartApplication(runTimeData) {
                     );
                   }
                 );
+
                 // Start whenConditions
                 StartWhenTimeout();
                 break;

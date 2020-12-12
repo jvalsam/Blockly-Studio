@@ -516,13 +516,20 @@ export class BlocklyVPL extends Editor {
     return getDomainElementDataFunc(elem);
   }
 
+  // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
   @ExportedSignal("create-pi-blockly-calendar-event", ["pitem-data"])
   @ExportedSignal("create-pi-blockly-conditional-event", ["pitem-data"])
   @ExportedSignal("create-pi-blockly-automation-task", ["pitem-data"])
   @ExportedFunction
-  public factoryNewItem(pitemName: string, econfigName: string, pitemInfo: any, editorConfig: any, projectinfo: any): any {
+  public factoryNewItem(
+    pitemName: string,
+    econfigName: string,
+    pitemInfo: any,
+    editorConfig: any,
+    projectinfo: any): any {
     let data = JSON.parse(JSON.stringify(pitemInfo));
     data.editorId = projectinfo.editorId;
+    data.pitemId = projectinfo.pitemId;
     data.pitemName = pitemName;
     data.econfigName = econfigName;
     data.projectID = projectinfo.projectId;
