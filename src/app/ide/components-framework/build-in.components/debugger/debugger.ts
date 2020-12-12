@@ -61,6 +61,16 @@ export class Debugger extends IDEUIComponent {
         );
     }
 
+    @RequiredFunction("BlocklyVPL", "getAllBlocklyWSPs")
+    private getAllBlocklyWSPs() {
+        return ComponentsCommunication.functionRequest(
+            this.name,
+            "BlocklyVPL",
+            "getAllBlocklyWSPs",
+            []
+        ).value;
+    }
+
     private getEnvironmentData(): any {
         return this.environmentData;
     }

@@ -1,5 +1,7 @@
+import { RuntimeManager } from "../../../../../../run-time-system-manager/run-time-manager";
 import * as Blockly from 'blockly';
-Blockly.Block.prototype.toString = function (opt_maxLength, opt_emptyToken) {
+
+Blockly.Block.prototype.toStringDEBUG = function (opt_maxLength, opt_emptyToken) {
     var text = [];
     var emptyFieldPlaceholder = opt_emptyToken || '?';
 
@@ -99,4 +101,10 @@ Blockly.Block.prototype.toString = function (opt_maxLength, opt_emptyToken) {
         }
     }
     return text;
+};
+Blockly.Block.prototype.toStringRELEASE =
+    Blockly.Block.prototype.toString;
+Blockly.Block.prototype.toString = function (opt_maxLength, opt_emptyToken) {
+    return Blockly.Block.prototype["toString" + RuntimeManager.getMode()]
+        (opt_maxLength, opt_emptyToken);
 };

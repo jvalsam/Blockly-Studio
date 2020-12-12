@@ -1,23 +1,23 @@
 import "./init.js";
 import { InitializeBlocklyDebuggee, dispatcher } from "./init.js";
 
-import { BlocklyDebuggeeStartAction } from "./actions/start";
+import { BlocklyDebuggeeStartAction } from "./actions/start.js";
 import {
     BlocklyDebuggeeWatchAction,
     BlocklyDebuggeeVariablesAction,
     BlocklyDebuggeeEvalAction
-} from "./actions/watches";
-import { BlocklyDebuggeeContinueAction } from "./actions/continue";
+} from "./actions/watches.js";
+import { BlocklyDebuggeeContinueAction } from "./actions/continue.js";
 import {
     BlocklyDebuggeeStepInAction,
     BlocklyDebuggeeStepOverAction,
     BlocklyDebuggeeStepOutAction,
     BlocklyDebuggeeStepParentAction
-} from "./actions/steps";
+} from "./actions/steps.js";
 import {
     BlocklyDebuggeeeBreakpointsAction,
     BlocklyDebuggeeeRunToCursor
-} from "./actions/breakpoints";
+} from "./actions/breakpoints.js";
 
 
 export function BlocklyDebuggee (plugin) {

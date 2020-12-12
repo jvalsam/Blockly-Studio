@@ -1,4 +1,6 @@
-import { Blockly_Debugger } from './src/debugger/debugger.js';
+import {
+    Blockly_Debugger
+} from './src/debugger/debugger.js';
 
 
 addEventListener("updateTable", function () {

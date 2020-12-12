@@ -1,20 +1,30 @@
 import * as Blockly from 'blockly';
 
-Blockly.JavaScript['text_length'] = function (block) {
+Blockly.JavaScript['text_lengthDEBUG'] = function (block) {
     // String or array length.
     var text = Blockly.JavaScript.valueToCode(block, 'VALUE',
         Blockly.JavaScript.ORDER_FUNCTION_CALL) || '\'\'';
     return ['(' + text + ')' + '.length', Blockly.JavaScript.ORDER_MEMBER];
 };
+Blockly.JavaScript['text_lengthRELEASE'] =
+    Blockly.JavaScript['text_length'];
+Blockly.JavaScript['text_length'] = function (block) {
+    return Blockly.JavaScript['text_length'+RuntimeManager.getMode()](block);
+};
 
-Blockly.JavaScript['text_isEmpty'] = function (block) {
+Blockly.JavaScript['text_isEmptyDEBUG'] = function (block) {
     // Is the string null or array empty?
     var text = Blockly.JavaScript.valueToCode(block, 'VALUE',
         Blockly.JavaScript.ORDER_MEMBER) || '\'\'';
     return ['!' + '(' + text + ')' + '.length', Blockly.JavaScript.ORDER_LOGICAL_NOT];
 };
+Blockly.JavaScript['text_isEmptyRELEASE'] =
+    Blockly.JavaScript['text_isEmpty'];
+Blockly.JavaScript['text_isEmpty'] = function (block) {
+    return Blockly.JavaScript['text_isEmpty'+RuntimeManager.getMode()](block);
+};
 
-Blockly.JavaScript['text_indexOf'] = function (block) {
+Blockly.JavaScript['text_indexOfDEBUG'] = function (block) {
     // Search the text for a substring.
     var operator = block.getFieldValue('END') == 'FIRST' ?
         'indexOf' : 'lastIndexOf';
@@ -28,8 +38,13 @@ Blockly.JavaScript['text_indexOf'] = function (block) {
     }
     return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
+Blockly.JavaScript['text_indexOfRELEASE'] =
+    Blockly.JavaScript['text_indexOf'];
+Blockly.JavaScript['text_indexOf'] = function (block) {
+    return Blockly.JavaScript['text_indexOf'+RuntimeManager.getMode()](block);
+};
 
-Blockly.JavaScript['text_charAt'] = function (block) {
+Blockly.JavaScript['text_charAtDEBUG'] = function (block) {
     // Get letter at index.
     // Note: Until January 2013 this block did not have the WHERE input.
     var where = block.getFieldValue('WHERE') || 'FROM_START';
@@ -67,9 +82,13 @@ Blockly.JavaScript['text_charAt'] = function (block) {
     }
     throw 'Unhandled option (text_charAt).';
 };
+Blockly.JavaScript['text_charAtRELEASE'] =
+    Blockly.JavaScript['text_charAt'];
+Blockly.JavaScript['text_charAt'] = function (block) {
+    return Blockly.JavaScript['text_charAt'+RuntimeManager.getMode()](block);
+};
 
-
-Blockly.JavaScript['text_getSubstring'] = function (block) {
+Blockly.JavaScript['text_getSubstringDEBUG'] = function (block) {
     // Get substring.
     var text = Blockly.JavaScript.valueToCode(block, 'STRING',
         Blockly.JavaScript.ORDER_FUNCTION_CALL) || '\'\'';
@@ -145,9 +164,13 @@ Blockly.JavaScript['text_getSubstring'] = function (block) {
     }
     return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
+Blockly.JavaScript['text_getSubstringRELEASE'] =
+    Blockly.JavaScript['text_getSubstring'];
+Blockly.JavaScript['text_getSubstring'] = function (block) {
+    return Blockly.JavaScript['text_getSubstring'+RuntimeManager.getMode()](block);
+};
 
-
-Blockly.JavaScript['text_changeCase'] = function (block) {
+Blockly.JavaScript['text_changeCaseDEBUG'] = function (block) {
     // Change capitalization.
     var OPERATORS = {
         'UPPERCASE': '.toUpperCase()',
@@ -176,11 +199,15 @@ Blockly.JavaScript['text_changeCase'] = function (block) {
     }
     return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
-
+Blockly.JavaScript['text_changeCaseRELEASE'] =
+    Blockly.JavaScript['text_changeCase'];
+Blockly.JavaScript['text_changeCase'] = function (block) {
+    return Blockly.JavaScript['text_changeCase'+RuntimeManager.getMode()](block);
+};
 
 ////
 
-Blockly.JavaScript['text_trim'] = function (block) {
+Blockly.JavaScript['text_trimDEBUG'] = function (block) {
     // Trim spaces.
     var OPERATORS = {
         'LEFT': ".replace(/^[\\s\\xa0]+/, '')",
@@ -192,9 +219,13 @@ Blockly.JavaScript['text_trim'] = function (block) {
         Blockly.JavaScript.ORDER_MEMBER) || '\'\'';
     return ['(' + argument0 + ')' + operator, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
+Blockly.JavaScript['text_trimRELEASE'] =
+    Blockly.JavaScript['text_trim'];
+Blockly.JavaScript['text_trim'] = function (block) {
+    return Blockly.JavaScript['text_trim'+RuntimeManager.getMode()](block);
+};
 
-
-Blockly.JavaScript['text_prompt_ext'] = function (block) {
+Blockly.JavaScript['text_prompt_extDEBUG'] = function (block) {
     // Prompt function.
     if (block.getField('TEXT')) {
         // Internal message.
@@ -211,13 +242,23 @@ Blockly.JavaScript['text_prompt_ext'] = function (block) {
     }
     return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
+Blockly.JavaScript['text_prompt_extRELEASE'] =
+    Blockly.JavaScript['text_prompt_ext'];
+Blockly.JavaScript['text_prompt_ext'] = function (block) {
+    return Blockly.JavaScript['text_prompt_ext'+RuntimeManager.getMode()](block);
+};
 
 Blockly.JavaScript['text_prompt'] = Blockly.JavaScript['text_prompt_ext'];
 
 
-Blockly.JavaScript['text_print'] = function (block) {
+Blockly.JavaScript['text_printDEBUG'] = function (block) {
     // Print statement.
     var msg = Blockly.JavaScript.valueToCode(block, 'TEXT',
         Blockly.JavaScript.ORDER_NONE) || '\'\'';
     return 'await window.alert(' + msg + ');\n';
+};
+Blockly.JavaScript['text_printRELEASE'] =
+    Blockly.JavaScript['text_print'];
+Blockly.JavaScript['text_print'] = function (block) {
+    return Blockly.JavaScript['text_print'+RuntimeManager.getMode()](block);
 };

@@ -1,5 +1,8 @@
-import { generation } from '../blockly_init.js'
-import { genEval } from '../../genEval.js'
+import {
+    RuntimeManager
+} from "../../../../../../run-time-system-manager/run-time-manager";
+import { generation } from '../blockly_init.js';
+import { genEval } from '../../genEval.js';
 import * as Blockly from 'blockly';
 /**
  * Generate code for the specified block (and attached blocks).
@@ -9,7 +12,7 @@ import * as Blockly from 'blockly';
  *     For value blocks, an array containing the generated code and an
  *     operator order value.  Returns '' if block is null.
  */
-Blockly.Generator.prototype.blockToCode = function (block, opt_thisOnly) {
+Blockly.Generator.prototype.blockToCodeDEBUG = function (block, opt_thisOnly) {
     if (!block) {
         return '';
     }
@@ -34,15 +37,14 @@ Blockly.Generator.prototype.blockToCode = function (block, opt_thisOnly) {
     var my_nest = ++generation.nest;
     var code = func.call(block, block);
     generation.nest--;
-    generation.currentSystemEditorId = window.workspace["blockly1"].getBlockById(block.id) ? "blockly1" : "blockly2"; // added 14/11/2020 attempting to fix higlighting bug. editors passed as null current id never changed
-    console.log(generation.currentSystemEditorId);
+    generation.currentSystemEditorId = generation.findBlockEditorId(block.id);
+    
     if (Array.isArray(code)) {
         // Value blocks return tuples of code and operator order.
         if (!block.outputConnection) {
             throw TypeError('Expecting string from statement block: ' + block.type);
         }
         if (this.STATEMENT_PREFIX) {
-
             let cs = genEval(my_nest, block.id, generation.currentSystemEditorId);
             code[0] = 'await $id(' + cs + ', ' + code[0] + ')';
         }
@@ -66,9 +68,14 @@ Blockly.Generator.prototype.blockToCode = function (block, opt_thisOnly) {
         throw SyntaxError('Invalid code generated: ' + code);
     }
 };
+Blockly.Generator.prototype.blockToCodeRELEASE =
+    Blockly.Generator.prototype.blockToCode;
+Blockly.Generator.prototype.blockToCode = function (block, opt_thisOnly) {
+    return Blockly.Generator.prototype["blockToCode" + RuntimeManager.getMode()]
+        (block, opt_thisOnly);
+};
 
-
-Blockly.Generator.prototype.addLoopTrap = function (branch, block) {
+Blockly.Generator.prototype.addLoopTrapDEBUG = function (branch, block) {
     let id = block.id.replace(/\$/g, '$$$$');  // Issue 251.  //!! Now blockly // where id = block
     let cs = genEval(generation.nest, id, generation.currentSystemEditorId);
     if (this.STATEMENT_SUFFIX && !block.suppressPrefixSuffix) {
@@ -79,9 +86,14 @@ Blockly.Generator.prototype.addLoopTrap = function (branch, block) {
     }
     return branch;
 };
+Blockly.Generator.prototype.addLoopTrapRELEASE =
+    Blockly.Generator.prototype.addLoopTrap;
+Blockly.Generator.prototype.addLoopTrap = function (branch, block) {
+    return Blockly.Generator.prototype["addLoopTrap" + RuntimeManager.getMode()]
+        (branch, block);
+}
 
-
-Blockly.Generator.prototype.workspaceToCode = function (workspace) {
+Blockly.Generator.prototype.workspaceToCodeDEBUG = function (workspace) {
     if (!workspace) {
         // Backwards compatibility from before there could be multiple workspaces.
         console.warn('No workspace specified in workspaceToCode call.  Guessing.');
@@ -120,7 +132,12 @@ Blockly.Generator.prototype.workspaceToCode = function (workspace) {
     code = code.replace(/[ \t]+\n/g, '\n');
     return code;
 };
-
+Blockly.Generator.prototype.workspaceToCodeRELEASE =
+    Blockly.Generator.prototype.workspaceToCode;
+Blockly.Generator.prototype.workspaceToCode = function (workspace) {
+    return Blockly.Generator.prototype["workspaceToCode" + RuntimeManager.getMode()]
+        (workspace);
+}
 
 // den einai kalh idea pou to exw balei sto Blockly.Generator.prototype gt einai diko m
 Blockly.Generator.prototype.myBlockToCode = function (block) {
@@ -193,3 +210,23 @@ Blockly.JavaScript.quote_ = function (a) {
     a = a.replace(/\\/g, "\\\\").replace(/\n/g, "\\\n").replace(/'/g, "\\'");
     return "'" + a + "'"
 };
+
+
+/**
+ * Generate code representing the statement.  Indent the code.
+ * @param {!Blockly.Block} block The block containing the input.
+ * @param {string} name The name of the input.
+ * @return {string} Generated code or '' if no blocks are connected.
+ */
+// Blockly.Generator.prototype.statementToCode = function(block, name) {
+//     var targetBlock = block.getInputTargetBlock(name);
+//     var code = this.blockToCode(targetBlock);
+//     // Value blocks must return code and order of operations info.
+//     // Statement blocks must only return code.
+//     goog.asserts.assertString(code, 'Expecting code from statement block "%s".',
+//         targetBlock && targetBlock.type);
+//     if (code) {
+//       code = this.prefixLines(/** @type {string} */ (code), this.INDENT);
+//     }
+//     return code;
+//   };

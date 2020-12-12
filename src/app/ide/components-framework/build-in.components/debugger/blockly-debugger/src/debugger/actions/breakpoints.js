@@ -19,7 +19,10 @@ export function RegisterDebuggerBreakpointFunctionality() {
     }
 
     Blockly_Debugger.actions["Breakpoint"].wait_view = (block_id) => {
-        var currentSystemEditorId = window.workspace["blockly1"].getBlockById(block_id) ? "blockly1" : "blockly2";
+        var currentSystemEditorId =
+            window.workspace["blockly1"].getBlockById(block_id)
+                ? "blockly1"
+                : "blockly2";
         var block = window.workspace[currentSystemEditorId].getBlockById(block_id);
         while (block != null) {
             block.setCollapsed(false);

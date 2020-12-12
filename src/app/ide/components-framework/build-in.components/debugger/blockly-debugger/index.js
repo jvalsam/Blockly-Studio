@@ -2,6 +2,7 @@ import './init_blockly.js';
 import './src/debugger/debugger.js';
 
 // initiate the code generator decoration
+import { generation } from "./src/generator/blockly/blockly_init";
 import './src/generator/blockly/generator/lists.js';
 import './src/generator/blockly/generator/procedures.js';
 import './src/generator/blockly/generator/text.js';
@@ -21,6 +22,15 @@ export function BlocklyDebugger (plugin) {
 
     InitializeDebuggeeWorker(plugin);
     Debuggee_Worker.registerBreakpointsRunToCursorFunctionality();
+
+    generation.wps = plugin.getAllBlocklyWSPs();
+    generation.findBlockEditorId = (blockId) => {
+        for(const editorId in generation.wps) {
+            if(generation.wps[editorId].getBlockById(blockId)) {
+                return generation.wps[editorId];
+            }
+        }
+    };
 
     this.initiateToolbar = (selector, onReady) => {
         Debuggee_Worker.registerDebuggerActions();

@@ -177,6 +177,17 @@ export class BlocklyVPL extends Editor {
     }
   }
 
+  @ExportedFunction
+  getBlockEditorId(projectId: string, blockId: string): string {
+    for(const elemName in this.domainElementTracker[projectId]) {
+      let block = this.domainElementTracker[projectId][elemName].getBlockById(blockId);
+      if (block) {
+        return block;
+      }
+    }
+    return null;
+  }
+
   @RequiredFunction("ProjectManager", "getComponentData")
   @RequiredFunction("ProjectManager", "saveComponentData")
   // save is used for Collaboration purposes
@@ -566,5 +577,10 @@ export class BlocklyVPL extends Editor {
   @ExportedFunction
   public initiateCodeGenerator() {
     InitiateBlocklyGenerator();
+  }
+
+  @ExportedFunction
+  public getAllBlocklyWSPs() {
+    return this.instancesMap;
   }
 }

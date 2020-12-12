@@ -1,7 +1,6 @@
-import { dispatcher } from '../init.js';
-var Blockly_Debuggee = require("../init.js").Blockly_Debuggee;
+import { dispatcher, Blockly_Debuggee } from '../init.js';
+import { window } from "../init.js";
 
-var window = require("../init.js").window;
 
 function update_values() {
     var update_var = Blockly_Debuggee.actions["variables"].update_values();

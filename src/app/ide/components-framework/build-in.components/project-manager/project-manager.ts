@@ -254,7 +254,10 @@ export class ProjectManager extends IDEUIComponent {
             let pitems = mainProject.projectItems.filter(x => category.validChildren.includes(x.type));
             
             pitems.forEach(pitem => {
+
                 let pitemData = {
+                    title: pitem.renderParts.find(e => e.type === "title").value.text,
+                    img: pitem.renderParts.find(e => e.type === "img").value.path,
                     type: pitem.type,
                     editorsData: []
                 };
