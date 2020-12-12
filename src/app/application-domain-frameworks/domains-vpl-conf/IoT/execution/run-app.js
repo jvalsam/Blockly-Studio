@@ -455,6 +455,7 @@ function utilityClock(container) {
   for (var i = 1; i <= 12; i++) hour(i);
 
   animate();
+  RenderDigitalClock();
 }
 
 function autoResize(element, nativeSize) {
@@ -468,7 +469,7 @@ function autoResize(element, nativeSize) {
   window.addEventListener("resize", update);
 }
 
-const RenderAnalogClock = function () {
+const RenderClocks = function () {
   var clock = document.getElementById("utility-clock");
   utilityClock(clock);
   autoResize(clock, 295 + 32);
@@ -479,22 +480,12 @@ const RenderDigitalClock = function () {
   var h = date.getHours(); // 0 - 23
   var m = date.getMinutes(); // 0 - 59
   var s = date.getSeconds(); // 0 - 59
-  var session = "AM";
-
-  if (h == 0) {
-    h = 12;
-  } else if (h > 12) {
-    h = h - 12;
-    session = "PM";
-  } else if (h === 12) {
-    session = "PM";
-  }
 
   h = h < 10 ? "0" + h : h;
   m = m < 10 ? "0" + m : m;
   s = s < 10 ? "0" + s : s;
 
-  var time = h + ":" + m + ":" + s + " " + session;
+  var time = h + ":" + m + ":" + s;
   document.getElementById("digital-clock").innerText = time;
   document.getElementById("digital-clock").textContent = time;
 
@@ -601,25 +592,29 @@ const FocusOnUpdatedDevice = function (selector) {
   selector.classList.add("runtime-cards-update");
   setTimeout(function () {
     selector.classList.remove("runtime-cards-update");
-  }, 3000);
+  }, 4000);
 };
 
-const RerenderDevice = function (device) {
+const RerenderDevice = function (device, propDiff) {
   let deviceCol = document.getElementById(device.id + "-runtime-card");
   deviceCol.innerHTML = "";
   Automatic_IoT_UI_Generator.RenderReadOnlyResource(deviceCol, device);
 
-  FocusOnUpdatedDevice(deviceCol);
+  // _air-condition-device-temperature-value
+  let propSelector = document.getElementById(
+    device.id + "-" + propDiff.name + "-value"
+  );
+  FocusOnUpdatedDevice(propSelector);
 };
 /* End UI for runtime environment */
 
 /* Start functionality for smart devices */
-let MergeSmartObjectWithResource = function (so, resource) {
+let MergeNameOfSmartObjectWithResource = function (so, resource) {
   // Merge all we need
   resource.name = so.editorsData[0].generated.title;
 };
 
-let MergeSmartObjectsWithResources = function (smartObjects, resources) {
+let MergeNameOfSmartObjectsWithResources = function (smartObjects, resources) {
   smartObjects.forEach((so) => {
     // find resource
     let device = resources.find(
@@ -673,7 +668,10 @@ export async function StartApplication(runTimeData) {
                     so.editorsData[0].generated.details.iotivityResourceID
                 );
                 // merge smart object with resource to avoid update
-                MergeSmartObjectWithResource(smartObject, socketData.resource);
+                MergeNameOfSmartObjectWithResource(
+                  smartObject,
+                  socketData.resource
+                );
 
                 // replace old resource with the new one
                 if (
@@ -682,25 +680,36 @@ export async function StartApplication(runTimeData) {
                     devicesOnAutomations[oldDeviceIndex]
                   )
                 ) {
+                  // find property difference
+                  let propDifference = socketData.resource.properties.filter(
+                    (x) =>
+                      !devicesOnAutomations[oldDeviceIndex].properties
+                        .map((y) => y.value)
+                        .includes(x.value)
+                  )[0];
+
                   devicesOnAutomations[oldDeviceIndex] = socketData.resource;
 
                   // Merge name into resource for rendering
-                  MergeSmartObjectWithResource(
+                  MergeNameOfSmartObjectWithResource(
                     smartObject,
                     devicesOnAutomations[oldDeviceIndex]
                   );
 
                   // render device
-                  RerenderDevice(devicesOnAutomations[oldDeviceIndex]);
+                  RerenderDevice(
+                    devicesOnAutomations[oldDeviceIndex],
+                    propDifference
+                  );
                 }
                 break;
 
               case "start_observe_response":
-                RenderAnalogClock();
+                RenderClocks();
 
-                RenderDigitalClock();
+                // RenderDigitalClock();
 
-                MergeSmartObjectsWithResources(
+                MergeNameOfSmartObjectsWithResources(
                   runTimeData.execData.project.SmartObjects,
                   devicesOnAutomations
                 );
