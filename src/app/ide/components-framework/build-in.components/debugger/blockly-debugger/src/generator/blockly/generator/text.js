@@ -1,3 +1,4 @@
+import { RuntimeManager } from "../../../../../../run-time-system-manager/run-time-manager";
 import * as Blockly from 'blockly';
 
 Blockly.JavaScript['text_lengthDEBUG'] = function (block) {
