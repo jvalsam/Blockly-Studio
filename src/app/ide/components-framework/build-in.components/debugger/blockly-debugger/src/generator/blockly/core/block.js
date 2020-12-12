@@ -105,6 +105,5 @@ Blockly.Block.prototype.toStringDEBUG = function (opt_maxLength, opt_emptyToken)
 Blockly.Block.prototype.toStringRELEASE =
     Blockly.Block.prototype.toString;
 Blockly.Block.prototype.toString = function (opt_maxLength, opt_emptyToken) {
-    return Blockly.Block.prototype["toString" + RuntimeManager.getMode()]
-        (opt_maxLength, opt_emptyToken);
+    return Blockly.Block.prototype["toString" + RuntimeManager.getMode()].bind(this) (opt_maxLength, opt_emptyToken);
 };

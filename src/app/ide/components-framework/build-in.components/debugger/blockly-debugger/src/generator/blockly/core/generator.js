@@ -71,8 +71,7 @@ Blockly.Generator.prototype.blockToCodeDEBUG = function (block, opt_thisOnly) {
 Blockly.Generator.prototype.blockToCodeRELEASE =
     Blockly.Generator.prototype.blockToCode;
 Blockly.Generator.prototype.blockToCode = function (block, opt_thisOnly) {
-    return Blockly.Generator.prototype["blockToCode" + RuntimeManager.getMode()]
-        (block, opt_thisOnly);
+    return Blockly.Generator.prototype["blockToCode" + RuntimeManager.getMode()].bind(this) (block, opt_thisOnly);
 };
 
 Blockly.Generator.prototype.addLoopTrapDEBUG = function (branch, block) {
@@ -89,11 +88,10 @@ Blockly.Generator.prototype.addLoopTrapDEBUG = function (branch, block) {
 Blockly.Generator.prototype.addLoopTrapRELEASE =
     Blockly.Generator.prototype.addLoopTrap;
 Blockly.Generator.prototype.addLoopTrap = function (branch, block) {
-    return Blockly.Generator.prototype["addLoopTrap" + RuntimeManager.getMode()]
-        (branch, block);
+    return Blockly.Generator.prototype["addLoopTrap" + RuntimeManager.getMode()].bind(this) (branch, block);
 }
 
-Blockly.Generator.prototype.workspaceToCodeDEBUG = function (workspace) {
+Blockly.Generator.workspaceToCodeDEBUG = function (workspace) {
     if (!workspace) {
         // Backwards compatibility from before there could be multiple workspaces.
         console.warn('No workspace specified in workspaceToCode call.  Guessing.');
@@ -132,11 +130,10 @@ Blockly.Generator.prototype.workspaceToCodeDEBUG = function (workspace) {
     code = code.replace(/[ \t]+\n/g, '\n');
     return code;
 };
-Blockly.Generator.prototype.workspaceToCodeRELEASE =
+Blockly.Generator.workspaceToCodeRELEASE =
     Blockly.Generator.prototype.workspaceToCode;
 Blockly.Generator.prototype.workspaceToCode = function (workspace) {
-    return Blockly.Generator.prototype["workspaceToCode" + RuntimeManager.getMode()]
-        (workspace);
+    return Blockly.Generator["workspaceToCode" + RuntimeManager.getMode()].bind(this) (workspace);
 }
 
 // den einai kalh idea pou to exw balei sto Blockly.Generator.prototype gt einai diko m

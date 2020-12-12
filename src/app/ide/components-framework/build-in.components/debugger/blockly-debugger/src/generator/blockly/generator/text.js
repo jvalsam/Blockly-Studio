@@ -9,7 +9,7 @@ Blockly.JavaScript['text_lengthDEBUG'] = function (block) {
 Blockly.JavaScript['text_lengthRELEASE'] =
     Blockly.JavaScript['text_length'];
 Blockly.JavaScript['text_length'] = function (block) {
-    return Blockly.JavaScript['text_length'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_length'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['text_isEmptyDEBUG'] = function (block) {
@@ -21,7 +21,7 @@ Blockly.JavaScript['text_isEmptyDEBUG'] = function (block) {
 Blockly.JavaScript['text_isEmptyRELEASE'] =
     Blockly.JavaScript['text_isEmpty'];
 Blockly.JavaScript['text_isEmpty'] = function (block) {
-    return Blockly.JavaScript['text_isEmpty'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_isEmpty'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['text_indexOfDEBUG'] = function (block) {
@@ -41,7 +41,7 @@ Blockly.JavaScript['text_indexOfDEBUG'] = function (block) {
 Blockly.JavaScript['text_indexOfRELEASE'] =
     Blockly.JavaScript['text_indexOf'];
 Blockly.JavaScript['text_indexOf'] = function (block) {
-    return Blockly.JavaScript['text_indexOf'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_indexOf'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['text_charAtDEBUG'] = function (block) {
@@ -85,7 +85,7 @@ Blockly.JavaScript['text_charAtDEBUG'] = function (block) {
 Blockly.JavaScript['text_charAtRELEASE'] =
     Blockly.JavaScript['text_charAt'];
 Blockly.JavaScript['text_charAt'] = function (block) {
-    return Blockly.JavaScript['text_charAt'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_charAt'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['text_getSubstringDEBUG'] = function (block) {
@@ -167,7 +167,7 @@ Blockly.JavaScript['text_getSubstringDEBUG'] = function (block) {
 Blockly.JavaScript['text_getSubstringRELEASE'] =
     Blockly.JavaScript['text_getSubstring'];
 Blockly.JavaScript['text_getSubstring'] = function (block) {
-    return Blockly.JavaScript['text_getSubstring'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_getSubstring'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['text_changeCaseDEBUG'] = function (block) {
@@ -202,7 +202,7 @@ Blockly.JavaScript['text_changeCaseDEBUG'] = function (block) {
 Blockly.JavaScript['text_changeCaseRELEASE'] =
     Blockly.JavaScript['text_changeCase'];
 Blockly.JavaScript['text_changeCase'] = function (block) {
-    return Blockly.JavaScript['text_changeCase'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_changeCase'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 ////
@@ -222,7 +222,7 @@ Blockly.JavaScript['text_trimDEBUG'] = function (block) {
 Blockly.JavaScript['text_trimRELEASE'] =
     Blockly.JavaScript['text_trim'];
 Blockly.JavaScript['text_trim'] = function (block) {
-    return Blockly.JavaScript['text_trim'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_trim'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['text_prompt_extDEBUG'] = function (block) {
@@ -245,7 +245,7 @@ Blockly.JavaScript['text_prompt_extDEBUG'] = function (block) {
 Blockly.JavaScript['text_prompt_extRELEASE'] =
     Blockly.JavaScript['text_prompt_ext'];
 Blockly.JavaScript['text_prompt_ext'] = function (block) {
-    return Blockly.JavaScript['text_prompt_ext'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_prompt_ext'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['text_prompt'] = Blockly.JavaScript['text_prompt_ext'];
@@ -260,5 +260,5 @@ Blockly.JavaScript['text_printDEBUG'] = function (block) {
 Blockly.JavaScript['text_printRELEASE'] =
     Blockly.JavaScript['text_print'];
 Blockly.JavaScript['text_print'] = function (block) {
-    return Blockly.JavaScript['text_print'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['text_print'+RuntimeManager.getMode()].bind(this)(block);
 };

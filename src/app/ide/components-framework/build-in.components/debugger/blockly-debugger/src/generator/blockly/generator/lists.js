@@ -16,7 +16,7 @@ Blockly.JavaScript['lists_lengthDEBUG'] = function (block) {
 Blockly.JavaScript['lists_lengthRELEASE'] =
     Blockly.JavaScript['lists_length'];
 Blockly.JavaScript['lists_length'] = function (block) {
-    return Blockly.JavaScript['lists_length'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['lists_length'+RuntimeManager.getMode()].bind(this)(block);
 }
 
 Blockly.JavaScript['lists_isEmptyDEBUG'] = function (block) {
@@ -29,7 +29,7 @@ Blockly.JavaScript['lists_isEmptyDEBUG'] = function (block) {
 Blockly.JavaScript['lists_isEmptyRELEASE'] =
     Blockly.JavaScript['lists_isEmpty'];
 Blockly.JavaScript['lists_isEmpty'] = function (block) {
-    return Blockly.JavaScript['lists_isEmpty'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['lists_isEmpty'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['lists_indexOfDEBUG'] = function (block) {
@@ -51,7 +51,7 @@ Blockly.JavaScript['lists_indexOfDEBUG'] = function (block) {
 Blockly.JavaScript['lists_indexOfRELEASE'] =
     Blockly.JavaScript['lists_indexOf'];
 Blockly.JavaScript['lists_indexOf'] = function (block) {
-    return Blockly.JavaScript['lists_indexOf'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['lists_indexOf'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['lists_getIndexDEBUG'] = function (block) {
@@ -135,7 +135,7 @@ Blockly.JavaScript['lists_getIndexDEBUG'] = function (block) {
 Blockly.JavaScript['lists_getIndexRELEASE'] =
     Blockly.JavaScript['lists_getIndex'];
 Blockly.JavaScript['lists_getIndex'] = function (block) {
-    return Blockly.JavaScript['lists_getIndex'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['lists_getIndex'+RuntimeManager.getMode()].bind(this)(block);
 }
 
 Blockly.JavaScript['lists_setIndexDEBUG'] = function (block) {
@@ -219,7 +219,7 @@ Blockly.JavaScript['lists_setIndexDEBUG'] = function (block) {
 Blockly.JavaScript['lists_setIndexRELEASE'] =
     Blockly.JavaScript['lists_setIndex'];
 Blockly.JavaScript['lists_setIndex'] = function (block) {
-    return Blockly.JavaScript['lists_setIndex'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['lists_setIndex'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['lists_splitDEBUG'] = function (block) {
@@ -248,7 +248,7 @@ Blockly.JavaScript['lists_splitDEBUG'] = function (block) {
 Blockly.JavaScript['lists_splitRELEASE'] =
     Blockly.JavaScript['lists_split'];
 Blockly.JavaScript['lists_split'] = function (block) {
-    return Blockly.JavaScript['lists_split'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['lists_split'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['lists_reverseDEBUG'] = function (block) {
@@ -261,7 +261,7 @@ Blockly.JavaScript['lists_reverseDEBUG'] = function (block) {
 Blockly.JavaScript['lists_reverseRELEASE'] =
     Blockly.JavaScript['lists_reverse'];
 Blockly.JavaScript['lists_reverse'] = function (block) {
-    return Blockly.JavaScript['lists_reverse'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['lists_reverse'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['lists_sortDEBUG'] = function (block) {
@@ -293,5 +293,5 @@ Blockly.JavaScript['lists_sortDEBUG'] = function (block) {
 Blockly.JavaScript['lists_sortRELEASE'] =
     Blockly.JavaScript['lists_sort'];
 Blockly.JavaScript['lists_sort'] = function (block) {
-    return Blockly.JavaScript['lists_sort'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['lists_sort'+RuntimeManager.getMode()].bind(this)(block);
 };

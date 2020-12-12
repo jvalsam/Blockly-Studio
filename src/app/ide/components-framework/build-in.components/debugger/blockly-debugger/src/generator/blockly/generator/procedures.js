@@ -43,7 +43,7 @@ Blockly.JavaScript['procedures_defreturnDEBUG'] = function (block) {
 Blockly.JavaScript['procedures_defreturnRELEASE'] =
     Blockly.JavaScript['procedures_defreturn'];
 Blockly.JavaScript['procedures_defreturn'] = function (block) {
-    return Blockly.JavaScript['procedures_defreturn'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['procedures_defreturn'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['procedures_defnoreturn'] =
@@ -65,7 +65,7 @@ Blockly.JavaScript['procedures_callreturnDEBUG'] = function (block) {
 Blockly.JavaScript['procedures_callreturnRELEASE'] =
     Blockly.JavaScript['procedures_callreturn'];
 Blockly.JavaScript['procedures_callreturn'] = function (block) {
-    return Blockly.JavaScript['procedures_callreturn'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['procedures_callreturn'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['procedures_callnoreturnDEBUG'] = function (block) {
@@ -83,7 +83,7 @@ Blockly.JavaScript['procedures_callnoreturnDEBUG'] = function (block) {
 Blockly.JavaScript['procedures_callnoreturnRELEASE'] =
     Blockly.JavaScript['procedures_callnoreturn'];
 Blockly.JavaScript['procedures_callnoreturn'] = function (block) {
-    return Blockly.JavaScript['procedures_callnoreturn'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['procedures_callnoreturn'+RuntimeManager.getMode()].bind(this)(block);
 };
 
 Blockly.JavaScript['procedures_ifreturnDEBUG'] = function (block) {
@@ -104,5 +104,5 @@ Blockly.JavaScript['procedures_ifreturnDEBUG'] = function (block) {
 Blockly.JavaScript['procedures_ifreturnRELEASE'] =
     Blockly.JavaScript['procedures_ifreturn'];
 Blockly.JavaScript['procedures_ifreturn'] = function (block) {
-    return Blockly.JavaScript['procedures_ifreturn'+RuntimeManager.getMode()](block);
+    return Blockly.JavaScript['procedures_ifreturn'+RuntimeManager.getMode()].bind(this)(block);
 };
