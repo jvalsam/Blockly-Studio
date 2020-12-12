@@ -258,6 +258,7 @@ export class ProjectManager extends IDEUIComponent {
                 let pitemData = {
                     title: pitem.renderParts.find(e => e.type === "title").value.text,
                     img: pitem.renderParts.find(e => e.type === "img").value.path,
+                    id: pitem.systemID,
                     type: pitem.type,
                     editorsData: []
                 };

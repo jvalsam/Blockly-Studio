@@ -1,5 +1,8 @@
 import * as Blockly from "blockly";
 
+// TODO: create infrastructure for the application-domain authoring and disconnect this depedence
+import { HanddleBreakContinue } from "../../../application-domain-frameworks/domains-vpl-conf/IoT/vpdl/domain-static-elements/handdle-break-continue";
+
 export class BlocklyConfig {
     constructor(_name, _data) {
         this._name = _name;
@@ -279,7 +282,8 @@ export class BlocklyInstance {
         if (resp || priv === Privillege.READ_ONLY) {
             return; // Don't mirror UI events.
         }
-        
+        // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
+        HanddleBreakContinue(event, this.wsp);
         this._syncWSP(event.toJson());
     }
 

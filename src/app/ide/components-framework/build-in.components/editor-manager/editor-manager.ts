@@ -370,6 +370,7 @@ export class EditorManager extends IDEUIComponent {
                     editorConfig,
                     {
                         editorId: editorId,
+                        pitemId: projectItem.systemID,
                         projectId: projectID
                     }
                 ]
