@@ -1,3 +1,4 @@
+import { generation } from "../generator/blockly/blockly_init";
 import { RegisterContinueDebuggerAction } from "./actions/continue";
 import { RegisterStartDebuggerAction } from "./actions/start";
 import {
@@ -63,6 +64,9 @@ export var InitializeDebuggeeWorker = function (plugin) {
         };
         dispatcher["highlightBlock"] = (data) => {
             // it entered here with editor null
+            //
+            let blocklyWSP = generation.getBlocklyWSP[data.currentSystemEditorId];
+            
             window.workspace[data.currentSystemEditorId].traceOn_ = true;
             window.workspace[data.currentSystemEditorId].highlightBlock(data.id);
         };

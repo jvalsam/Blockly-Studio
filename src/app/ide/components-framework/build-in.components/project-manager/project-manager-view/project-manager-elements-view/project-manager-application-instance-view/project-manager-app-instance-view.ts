@@ -211,7 +211,7 @@ export class ProjectManagerAppInstanceView extends View {
 
                     // TODO: check if mouseover changes colour in current domain meta and set respective style
                     $("#project-manager-app-instance-info-"+this.id)
-                        .css("background-color", "rgb(117, 115, 115)");
+                        .css("background-color", "rgb(105 160 208)");
                 }
             },
             {
@@ -224,7 +224,7 @@ export class ProjectManagerAppInstanceView extends View {
                     }
                     // check if mouseover changes colour in current domain meta and set respective style
                     $("#project-manager-app-instance-info-"+this.id)
-                        .css("background-color", "rgb(80, 80, 80)");
+                        .css("background-color", "rgb(74 129 177)");
                 }
             }
         );
