@@ -294,53 +294,55 @@ export const SmartObject = {
 
         // TODO: console warning when the value is number and < minimum or > maximum
 
-        // (function () {
-        //   let args = [];
-        //   let property = devicesOnAutomations
-        //     .find(
-        //       (device) => device.id === block.soData.details.iotivityResourceID
-        //     )
-        //     .properties.find((prop) => prop.name === dropdown_properties);
-        //   if (checkArray[0] === "Number") {
-        //     let number = parseFloat(value_value);
-        //     // check for minimum and maximum values
-        //     if (
-        //       property.options.minimum_value &&
-        //       number < property.options.minimum_value
-        //     ) {
-        //       args.push(property.options.minimum_value);
-        //     } else if (
-        //       property.options.maximum_value &&
-        //       number > property.options.maximum_value
-        //     ) {
-        //       args.push(property.options.maximum_value);
-        //     } else {
-        //       args.push(number);
-        //     }
-        //   } else if (checkArray[0] === "Boolean") {
-        //     args.push(value_value === "true" ? true : false);
-        //   } else if (checkArray[0] === "String") {
-        //     args.push(value_value);
-        //   }
-        //   // change value in data and then send request
-        //   property.value = args[0];
-        //   let oldDeviceIndex = devicesOnAutomations.findIndex(
-        //     (elem) => elem.id === block.soData.details.iotivityResourceID
-        //   );
-        //   RerenderDevice(devicesOnAutomations[oldDeviceIndex]);
-        //   PostRequest(
-        //     "http://" + urlInfo.iotivityUrl + "/resource/execute-method",
-        //     {
-        //       resourceId: block.soData.details.iotivityResourceID,
-        //       methodId:
-        //         "method-" +
-        //         block.soData.details.iotivityResourceID +
-        //         "-set-" +
-        //         dropdown_properties,
-        //       arguments: JSON.stringify(args),
-        //     }
-        //   );
-        // })();
+        (function () {
+          let args = [];
+          let property = devicesOnAutomations
+            .find(
+              (device) => device.id === block.soData.details.iotivityResourceID
+            )
+            .properties.find((prop) => prop.name === dropdown_properties);
+          if (checkArray[0] === "Number") {
+            let number = parseFloat(value_value);
+            // check for minimum and maximum values
+            if (
+              property.options.minimum_value &&
+              number < property.options.minimum_value
+            ) {
+              args.push(property.options.minimum_value);
+            } else if (
+              property.options.maximum_value &&
+              number > property.options.maximum_value
+            ) {
+              args.push(property.options.maximum_value);
+            } else {
+              args.push(number);
+            }
+          } else if (checkArray[0] === "Boolean") {
+            args.push(value_value === "true" ? true : false);
+          } else if (checkArray[0] === "String") {
+            args.push(value_value);
+          }
+          // change value in data and then send request
+          if (property.value !== args[0]) {
+            property.value = args[0];
+            let oldDeviceIndex = devicesOnAutomations.findIndex(
+              (elem) => elem.id === block.soData.details.iotivityResourceID
+            );
+            RerenderDevice(devicesOnAutomations[oldDeviceIndex], property);
+          }
+          PostRequest(
+            "http://" + urlInfo.iotivityUrl + "/resource/execute-method",
+            {
+              resourceId: block.soData.details.iotivityResourceID,
+              methodId:
+                "method-" +
+                block.soData.details.iotivityResourceID +
+                "-set-" +
+                dropdown_properties,
+              arguments: JSON.stringify(args),
+            }
+          );
+        })();
 
         let strBuilder = "";
         strBuilder += "(function () {";
@@ -377,13 +379,17 @@ export const SmartObject = {
         strBuilder += "} else if ('" + checkArray[0] + '\' === "String") {';
         strBuilder += "args.push(" + value_value + ");\n";
         strBuilder += "}";
+        strBuilder += "if (property.value !== args[0]) {";
         strBuilder += "property.value = args[0];\n";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
-        strBuilder += "(elem) =>";
         strBuilder +=
-          "elem.id === '" + block.soData.details.iotivityResourceID + "'";
+          "(elem) => elem.id === '" +
+          block.soData.details.iotivityResourceID +
+          "'";
         strBuilder += ");";
-        strBuilder += "RerenderDevice(devicesOnAutomations[oldDeviceIndex]);";
+        strBuilder +=
+          "RerenderDevice(devicesOnAutomations[oldDeviceIndex], property);";
+        strBuilder += "}";
         strBuilder +=
           'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {';
         strBuilder +=
@@ -482,11 +488,13 @@ export const SmartObject = {
         //       (device) => device.id === block.soData.details.iotivityResourceID
         //     )
         //     .properties.find((prop) => prop.name === dropdown_properties);
-        //   property.value = args[0];
-        //   let oldDeviceIndex = devicesOnAutomations.findIndex(
-        //     (elem) => elem.id === block.soData.details.iotivityResourceID
-        //   );
-        //   RerenderDevice(devicesOnAutomations[oldDeviceIndex]);
+        //   if (property.value !== args[0]) {
+        //     property.value = args[0];
+        //     let oldDeviceIndex = devicesOnAutomations.findIndex(
+        //       (elem) => elem.id === block.soData.details.iotivityResourceID
+        //     );
+        //     RerenderDevice(devicesOnAutomations[oldDeviceIndex], property);
+        //   }
         //   PostRequest(
         //     "http://" + urlInfo.iotivityUrl + "/resource/execute-method",
         //     {
@@ -515,14 +523,17 @@ export const SmartObject = {
           ".properties.find((prop) => prop.name === '" +
           dropdown_properties +
           "');\n";
-        strBuilder += "property.value = args[0];\n";
+        strBuilder += "if (property.value !== args[0]) {";
+        strBuilder += "property.value = args[0];";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=
           "(elem) => elem.id === '" +
           block.soData.details.iotivityResourceID +
           "'";
         strBuilder += ");";
-        strBuilder += "RerenderDevice(devicesOnAutomations[oldDeviceIndex]);";
+        strBuilder +=
+          "RerenderDevice(devicesOnAutomations[oldDeviceIndex], property);";
+        strBuilder += "}";
         strBuilder +=
           'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {';
         strBuilder +=

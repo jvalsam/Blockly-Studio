@@ -144,7 +144,16 @@ export const CalendarStaticBlocks = [
         //   arrayIntervals.push({ type: "calendar_every" });
         //   let f = function () {
         //     arrayIntervals[index].time = setTimeout(async () => {
-        //       alert(index);
+        //       try {
+        //         statements_statement;
+        //       } catch (e) {
+        //         if (e === "break") {
+        //           clearTimeout(arrayIntervals[index].time);
+        //           arrayIntervals.slice(index, 1);
+        //           return;
+        //         } else if (e === "continue") {
+        //         }
+        //       }
         //       arrayIntervals[index].func();
         //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
         //   };
@@ -158,7 +167,16 @@ export const CalendarStaticBlocks = [
         strBuilder += "arrayIntervals.push({type: 'calendar_every'});";
         strBuilder += "let f = function () {";
         strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
+        strBuilder += "try {";
         strBuilder += statements_statement;
+        strBuilder += "} catch (e) {";
+        strBuilder += 'if (e === "break") {';
+        strBuilder += "clearTimeout(arrayIntervals[index].time);";
+        strBuilder += "arrayIntervals.slice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += '} else if (e === "continue") {';
+        strBuilder += "}";
+        strBuilder += "}";
         strBuilder += "arrayIntervals[index].func();";
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -180,6 +198,24 @@ export const CalendarStaticBlocks = [
   {
     name: "calendar_every_top_bottom",
     blockDef: () => ({
+      isSurroundLoop: function () {
+        // Is the block nested in a loop?
+        let blockP = this.getParent();
+        while (blockP) {
+          if (
+            blockP.type === "calendar_every" ||
+            blockP.type === "calendar_every_top_bottom" ||
+            blockP.type === "when_times" ||
+            blockP.type === "when_times_top_bottom" ||
+            blockP.type === "when_forever" ||
+            blockP.type === "when_forever_top_bottom"
+          ) {
+            return true;
+          }
+          blockP = blockP.getParent();
+        }
+        return false;
+      },
       init: function () {
         this.appendDummyInput().appendField("Every");
         this.appendValueInput("TIME").setCheck([
@@ -217,10 +253,19 @@ export const CalendarStaticBlocks = [
 
         // (function () {
         //   let index = arrayIntervals.length;
-        //   arrayIntervals.push({type: 'calendar_every_top_bottom'});
+        //   arrayIntervals.push({ type: "calendar_every_top_bottom" });
         //   let f = function () {
         //     arrayIntervals[index].time = setTimeout(() => {
-        //       alert(index);
+        //       try {
+        //         statements_statement;
+        //       } catch (e) {
+        //         if (e === "break") {
+        //           clearTimeout(arrayIntervals[index].time);
+        //           arrayIntervals.slice(index, 1);
+        //           return;
+        //         } else if (e === "continue") {
+        //         }
+        //       }
         //       arrayIntervals[index].func();
         //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
         //   };
@@ -235,7 +280,16 @@ export const CalendarStaticBlocks = [
           "arrayIntervals.push({type: 'calendar_every_top_bottom'});";
         strBuilder += "let f = function () {";
         strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
+        strBuilder += "try {";
         strBuilder += statements_statement;
+        strBuilder += "} catch (e) {";
+        strBuilder += 'if (e === "break") {';
+        strBuilder += "clearTimeout(arrayIntervals[index].time);";
+        strBuilder += "arrayIntervals.slice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += '} else if (e === "continue") {';
+        strBuilder += "}";
+        strBuilder += "}";
         strBuilder += "arrayIntervals[index].func();";
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -289,7 +343,7 @@ export const CalendarStaticBlocks = [
           );
         }
         // let imgField = this.getField("IMAGE");
-        let input = this.getInput("IMAGE-OUTTER");
+        let input = this.getInput("IMAGE-OUTER");
         input.removeField("IMAGE");
         input.appendField(image, "IMAGE");
       },
@@ -298,7 +352,7 @@ export const CalendarStaticBlocks = [
         return newValue;
       },
       init: function () {
-        this.appendDummyInput("IMAGE-OUTTER").appendField(
+        this.appendDummyInput("IMAGE-OUTER").appendField(
           new Blockly.FieldImage(
             "https://img.icons8.com/office/2x/down2.png",
             20,

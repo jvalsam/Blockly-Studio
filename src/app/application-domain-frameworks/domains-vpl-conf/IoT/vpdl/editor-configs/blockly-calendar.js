@@ -14,6 +14,24 @@ export const BlocklyCalendar = {
       gap: "200",
     },
     {
+      name: "Automation Tasks",
+      type: "Category",
+      colour: "19",
+      elements: [
+        {
+          name: {
+            domainElem: "ec-automation-task",
+            item: "invoke_task",
+          },
+          type: "Element",
+        },
+      ],
+    },
+    {
+      type: "Separator",
+      gap: "200",
+    },
+    {
       name: "Calendar",
       type: "DomainStatic",
       colour: "75",
