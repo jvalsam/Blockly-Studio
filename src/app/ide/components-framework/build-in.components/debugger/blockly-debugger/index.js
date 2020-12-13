@@ -20,19 +20,19 @@ import {
 export function BlocklyDebugger (plugin) {
     this.plugin = plugin;
 
-    InitializeDebuggeeWorker(plugin);
+    InitializeDebuggeeWorker(plugin, this);
     Debuggee_Worker.registerBreakpointsRunToCursorFunctionality();
 
-    generation.wps = plugin.getAllBlocklyWSPs();
+    generation.workspaces = plugin.getAllBlocklyWSPs();
     generation.findBlockEditorId = (blockId) => {
-        for(const editorId in generation.wps) {
-            if(generation.wps[editorId].getBlockById(blockId)) {
-                return /*generation.wps[*/editorId/*]*/;
+        for(const editorId in generation.workspaces) {
+            if(generation.workspaces[editorId].getBlockById(blockId)) {
+                return editorId;
             }
         }
     };
     generation.getBlocklyWSP = (editorId) => {
-        return generation.wps[editorId];
+        return generation.workspaces[editorId];
     };
 
     this.initiateToolbar = (selector, onReady) => {
@@ -54,5 +54,9 @@ export function BlocklyDebugger (plugin) {
         Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
 
         onReady();
+    };
+
+    this.onmessage = (msg, callback) => {
+        Debuggee_Worker.getInstance().onmessage(msg);
     };
 }

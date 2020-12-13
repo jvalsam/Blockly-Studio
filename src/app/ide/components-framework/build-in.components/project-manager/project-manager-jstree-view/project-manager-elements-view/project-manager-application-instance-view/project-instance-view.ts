@@ -268,7 +268,7 @@ export class ProjectInstanceView extends View {
                 bgColor: "rgb(151 181 207)",
                 bgColorHover: "rgb(180 201 220)",
                 options: {
-                    color: "black",
+                    color: "#1A3A3A",
                     hover: "white"
                 }
             };

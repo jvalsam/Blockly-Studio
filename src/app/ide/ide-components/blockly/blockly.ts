@@ -150,6 +150,7 @@ export class BlocklyVPL extends Editor {
     if (!this.instancesMap.hasOwnProperty(editorData.editorId)) {
       let text = editorData ? editorData.src : null;
       this.instancesMap[editorData.editorId] = new BlocklyInstance(
+        this,
         pitem.pi,
         editorData.editorId,
         editorData.editorId, // selector has to be unique (injected in DOM, not in pitem template)
@@ -566,6 +567,7 @@ export class BlocklyVPL extends Editor {
     // load data by creating instance of the visual domain element
     let text = editorData ? editorData.src : null;
     this.instancesMap[editorData.editorId] = new BlocklyInstance(
+        this,
         pitem,
         editorData.editorId,
         editorData.editorId,
@@ -589,5 +591,15 @@ export class BlocklyVPL extends Editor {
   @ExportedFunction
   public getAllBlocklyWSPs() {
     return this.instancesMap;
+  }
+
+  @RequiredFunction("ProjectManager", "clickProjectElement")
+  private openPItem(pitem: ProjectItem) {
+    ComponentsCommunication.functionRequest(
+      this.name,
+      "ProjectManager",
+      "clickProjectElement",
+      [pitem.systemID]
+    );
   }
 }

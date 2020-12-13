@@ -59,8 +59,9 @@
   /* justify-content: space-between; */
   padding: 10px;
   border-bottom: var(--border);
-  background: #eee;
-  color: #666;
+  color: #1A3A3A;
+  background-color: #97b5cf;
+  font-weight: bold;
 }
 
 .output-console-header-text {

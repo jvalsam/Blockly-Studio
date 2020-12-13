@@ -94,7 +94,8 @@ const Privillege = Object.freeze({
 });
 
 export class BlocklyInstance {
-  constructor(pitem, id, selector, type, config, _toolbox, _syncWSP, text) {
+  constructor(parent, pitem, id, selector, type, config, _toolbox, _syncWSP, text) {
+    this.parent = parent;
     this.pitem = pitem;
     this.selector = selector;
     this.id = id;
@@ -311,6 +312,22 @@ export class BlocklyInstance {
 
   generateJavaScriptCode() {
     return Blockly.JavaScript.workspaceToCode(this.wsp);
+  }
+
+  highlightBlock(blockId) {
+    if(blockId !== "") {
+      this.parent.openPItem(this.pitem);
+    }
+
+    this.wsp.highlightBlock(blockId);
+  }
+
+  setTraceOn_(value) {
+    this.wsp.traceOn_ = value;
+  }
+
+  getTraceOn_() {
+    return this.wsp.traceOn_;
   }
 }
 

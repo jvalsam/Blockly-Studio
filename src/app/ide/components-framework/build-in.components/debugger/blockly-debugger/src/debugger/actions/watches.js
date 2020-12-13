@@ -3,7 +3,7 @@ import {
     Blockly_Debugger
 } from '../debugger.js';
 import * as Blockly from 'blockly';
-
+import { generation } from "../../generator/blockly/blockly_init";
 
 // Variables
 export function RegisterVariablesDebuggerAction (event) {
@@ -32,24 +32,24 @@ export function RegisterVariablesDebuggerAction (event) {
     
         function init() {
             var workspace_vars = [];
-            workspace_vars[0] = window.workspace["blockly1"].getAllVariables().map((variable) => {
-                return variable.name;
-            });
-            workspace_vars[1] = window.workspace["blockly2"].getAllVariables().map((variable) => {
-                return variable.name;
-            });
+            for (const editorId in generation.workspaces) {
+                workspace_vars.push(
+                    generation
+                        .workspaces[editorId]
+                        .getAllVariables()
+                        .map(variable => variable.name)
+                );
+            }
     
             for (var i = 0; i < workspace_vars.length; i++) {
-                var variables_names = variables.map((variable) => {
-                    return variable.name;
-                });
+                var variables_names = variables.map(variable => variable.name);
                 for (var j = 0; j < workspace_vars[i].length; ++j) {
                     if (variables_names.includes(workspace_vars[i][j])) continue;
                     var nvar = {
                         "name": workspace_vars[i][j],
                         "value": undefined,
                         "change": false
-                    }
+                    };
                     variables.push(nvar);
                 }
             }

@@ -42,7 +42,7 @@ export class Debugger extends IDEUIComponent {
 
     @ExportedFunction
     public frontendReceiveMessage(msg, callback?: Function) {
-
+        this.blocklyDebugger.onmessage(msg, callback);
     }
 
     @ExportedFunction

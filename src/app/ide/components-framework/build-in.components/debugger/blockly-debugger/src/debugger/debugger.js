@@ -27,13 +27,17 @@ export var InitializeDebuggeeWorker = function (plugin) {
     function getInstance() {
         if (instance === undefined) {
             alert(plugin);
-            instance = new Worker("http://localhost:3000/dist/debuggee.js");	 // to path apo to localhost kai oxi apo edw
+            instance = {};	 // to path apo to localhost kai oxi apo edw
             initDispacher();
+            
+            // establish the communication
             instance.onmessage = function (msg) {
                 let obj = msg.data;
                 let data = obj.data;
-                //console.log(data);
                 dispatcher[obj.type](data);
+            };
+            instance.postMessage = (msg) => {
+                plugin.postMessage(msg);
             };
         }
         return instance;
