@@ -69,6 +69,11 @@ export const ConditionalStaticBlocks = [
         //   },
         // });
 
+        if (value_condition === "") {
+          let code = "";
+          return code;
+        }
+
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
@@ -144,6 +149,11 @@ export const ConditionalStaticBlocks = [
         //     }
         //   },
         // });
+
+        if (value_condition === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
 
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
@@ -238,6 +248,11 @@ export const ConditionalStaticBlocks = [
         //     }
         //   },
         // });
+
+        if (value_condition === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
 
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
@@ -356,6 +371,11 @@ export const ConditionalStaticBlocks = [
         //   },
         // });
 
+        if (value_condition === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
@@ -470,6 +490,11 @@ export const ConditionalStaticBlocks = [
         //     }
         //   },
         // });
+
+        if (value_condition === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
 
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
@@ -588,6 +613,11 @@ export const ConditionalStaticBlocks = [
         //   },
         // });
 
+        if (value_condition === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
@@ -688,6 +718,11 @@ export const ConditionalStaticBlocks = [
         //   },
         // });
 
+        if (value_condition === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
@@ -781,6 +816,11 @@ export const ConditionalStaticBlocks = [
         //   },
         // });
 
+        if (value_condition === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
         let strBuilder = "";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
@@ -821,7 +861,7 @@ export const ConditionalStaticBlocks = [
     blockDef: () => ({
       isSurroundWhen: function () {
         // Is the block nested in a loop?
-        let blockP = this.getParent();
+        let blockP = this.getSurroundParent();
         while (blockP) {
           if (
             blockP.type === "conditional_when" ||
@@ -835,7 +875,7 @@ export const ConditionalStaticBlocks = [
           ) {
             return true;
           }
-          blockP = blockP.getParent();
+          blockP = blockP.getSurroundParent();
         }
         return false;
       },
@@ -947,10 +987,16 @@ export const ConditionalStaticBlocks = [
           Blockly.JavaScript.ORDER_ATOMIC
         );
 
-        var code = "false";
-        // TODO: I don't know if it needs check
-        if (value_left && value_right)
-          code = "(" + value_left + dropdown_operators + value_right + ")";
+        var code = "(function () {";
+        code +=
+          "return" +
+          value_left +
+          "" +
+          dropdown_operators +
+          "" +
+          value_right +
+          ";";
+        code += "})();";
 
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
@@ -968,8 +1014,8 @@ export const ConditionalStaticBlocks = [
         ]);
         this.appendDummyInput().appendField(
           new Blockly.FieldDropdown([
-            ["=", "==="],
-            ["≠", "!=="],
+            ["=", "=="],
+            ["≠", "!="],
             [">", ">"],
             ["<", "<"],
             ["≥", ">="],
@@ -1004,9 +1050,20 @@ export const ConditionalStaticBlocks = [
           "right_value",
           Blockly.JavaScript.ORDER_ATOMIC
         );
-        var code = "false";
-        if (value_left_value && value_right_value)
-          code = value_left_value + dropdown_operators + value_right_value;
+
+        var code = "";
+        code += "(function () {";
+        if (value_left_value !== "" && value_right_value !== "") {
+          code += "return eval(" + value_left_value + ")";
+          code += " " + dropdown_operators + " ";
+          code += "eval(" + value_right_value + ");";
+        } else {
+          code +=
+            'throw {InvalidWsp: "Relational operaor: Invalid left or right value"};';
+        }
+        code += "})()";
+
+        // var code = value_left_value + dropdown_operators + value_right_value;
 
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];

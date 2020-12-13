@@ -724,7 +724,7 @@ export async function StartApplication(runTimeData) {
                 runTimeData.execData.project.AutomationTasks.forEach(
                   (events) => {
                     eval(
-                      "(async () => {" +
+                      "(async () => { " +
                         events.editorsData[0].generated +
                         "})()"
                     );
