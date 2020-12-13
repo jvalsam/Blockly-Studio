@@ -281,13 +281,13 @@ export class ProjectCategoryView extends ProjectManagerElementView {
 
     protected setMouseOverStyle(): void {
         $("#project-manager-category-header-area-" + this.id).css({
-            "background-color": "rgb(117, 115, 115)"
+            "background-color": "rgb(105 160 208)"
         });
     }
 
     protected setMouseOutStyle(): void {
         $("#project-manager-category-header-area-" + this.id).css({
-            "background-color": "rgb(80, 80, 80)"
+            "background-color": "rgb(74 129 177)"
         });
     }
 

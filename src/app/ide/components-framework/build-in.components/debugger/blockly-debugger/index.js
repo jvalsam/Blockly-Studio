@@ -27,9 +27,12 @@ export function BlocklyDebugger (plugin) {
     generation.findBlockEditorId = (blockId) => {
         for(const editorId in generation.wps) {
             if(generation.wps[editorId].getBlockById(blockId)) {
-                return generation.wps[editorId];
+                return /*generation.wps[*/editorId/*]*/;
             }
         }
+    };
+    generation.getBlocklyWSP = (editorId) => {
+        return generation.wps[editorId];
     };
 
     this.initiateToolbar = (selector, onReady) => {
