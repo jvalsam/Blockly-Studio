@@ -2,7 +2,7 @@ import {
     dispatcher,
     Blockly_Debuggee,
     window
-} from '../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init';
+} from '../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init.js';
 
 
 export async function StartApplication(runTimeData) {
