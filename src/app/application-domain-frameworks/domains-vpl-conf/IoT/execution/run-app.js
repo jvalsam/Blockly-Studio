@@ -588,23 +588,26 @@ const RenderSmartDevices = function (devicesOnAutomations) {
   });
 };
 
-const FocusOnUpdatedDevice = function (selector) {
-  selector.classList.add("runtime-cards-update");
+const FocusOnUpdatedDevice = function (selectors) {
+  selectors.forEach((sel) => sel.classList.add("runtime-cards-update"));
   setTimeout(function () {
-    selector.classList.remove("runtime-cards-update");
+    selectors.forEach((sel) => sel.classList.remove("runtime-cards-update"));
   }, 4000);
 };
 
-const RerenderDevice = function (device, propDiff) {
+const RerenderDevice = function (device, propsDiff) {
   let deviceCol = document.getElementById(device.id + "-runtime-card");
   deviceCol.innerHTML = "";
   Automatic_IoT_UI_Generator.RenderReadOnlyResource(deviceCol, device);
 
-  // _air-condition-device-temperature-value
-  let propSelector = document.getElementById(
-    device.id + "-" + propDiff.name + "-value"
+  let propsSelectors = [];
+  propsDiff.forEach((prop) =>
+    propsSelectors.push(
+      document.getElementById(device.id + "-" + prop.name + "-value")
+    )
   );
-  FocusOnUpdatedDevice(propSelector);
+
+  FocusOnUpdatedDevice(propsSelectors);
 };
 /* End UI for runtime environment */
 
@@ -681,12 +684,12 @@ export async function StartApplication(runTimeData) {
                   )
                 ) {
                   // find property difference
-                  let propDifference = socketData.resource.properties.filter(
+                  let propsDiff = socketData.resource.properties.filter(
                     (x) =>
                       !devicesOnAutomations[oldDeviceIndex].properties
                         .map((y) => y.value)
                         .includes(x.value)
-                  )[0];
+                  );
 
                   devicesOnAutomations[oldDeviceIndex] = socketData.resource;
 
@@ -699,7 +702,7 @@ export async function StartApplication(runTimeData) {
                   // render device
                   RerenderDevice(
                     devicesOnAutomations[oldDeviceIndex],
-                    propDifference
+                    propsDiff
                   );
                 }
                 break;
