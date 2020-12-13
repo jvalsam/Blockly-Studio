@@ -33,6 +33,11 @@ export const CalendarStaticBlocks = [
           "STATEMENT"
         );
 
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
         let strBuilder = "";
         strBuilder +=
           "arrayIntervals.push({type: 'calendar_at', time: setTimeout(async function () {";
@@ -84,6 +89,11 @@ export const CalendarStaticBlocks = [
           block,
           "STATEMENT"
         );
+
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
 
         let strBuilder = "";
         strBuilder +=
@@ -161,6 +171,11 @@ export const CalendarStaticBlocks = [
         //   arrayIntervals[index].func();
         // })();
 
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
         let strBuilder = "";
         strBuilder += "(function () {";
         strBuilder += "let index = arrayIntervals.length;";
@@ -200,7 +215,7 @@ export const CalendarStaticBlocks = [
     blockDef: () => ({
       isSurroundLoop: function () {
         // Is the block nested in a loop?
-        let blockP = this.getParent();
+        let blockP = this.getSurroundParent();
         while (blockP) {
           if (
             blockP.type === "calendar_every" ||
@@ -212,7 +227,7 @@ export const CalendarStaticBlocks = [
           ) {
             return true;
           }
-          blockP = blockP.getParent();
+          blockP = blockP.getSurroundParent();
         }
         return false;
       },
@@ -273,6 +288,11 @@ export const CalendarStaticBlocks = [
         //   arrayIntervals[index].func();
         // })();
 
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
         let strBuilder = "";
         strBuilder += "(function () {";
         strBuilder += "let index = arrayIntervals.length;";
@@ -313,7 +333,7 @@ export const CalendarStaticBlocks = [
     blockDef: () => ({
       isSurroundEvery: function () {
         // Is the block nested in a loop?
-        let blockP = this.getParent();
+        let blockP = this.getSurroundParent();
         while (blockP) {
           if (
             blockP.type === "calendar_every" ||
@@ -321,7 +341,7 @@ export const CalendarStaticBlocks = [
           ) {
             return true;
           }
-          blockP = blockP.getParent();
+          blockP = blockP.getSurroundParent();
         }
         return false;
       },
@@ -431,6 +451,11 @@ export const CalendarStaticBlocks = [
         //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time))),
         // });
 
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
         let strBuilder = "";
         strBuilder +=
           "arrayIntervals.push({type: 'calendar_wait_then', time: setTimeout(async () => {";
@@ -491,6 +516,11 @@ export const CalendarStaticBlocks = [
         //     alert("hi");
         //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText())),
         // });
+
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
 
         let strBuilder = "";
         strBuilder +=
