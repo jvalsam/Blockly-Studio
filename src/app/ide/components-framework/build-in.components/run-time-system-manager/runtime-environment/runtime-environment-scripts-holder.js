@@ -3,25 +3,45 @@
  */
 
 import {
-    StartApplication,
-    StopApplication,
-    PauseApplication,
-    ContinueApplication
+    StartApplication as StartApplicationIoT,
+    StopApplication as StopApplicationIoT,
+    PauseApplication as PauseApplicationIoT,
+    ContinueApplication as ContinueApplicationIoT
 } from "../../../../../application-domain-frameworks/domains-vpl-conf/IoT/execution/run-app.js";
+
+import {
+    StartApplication as StartDebugApplicationIoT,
+    StopApplication as StopDebugApplicationIoT,
+    PauseApplication as PauseDebugApplicationIoT,
+    ContinueApplication as ContinueDebugApplicationIoT
+} from "../../../../../application-domain-frameworks/domains-vpl-conf/IoT/execution/debug-app.js";
+
 
 class _RuntimeEnvironmentScriptsHolder {
     constructor() {
         this._domainsScriptMap = {};
+        this._domainsDebugScriptMap = {};
+
         this._domainsScriptMap["IoT"] = {
-            StartApplication: StartApplication,
-            StopApplication: StopApplication,
-            PauseApplication: PauseApplication,
-            ContinueApplication: ContinueApplication
+            StartApplication: StartApplicationIoT,
+            StopApplication: StopApplicationIoT,
+            PauseApplication: PauseApplicationIoT,
+            ContinueApplication: ContinueApplicationIoT
+        };
+        this._domainsDebugScriptMap["IoT"] = {
+            StartApplication: StartDebugApplicationIoT,
+            StopApplication: StopDebugApplicationIoT,
+            PauseApplication: PauseDebugApplicationIoT,
+            ContinueApplication: ContinueDebugApplicationIoT
         };
     }
 
     executionDomainFunctions(domain) {
         return this._domainsScriptMap[domain];
+    }
+
+    executionDebugDomainFunctions(domain) {
+        return this._domainsDebugScriptMap[domain];
     }
 }
 

@@ -23,7 +23,7 @@ export class RuntimeEnvironmentDebug {
         this._envData = envData;
 
         this._executionScript = RuntimeEnvironmentScriptsHolder
-            .executionDomainFunctions(this._envData.domainType);
+            .executionDebugDomainFunctions(this._envData.domainType);
         
         // pin callback that checks runtime environment state
         this._envData.checkRuntimeEnvironment = () => this._handleRuntime();
@@ -36,7 +36,8 @@ export class RuntimeEnvironmentDebug {
             [
                 this._envData
             ],
-            { // on start debugger
+            {
+                // on start debugger
                 func: (response) => {
                     // initialize backend
                     alert(response);

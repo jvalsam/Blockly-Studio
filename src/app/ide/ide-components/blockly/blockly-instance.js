@@ -311,7 +311,9 @@ export class BlocklyInstance {
   }
 
   generateJavaScriptCode() {
-    return Blockly.JavaScript.workspaceToCode(this.wsp);
+    let code = Blockly.JavaScript.workspaceToCode(this.wsp);
+    code.replace(/__DOLLAR__/g, '\$');
+    return code;
   }
 
   highlightBlock(blockId) {

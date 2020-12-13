@@ -11,19 +11,27 @@ function update_values() {
 export function BlocklyDebuggeeStartAction(plugin) {
     Blockly_Debuggee.actions.start_debugging = (function () {
         async function handler(content) {
-            if (content != undefined) {
-                Blockly_Debuggee.actions["breakpoint"].update(content.breakpoints);
-                Blockly_Debuggee.actions["runToCursor"].cursorBreakpoint = content.cursorBreakpoint;
-                Blockly_Debuggee.actions["watch"].update(content.watches);
-                Blockly_Debuggee.actions["variables"].update(content.variables);
-                var variables = Blockly_Debuggee.actions["variables"].getVariables();
-                var watches = Blockly_Debuggee.actions["watch"].getWatches();
-                var def_variables_code = Blockly_Debuggee.actions["variables"].define_variables();
-                var variablesWatches_code = "eval(update_values()); Blockly_Debuggee.actions[\"variables\"].updateDebugger(); Blockly_Debuggee.actions[\"watch\"].updateDebugger();";
-                await eval(def_variables_code + " function evalLocal(expr){eval(expr);} Blockly_Debuggee.actions[\"eval\"].evalLocal = evalLocal;" + "async function code(){ " + content.code + variablesWatches_code + "}; code(); ");
+            if (content != undefined) {                
+                let execData = plugin._envData.execData;
+                plugin._envData.update_values = update_values;
+                plugin._envData.postMessage = plugin.postMessage.bind(plugin);
 
-                plugin.postMessage({ "type": "execution_finished" });
-            } else {
+                Blockly_Debuggee
+                    .actions["breakpoint"]
+                    .update(content.breakpoints);
+                Blockly_Debuggee
+                    .actions["runToCursor"]
+                    .cursorBreakpoint = content.cursorBreakpoint;
+                Blockly_Debuggee
+                    .actions["watch"]
+                    .update(content.watches);
+                Blockly_Debuggee
+                    .actions["variables"]
+                    .update(content.variables);
+
+                plugin._executionScript(execData);
+            }
+            else {
                 window.alert("The content is undefined.");
             }
         };
@@ -49,7 +57,6 @@ export function BlocklyDebuggeeStartAction(plugin) {
             handler: handler
         };
     })();
-
 
     dispatcher.start_debugging = Blockly_Debuggee.actions["start_debugging"].handler;
 }
