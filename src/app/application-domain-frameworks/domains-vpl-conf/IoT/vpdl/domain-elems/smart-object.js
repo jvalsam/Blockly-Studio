@@ -178,7 +178,7 @@ export const SmartObject = {
                 new Blockly.FieldDropdown(dropdownSel),
                 "PROPERTIES"
               );
-            this.setOutput(true, "getter_boolean");
+            this.setOutput(true, "Boolean");
             this.setColour(230);
             this.setTooltip("Output type: Boolean");
             this.setHelpUrl("");
