@@ -105,6 +105,8 @@ const StartWhenTimeout = function () {
   let f = function () {
     arrayIntervals[index].time = setTimeout(() => {
       if (whenCondData.length === 0) {
+        clearTimeout(arrayIntervals[index].time);
+        arrayIntervals.slice(index, 1);
         return;
       }
       whenCondData.forEach((cond) => {
@@ -200,6 +202,10 @@ const TakeDifferenceFromSpecificMonth = function (time, calendarInfo) {
 };
 
 const EverySecond = function (time, calendarInfo) {
+  let futureDate = dayjs().second(dayjs().second() + time.second);
+
+  // Pin in calendar
+  PinEventInCalendar(futureDate, calendarInfo);
   return time.second * 1000;
 };
 
@@ -250,6 +256,20 @@ const timeDispatch = {
   everyMonth: EveryMonth,
 };
 
+const compareStartingDate = function (a, b) {
+  // Use toUpperCase() to ignore character casing
+  const startTimeA = a.startTime;
+  const startTimeB = b.startTime;
+
+  let comparison = 0;
+  if (startTimeA > startTimeB) {
+    comparison = 1;
+  } else if (startTimeA < startTimeB) {
+    comparison = -1;
+  }
+  return comparison;
+};
+
 const PinEventInCalendar = function (futureTime, calendarInfo) {
   let year = futureTime.year();
   let month = futureTime.month() + 1;
@@ -272,7 +292,11 @@ const PinEventInCalendar = function (futureTime, calendarInfo) {
 
   // get dom
 
-  calendarData = deepmerge(calendarData, data); // => output
+  calendarData = deepmerge(calendarData, data);
+
+  /* Sorting Calendar data */
+  calendarData[year][month][date].sort(compareStartingDate);
+
   organizer.updateData(calendarData);
 };
 /* End data and functions for calendar - conditional blocks */
@@ -454,8 +478,8 @@ function utilityClock(container) {
   for (var i = 1 / 4; i <= 60; i += 1 / 4) minute(i);
   for (var i = 1; i <= 12; i++) hour(i);
 
-  animate();
   RenderDigitalClock();
+  animate();
 }
 
 function autoResize(element, nativeSize) {
@@ -495,9 +519,8 @@ const RenderDigitalClock = function () {
 const InitializeCalendar = function (selector) {
   let calendarRow = document.createElement("div");
   calendarRow.classList.add("row");
-  calendarRow.classList.add("border");
   calendarRow.classList.add("rounded");
-  calendarRow.classList.add("p-3");
+  calendarRow.classList.add("p-2");
   calendarRow.id = "calendar-outter";
   selector.appendChild(calendarRow);
 
