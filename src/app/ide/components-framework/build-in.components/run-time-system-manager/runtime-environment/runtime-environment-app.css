@@ -31,6 +31,11 @@ body {
   background-color: rgb(74 129 177) !important;
 }
 
+.calendar-event-finished {
+  background-color: #77ca77 !important;
+  /* border: 3px solid #4dd44d; */
+}
+
 /* Smart Devices Preview */
 .resource-card {
   width: 16rem !important;

@@ -1,5 +1,12 @@
 import * as Blockly from "blockly";
 
+const ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return "_" + Math.random().toString(36).substr(2, 9);
+};
+
 export const CalendarStaticBlocks = [
   {
     name: "calendar_at",
@@ -38,10 +45,17 @@ export const CalendarStaticBlocks = [
           return strBuilder;
         }
 
+        const id = ID();
+
         let strBuilder = "";
         strBuilder +=
           "arrayIntervals.push({type: 'calendar_at', time: setTimeout(async function () {";
         strBuilder += statements_statement;
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate['" + id + "'].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate['" + id + "'].startTime";
+        strBuilder += ").isFired = true;";
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
           value_time +
@@ -49,6 +63,8 @@ export const CalendarStaticBlocks = [
           value_time +
           "),'" +
           block.getCommentText() +
+          "', '" +
+          id +
           "'))";
         strBuilder += "});";
 
@@ -95,10 +111,17 @@ export const CalendarStaticBlocks = [
           return strBuilder;
         }
 
+        const id = ID();
+
         let strBuilder = "";
         strBuilder +=
           "arrayIntervals.push({type: 'calendar_at_top_bottom', time: setTimeout(async function () {";
         strBuilder += statements_statement;
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate['" + id + "'].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate['" + id + "'].startTime";
+        strBuilder += ").isFired = true;";
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
           value_time +
@@ -106,6 +129,8 @@ export const CalendarStaticBlocks = [
           value_time +
           "),'" +
           block.getCommentText() +
+          "', '" +
+          id +
           "'))";
         strBuilder += "});";
 
@@ -149,6 +174,8 @@ export const CalendarStaticBlocks = [
           "STATEMENT"
         );
 
+        const id = ID();
+
         // (function () {
         //   let index = arrayIntervals.length;
         //   arrayIntervals.push({ type: "calendar_every" });
@@ -156,6 +183,10 @@ export const CalendarStaticBlocks = [
         //     arrayIntervals[index].time = setTimeout(async () => {
         //       try {
         //         statements_statement;
+        //         // update fire boolean
+        //         activeDateOnCalendar[timeIdsToDate[id].day][
+        //           timeIdsToDate[id].startTime
+        //         ].isFired = true;
         //       } catch (e) {
         //         if (e === "break") {
         //           clearTimeout(arrayIntervals[index].time);
@@ -165,7 +196,7 @@ export const CalendarStaticBlocks = [
         //         }
         //       }
         //       arrayIntervals[index].func();
-        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
+        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id));
         //   };
         //   arrayIntervals[index].func = f;
         //   arrayIntervals[index].func();
@@ -184,6 +215,11 @@ export const CalendarStaticBlocks = [
         strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
         strBuilder += "try {";
         strBuilder += statements_statement;
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate['" + id + "'].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate['" + id + "'].startTime";
+        strBuilder += ").isFired = true;";
         strBuilder += "} catch (e) {";
         strBuilder += 'if (e === "break") {';
         strBuilder += "clearTimeout(arrayIntervals[index].time);";
@@ -200,6 +236,8 @@ export const CalendarStaticBlocks = [
           value_time +
           "), '" +
           block.getCommentText() +
+          "', '" +
+          id +
           "'));";
         strBuilder += "};";
         strBuilder += "arrayIntervals[index].func = f;";
@@ -266,6 +304,8 @@ export const CalendarStaticBlocks = [
           "STATEMENT"
         );
 
+        const id = ID();
+
         // (function () {
         //   let index = arrayIntervals.length;
         //   arrayIntervals.push({ type: "calendar_every_top_bottom" });
@@ -273,6 +313,10 @@ export const CalendarStaticBlocks = [
         //     arrayIntervals[index].time = setTimeout(() => {
         //       try {
         //         statements_statement;
+        //         // update fire boolean
+        //         activeDateOnCalendar[timeIdsToDate[id].day][
+        //           timeIdsToDate[id].startTime
+        //         ].isFired = true;
         //       } catch (e) {
         //         if (e === "break") {
         //           clearTimeout(arrayIntervals[index].time);
@@ -282,7 +326,7 @@ export const CalendarStaticBlocks = [
         //         }
         //       }
         //       arrayIntervals[index].func();
-        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time)));
+        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id));
         //   };
         //   arrayIntervals[index].func = f;
         //   arrayIntervals[index].func();
@@ -302,6 +346,11 @@ export const CalendarStaticBlocks = [
         strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
         strBuilder += "try {";
         strBuilder += statements_statement;
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate['" + id + "'].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate['" + id + "'].startTime";
+        strBuilder += ").isFired = true;";
         strBuilder += "} catch (e) {";
         strBuilder += 'if (e === "break") {';
         strBuilder += "clearTimeout(arrayIntervals[index].time);";
@@ -318,6 +367,8 @@ export const CalendarStaticBlocks = [
           value_time +
           "), '" +
           block.getCommentText() +
+          "', '" +
+          id +
           "'));";
         strBuilder += "};";
         strBuilder += "arrayIntervals[index].func = f;";
@@ -444,11 +495,17 @@ export const CalendarStaticBlocks = [
           "STATEMENT"
         );
 
+        const id = ID();
+
         // arrayIntervals.push({
-        //   type: 'calendar_wait_then',
+        //   type: "calendar_wait_then",
         //   time: setTimeout(() => {
-        //     alert("hi");
-        //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time))),
+        //     statements_statement;
+        //     // update fire boolean
+        //     activeDateOnCalendar[timeIdsToDate[id].day][
+        //       timeIdsToDate[id].startTime
+        //     ].isFired = true;
+        //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id)),
         // });
 
         if (value_time === "") {
@@ -461,12 +518,19 @@ export const CalendarStaticBlocks = [
           "arrayIntervals.push({type: 'calendar_wait_then', time: setTimeout(async () => {";
         strBuilder += statements_statement;
         strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate['" + id + "'].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate['" + id + "'].startTime";
+        strBuilder += ").isFired = true;";
+        strBuilder +=
           "}, timeDispatch[JSON.parse(" +
           value_time +
           ").type](JSON.parse(" +
           value_time +
           "),'" +
           block.getCommentText() +
+          "', '" +
+          id +
           "'))";
         strBuilder += "});";
 
@@ -510,11 +574,17 @@ export const CalendarStaticBlocks = [
           "STATEMENT"
         );
 
+        const id = ID();
+
         // arrayIntervals.push({
         //   type: "calendar_wait_then_top_bottom",
         //   time: setTimeout(() => {
-        //     alert("hi");
-        //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText())),
+        //     statements_statement;
+        //     // update fire boolean
+        //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+        //       (e) => e.startTime === timeIdsToDate[id].startTime
+        //     ).isFired = true;
+        //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id)),
         // });
 
         if (value_time === "") {
@@ -527,12 +597,19 @@ export const CalendarStaticBlocks = [
           "arrayIntervals.push({type: 'calendar_wait_then_top_bottom', time: setTimeout(async () => {";
         strBuilder += statements_statement;
         strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate['" + id + "'].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate['" + id + "'].startTime";
+        strBuilder += ").isFired = true;";
+        strBuilder +=
           "}, timeDispatch[JSON.parse(" +
           value_time +
           ").type](JSON.parse(" +
           value_time +
           "), '" +
           block.getCommentText() +
+          "', '" +
+          id +
           "'))";
         strBuilder += "});";
 

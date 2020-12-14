@@ -93,6 +93,9 @@ const Initialize = function (selector) {
 };
 
 /* Start data and functions for calendar - conditional blocks */
+const timeIdsToDate = {}; //  <id>: { day: "December 14, 2020", startTime: "16:54:33" }
+const activeDateOnCalendar = {}; // "December 14, 2020": [ {startTime:"16:54:33", isFired: false } ]
+
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
 const whenCondData = [];
@@ -105,6 +108,8 @@ const StartWhenTimeout = function () {
   let f = function () {
     arrayIntervals[index].time = setTimeout(() => {
       if (whenCondData.length === 0) {
+        clearTimeout(arrayIntervals[index].time);
+        arrayIntervals.slice(index, 1);
         return;
       }
       whenCondData.forEach((cond) => {
@@ -142,7 +147,11 @@ const months = [
   "December",
 ];
 
-const TakeDifferenceFromSpecificTime = function (time, calendarInfo) {
+const TakeDifferenceFromSpecificTime = function (
+  time,
+  calendarInfo,
+  calendarBlockId
+) {
   let futureTime = dayjs()
     .set("second", time.second)
     .set("minute", time.minute)
@@ -160,12 +169,16 @@ const TakeDifferenceFromSpecificTime = function (time, calendarInfo) {
   }
 
   // Pin in calendar
-  PinEventInCalendar(futureTime, calendarInfo);
+  PinEventInCalendar(futureTime, calendarInfo, calendarBlockId);
 
   return ms;
 };
 
-const TakeDifferenceFromSpecificDay = function (time, calendarInfo) {
+const TakeDifferenceFromSpecificDay = function (
+  time,
+  calendarInfo,
+  calendarBlockId
+) {
   let intDay = weekDays.indexOf(time.day);
 
   let futureDate = dayjs().day(intDay);
@@ -177,12 +190,16 @@ const TakeDifferenceFromSpecificDay = function (time, calendarInfo) {
   }
 
   // Pin in calendar
-  PinEventInCalendar(futureDate, calendarInfo);
+  PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
   return ms;
 };
 
-const TakeDifferenceFromSpecificMonth = function (time, calendarInfo) {
+const TakeDifferenceFromSpecificMonth = function (
+  time,
+  calendarInfo,
+  calendarBlockId
+) {
   let intMonth = months.indexOf(time.month);
 
   let futureDate = dayjs().month(intMonth);
@@ -194,47 +211,51 @@ const TakeDifferenceFromSpecificMonth = function (time, calendarInfo) {
   }
 
   // Pin in calendar
-  PinEventInCalendar(futureDate, calendarInfo);
+  PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
   return ms;
 };
 
-const EverySecond = function (time, calendarInfo) {
+const EverySecond = function (time, calendarInfo, calendarBlockId) {
+  let futureDate = dayjs().second(dayjs().second() + time.second);
+
+  // Pin in calendar
+  PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
   return time.second * 1000;
 };
 
-const EveryMinute = function (time, calendarInfo) {
+const EveryMinute = function (time, calendarInfo, calendarBlockId) {
   let futureDate = dayjs().minute(dayjs().minute() + time.minute);
 
   // Pin in calendar
-  PinEventInCalendar(futureDate, calendarInfo);
+  PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
   return time.minute * 60000;
 };
 
-const EveryHour = function (time, calendarInfo) {
+const EveryHour = function (time, calendarInfo, calendarBlockId) {
   let futureDate = dayjs().hour(dayjs().hour() + time.hour);
 
   // Pin in calendar
-  PinEventInCalendar(futureDate, calendarInfo);
+  PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
   return time.hour * 3600000;
 };
 
-const EveryDay = function (time, calendarInfo) {
+const EveryDay = function (time, calendarInfo, calendarBlockId) {
   let futureDate = dayjs().day(dayjs().day() + time.day);
 
   // Pin in calendar
-  PinEventInCalendar(futureDate, calendarInfo);
+  PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
   return time.day * 86400000;
 };
 
-const EveryMonth = function (time, calendarInfo) {
+const EveryMonth = function (time, calendarInfo, calendarBlockId) {
   let futureDate = dayjs().month(dayjs().month() + time.month);
 
   // Pin in calendar
-  PinEventInCalendar(futureDate, calendarInfo);
+  PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
   return time.month * 2592000000;
 };
@@ -250,29 +271,70 @@ const timeDispatch = {
   everyMonth: EveryMonth,
 };
 
-const PinEventInCalendar = function (futureTime, calendarInfo) {
+const compareStartingDate = function (a, b) {
+  // Use toUpperCase() to ignore character casing
+  const startTimeA = a.startTime;
+  const startTimeB = b.startTime;
+
+  let comparison = 0;
+  if (startTimeA > startTimeB) {
+    comparison = 1;
+  } else if (startTimeA < startTimeB) {
+    comparison = -1;
+  }
+  return comparison;
+};
+
+const PinEventInCalendar = function (
+  futureTime,
+  calendarInfo,
+  calendarBlockId
+) {
   let year = futureTime.year();
   let month = futureTime.month() + 1;
   let date = futureTime.date();
+
+  let startTime =
+    ("0" + futureTime.hour()).slice(-2) +
+    ":" +
+    ("0" + futureTime.minute()).slice(-2) +
+    ":" +
+    ("0" + futureTime.second()).slice(-2);
 
   let data = {};
   data[year] = {};
   data[year][month] = {};
   data[year][month][date] = [];
   data[year][month][date].push({
-    startTime:
-      ("0" + futureTime.hour()).slice(-2) +
-      ":" +
-      ("0" + futureTime.minute()).slice(-2) +
-      ":" +
-      ("0" + futureTime.second()).slice(-2),
+    startTime: startTime,
     endTime: "end",
     text: calendarInfo,
   });
 
-  // get dom
+  // December 14, 2020
+  let dateToSave = futureTime.format("MMMM DD, YYYY");
 
-  calendarData = deepmerge(calendarData, data); // => output
+  // save in timeIdsTodate day and startTime
+  timeIdsToDate[calendarBlockId] = { day: dateToSave, startTime: startTime };
+  if (!activeDateOnCalendar[dateToSave]) {
+    activeDateOnCalendar[dateToSave] = [];
+  }
+
+  // push new date in activeDateOnCalendar
+  activeDateOnCalendar[dateToSave].push({
+    startTime: startTime,
+    isFired: false,
+  });
+
+  // sort the activeDateOnCalendar for specific day
+  activeDateOnCalendar[dateToSave].sort(compareStartingDate);
+
+  /* Merge new calendar data with the existing ones */
+  calendarData = deepmerge(calendarData, data);
+
+  /* Sorting calendar data */
+  calendarData[year][month][date].sort(compareStartingDate);
+
   organizer.updateData(calendarData);
 };
 /* End data and functions for calendar - conditional blocks */
@@ -454,8 +516,8 @@ function utilityClock(container) {
   for (var i = 1 / 4; i <= 60; i += 1 / 4) minute(i);
   for (var i = 1; i <= 12; i++) hour(i);
 
-  animate();
   RenderDigitalClock();
+  animate();
 }
 
 function autoResize(element, nativeSize) {
@@ -495,9 +557,8 @@ const RenderDigitalClock = function () {
 const InitializeCalendar = function (selector) {
   let calendarRow = document.createElement("div");
   calendarRow.classList.add("row");
-  calendarRow.classList.add("border");
   calendarRow.classList.add("rounded");
-  calendarRow.classList.add("p-3");
+  calendarRow.classList.add("p-2");
   calendarRow.id = "calendar-outter";
   selector.appendChild(calendarRow);
 
@@ -550,15 +611,31 @@ const InitializeOrganizerForCalendar = function () {
   document.getElementById("calendar-outter").appendChild(organizerDiv);
 
   organizer = new Organizer("organizer-container", calendar, {});
-  organizer.setOnClickListener(
-    "days-blocks",
-    // Called when a day block is long clicked
-    function () {
-      console.log("Day block long clicked");
-    }
-  );
+
   $("body").on("DOMSubtreeModified", "#organizer-container-list", function () {
-    console.log("changed");
+    // take day
+    let day = document.getElementById("organizer-container-date").innerHTML;
+
+    console.log(activeDateOnCalendar[day]);
+
+    // parse the date and take which event is marked as fired
+    if (activeDateOnCalendar[day]) {
+      for (let i = 0; i < activeDateOnCalendar[day].length; ++i) {
+        if (activeDateOnCalendar[day][i].isFired) {
+          // add green border to show that the event is fired
+          if (document.getElementById("organizer-container-list-item-" + i)) {
+            if (
+              !document
+                .getElementById("organizer-container-list-item-" + i)
+                .classList.contains("calendar-event-finished")
+            )
+              document
+                .getElementById("organizer-container-list-item-" + i)
+                .classList.add("calendar-event-finished");
+          }
+        }
+      }
+    }
   });
 };
 

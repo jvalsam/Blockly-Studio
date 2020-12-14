@@ -3,6 +3,38 @@ import * as Blockly from "blockly";
 // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
 import { HandleBreakContinue } from "../../../application-domain-frameworks/domains-vpl-conf/IoT/vpdl/domain-static-elements/handle-break-continue-every";
 
+export function GetBlocklyWspOptions(mode, media, toolbox) {
+  var options = {
+    css: true,
+    media: media,
+    rtl: false,
+    scrollbars: true,
+    sounds: true,
+    oneBasedIndex: true,
+    zoom: {
+      controls: true,
+      wheel: true,
+      startScale: 1,
+      maxScale: 3,
+      minScale: 0.3,
+      scaleSpeed: 1.2,
+    },
+  };
+  if (mode === Privillege.READ_ONLY) options.readOnly = true;
+  else
+    Object.assign(options, {
+      toolbox: toolbox,
+      collapse: true,
+      comments: true,
+      disable: true,
+      maxBlocks: Infinity,
+      trashcan: true,
+      horizontalLayout: false,
+      toolboxPosition: "start",
+    });
+  return options;
+}
+
 export function GetBlockTypeByBlockId(blockId) {
   return blockId.split("$")[1];
 }
@@ -92,7 +124,7 @@ const InstStateEnum = Object.freeze({
   CLOSE: 2,
 });
 
-const Privillege = Object.freeze({
+export const Privillege = Object.freeze({
   READ_ONLY: "READ_ONLY",
   EDITING: "EDITING",
 });
@@ -135,10 +167,17 @@ export class BlocklyInstance {
         "blockly-sync-editors-area-diplay-none"
       );
 
-      this._notFocusedWSP = Blockly.inject(this._syncNotFocusedInst, {
-        media: "../../../../../node_modules/blockly/media/",
-        toolbox: toolboxXml,
-      });
+      let toolbox = this.toolbox();
+      var toolboxXml = Blockly.Xml.textToDom(toolbox.gen);
+
+      this._notFocusedWSP = Blockly.inject(
+        this._syncNotFocusedInst,
+        GetBlocklyWspOptions(
+          Privillege.EDITING,
+          "../../../../../node_modules/blockly/media/",
+          toolboxXml
+        )
+      );
 
       let editorData = pitem.editorsData.find((e) => e.id === editorId);
 
@@ -168,7 +207,13 @@ export class BlocklyInstance {
     );
     this._blocklyDiv = document.getElementById(blocklySel);
 
-    this.wsp = Blockly.inject(this._blocklyDiv, { readOnly: true });
+    this.wsp = Blockly.inject(
+      this._blocklyDiv,
+      GetBlocklyWspOptions(
+        Privillege.READ_ONLY,
+        "../../../../../node_modules/blockly/media/"
+      )
+    );
 
     if (this.text) {
       var xml = Blockly.Xml.textToDom(this.text);
@@ -239,21 +284,27 @@ export class BlocklyInstance {
     let toolbox = this.toolbox();
     var toolboxXml = Blockly.Xml.textToDom(toolbox.gen);
 
-    this.wsp = Blockly.inject(this._blocklyDiv, {
-      media: "../../../../../node_modules/blockly/media/",
-      toolbox: toolboxXml,
-    });
+    this.wsp = Blockly.inject(
+      this._blocklyDiv,
+      GetBlocklyWspOptions(
+        Privillege.EDITING,
+        "../../../../../node_modules/blockly/media/",
+        toolboxXml
+      )
+    );
 
     this.changeWSPCB = (e) => this.onChangeWSP(e);
     this.wsp.addChangeListener(this.changeWSPCB);
   }
 
   initWSP_READ_ONLY() {
-    this.wsp = Blockly.inject(this._blocklyDiv, {
-      // "media": "../../../../.././media/",
-      // toolbox: toolboxXml,
-      readOnly: true,
-    });
+    this.wsp = Blockly.inject(
+      this._blocklyDiv,
+      GetBlocklyWspOptions(
+        Privillege.READ_ONLY,
+        "../../../../../node_modules/blockly/media/"
+      )
+    );
   }
 
   refresh() {
