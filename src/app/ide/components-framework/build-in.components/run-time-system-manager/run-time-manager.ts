@@ -15,6 +15,8 @@ import { IConsoleOutputMsg } from './run-time-manager-view/run-time-manager-outp
 import { ComponentsCommunication } from '../../component/components-communication';
 import { RuntimeSystem } from "./runtime-system";
 import { RuntimeManagerView } from './run-time-manager-view/run-time-manager-view';
+import { ComponentRegistry } from '../../component/component-entry';
+import { Debugger } from '../debugger/debugger';
 
 // initialize the metadata of the project manager component for registration in the platform
 RuntimeManagerDataHolder.initialize();
@@ -46,6 +48,7 @@ export class RuntimeManager extends IDEUIComponent {
     private isOpen: Boolean;
     private runtimeSystemInst: RuntimeSystem;
     private _environmentData: any;
+    private debuggerInst: Debugger;
 
     constructor(
         name: string,
@@ -59,6 +62,7 @@ export class RuntimeManager extends IDEUIComponent {
         RuntimeManager.currentMode = 0;
         this.runtimeSystemInst = null;
         this._environmentData = null;
+        this.debuggerInst = null;
     }
 
     public registerEvents(): void { ; }
@@ -312,15 +316,23 @@ export class RuntimeManager extends IDEUIComponent {
         this.AddDefaultMessage("start");
     }
 
+    @RequiredFunction("Shell", "openComponent")
     private onStartDebugApplicationBtn(): void {
         RuntimeManager.currentMode = 1;
 
-        ComponentsCommunication.functionRequest(
-            this.name,
-            "Debugger",
-            "initiate",
-            []
-        );
+        if (!this.debuggerInst) {
+            this.debuggerInst = <Debugger>ComponentRegistry
+                .getEntry("Debugger")
+                .create([
+                    ".debugger-toolbar-area"
+                ]);
+            ComponentsCommunication.functionRequest(
+                this.name,
+                "Shell",
+                "openComponent",
+                [this.debuggerInst]);
+        }
+        this.debuggerInst.initiate();
 
         let toolbarView = this._viewElems.RuntimeManagerToolbarView[0].elem;
         toolbarView.disableButtons();
@@ -421,35 +433,40 @@ export class RuntimeManager extends IDEUIComponent {
         funcName: string,
         data: Array<any>,
         callback: Function =null) {
-            try {
-                if (callback) {
-                    ComponentsCommunication.functionRequest(
-                        this.name,
-                        destComp,
-                        funcName,
-                        [
-                            ...data,
-                            callback
-                        ]
-                    );
+            // try {
+                if (destComp === "Debugger") {
+                        this.debuggerInst[funcName](...data, callback);
                 }
                 else {
-                    return ComponentsCommunication.functionRequest(
-                        this.name,
-                        destComp,
-                        funcName,
-                        [...data]
-                    ).value;
+                    if (callback) {
+                        ComponentsCommunication.functionRequest(
+                            this.name,
+                            destComp,
+                            funcName,
+                            [
+                                ...data,
+                                callback
+                            ]
+                        );
+                    }
+                    else {
+                        return ComponentsCommunication.functionRequest(
+                            this.name,
+                            destComp,
+                            funcName,
+                            [...data]
+                        ).value;
+                    }
                 }
-            }
-            catch(e) {
-                throw new Error(
-                    "Error in Runtime Environment: "
-                    + srcComp
-                    + "requested "
-                    + funcName
-                    + ".\n"
-                    + e.message);
-            }
+            // }
+            // catch(e) {
+            //     throw new Error(
+            //         "Error in Runtime Environment: "
+            //         + srcComp
+            //         + "requested "
+            //         + funcName
+            //         + ".\n"
+            //         + e.message);
+            // }
     }
 }
