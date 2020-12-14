@@ -65,6 +65,30 @@ export class SequentialDialoguesModalView extends ModalView {
                 }
             }
         }
+
+        $(".project-manager-action-form-elements")
+            .append(`<hr size="30"
+                         style="width: 107%;
+                         border-color: #eeeeee;
+                         margin-left: -21px;
+                         margin-bottom: 25px;"
+                         noshade="">`);
+
+        if (data.body.options) {
+            data.body.options.forEach(option => {
+                let key = option.id;
+                option.descriptionID = option.id;
+                formElems[key] = <PropertyView>ViewRegistry
+                    .getEntry(TypeToNameOfPropertyView(option.type))
+                    .create(
+                        this.parent,
+                        ".project-manager-action-form-elements",
+                        option);
+                formElems[key].clearSelectorArea = false;
+                formElems[key].render();
+            });
+        }
+
         this._dialoguesFormData.push(formElems);
 
         _.forEach(data.actions, (action) => {

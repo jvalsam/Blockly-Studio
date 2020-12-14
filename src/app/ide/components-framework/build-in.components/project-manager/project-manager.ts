@@ -986,6 +986,7 @@ export class ProjectManager extends IDEUIComponent {
                     "Create New ",
                     {
                         formElems: renderData,
+                        options: this.currModalData.itemData.options,
                         systemIDs: systemIDs
                     },
                     type,
@@ -1436,7 +1437,10 @@ export class ProjectManager extends IDEUIComponent {
                     this,
                     [createDialogue (
                         "Rename: ",
-                        { formElems: renderMData },
+                        {
+                            formElems: renderMData,
+                            options: concerned["_editorsData"].options
+                        },
                         title ? title : "Element",
                         [
                             {
@@ -1537,9 +1541,32 @@ export class ProjectManager extends IDEUIComponent {
             : data[data.length - 1].json[0];
         for (const id of Object.keys(formData)) {
             let rp = this.currModalData.itemData.renderParts.find(x=> x.id === id);
-            renderParts[rp.type] = data.json[id] || formData[id];
+            if (rp) {
+                renderParts[rp.type] = data.json[id] || formData[id];
+            }
         }
         return renderParts;
+    }
+
+    private filterOptionsFromUpload(data) {
+        let options = [];
+
+        let formData = typeof data === "object"
+            ? data.json[0]
+            : data[data.length - 1].json[0];
+
+        for (const id of Object.keys(formData)) {
+            let rp = this.currModalData.itemData
+                .renderParts.find(x=> x.id === id);
+            if (!rp) {
+                options.push({
+                    id: id,
+                    value: formData[id]
+                });
+            }
+        }
+
+        return options;
     }
 
     private convertAuthoredRenderPartsFromUpload (data) {
@@ -1562,6 +1589,8 @@ export class ProjectManager extends IDEUIComponent {
         
         let renderParts = this.convertRenderPartsFromUpload(data);
 
+        let options = this.filterOptionsFromUpload(data);
+
         let response = ComponentsCommunication.functionRequest(
             "ProjectManager",
             "EditorManager",
@@ -1569,6 +1598,7 @@ export class ProjectManager extends IDEUIComponent {
             [
                 this.currModalData.itemData.type, // project-item-type
                 renderParts,
+                options,
                 systemID,
                 this.currModalData.projectID,
                 []
