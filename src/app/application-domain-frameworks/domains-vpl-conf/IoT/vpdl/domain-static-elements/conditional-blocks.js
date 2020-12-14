@@ -1148,7 +1148,6 @@ export const ConditionalStaticBlocks = [
         strBuilder += "(function () {";
         strBuilder += "let index = changesData.findIndex((data) => ";
         strBuilder += "data.key === " + changesID + ");";
-        strBuilder += "console.log(changesData);";
         strBuilder += "if (index === -1) {";
         strBuilder +=
           "changesData.push({ key: " +
