@@ -1416,9 +1416,28 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
+    private getKeyByValue(object, value) {
+        return Object.keys(object).find(key => object[key] === value);
+    }
+    private fixOptionsOnEdit(options, optionsDescr) {
+        let goptions = [];
+        options.forEach(option => {
+            let goption = JSON.parse(JSON.stringify(optionsDescr.find(od => od.descriptionID === option.id)));
+            // set value in the appropriate key
+            let key = this.getKeyByValue(goption, option.value);
+            goption[key] = option.value;
+            goptions.push(goption);
+        });
+        return goptions;
+    }
+
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
         let execOpenDialogue = () => {
+            let options = this.fixOptionsOnEdit(
+                concerned["_editorsData"].options,
+                concerned["_meta"].options);
+
             let projInstView = (<ProjectManagerJSTreeView>this._view)
                 .getProject(concerned["project"].projectID);
             let itemData = concerned.itemData();
@@ -1439,7 +1458,7 @@ export class ProjectManager extends IDEUIComponent {
                         "Rename: ",
                         {
                             formElems: renderMData,
-                            options: concerned["_editorsData"].options
+                            options: options
                         },
                         title ? title : "Element",
                         [
