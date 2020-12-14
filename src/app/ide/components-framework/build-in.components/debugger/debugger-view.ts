@@ -13,6 +13,5 @@ import DebuggerViewSYCSS from "./debugger-view.sycss";
         system: DebuggerViewSYCSS
     }
 })
-export class DebuggerViewView extends ComponentView {
-
+export class DebuggerView extends ComponentView {
 }
