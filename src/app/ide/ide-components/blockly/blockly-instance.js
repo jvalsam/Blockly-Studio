@@ -3,6 +3,10 @@ import * as Blockly from "blockly";
 // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
 import { HandleBreakContinue } from "../../../application-domain-frameworks/domains-vpl-conf/IoT/vpdl/domain-static-elements/handle-break-continue-every";
 
+export function GetBlockTypeByBlockId(blockId) {
+  return blockId.split("$")[1];
+}
+
 export class BlocklyConfig {
   constructor(_name, _data) {
     this._name = _name;
@@ -94,7 +98,17 @@ const Privillege = Object.freeze({
 });
 
 export class BlocklyInstance {
-  constructor(parent, pitem, id, selector, type, config, _toolbox, _syncWSP, text) {
+  constructor(
+    parent,
+    pitem,
+    id,
+    selector,
+    type,
+    config,
+    _toolbox,
+    _syncWSP,
+    text
+  ) {
     this.parent = parent;
     this.pitem = pitem;
     this.selector = selector;
@@ -312,12 +326,12 @@ export class BlocklyInstance {
 
   generateJavaScriptCode() {
     let code = Blockly.JavaScript.workspaceToCode(this.wsp);
-    code.replace(/__DOLLAR__/g, '\$');
+    code.replace(/__DOLLAR__/g, "$");
     return code;
   }
 
   highlightBlock(blockId) {
-    if(blockId !== "") {
+    if (blockId !== "") {
       this.parent.openPItem(this.pitem);
     }
 

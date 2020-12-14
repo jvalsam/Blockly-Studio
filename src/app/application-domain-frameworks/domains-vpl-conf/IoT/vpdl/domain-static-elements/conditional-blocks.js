@@ -1,4 +1,5 @@
 import * as Blockly from "blockly";
+import { GetBlockTypeByBlockId } from "../../../../../ide/ide-components/blockly/blockly-instance";
 
 let whenCondCounter = 1;
 let changesIDCounter = 1;
@@ -1051,16 +1052,45 @@ export const ConditionalStaticBlocks = [
           Blockly.JavaScript.ORDER_ATOMIC
         );
 
-        var code = "";
-        code += "(function () {";
-        if (value_left_value !== "" && value_right_value !== "") {
-          code += "return eval(" + value_left_value + ")";
-          code += " " + dropdown_operators + " ";
-          code += "eval(" + value_right_value + ");";
-        } else {
+        let leftEval = false;
+        let rightEval = false;
+
+        // Get children to check if any of the blocks is getter
+        let children = block.getChildren();
+        if (children.length !== 2) {
+          let code = "(function () {";
           code +=
             'throw {InvalidWsp: "Relational operaor: Invalid left or right value"};';
+          code += "})()";
+          return code;
         }
+        let blockLeftType = GetBlockTypeByBlockId(children[0].type);
+        let blockRightType = GetBlockTypeByBlockId(children[1].type);
+
+        // check if left or right value is needed eval
+        if (
+          blockLeftType &&
+          (blockLeftType === "getter" || blockLeftType === "getter_boolean")
+        )
+          leftEval = true;
+        if (
+          blockRightType &&
+          (blockRightType === "getter" || blockRightType === "getter_boolean")
+        )
+          rightEval = true;
+
+        var code = "";
+        code += "(function () { return ";
+
+        if (leftEval) code += "eval(" + JSON.stringify(value_left_value) + ")";
+        else code += value_left_value;
+
+        code += " " + dropdown_operators + " ";
+
+        if (rightEval)
+          code += "eval(" + JSON.stringify(value_right_value) + ")";
+        else code += value_right_value;
+
         code += "})()";
 
         // var code = value_left_value + dropdown_operators + value_right_value;
