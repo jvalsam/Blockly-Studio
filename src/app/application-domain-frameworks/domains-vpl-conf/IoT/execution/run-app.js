@@ -705,6 +705,8 @@ let MergeNameOfSmartObjectsWithResources = function (smartObjects, resources) {
     if (device) device.name = so.editorsData[0].generated.title;
   });
 };
+
+
 /* End functionality for smart devices */
 
 export async function StartApplication(runTimeData) {
@@ -797,38 +799,28 @@ export async function StartApplication(runTimeData) {
                 // Render Smart Devices
                 RenderSmartDevices(devicesOnAutomations);
 
+                const RunAutomations = async function (automations) {
+                  automations.forEach(
+                    (events) => {
+                      if (events.options.find(option=>option.id==='starts_on_execution').value === 'Yes') {
+                        eval(
+                          "(async () => { " +
+                            events.editorsData[0].generated +
+                            "})()"
+                        );
+                      }
+                    }
+                  );
+                };
+
                 // automations tasks
-                runTimeData.execData.project.AutomationTasks.forEach(
-                  (events) => {
-                    eval(
-                      "(async () => { " +
-                        events.editorsData[0].generated +
-                        "})()"
-                    );
-                  }
-                );
+                RunAutomations(runTimeData.execData.project.AutomationTasks);
 
                 // calendar tasks
-                runTimeData.execData.project.CalendarEvents.forEach(
-                  (events) => {
-                    eval(
-                      "(async () => {" +
-                        events.editorsData[0].generated +
-                        "})()"
-                    );
-                  }
-                );
+                RunAutomations(runTimeData.execData.project.CalendarEvents);
 
                 // conditional tasks
-                runTimeData.execData.project.ConditionalEvents.forEach(
-                  (events) => {
-                    eval(
-                      "(async () => {" +
-                        events.editorsData[0].generated +
-                        "})()"
-                    );
-                  }
-                );
+                RunAutomations(runTimeData.execData.project.ConditionalEvents);
 
                 // Start whenConditions
                 StartWhenTimeout();

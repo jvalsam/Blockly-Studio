@@ -1,4 +1,4 @@
-export const HandleBreakContinue = function (event, wsp) {
+export const HandleWorkspaceEvents = function (event, wsp) {
   let block = wsp.getBlockById(event.blockId);
 
   if (block) {

@@ -1,10 +1,10 @@
 import * as Blockly from "blockly";
 
-export const AutomationTask = {
-  name: "ec-automation-task",
+export const ConditionalTask = {
+  name: "ec-blockly-conditional-event",
   blocklyElems: [
     {
-      name: "invoke_task",
+      name: "invoke_conditional_task",
       blockDef: (data) => ({
         init: function () {
           this.appendDummyInput()
@@ -16,7 +16,7 @@ export const AutomationTask = {
                 { alt: "*", flipRtl: "FALSE" }
               )
             )
-            .appendField("Invoke Automation:")
+            .appendField("Invoke Conditional:")
             .appendField(
               new Blockly.FieldImage(data.img, 20, 20, {
                 alt: "*",
@@ -34,7 +34,7 @@ export const AutomationTask = {
       }),
       codeGen: (block) => {
         var code =
-          "runTimeData.execData.project.AutomationTasks.find(e => e.id === '" +
+          "runTimeData.execData.project.ConditionalEvents.find(e => e.id === '" +
           block.pitemData.pitemId +
           "').editorsData[0].generated";
         return code;
@@ -44,20 +44,20 @@ export const AutomationTask = {
   signals: [
     {
       action: "onCreate",
-      name: "create-pi-blockly-automation-task",
-      mission: "ec-automation-task",
+      name: "create-pi-blockly-conditional-event",
+      mission: "ec-blockly-conditional-event",
       provider: "BlocklyVPL",
     },
     {
       action: "onDelete",
-      name: "delete-pi-blockly-automation-task",
-      mission: "ec-automation-task",
+      name: "delete-pi-blockly-conditional-event",
+      mission: "ec-blockly-conditional-event",
       provider: "BlocklyVPL",
     },
     {
       action: "onEdit",
-      name: "rename-pi-blockly-automation-task",
-      mission: "ec-automation-task",
+      name: "rename-pi-blockly-conditional-event",
+      mission: "ec-blockly-conditional-event",
       provider: "BlocklyVPL",
     },
   ],

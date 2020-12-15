@@ -14,6 +14,52 @@ export const AutomationTask = {
       gap: "200",
     },
     {
+      name: "Automation Tasks",
+      type: "Category",
+      colour: "300",
+      elements: [
+        {
+          name: {
+            domainElem: "ec-automation-task",
+            item: "invoke_task",
+          },
+          type: "Element",
+        },
+      ],
+    },
+    {
+      name: "Calendar Automation Tasks",
+      type: "Category",
+      colour: "300",
+      elements: [
+        {
+          name: {
+            domainElem: "ec-blockly-calendar-event",
+            item: "invoke_calendar_task",
+          },
+          type: "Element",
+        },
+      ],
+    },
+    {
+      name: "Conditional Automation Tasks",
+      type: "Category",
+      colour: "300",
+      elements: [
+        {
+          name: {
+            domainElem: "ec-blockly-conditional-event",
+            item: "invoke_conditional_task",
+          },
+          type: "Element",
+        },
+      ],
+    },
+    {
+      type: "Separator",
+      gap: "200",
+    },
+    {
       name: "Smart Objects",
       type: "Category",
       colour: "210",

@@ -260,6 +260,7 @@ export class ProjectManager extends IDEUIComponent {
                     img: pitem.renderParts.find(e => e.type === "img").value.path,
                     id: pitem.systemID,
                     type: pitem.type,
+                    options: pitem.editorsData.options,
                     editorsData: []
                 };
 

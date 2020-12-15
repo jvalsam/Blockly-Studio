@@ -20,9 +20,11 @@ import { AutomationTask as AutomationTaskVPLElem } from "./domain-elems/automati
 import { AutomationTask as AutomationTaskConf } from "./editor-configs/automation-task";
 import { AutomationTask as AutomationTaskPI } from "./project-items/blockly-task/blockly-task";
 
+import { ConditionalTask as ConditionalTaskVPLElem } from "./domain-elems/conditional-task";
 import { BlocklyConditional as BlocklyConditionalConf } from "./editor-configs/blockly-conditional";
 import { BlocklyConditional as BlocklyConditionalPI } from "./project-items/blockly-conditional/blockly-conditional";
 
+import { CalendarTask as CalendarTaskVPLElem } from "./domain-elems/calendar-task";
 import { BlocklyCalendar as BlocklyCalendarConf } from "./editor-configs/blockly-calendar";
 import { BlocklyCalendar as BlocklyCalendarPI } from "./project-items/blockly-calendar/blockly-calendar";
 
@@ -36,6 +38,8 @@ export function InitializeVPDL() {
       SmartObjectVPLElem,
       SmartGroupVPLElem,
       AutomationTaskVPLElem,
+      ConditionalTaskVPLElem,
+      CalendarTaskVPLElem
     ],
     domainStaticElements: [
       ConditionalStaticBlocks,

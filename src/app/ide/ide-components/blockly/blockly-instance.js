@@ -1,7 +1,7 @@
 import * as Blockly from "blockly";
 
 // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
-import { HandleBreakContinue } from "../../../application-domain-frameworks/domains-vpl-conf/IoT/vpdl/domain-static-elements/handle-break-continue-every";
+import { HandleWorkspaceEvents } from "../../../application-domain-frameworks/domains-vpl-conf/IoT/vpdl/domain-static-elements/handle-workspace-events";
 
 export function GetBlocklyWspOptions(mode, media, toolbox) {
   var options = {
@@ -333,7 +333,7 @@ export class BlocklyInstance {
       return; // Don't mirror UI events.
     }
     // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
-    HandleBreakContinue(event, this.wsp);
+    HandleWorkspaceEvents(event, this.wsp);
     this._syncWSP(event.toJson());
   }
 
@@ -400,5 +400,5 @@ export class BlocklyInstance {
 
 export function InitiateBlocklyGenerator() {
   Blockly.JavaScript.STATEMENT_PREFIX =
-    "runTimeData.checkRuntimeEnvironment();\n";
+    "; runTimeData.checkRuntimeEnvironment();\n";
 }
