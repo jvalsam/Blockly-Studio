@@ -111,9 +111,9 @@ export class ProjectManagerJSTreeView extends ComponentView {
         });
     }
 
-    public pitemRename(pitem, projectId, data): void {
+    public pitemRename(pitem, projectId, data, options): void {
         let project = this.loadedProjects.find(inst => inst.dbID);
-        project.pitemRename(pitem, data);
+        project.pitemRename(pitem, data, options);
     }
 
     public loadActions(data: any): void {

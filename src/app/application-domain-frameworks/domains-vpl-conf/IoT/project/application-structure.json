@@ -805,7 +805,8 @@
                                 "selected": "Yes",
                                 "renderOnProjectManager":
                                     "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
-                                "selectedBy": "user"
+                                "selectedBy": "user",
+                                "KeyValueCollector": "selected"
                             }
                         ],
                         "actions" : [
@@ -990,7 +991,8 @@
                         "selected": "Yes",
                         "renderOnProjectManager":
                             "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
-                        "selectedBy": "user"
+                        "selectedBy": "user",
+                        "KeyValueCollector": "selected"
                     }
                 ],
                   "actions": [
@@ -1173,7 +1175,8 @@
                         "selected": "No",
                         "renderOnProjectManager":
                             "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
-                        "selectedBy": "user"
+                        "selectedBy": "user",
+                        "KeyValueCollector": "selected"
                     }
                   ],
                   "actions": [

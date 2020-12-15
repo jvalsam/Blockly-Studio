@@ -77,13 +77,13 @@ export class SequentialDialoguesModalView extends ModalView {
 
             data.body.options.forEach(option => {
                 let key = option.id;
-                option.descriptionID = option.id;
+                //option.descriptionID = option.id;
                 formElems[key] = <PropertyView>ViewRegistry
                     .getEntry(TypeToNameOfPropertyView(option.type))
                     .create(
                         this.parent,
                         ".project-manager-action-form-elements",
-                        option);
+                        JSON.parse(JSON.stringify(option)));
                 formElems[key].clearSelectorArea = false;
                 formElems[key].render();
             });

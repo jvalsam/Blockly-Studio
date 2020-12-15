@@ -398,18 +398,23 @@ export class ProjectInstanceView extends View {
         return this.treevaluemap[prop] || prop;
     }
 
-    public pitemRename(pitem, data) {
+    public pitemRename(pitem, data, options) {
         // mapped data
         let mdata = {};
         
         let el = this.projectElems.find(el => el["systemID"] === pitem);
         for (let key of Object.keys(data)) {
-            if (key === 'img' && Array.isArray(data.img.path) && data.img.path.length === 0) {
+            if (key === 'img'
+            && Array.isArray(data.img.path)
+            && data.img.path.length === 0) {
                 continue;
             }
             mdata[this.mapTreeValues(key)] = data[key];
             el.jstreeNode[this.mapTreeValues(key)] = data[key];
         }
+
+        // options
+        // TODO: check if render is required for one or more options
 
         this.treeview.update_node(pitem, mdata);
     }

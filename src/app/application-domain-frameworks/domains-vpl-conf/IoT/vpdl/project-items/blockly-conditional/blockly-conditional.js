@@ -18,6 +18,29 @@ export const BlocklyConditional = {
     ],
     // Editor Layout handles to render and load the respective template
     // and inject the editor parts of the project item
+    actionsHandling: {
+        // call after fill-in data
+        createPrevious: (pelem, onsuccess) => {
+            onsuccess.exec_open_dialogue();
+        },
+        createAfter: (pelem, onsuccess) => {
+            onsuccess.exec_action();
+        },
+        // call before fill-in the data
+        deletePrevious: (pelem, onsuccess) => {
+            onsuccess.exec_open_dialogue();
+        },
+        deleteAfter: (pelem, onsuccess) => {
+            onsuccess.exec_action();
+        },
+        // call after fill-in data
+        renamePrevious: (pelem, onsuccess) => {
+            onsuccess.exec_open_dialogue();
+        },
+        renameAfter: (pelem, onsuccess) => {
+            onsuccess.exec_action();
+        }
+    },
     view: {
         template: BlocklyConditionalTmpl, // load template, by default focus out style
         style: BlocklyConditionalSYCSS, // style has to be added dynamically in the first use of template?

@@ -117,8 +117,8 @@ export class ProjectItem extends ProjectElement {
         this._editorsData = data;
     }
 
-    public rename(value: any): void {   
-        this.project.pitemRename(this.systemID, value);
+    public rename(value: any, options: any): void {   
+        this.project.pitemRename(this.systemID, value, options);
     }
 
     public setEditorData(id: string, data: any): void {

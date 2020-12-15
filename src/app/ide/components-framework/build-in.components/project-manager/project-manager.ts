@@ -1333,10 +1333,9 @@ export class ProjectManager extends IDEUIComponent {
         assert(index>-1, "Not found element in project to rename!");
 
         let viewData = this.convertRenderPartsFromUpload(data, "Edit");
-
         let options = this.filterOptionsFromUpload(data, "Edit");
 
-        concerned.rename(viewData);
+        concerned.rename(viewData, options);
 
         ComponentsCommunication.functionRequest(
             "ProjectManager",
@@ -1365,8 +1364,15 @@ export class ProjectManager extends IDEUIComponent {
             let type = id.split('_')[1];
             let rpart = pitem.renderParts.find(x => x.type === type);
 
-            rpart.value[this.mapTypeToValueIndex(type)] = 
-                updatedData[id] || updatedData[0][id];
+            if (rpart) {
+                rpart.value[this.mapTypeToValueIndex(type)] = 
+                    updatedData[id] || updatedData[0][id];
+            }
+            else {
+                pitem.editorsData.options.find(
+                    option => option.id === id
+                ).value = updatedData[0][id]; 
+            }
         }
     }
 
@@ -1418,9 +1424,9 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
-    private getKeyByValue(object, value) {
-        return Object.keys(object).find(key => object[key] === value);
-    }
+    // private getKeyByValue(object, value) {
+    //     return Object.keys(object).find(key => object[key] === value);
+    // }
     private fixOptionsOnEdit(options, optionsDescr) {
         let goptions = [];
         options.forEach(option => {
@@ -1432,7 +1438,7 @@ export class ProjectManager extends IDEUIComponent {
                             || od.id === option.id
                         )));
             // set value in the appropriate key
-            let key = this.getKeyByValue(goption, option.value);
+            let key = goption.KeyValueCollector;
             goption[key] = option.value;
             goptions.push(goption);
         });
@@ -1444,7 +1450,7 @@ export class ProjectManager extends IDEUIComponent {
         let execOpenDialogue = () => {
             let options = this.fixOptionsOnEdit(
                 concerned["_editorsData"].options,
-                concerned["_meta"].options);
+                JSON.parse(JSON.stringify(concerned["_meta"].options)));
 
             let projInstView = (<ProjectManagerJSTreeView>this._view)
                 .getProject(concerned["project"].projectID);
