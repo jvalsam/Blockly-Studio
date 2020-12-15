@@ -1,4 +1,4 @@
-import "./events.js";
+//import "./events.js";
 
 import * as Blockly from "blockly";
 import {
