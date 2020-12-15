@@ -66,7 +66,8 @@ export class SequentialDialoguesModalView extends ModalView {
             }
         }
 
-        $(".project-manager-action-form-elements")
+        if (data.body.options && data.body.options.length > 0) {
+            $(".project-manager-action-form-elements")
             .append(`<hr size="30"
                          style="width: 107%;
                          border-color: #eeeeee;
@@ -74,7 +75,6 @@ export class SequentialDialoguesModalView extends ModalView {
                          margin-bottom: 25px;"
                          noshade="">`);
 
-        if (data.body.options) {
             data.body.options.forEach(option => {
                 let key = option.id;
                 option.descriptionID = option.id;

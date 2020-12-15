@@ -285,20 +285,6 @@
                                 "formElemItemRenderNO" : 3
                             }
                         ],
-                        "options": [
-                            {
-                                "id" : "starts_on_execution",
-                                "name": "Starts on execution",
-                                "type": "select",
-                                "values": [
-                                    "Yes",
-                                    "No"
-                                ],
-                                "selected": "Yes",
-                                "renderOnProjectManager":
-                                    "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }"
-                            }
-                        ],
                         "actions" : [
                             {
                                 "title" : "Open",
@@ -807,6 +793,21 @@
                                 "formElemItemRenderNO" : 3
                             }
                         ],
+                        "options": [
+                            {
+                                "id" : "starts_on_execution",
+                                "name": "Starts on execution",
+                                "type": "select",
+                                "values": [
+                                    "Yes",
+                                    "No"
+                                ],
+                                "selected": "Yes",
+                                "renderOnProjectManager":
+                                    "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
+                                "selectedBy": "user"
+                            }
+                        ],
                         "actions" : [
                             {
                                 "title" : "Open",
@@ -837,7 +838,7 @@
                                 ]
                             }, 
                             {
-                                "title" : "Rename",
+                                "title" : "Settings",
                                 "img" : "fa fa-edit",
                                 "events" : [ 
                                     {
@@ -977,6 +978,21 @@
                       "formElemItemRenderNO": 3
                     }
                   ],
+                  "options": [
+                    {
+                        "id" : "starts_on_execution",
+                        "name": "Starts on execution",
+                        "type": "select",
+                        "values": [
+                            "Yes",
+                            "No"
+                        ],
+                        "selected": "Yes",
+                        "renderOnProjectManager":
+                            "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
+                        "selectedBy": "user"
+                    }
+                ],
                   "actions": [
                     {
                       "title": "Open",
@@ -1007,7 +1023,7 @@
                       ]
                     },
                     {
-                      "title": "Rename",
+                      "title": "Settings",
                       "img": "fa fa-edit",
                       "events": [
                         {
@@ -1145,6 +1161,21 @@
                       "formElemItemRenderNO": 3
                     }
                   ],
+                  "options": [
+                    {
+                        "id" : "starts_on_execution",
+                        "name": "Starts on execution",
+                        "type": "select",
+                        "values": [
+                            "Yes",
+                            "No"
+                        ],
+                        "selected": "No",
+                        "renderOnProjectManager":
+                            "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
+                        "selectedBy": "user"
+                    }
+                  ],
                   "actions": [
                     {
                       "title": "Open",
@@ -1175,8 +1206,8 @@
                       ]
                     },
                     {
-                      "title": "Rename",
-                      "img": "fa fa-edit",
+                      "title": "Settings",
+                      "img": "fas fa-cogs",
                       "events": [
                         {
                           "type": "click",

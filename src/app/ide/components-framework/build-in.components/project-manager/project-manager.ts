@@ -1332,7 +1332,9 @@ export class ProjectManager extends IDEUIComponent {
         let index = loadedProject.projectItems.map(x=>x.systemID).indexOf(concerned.systemID);
         assert(index>-1, "Not found element in project to rename!");
 
-        let viewData = this.convertAuthoredRenderPartsFromUpload(data);
+        let viewData = this.convertRenderPartsFromUpload(data, "Edit");
+
+        let options = this.filterOptionsFromUpload(data, "Edit");
 
         concerned.rename(viewData);
 
@@ -1422,7 +1424,13 @@ export class ProjectManager extends IDEUIComponent {
     private fixOptionsOnEdit(options, optionsDescr) {
         let goptions = [];
         options.forEach(option => {
-            let goption = JSON.parse(JSON.stringify(optionsDescr.find(od => od.descriptionID === option.id)));
+            let goption = JSON.parse(
+                JSON.stringify(
+                    optionsDescr
+                        .find(
+                            od => od.descriptionID === option.id
+                            || od.id === option.id
+                        )));
             // set value in the appropriate key
             let key = this.getKeyByValue(goption, option.value);
             goption[key] = option.value;
@@ -1455,7 +1463,7 @@ export class ProjectManager extends IDEUIComponent {
                 .create(
                     this,
                     [createDialogue (
-                        "Rename: ",
+                        "Settings: ",
                         {
                             formElems: renderMData,
                             options: options
@@ -1468,7 +1476,7 @@ export class ProjectManager extends IDEUIComponent {
                                 providedBy:"self"
                             },
                             {
-                                choice: "Rename",
+                                choice: "Apply",
                                 type: "submit",
                                 providedBy: "creator",
                                 validation: (data, callback) => ProjectManagerValidation.check(
@@ -1553,21 +1561,16 @@ export class ProjectManager extends IDEUIComponent {
         }
     }
 
-    private convertRenderPartsFromUpload (data) {
-        let renderParts = {};
-        let formData = typeof data === "object"
-            ? data.json[0]
-            : data[data.length - 1].json[0];
-        for (const id of Object.keys(formData)) {
-            let rp = this.currModalData.itemData.renderParts.find(x=> x.id === id);
-            if (rp) {
-                renderParts[rp.type] = data.json[id] || formData[id];
-            }
-        }
-        return renderParts;
+    private getRenderPartOnCreate(id) {
+
+        return this.currModalData.itemData.renderParts.find(x => x.id === id);
+    }
+    private getRenderPartOnEdit(id) {
+        let type = id.split('_')[1];
+        return this.currModalData.itemData.renderParts.find(x => x.type === type);
     }
 
-    private filterOptionsFromUpload(data) {
+    private filterOptionsFromUpload(data, action) {
         let options = [];
 
         let formData = typeof data === "object"
@@ -1575,8 +1578,7 @@ export class ProjectManager extends IDEUIComponent {
             : data[data.length - 1].json[0];
 
         for (const id of Object.keys(formData)) {
-            let rp = this.currModalData.itemData
-                .renderParts.find(x=> x.id === id);
+            let rp = this["getRenderPartOn"+action](id);
             if (!rp) {
                 options.push({
                     id: id,
@@ -1588,15 +1590,17 @@ export class ProjectManager extends IDEUIComponent {
         return options;
     }
 
-    private convertAuthoredRenderPartsFromUpload (data) {
+    private convertRenderPartsFromUpload (data, action) {
         let renderParts = {};
         let formData = typeof data === "object"
             ? data.json[0]
             : data[data.length - 1].json[0];
+
         for (let id of Object.keys(formData)) {
-            let type = id.split('_')[1];
-            let rp = this.currModalData.itemData.renderParts.find(x=> x.type === type);
-            renderParts[rp.type] = data.json[id] || formData[id];
+            let rp = this["getRenderPartOn"+action](id);
+            if (rp) {
+                renderParts[rp.type] = data.json[id] || formData[id];
+            }
         }
         return renderParts;
     }
@@ -1606,9 +1610,9 @@ export class ProjectManager extends IDEUIComponent {
         let index = event.data.choices.map(x=>x.type).indexOf(this.currModalData.itemData.type);
         assert(index !== -1, "Not defined event click for this specific element type.");
         
-        let renderParts = this.convertRenderPartsFromUpload(data);
+        let renderParts = this.convertRenderPartsFromUpload(data, "Create");
 
-        let options = this.filterOptionsFromUpload(data);
+        let options = this.filterOptionsFromUpload(data, "Create");
 
         let response = ComponentsCommunication.functionRequest(
             "ProjectManager",
