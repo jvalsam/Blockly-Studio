@@ -2,7 +2,6 @@ import './events.js';
 
 import * as Blockly from 'blockly';
 
-
 export function InitializeBlocklyDebuggerWorkspace(wsps) {
     window.workspace = {};
 
