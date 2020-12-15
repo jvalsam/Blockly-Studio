@@ -953,6 +953,7 @@ export const ConditionalStaticBlocks = [
         this.appendValueInput("LEFT").setCheck([
           "relational_operators",
           "logical_operators",
+          "changes",
           "Boolean",
         ]);
         this.appendDummyInput().appendField(
@@ -965,6 +966,7 @@ export const ConditionalStaticBlocks = [
         this.appendValueInput("RIGHT").setCheck([
           "relational_operators",
           "logical_operators",
+          "changes",
           "Boolean",
         ]);
         this.setInputsInline(true);
@@ -997,7 +999,7 @@ export const ConditionalStaticBlocks = [
           "" +
           value_right +
           ";";
-        code += "})();";
+        code += "})()";
 
         // TODO: Change ORDER_NONE to the correct strength.
         return [code, Blockly.JavaScript.ORDER_NONE];
@@ -1125,12 +1127,12 @@ export const ConditionalStaticBlocks = [
           Blockly.JavaScript.ORDER_ATOMIC
         );
 
-        let changesID = CreateWhenID();
+        let changesID = CreateChangesID();
 
         // (function () {
-        //   let index = changesData.findIndex((data) => {
-        //     data.key === changesID;
-        //   });
+        //   let index = changesData.findIndex((data) =>
+        //     data.key === changesID
+        //   );
         //   if (index === -1) {
         //     changesData.push({ key: changesID, value: value_value });
         //   } else {
@@ -1144,19 +1146,24 @@ export const ConditionalStaticBlocks = [
 
         let strBuilder = "";
         strBuilder += "(function () {";
-        strBuilder += "let index = changesData.findIndex((data) => {";
-        strBuilder += "data.key === " + changesID + ";";
-        strBuilder += "});";
+        strBuilder += "let index = changesData.findIndex((data) => ";
+        strBuilder += "data.key === " + changesID + ");";
         strBuilder += "if (index === -1) {";
         strBuilder +=
           "changesData.push({ key: " +
           changesID +
-          ", value: " +
-          value_value +
-          " });";
+          ", value: eval(" +
+          JSON.stringify(value_value) +
+          ")});";
         strBuilder += "} else {";
-        strBuilder += "if (changesData[index].value !== " + value_value + ") {";
-        strBuilder += "changesData[index].value = " + value_value + ";";
+        strBuilder +=
+          "if (changesData[index].value !== eval(" +
+          JSON.stringify(value_value) +
+          ")) {";
+        strBuilder +=
+          "changesData[index].value = eval(" +
+          JSON.stringify(value_value) +
+          ");";
         strBuilder += "return true;";
         strBuilder += "}";
         strBuilder += "return false;";

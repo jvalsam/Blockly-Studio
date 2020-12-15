@@ -986,6 +986,7 @@ export class ProjectManager extends IDEUIComponent {
                     "Create New ",
                     {
                         formElems: renderData,
+                        options: this.currModalData.itemData.options,
                         systemIDs: systemIDs
                     },
                     type,
@@ -1415,9 +1416,28 @@ export class ProjectManager extends IDEUIComponent {
         );
     }
 
+    private getKeyByValue(object, value) {
+        return Object.keys(object).find(key => object[key] === value);
+    }
+    private fixOptionsOnEdit(options, optionsDescr) {
+        let goptions = [];
+        options.forEach(option => {
+            let goption = JSON.parse(JSON.stringify(optionsDescr.find(od => od.descriptionID === option.id)));
+            // set value in the appropriate key
+            let key = this.getKeyByValue(goption, option.value);
+            goption[key] = option.value;
+            goptions.push(goption);
+        });
+        return goptions;
+    }
+
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
         let execOpenDialogue = () => {
+            let options = this.fixOptionsOnEdit(
+                concerned["_editorsData"].options,
+                concerned["_meta"].options);
+
             let projInstView = (<ProjectManagerJSTreeView>this._view)
                 .getProject(concerned["project"].projectID);
             let itemData = concerned.itemData();
@@ -1436,7 +1456,10 @@ export class ProjectManager extends IDEUIComponent {
                     this,
                     [createDialogue (
                         "Rename: ",
-                        { formElems: renderMData },
+                        {
+                            formElems: renderMData,
+                            options: options
+                        },
                         title ? title : "Element",
                         [
                             {
@@ -1537,9 +1560,32 @@ export class ProjectManager extends IDEUIComponent {
             : data[data.length - 1].json[0];
         for (const id of Object.keys(formData)) {
             let rp = this.currModalData.itemData.renderParts.find(x=> x.id === id);
-            renderParts[rp.type] = data.json[id] || formData[id];
+            if (rp) {
+                renderParts[rp.type] = data.json[id] || formData[id];
+            }
         }
         return renderParts;
+    }
+
+    private filterOptionsFromUpload(data) {
+        let options = [];
+
+        let formData = typeof data === "object"
+            ? data.json[0]
+            : data[data.length - 1].json[0];
+
+        for (const id of Object.keys(formData)) {
+            let rp = this.currModalData.itemData
+                .renderParts.find(x=> x.id === id);
+            if (!rp) {
+                options.push({
+                    id: id,
+                    value: formData[id]
+                });
+            }
+        }
+
+        return options;
     }
 
     private convertAuthoredRenderPartsFromUpload (data) {
@@ -1562,6 +1608,8 @@ export class ProjectManager extends IDEUIComponent {
         
         let renderParts = this.convertRenderPartsFromUpload(data);
 
+        let options = this.filterOptionsFromUpload(data);
+
         let response = ComponentsCommunication.functionRequest(
             "ProjectManager",
             "EditorManager",
@@ -1569,6 +1617,7 @@ export class ProjectManager extends IDEUIComponent {
             [
                 this.currModalData.itemData.type, // project-item-type
                 renderParts,
+                options,
                 systemID,
                 this.currModalData.projectID,
                 []

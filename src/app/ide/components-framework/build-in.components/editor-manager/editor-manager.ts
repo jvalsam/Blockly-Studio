@@ -328,6 +328,7 @@ export class EditorManager extends IDEUIComponent {
     public factoryNewProjectItem(
         name: string,
         args,
+        options,
         systemID: string,
         projectID: string,
         restriction?: Array<string>
@@ -346,6 +347,7 @@ export class EditorManager extends IDEUIComponent {
         let projectItem = {
             systemID: systemID,
             projectID: projectID,
+            options: options,
             items: {}
         };
 

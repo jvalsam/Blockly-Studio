@@ -285,6 +285,20 @@
                                 "formElemItemRenderNO" : 3
                             }
                         ],
+                        "options": [
+                            {
+                                "id" : "starts_on_execution",
+                                "name": "Starts on execution",
+                                "type": "select",
+                                "values": [
+                                    "Yes",
+                                    "No"
+                                ],
+                                "selected": "Yes",
+                                "renderOnProjectManager":
+                                    "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }"
+                            }
+                        ],
                         "actions" : [
                             {
                                 "title" : "Open",

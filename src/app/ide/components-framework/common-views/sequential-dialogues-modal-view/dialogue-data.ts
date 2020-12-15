@@ -31,6 +31,7 @@ export function createDialogue(
     actionTitle: string,
     body: {
         formElems?: any,
+        options?: any,
         text?: any,
         systemIDs?: number
     },
