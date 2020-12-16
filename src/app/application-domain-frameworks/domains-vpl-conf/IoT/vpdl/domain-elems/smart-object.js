@@ -132,14 +132,13 @@ export const SmartObject = {
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
         strBuilder +=
-          "(device) => device.id === '" +
-          block.soData.details.iotivityResourceID +
-          "'";
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ")";
         strBuilder +=
-          ".properties.find((prop) => prop.name === '" +
-          dropdown_properties +
-          "');";
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");";
         strBuilder += "return property.value;";
         strBuilder += "})()";
 
@@ -204,14 +203,13 @@ export const SmartObject = {
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
         strBuilder +=
-          "(device) => device.id === '" +
-          block.soData.details.iotivityResourceID +
-          "'";
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ")";
         strBuilder +=
-          ".properties.find((prop) => prop.name === '" +
-          dropdown_properties +
-          "');\n";
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");\n";
         strBuilder += "return property.value;";
         strBuilder += "})()";
 
@@ -350,14 +348,13 @@ export const SmartObject = {
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
         strBuilder +=
-          "(device) => device.id === '" +
-          block.soData.details.iotivityResourceID +
-          "'";
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ")";
         strBuilder +=
-          ".properties.find((prop) => prop.name === '" +
-          dropdown_properties +
-          "');\n";
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");\n";
         strBuilder += "if ('" + checkArray[0] + '\' === "Number") {';
         strBuilder += "let number = parseFloat(" + value_value + ");\n";
         strBuilder += "if (";
@@ -373,19 +370,20 @@ export const SmartObject = {
         strBuilder += "} else {";
         strBuilder += "args.push(number);\n";
         strBuilder += "}\n";
-        strBuilder += "} else if ('" + checkArray[0] + '\' === "Boolean") {';
+        strBuilder +=
+          "} else if (" + JSON.stringify(checkArray[0]) + ' === "Boolean") {';
         strBuilder +=
           "args.push(" + value_value + ' === "true" ? true : false);\n';
-        strBuilder += "} else if ('" + checkArray[0] + '\' === "String") {';
+        strBuilder +=
+          "} else if (" + JSON.stringify(checkArray[0]) + ' === "String") {';
         strBuilder += "args.push(" + value_value + ");\n";
         strBuilder += "}";
         strBuilder += "if (property.value !== args[0]) {";
         strBuilder += "property.value = args[0];\n";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=
-          "(elem) => elem.id === '" +
-          block.soData.details.iotivityResourceID +
-          "'";
+          "(elem) => elem.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
@@ -393,7 +391,9 @@ export const SmartObject = {
         strBuilder +=
           'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {';
         strBuilder +=
-          "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
+          "resourceId: " +
+          JSON.stringify(block.soData.details.iotivityResourceID) +
+          ",\n";
         strBuilder +=
           "methodId: 'method-" +
           block.soData.details.iotivityResourceID +
@@ -511,25 +511,24 @@ export const SmartObject = {
 
         let strBuilder = "";
         strBuilder += "(function () {";
-        strBuilder += "let args = ['" + dropdown_possible_values + "'];\n";
+        strBuilder +=
+          "let args = [" + JSON.stringify(dropdown_possible_values) + "];\n";
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
         strBuilder +=
-          "(device) => device.id === '" +
-          block.soData.details.iotivityResourceID +
-          "'";
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ")";
         strBuilder +=
-          ".properties.find((prop) => prop.name === '" +
-          dropdown_properties +
-          "');\n";
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");\n";
         strBuilder += "if (property.value !== args[0]) {";
         strBuilder += "property.value = args[0];";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=
-          "(elem) => elem.id === '" +
-          block.soData.details.iotivityResourceID +
-          "'";
+          "(elem) => elem.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
@@ -537,7 +536,9 @@ export const SmartObject = {
         strBuilder +=
           'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {';
         strBuilder +=
-          "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
+          "resourceId: " +
+          JSON.stringify(block.soData.details.iotivityResourceID) +
+          ",\n";
         strBuilder +=
           "methodId: 'method-" +
           block.soData.details.iotivityResourceID +
@@ -672,10 +673,12 @@ export const SmartObject = {
           if (block.getInput("INPUT" + i).type === 1) {
             // type 1
             inputsToCode.push(
-              Blockly.JavaScript.valueToCode(
-                block,
-                "INPUT" + i,
-                Blockly.JavaScript.ORDER_ATOMIC
+              eval(
+                Blockly.JavaScript.valueToCode(
+                  block,
+                  "INPUT" + i,
+                  Blockly.JavaScript.ORDER_ATOMIC
+                )
               )
             );
             checksArray["INPUT" + i] = block
@@ -740,7 +743,9 @@ export const SmartObject = {
         strBuilder +=
           'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {\n';
         strBuilder +=
-          "resourceId: '" + block.soData.details.iotivityResourceID + "',\n";
+          "resourceId: " +
+          JSON.stringify(block.soData.details.iotivityResourceID) +
+          ",\n";
         strBuilder +=
           "methodId: 'action-" +
           block.soData.details.iotivityResourceID +

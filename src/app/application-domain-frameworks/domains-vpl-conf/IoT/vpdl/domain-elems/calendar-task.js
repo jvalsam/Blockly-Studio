@@ -34,9 +34,9 @@ export const CalendarTask = {
       }),
       codeGen: (block) => {
         var code =
-          "runTimeData.execData.project.CalendarEvents.find(e => e.id === '" +
-          block.pitemData.pitemId +
-          "').editorsData[0].generated";
+          "runTimeData.execData.project.CalendarEvents.find(e => e.id === " +
+          JSON.stringify(block.pitemData.pitemId) +
+          ").editorsData[0].generated";
         return code;
       },
     },

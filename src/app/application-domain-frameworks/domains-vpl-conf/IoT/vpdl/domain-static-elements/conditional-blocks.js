@@ -941,7 +941,7 @@ export const ConditionalStaticBlocks = [
         var dropdown_action = block.getFieldValue("ACTION");
 
         // TODO: Assemble JavaScript into code variable.
-        var code = "throw '" + dropdown_action + "'";
+        var code = "throw " + JSON.stringify(dropdown_action);
         return code;
       },
   },
@@ -1062,7 +1062,7 @@ export const ConditionalStaticBlocks = [
         if (children.length !== 2) {
           let code = "(function () {";
           code +=
-            'throw {InvalidWsp: "Relational operaor: Invalid left or right value"};';
+            'throw {InvalidWsp: "Relational operator: Invalid left or right value"};';
           code += "})()";
           return code;
         }

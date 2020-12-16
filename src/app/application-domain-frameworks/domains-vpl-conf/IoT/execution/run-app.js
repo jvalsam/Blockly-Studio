@@ -612,11 +612,9 @@ const InitializeOrganizerForCalendar = function () {
 
   organizer = new Organizer("organizer-container", calendar, {});
 
-  $("body").on("DOMSubtreeModified", "#organizer-container-list", function () {
+  $("body").on("DOMSubtreeModified", "#digital-clock", function () {
     // take day
     let day = document.getElementById("organizer-container-date").innerHTML;
-
-    console.log(activeDateOnCalendar[day]);
 
     // parse the date and take which event is marked as fired
     if (activeDateOnCalendar[day]) {
@@ -705,7 +703,6 @@ let MergeNameOfSmartObjectsWithResources = function (smartObjects, resources) {
     if (device) device.name = so.editorsData[0].generated.title;
   });
 };
-
 
 /* End functionality for smart devices */
 
@@ -800,17 +797,19 @@ export async function StartApplication(runTimeData) {
                 RenderSmartDevices(devicesOnAutomations);
 
                 const RunAutomations = async function (automations) {
-                  automations.forEach(
-                    (events) => {
-                      if (events.options.find(option=>option.id==='starts_on_execution').value === 'Yes') {
-                        eval(
-                          "(async () => { " +
-                            events.editorsData[0].generated +
-                            "})()"
-                        );
-                      }
+                  automations.forEach((events) => {
+                    if (
+                      events.options.find(
+                        (option) => option.id === "starts_on_execution"
+                      ).value === "Yes"
+                    ) {
+                      eval(
+                        "(async () => { " +
+                          events.editorsData[0].generated +
+                          "})()"
+                      );
                     }
-                  );
+                  });
                 };
 
                 // automations tasks
