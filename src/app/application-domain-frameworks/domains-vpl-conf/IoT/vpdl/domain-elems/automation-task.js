@@ -33,10 +33,11 @@ export const AutomationTask = {
         },
       }),
       codeGen: (block) => {
+        // Build eval for the main eval in run-app.js
         var code =
-          "runTimeData.execData.project.AutomationTasks.find(e => e.id === " +
+          'eval( "(async () => {" +  runTimeData.execData.project.AutomationTasks.find(e => e.id === ' +
           JSON.stringify(block.pitemData.pitemId) +
-          ").editorsData[0].generated";
+          ').editorsData[0].generated + "})()" );';
         return code;
       },
     },

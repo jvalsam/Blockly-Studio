@@ -57,7 +57,8 @@ export const CalendarStaticBlocks = [
         strBuilder +=
           "(e) => e.startTime === timeIdsToDate[" +
           JSON.stringify(id) +
-          "].startTime";
+          "].startTime && e.id === " +
+          JSON.stringify(id);
         strBuilder += ").isFired = true;";
         strBuilder += statements_statement;
         strBuilder +=
@@ -127,7 +128,8 @@ export const CalendarStaticBlocks = [
         strBuilder +=
           "(e) => e.startTime === timeIdsToDate[" +
           JSON.stringify(id) +
-          "].startTime";
+          "].startTime && e.id === " +
+          JSON.stringify(id);
         strBuilder += ").isFired = true;";
         strBuilder += statements_statement;
         strBuilder +=
@@ -229,7 +231,8 @@ export const CalendarStaticBlocks = [
         strBuilder +=
           "(e) => e.startTime === timeIdsToDate[" +
           JSON.stringify(id) +
-          "].startTime";
+          "].startTime && e.id === " +
+          JSON.stringify(id);
         strBuilder += ").isFired = true;";
         strBuilder += statements_statement;
         strBuilder += "} catch (e) {";
@@ -364,7 +367,8 @@ export const CalendarStaticBlocks = [
         strBuilder +=
           "(e) => e.startTime === timeIdsToDate[" +
           JSON.stringify(id) +
-          "].startTime";
+          "].startTime && e.id === " +
+          JSON.stringify(id);
         strBuilder += ").isFired = true;";
         strBuilder += statements_statement;
         strBuilder += "} catch (e) {";
@@ -539,7 +543,8 @@ export const CalendarStaticBlocks = [
         strBuilder +=
           "(e) => e.startTime === timeIdsToDate[" +
           JSON.stringify(id) +
-          "].startTime";
+          "].startTime && e.id === " +
+          JSON.stringify(id);
         strBuilder += ").isFired = true;";
         strBuilder += statements_statement;
         strBuilder +=
@@ -622,7 +627,8 @@ export const CalendarStaticBlocks = [
         strBuilder +=
           "(e) => e.startTime === timeIdsToDate[" +
           JSON.stringify(id) +
-          "].startTime";
+          "].startTime && e.id === " +
+          JSON.stringify(id);
         strBuilder += ").isFired = true;";
         strBuilder += statements_statement;
         strBuilder +=

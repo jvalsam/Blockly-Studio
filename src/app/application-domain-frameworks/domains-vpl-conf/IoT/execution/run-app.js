@@ -94,7 +94,7 @@ const Initialize = function (selector) {
 
 /* Start data and functions for calendar - conditional blocks */
 const timeIdsToDate = {}; //  <id>: { day: "December 14, 2020", startTime: "16:54:33" }
-const activeDateOnCalendar = {}; // "December 14, 2020": [ {startTime:"16:54:33", isFired: false } ]
+const activeDateOnCalendar = {}; // "December 14, 2020": [ {startTime:"16:54:33", id: <id>, isFired: false } ]
 
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
@@ -323,6 +323,7 @@ const PinEventInCalendar = function (
   // push new date in activeDateOnCalendar
   activeDateOnCalendar[dateToSave].push({
     startTime: startTime,
+    id: calendarBlockId,
     isFired: false,
   });
 
@@ -653,7 +654,7 @@ const InitializeSmartDevicesContainer = function (selector) {
   let smartDevicesDiv = document.createElement("div");
   smartDevicesDiv.classList.add("row");
   smartDevicesDiv.id = "runtime-smart-devices-container";
-  smartDevicesDiv.style.backgroundColor = "#f1f1f1";
+  // smartDevicesDiv.style.backgroundColor = "#f1f1f1";
   smartDevicesDiv.style.overflowY = "auto";
   selector.appendChild(smartDevicesDiv);
 };
