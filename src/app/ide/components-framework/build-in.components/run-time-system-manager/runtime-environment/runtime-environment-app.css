@@ -7,9 +7,22 @@ body {
   margin-top: 1rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  background-color: #4a81b126;
 }
 
 /* For calendar */
+.cjslib-calendar {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.cjslib-events {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .cjslib-year {
   width: 100% !important;
   background-color: #4a81b1 !important;
@@ -34,6 +47,83 @@ body {
 .calendar-event-finished {
   background-color: #77ca77 !important;
   /* border: 3px solid #4dd44d; */
+}
+
+.cjslib-list > li > p {
+  font-size: small !important;
+}
+
+.cjslib-list > li {
+  font-size: small !important;
+}
+
+/* Actions logger */
+#logger-container {
+  height: 100%;
+  font-family: Satellite, Roboto, sans-serif;
+  -webkit-box-shadow: 0 0 4px rgb(21 21 21 / 21%);
+  box-shadow: 0 0 4px rgb(21 21 21 / 21%);
+  border: 1px solid rgba(21, 21, 21, 0.12);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-user-select: none;
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
+
+#logger-header {
+  width: 100% !important;
+  background-color: rgb(74 129 177) !important;
+  color: rgb(255, 236, 179);
+  text-align: center;
+  font-size: 14px;
+  padding: 0.3rem 0rem 0.3rem 0rem;
+  height: 9%;
+}
+
+#logger-body {
+  background-color: #f6f6f6;
+  display: flex;
+  height: 91%;
+  font-size: small;
+  overflow-y: auto;
+  font-size: 15px;
+}
+
+.log-bubble {
+  /* max-width: 450px; */
+  padding: 0.7rem 1rem 0rem 1rem;
+  border-radius: 14px;
+  width: 94%;
+  height: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
+  display: grid;
+}
+
+.log-bubble-name {
+  float: left;
+  margin-left: 1rem;
+  font-weight: 600;
+}
+
+.log-bubble-time {
+  float: right;
+}
+
+.log-bubble-text {
+  padding: 0.4rem 0rem 0.4rem 0rem;
+  margin-left: 2.6rem;
+  margin-top: -0.6rem;
 }
 
 /* Smart Devices Preview */

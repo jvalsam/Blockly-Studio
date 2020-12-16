@@ -27,6 +27,7 @@
   margin: 0;
   padding: 10px;
   height: 90%;
+  max-width: 105rem !important;
 }
 
 #runtime-modal .modal-content {
@@ -59,7 +60,7 @@
   /* justify-content: space-between; */
   padding: 7px;
   border-bottom: var(--border);
-  color: #1A3A3A;
+  color: #1a3a3a;
   background-color: #97b5cf;
   font-weight: bold;
 }

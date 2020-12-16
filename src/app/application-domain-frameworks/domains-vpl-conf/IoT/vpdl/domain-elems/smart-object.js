@@ -326,6 +326,17 @@ export const SmartObject = {
         //     let oldDeviceIndex = devicesOnAutomations.findIndex(
         //       (elem) => elem.id === block.soData.details.iotivityResourceID
         //     );
+        //     CreateDeviceBubbleForLog(
+        //       data.title,
+        //       data.img,
+        //       bgColor,
+        //       "Text",
+        //       () =>
+        //         runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(
+        //           projectElementId,
+        //           block.blockId
+        //         )
+        //     );
         //     RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);
         //   }
         //   PostRequest(
@@ -379,6 +390,26 @@ export const SmartObject = {
         strBuilder += "args.push(" + value_value + ");\n";
         strBuilder += "}";
         strBuilder += "if (property.value !== args[0]) {";
+        strBuilder += "CreateDeviceBubbleForLog(";
+        strBuilder += JSON.stringify(block.soData.title) + ",";
+        strBuilder += JSON.stringify(block.soData.img) + ",";
+        strBuilder += JSON.stringify(block.soData.colour) + ",";
+        strBuilder +=
+          JSON.stringify("Set property ") +
+          "+ property.name +" +
+          JSON.stringify(": old value = <b>") +
+          "+ property.value +" +
+          JSON.stringify("</b>, current value =  <b>") +
+          "+ args[0] +" +
+          JSON.stringify("</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "property.value = args[0];\n";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=

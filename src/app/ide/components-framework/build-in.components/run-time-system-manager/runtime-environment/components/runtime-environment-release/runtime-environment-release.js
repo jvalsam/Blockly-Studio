@@ -29,6 +29,7 @@ export class RuntimeEnvironmentRelease {
         this._envData.UISelector = document.getElementById(
           "run-application-view-container"
         );
+        this._envData.RuntimeEnvironmentRelease = this;
         this._envData.runtimeEnvironment = this._runtimeEnv;
 
         this.start(this._envData);
@@ -119,5 +120,9 @@ export class RuntimeEnvironmentRelease {
         promise
             .then(finish => console.log("run app finished"))
             .catch(stopAction => this._handleStopAction(stopAction));
+    }
+
+    browseBlocklyBlock(projectElementId, blockId) {
+        
     }
 }

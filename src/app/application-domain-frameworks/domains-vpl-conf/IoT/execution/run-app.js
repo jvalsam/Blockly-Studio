@@ -89,6 +89,7 @@ const Initialize = function (selector) {
 
   InitializeCalendar(selector);
   InitializeOrganizerForCalendar();
+  InitializeActionsLog();
   InitializeSmartDevicesContainer(selector);
 };
 
@@ -565,7 +566,7 @@ const InitializeCalendar = function (selector) {
   selector.appendChild(calendarRow);
 
   let calendarDiv = document.createElement("span");
-  calendarDiv.classList.add("col");
+  calendarDiv.classList.add("col-3");
   calendarDiv.id = "calendar-container";
   calendarRow.appendChild(calendarDiv);
 
@@ -608,7 +609,7 @@ const InitializeCalendar = function (selector) {
 
 const InitializeOrganizerForCalendar = function () {
   let organizerDiv = document.createElement("span");
-  organizerDiv.classList.add("col");
+  organizerDiv.classList.add("col-4");
   organizerDiv.id = "organizer-container";
   document.getElementById("calendar-outter").appendChild(organizerDiv);
 
@@ -648,6 +649,69 @@ const InitializeOrganizerForCalendar = function () {
     attributes: true,
     attributeFilter: ["style"],
   });
+};
+
+const InitializeActionsLog = function () {
+  let loggerOutterDiv = document.createElement("span");
+  loggerOutterDiv.classList.add("col");
+  loggerOutterDiv.id = "logger-outter";
+  document.getElementById("calendar-outter").appendChild(loggerOutterDiv);
+
+  let loggerContainer = document.createElement("div");
+  loggerContainer.id = "logger-container";
+  loggerOutterDiv.appendChild(loggerContainer);
+
+  let loggerHeader = document.createElement("div");
+  loggerHeader.id = "logger-header";
+  loggerHeader.innerHTML = "ACTIONS LOG";
+  loggerContainer.appendChild(loggerHeader);
+
+  let loggerBody = document.createElement("div");
+  loggerBody.id = "logger-body";
+  loggerContainer.appendChild(loggerBody);
+};
+
+const CreateDeviceBubbleForLog = function (
+  name,
+  icon,
+  backgroundColor,
+  actionText,
+  callback
+) {
+  let logBubble = document.createElement("div");
+  logBubble.classList.add("log-bubble");
+  logBubble.style.backgroundColor = backgroundColor;
+  document.getElementById("logger-body").appendChild(logBubble);
+
+  let logBubbleInfo = document.createElement("div");
+  logBubbleInfo.classList.add("log-bubble-info");
+  logBubble.appendChild(logBubbleInfo);
+
+  let logBubbleIconSpan = document.createElement("span");
+  logBubbleIconSpan.style.cssFloat = "left";
+  logBubbleInfo.appendChild(logBubbleIconSpan);
+
+  let logBubbleIcon = document.createElement("img");
+  logBubbleIcon.classList.add("log-bubble-icon");
+  logBubbleIcon.width = 25;
+  logBubbleIcon.height = 25;
+  logBubbleIcon.src = icon;
+  logBubbleIconSpan.appendChild(logBubbleIcon);
+
+  let logBubbleName = document.createElement("span");
+  logBubbleName.classList.add("log-bubble-name");
+  logBubbleName.innerHTML = name;
+  logBubbleInfo.appendChild(logBubbleName);
+
+  let logBubbleTime = document.createElement("span");
+  logBubbleTime.classList.add("log-bubble-time");
+  logBubbleTime.innerHTML = dayjs().format("HH:mm:ss, DD/MM");
+  logBubbleInfo.appendChild(logBubbleTime);
+
+  let logBubbleText = document.createElement("div");
+  logBubbleText.classList.add("log-bubble-text");
+  logBubbleText.innerHTML = actionText;
+  logBubble.appendChild(logBubbleText);
 };
 
 const InitializeSmartDevicesContainer = function (selector) {
@@ -700,12 +764,15 @@ const RerenderDevice = function (device, propsDiff) {
 /* End UI for runtime environment */
 
 /* Start functionality for smart devices */
-let MergeNameOfSmartObjectWithResource = function (so, resource) {
+const MergeNameOfSmartObjectWithResource = function (so, resource) {
   // Merge all we need
   resource.name = so.editorsData[0].generated.title;
 };
 
-let MergeNameOfSmartObjectsWithResources = function (smartObjects, resources) {
+const MergeNameOfSmartObjectsWithResources = function (
+  smartObjects,
+  resources
+) {
   smartObjects.forEach((so) => {
     // find resource
     let device = resources.find(
@@ -816,6 +883,7 @@ export async function StartApplication(runTimeData) {
                         (option) => option.id === "starts_on_execution"
                       ).value === "Yes"
                     ) {
+                      let projectElementId = events.id;
                       eval(
                         "(async () => { " +
                           events.editorsData[0].generated +
