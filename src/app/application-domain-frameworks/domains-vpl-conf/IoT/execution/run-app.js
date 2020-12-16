@@ -413,6 +413,7 @@ const InitializeClocks = function (selector) {
   anchorMinute.appendChild(anchorMinSub2);
 
   let anchorSecond = document.createElement("div");
+  anchorSecond.id = "anchor-second";
   anchorSecond.classList.add("anchor");
   anchorSecond.classList.add("second");
   centre.appendChild(anchorSecond);
@@ -612,28 +613,39 @@ const InitializeOrganizerForCalendar = function () {
 
   organizer = new Organizer("organizer-container", calendar, {});
 
-  $("body").on("DOMSubtreeModified", "#digital-clock", function () {
-    // take day
-    let day = document.getElementById("organizer-container-date").innerHTML;
+  // hack to live update the completed events:
+  // bind an observer to seconds of utility clock
+  const observeChangesOfUtilityClockCSS = new MutationObserver(function (
+    mutations
+  ) {
+    mutations.forEach(function (mutationRecord) {
+      let day = document.getElementById("organizer-container-date").innerHTML;
 
-    // parse the date and take which event is marked as fired
-    if (activeDateOnCalendar[day]) {
-      for (let i = 0; i < activeDateOnCalendar[day].length; ++i) {
-        if (activeDateOnCalendar[day][i].isFired) {
-          // add green border to show that the event is fired
-          if (document.getElementById("organizer-container-list-item-" + i)) {
-            if (
-              !document
-                .getElementById("organizer-container-list-item-" + i)
-                .classList.contains("calendar-event-finished")
-            )
-              document
-                .getElementById("organizer-container-list-item-" + i)
-                .classList.add("calendar-event-finished");
+      // parse the date and take which event is marked as fired
+      if (activeDateOnCalendar[day]) {
+        for (let i = 0; i < activeDateOnCalendar[day].length; ++i) {
+          if (activeDateOnCalendar[day][i].isFired) {
+            // add green border to show that the event is fired
+            if (document.getElementById("organizer-container-list-item-" + i)) {
+              if (
+                !document
+                  .getElementById("organizer-container-list-item-" + i)
+                  .classList.contains("calendar-event-finished")
+              )
+                document
+                  .getElementById("organizer-container-list-item-" + i)
+                  .classList.add("calendar-event-finished");
+            }
           }
         }
       }
-    }
+    });
+  });
+
+  let target = document.getElementById("anchor-second");
+  observeChangesOfUtilityClockCSS.observe(target, {
+    attributes: true,
+    attributeFilter: ["style"],
   });
 };
 
