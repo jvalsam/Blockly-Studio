@@ -27,7 +27,7 @@
   margin: 0;
   padding: 10px;
   height: 90%;
-  max-width: 105rem !important;
+  max-width: 108rem !important;
 }
 
 #runtime-modal .modal-content {

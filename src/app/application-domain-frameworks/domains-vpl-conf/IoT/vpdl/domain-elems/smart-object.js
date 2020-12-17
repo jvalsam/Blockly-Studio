@@ -555,6 +555,26 @@ export const SmartObject = {
           JSON.stringify(dropdown_properties) +
           ");\n";
         strBuilder += "if (property.value !== args[0]) {";
+        strBuilder += "CreateDeviceBubbleForLog(";
+        strBuilder += JSON.stringify(block.soData.title) + ",";
+        strBuilder += JSON.stringify(block.soData.img) + ",";
+        strBuilder += JSON.stringify(block.soData.colour) + ",";
+        strBuilder +=
+          JSON.stringify("Set property ") +
+          "+ property.name +" +
+          JSON.stringify(": old value = <b>") +
+          "+ property.value +" +
+          JSON.stringify("</b>, current value =  <b>") +
+          "+ args[0] +" +
+          JSON.stringify("</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "property.value = args[0];";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=
@@ -735,15 +755,21 @@ export const SmartObject = {
         //         args.push(inputsToCode[i]);
         //       }
         //     }
-        //     PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {
-        //       resourceId: block.soData.details.iotivityResourceID,
-        //       methodId:
-        //         "action-" +
-        //         data.details.iotivityResourceID +
-        //         "-" +
-        //         dropdown_actions,
-        //       arguments: JSON.stringify(args),
-        //     }).then(resolve());
+        //     PostRequest(
+        //       "http://" + urlInfo.iotivityUrl + "/resource/execute-method",
+        //       {
+        //         resourceId: block.soData.details.iotivityResourceID,
+        //         methodId:
+        //           "action-" +
+        //           data.details.iotivityResourceID +
+        //           "-" +
+        //           dropdown_actions,
+        //         arguments: JSON.stringify(args),
+        //       }
+        //     ).then(() => {
+
+        //       resolve();
+        //     });
         //   });
         // })();
 
@@ -784,7 +810,39 @@ export const SmartObject = {
           dropdown_actions +
           "',\n";
         strBuilder += "arguments: JSON.stringify(args)\n";
-        strBuilder += "}).then(() => resolve());\n";
+        strBuilder += "}).then(() => { ";
+        strBuilder += "let argsStr = '';";
+        strBuilder +=
+          "if (args.length !== 0) argsStr += " +
+          JSON.stringify("with arguments: ") +
+          ";";
+        strBuilder += "args.forEach((arg, idx, array) => {";
+        strBuilder +=
+          "argsStr += " +
+          JSON.stringify("<b>") +
+          " + arg +" +
+          JSON.stringify("</b>") +
+          ";";
+        strBuilder += "if (idx !== array.length - 1) {";
+        strBuilder += "argsStr += " + JSON.stringify(", ") + ";";
+        strBuilder += "}";
+        strBuilder += "});";
+        strBuilder += "CreateDeviceBubbleForLog(";
+        strBuilder += JSON.stringify(block.soData.title) + ",";
+        strBuilder += JSON.stringify(block.soData.img) + ",";
+        strBuilder += JSON.stringify(block.soData.colour) + ",";
+        strBuilder +=
+          JSON.stringify("Execute Action: <b>" + dropdown_actions + "</b>  ") +
+          "+ argsStr" +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
+        strBuilder += "resolve()});\n";
         strBuilder += "});\n";
         strBuilder += "})();";
 

@@ -60,6 +60,21 @@ export const CalendarStaticBlocks = [
           "].startTime && e.id === " +
           JSON.stringify(id);
         strBuilder += ").isFired = true;";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("At Block") + ",";
+        strBuilder += JSON.stringify("#5b93a5") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Ends, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -131,6 +146,21 @@ export const CalendarStaticBlocks = [
           "].startTime && e.id === " +
           JSON.stringify(id);
         strBuilder += ").isFired = true;";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("At Statement Block") + ",";
+        strBuilder += JSON.stringify("#5b93a5") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Ends, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -234,6 +264,21 @@ export const CalendarStaticBlocks = [
           "].startTime && e.id === " +
           JSON.stringify(id);
         strBuilder += ").isFired = true;";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("Every Block") + ",";
+        strBuilder += JSON.stringify("#995ba5") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Ends, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += statements_statement;
         strBuilder += "} catch (e) {";
         strBuilder += 'if (e === "break") {';
@@ -370,6 +415,21 @@ export const CalendarStaticBlocks = [
           "].startTime && e.id === " +
           JSON.stringify(id);
         strBuilder += ").isFired = true;";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("Every Statement Block") + ",";
+        strBuilder += JSON.stringify("#995ba5") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Ends, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += statements_statement;
         strBuilder += "} catch (e) {";
         strBuilder += 'if (e === "break") {';
@@ -546,6 +606,21 @@ export const CalendarStaticBlocks = [
           "].startTime && e.id === " +
           JSON.stringify(id);
         strBuilder += ").isFired = true;";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("Wait Block") + ",";
+        strBuilder += JSON.stringify("#a5805b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Ends, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +
@@ -630,6 +705,21 @@ export const CalendarStaticBlocks = [
           "].startTime && e.id === " +
           JSON.stringify(id);
         strBuilder += ").isFired = true;";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("Wait Statement Block") + ",";
+        strBuilder += JSON.stringify("#a5805b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Ends, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += statements_statement;
         strBuilder +=
           "}, timeDispatch[JSON.parse(" +

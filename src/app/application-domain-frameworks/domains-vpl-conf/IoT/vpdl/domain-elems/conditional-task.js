@@ -35,7 +35,9 @@ export const ConditionalTask = {
       codeGen: (block) => {
         // Build eval for the main eval in run-app.js
         var code =
-          'eval( "(async () => {" +  runTimeData.execData.project.ConditionalEvents.find(e => e.id === ' +
+          'eval( "(async () => { let projectElementId = " + JSON.stringify(' +
+          JSON.stringify(block.pitemData.pitemId) +
+          ") + runTimeData.execData.project.ConditionalEvents.find(e => e.id === " +
           JSON.stringify(block.pitemData.pitemId) +
           ').editorsData[0].generated + "})()" );';
         return code;

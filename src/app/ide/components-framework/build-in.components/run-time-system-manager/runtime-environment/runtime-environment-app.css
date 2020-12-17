@@ -13,6 +13,10 @@ body {
 }
 
 /* For calendar */
+#organizer-container-list-container {
+  max-height: 20rem;
+}
+
 .cjslib-calendar {
   width: 100% !important;
   height: 100% !important;
@@ -91,11 +95,12 @@ body {
 
 #logger-body {
   background-color: #f6f6f6;
-  display: flex;
+  display: block;
   height: 91%;
   font-size: small;
   overflow-y: auto;
   font-size: 15px;
+  max-height: 20rem;
 }
 
 .log-bubble {
@@ -103,11 +108,12 @@ body {
   padding: 0.7rem 1rem 0rem 1rem;
   border-radius: 14px;
   width: 94%;
-  height: fit-content;
+  min-height: 4.5rem;
   margin-left: auto;
   margin-right: auto;
   margin-top: 1rem;
-  display: grid;
+  margin-bottom: 1rem;
+  display: block;
 }
 
 .log-bubble-name {
@@ -123,7 +129,7 @@ body {
 .log-bubble-text {
   padding: 0.4rem 0rem 0.4rem 0rem;
   margin-left: 2.6rem;
-  margin-top: -0.6rem;
+  margin-top: 1.1rem;
 }
 
 /* Smart Devices Preview */

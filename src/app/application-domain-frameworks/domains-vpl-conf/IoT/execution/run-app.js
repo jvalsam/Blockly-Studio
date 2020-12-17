@@ -649,6 +649,8 @@ const InitializeOrganizerForCalendar = function () {
     attributes: true,
     attributeFilter: ["style"],
   });
+
+  KeepScrollDown("organizer-container-list-container");
 };
 
 const InitializeActionsLog = function () {
@@ -669,6 +671,8 @@ const InitializeActionsLog = function () {
   let loggerBody = document.createElement("div");
   loggerBody.id = "logger-body";
   loggerContainer.appendChild(loggerBody);
+
+  KeepScrollDown("logger-body");
 };
 
 const CreateDeviceBubbleForLog = function (
@@ -712,6 +716,61 @@ const CreateDeviceBubbleForLog = function (
   logBubbleText.classList.add("log-bubble-text");
   logBubbleText.innerHTML = actionText;
   logBubble.appendChild(logBubbleText);
+};
+
+const CreateStaticBubbleForLog = function (
+  name,
+  backgroundColor,
+  actionText,
+  callback
+) {
+  let logBubble = document.createElement("div");
+  logBubble.classList.add("log-bubble");
+  logBubble.style.backgroundColor = backgroundColor;
+  document.getElementById("logger-body").appendChild(logBubble);
+
+  let logBubbleInfo = document.createElement("div");
+  logBubbleInfo.classList.add("log-bubble-info");
+  logBubble.appendChild(logBubbleInfo);
+
+  let logBubbleIconSpan = document.createElement("span");
+  logBubbleIconSpan.style.cssFloat = "left";
+  logBubbleInfo.appendChild(logBubbleIconSpan);
+
+  let logBubbleIcon = document.createElement("img");
+  logBubbleIcon.classList.add("log-bubble-icon");
+  logBubbleIcon.width = 25;
+  logBubbleIcon.height = 25;
+  logBubbleIcon.src = "https://img.icons8.com/color/2x/blockly-pink.png";
+  logBubbleIconSpan.appendChild(logBubbleIcon);
+
+  let logBubbleName = document.createElement("span");
+  logBubbleName.classList.add("log-bubble-name");
+  logBubbleName.innerHTML = name;
+  logBubbleInfo.appendChild(logBubbleName);
+
+  let logBubbleTime = document.createElement("span");
+  logBubbleTime.classList.add("log-bubble-time");
+  logBubbleTime.innerHTML = dayjs().format("HH:mm:ss, DD/MM");
+  logBubbleInfo.appendChild(logBubbleTime);
+
+  let logBubbleText = document.createElement("div");
+  logBubbleText.classList.add("log-bubble-text");
+  logBubbleText.innerHTML = actionText;
+  logBubble.appendChild(logBubbleText);
+};
+
+function updateScroll(id) {
+  var element = document.getElementById(id);
+  element.scrollTop = element.scrollHeight;
+}
+
+const KeepScrollDown = function (id) {
+  const config = { attributes: true, childList: true, subtree: true };
+  const observer = new MutationObserver(() => {
+    updateScroll(id);
+  });
+  observer.observe(document.getElementById(id), config);
 };
 
 const InitializeSmartDevicesContainer = function (selector) {
