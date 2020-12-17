@@ -36,6 +36,7 @@ export const ConditionalStaticBlocks = [
         this.setColour(75);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("");
       },
     }),
     codeGen: () =>
@@ -76,6 +77,23 @@ export const ConditionalStaticBlocks = [
         }
 
         let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("When Block") + ",";
+        strBuilder += JSON.stringify("#93a55b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Starts, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "func: async () => {";
@@ -85,6 +103,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += ");";
         strBuilder += "whenCondData.splice(removedindex, 1);";
         strBuilder += "try {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
         strBuilder += "CreateStaticBubbleForLog(";
         strBuilder += JSON.stringify("When Block") + ",";
         strBuilder += JSON.stringify("#93a55b") + ",";
@@ -107,6 +126,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         return code;
@@ -132,6 +152,7 @@ export const ConditionalStaticBlocks = [
         this.setColour(75);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("When Statement Block");
       },
     }),
     codeGen: () =>
@@ -172,6 +193,23 @@ export const ConditionalStaticBlocks = [
         }
 
         let strBuilder = "";
+        strBuilder += " (function () {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("When Statement Block") + ",";
+        strBuilder += JSON.stringify("#93a55b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Starts, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "func: async () => {";
@@ -181,6 +219,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += ");";
         strBuilder += "whenCondData.splice(removedindex, 1);";
         strBuilder += "try {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
         strBuilder += "CreateStaticBubbleForLog(";
         strBuilder += JSON.stringify("When Statement Block") + ",";
         strBuilder += JSON.stringify("#93a55b") + ",";
@@ -203,6 +242,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         return code;
@@ -230,6 +270,7 @@ export const ConditionalStaticBlocks = [
         this.setColour(75);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("When Times Block");
       },
     }),
     codeGen: () =>
@@ -286,6 +327,23 @@ export const ConditionalStaticBlocks = [
         }
 
         let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("When Times Block") + ",";
+        strBuilder += JSON.stringify("#93a55b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Starts, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "triggerFlag: false,";
@@ -307,6 +365,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "whenCondData.splice(index, 1);";
         strBuilder += "}";
         strBuilder += "try {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
         strBuilder += "CreateStaticBubbleForLog(";
         strBuilder += JSON.stringify("When Times Block") + ",";
         strBuilder += JSON.stringify("#93a55b") + ",";
@@ -338,6 +397,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         return code;
@@ -367,6 +427,7 @@ export const ConditionalStaticBlocks = [
         this.setColour(75);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("When Times Statement Block");
       },
     }),
     codeGen: () =>
@@ -423,6 +484,23 @@ export const ConditionalStaticBlocks = [
         }
 
         let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("When Times Statement Block") + ",";
+        strBuilder += JSON.stringify("#93a55b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Starts, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "triggerFlag: false,";
@@ -444,6 +522,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "whenCondData.splice(index, 1);";
         strBuilder += "}";
         strBuilder += "try {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
         strBuilder += "CreateStaticBubbleForLog(";
         strBuilder += JSON.stringify("When Times Statement Block") + ",";
         strBuilder += JSON.stringify("#93a55b") + ",";
@@ -475,6 +554,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         return code;
@@ -502,6 +582,7 @@ export const ConditionalStaticBlocks = [
         this.setColour(75);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("After Block");
       },
     }),
     codeGen: () =>
@@ -558,6 +639,23 @@ export const ConditionalStaticBlocks = [
         }
 
         let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("After Block") + ",";
+        strBuilder += JSON.stringify("#93a55b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Starts, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "triggerFlag: false,";
@@ -578,6 +676,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += ") {";
         strBuilder += "whenCondData.splice(index, 1);";
         strBuilder += "try {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
         strBuilder += "CreateStaticBubbleForLog(";
         strBuilder += JSON.stringify("After Block") + ",";
         strBuilder += JSON.stringify("#93a55b") + ",";
@@ -610,6 +709,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         return code;
@@ -639,6 +739,7 @@ export const ConditionalStaticBlocks = [
         this.setColour(75);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("After Statement Block");
       },
     }),
     codeGen: () =>
@@ -695,6 +796,23 @@ export const ConditionalStaticBlocks = [
         }
 
         let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("After Statement Block") + ",";
+        strBuilder += JSON.stringify("#93a55b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Starts, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "triggerFlag: false,";
@@ -715,6 +833,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += ") {";
         strBuilder += "whenCondData.splice(index, 1);";
         strBuilder += "try {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
         strBuilder += "CreateStaticBubbleForLog(";
         strBuilder += JSON.stringify("After Statement Block") + ",";
         strBuilder += JSON.stringify("#93a55b") + ",";
@@ -747,6 +866,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         return code;
@@ -770,6 +890,7 @@ export const ConditionalStaticBlocks = [
         this.setColour(75);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("Forever Block");
       },
     }),
     codeGen: () =>
@@ -815,6 +936,23 @@ export const ConditionalStaticBlocks = [
         }
 
         let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("Forever Block") + ",";
+        strBuilder += JSON.stringify("#93a55b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Starts, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "triggerFlag: false,";
@@ -827,6 +965,7 @@ export const ConditionalStaticBlocks = [
           "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
         strBuilder += "whenCondData[index].triggerFlag = true;";
         strBuilder += "try {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
         strBuilder += "CreateStaticBubbleForLog(";
         strBuilder += JSON.stringify("Forever Block") + ",";
         strBuilder += JSON.stringify("#93a55b") + ",";
@@ -858,6 +997,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         return code;
@@ -883,6 +1023,7 @@ export const ConditionalStaticBlocks = [
         this.setColour(75);
         this.setTooltip("");
         this.setHelpUrl("");
+        this.setCommentText("Forever Statement Block");
       },
     }),
     codeGen: () =>
@@ -928,6 +1069,23 @@ export const ConditionalStaticBlocks = [
         }
 
         let strBuilder = "";
+        strBuilder += "(function(){";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+        strBuilder += "CreateStaticBubbleForLog(";
+        strBuilder += JSON.stringify("Forever Statement Block") + ",";
+        strBuilder += JSON.stringify("#93a55b") + ",";
+        strBuilder +=
+          JSON.stringify("Status: Starts, Comment: ") +
+          "+" +
+          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "whenCondData.push({";
         strBuilder += "key: " + whenCondID + ",";
         strBuilder += "triggerFlag: false,";
@@ -940,6 +1098,7 @@ export const ConditionalStaticBlocks = [
           "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
         strBuilder += "whenCondData[index].triggerFlag = true;";
         strBuilder += "try {";
+        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
         strBuilder += "CreateStaticBubbleForLog(";
         strBuilder += JSON.stringify("Forever Statement Block") + ",";
         strBuilder += JSON.stringify("#93a55b") + ",";
@@ -971,6 +1130,7 @@ export const ConditionalStaticBlocks = [
         strBuilder += "}";
         strBuilder += "},";
         strBuilder += "});";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         return code;

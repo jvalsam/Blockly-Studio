@@ -35,6 +35,26 @@
   background-color: #f4f5f5 !important;
 }
 
+#fold-runtime-modal {
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+#expand-runtime-modal {
+  margin-right: 0.5rem;
+  display: none;
+}
+
+#fold-runtime-modal:hover {
+  color: #bbb7a6;
+  cursor: pointer;
+}
+
+#expand-runtime-modal:hover {
+  color: #bbb7a6;
+  cursor: pointer;
+}
+
 /* #runtime-modal .modal-content {
   width: fit-content;
 } */

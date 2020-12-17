@@ -38,17 +38,11 @@
             "
           >
             <h5 class="modal-title">Live Preview</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-              style="color: cornsilk; display: none"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+
+            <i class="fas fa-minus-square fa-lg" id="fold-runtime-modal"></i>
+            <i class="fas fa-plus-square fa-lg" id="expand-runtime-modal"></i>
           </div>
-          <div class="modal-body" style="padding: 0">
+          <div class="modal-body" id="runtime-modal-body" style="padding: 0">
             <!-- <p>Modal body text goes here.</p> -->
             <div id="runtime-iframe-container" style="height: 100%"></div>
           </div>

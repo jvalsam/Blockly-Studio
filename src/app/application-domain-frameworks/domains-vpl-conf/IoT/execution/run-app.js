@@ -95,7 +95,7 @@ const Initialize = function (selector) {
 
 /* Start data and functions for calendar - conditional blocks */
 const timeIdsToDate = {}; //  <id>: { day: "December 14, 2020", startTime: "16:54:33" }
-const activeDateOnCalendar = {}; // "December 14, 2020": [ {startTime:"16:54:33", id: <id>, isFired: false } ]
+const activeDateOnCalendar = {}; // "December 14, 2020": [ {startTime:"16:54:33", endTime: "" id: <id>, isFired: false, isCompleted = true } ]
 
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
 
@@ -338,6 +338,7 @@ const PinEventInCalendar = function (
   calendarData[year][month][date].sort(compareStartingDate);
 
   organizer.updateData(calendarData);
+  updateScroll("organizer-container-list-container");
 };
 /* End data and functions for calendar - conditional blocks */
 
@@ -626,9 +627,9 @@ const InitializeOrganizerForCalendar = function () {
       // parse the date and take which event is marked as fired
       if (activeDateOnCalendar[day]) {
         for (let i = 0; i < activeDateOnCalendar[day].length; ++i) {
-          if (activeDateOnCalendar[day][i].isFired) {
-            // add green border to show that the event is fired
-            if (document.getElementById("organizer-container-list-item-" + i)) {
+          if (document.getElementById("organizer-container-list-item-" + i)) {
+            if (activeDateOnCalendar[day][i].isFired) {
+              // add green border to show that the event is fired
               if (
                 !document
                   .getElementById("organizer-container-list-item-" + i)
@@ -637,6 +638,33 @@ const InitializeOrganizerForCalendar = function () {
                 document
                   .getElementById("organizer-container-list-item-" + i)
                   .classList.add("calendar-event-finished");
+            }
+            if (activeDateOnCalendar[day][i].isCompleted) {
+              let text = document.getElementById(
+                "organizer-container-list-item-" + i + "-time"
+              ).innerHTML;
+              text = text.replace("end", activeDateOnCalendar[day][i].endTime);
+              document.getElementById(
+                "organizer-container-list-item-" + i + "-time"
+              ).innerHTML = text;
+              if (
+                $("#organizer-container-list-item-" + i + "-text").children()
+                  .length === 0
+              ) {
+                document.getElementById(
+                  "organizer-container-list-item-" + i + "-text"
+                ).style.display = "block";
+                let icon = document.createElement("img");
+                icon.width = 20;
+                icon.height = 20;
+                icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+                icon.style.cssFloat = "right";
+                document
+                  .getElementById(
+                    "organizer-container-list-item-" + i + "-text"
+                  )
+                  .appendChild(icon);
+              }
             }
           }
         }
@@ -649,8 +677,6 @@ const InitializeOrganizerForCalendar = function () {
     attributes: true,
     attributeFilter: ["style"],
   });
-
-  KeepScrollDown("organizer-container-list-container");
 };
 
 const InitializeActionsLog = function () {
@@ -671,8 +697,6 @@ const InitializeActionsLog = function () {
   let loggerBody = document.createElement("div");
   loggerBody.id = "logger-body";
   loggerContainer.appendChild(loggerBody);
-
-  KeepScrollDown("logger-body");
 };
 
 const CreateDeviceBubbleForLog = function (
@@ -685,6 +709,8 @@ const CreateDeviceBubbleForLog = function (
   let logBubble = document.createElement("div");
   logBubble.classList.add("log-bubble");
   logBubble.style.backgroundColor = backgroundColor;
+  logBubble.onclick = callback;
+
   document.getElementById("logger-body").appendChild(logBubble);
 
   let logBubbleInfo = document.createElement("div");
@@ -716,6 +742,7 @@ const CreateDeviceBubbleForLog = function (
   logBubbleText.classList.add("log-bubble-text");
   logBubbleText.innerHTML = actionText;
   logBubble.appendChild(logBubbleText);
+  updateScroll("logger-body");
 };
 
 const CreateStaticBubbleForLog = function (
@@ -727,6 +754,7 @@ const CreateStaticBubbleForLog = function (
   let logBubble = document.createElement("div");
   logBubble.classList.add("log-bubble");
   logBubble.style.backgroundColor = backgroundColor;
+  logBubble.onclick = callback;
   document.getElementById("logger-body").appendChild(logBubble);
 
   let logBubbleInfo = document.createElement("div");
@@ -758,20 +786,15 @@ const CreateStaticBubbleForLog = function (
   logBubbleText.classList.add("log-bubble-text");
   logBubbleText.innerHTML = actionText;
   logBubble.appendChild(logBubbleText);
+  updateScroll("logger-body");
 };
 
 function updateScroll(id) {
   var element = document.getElementById(id);
-  element.scrollTop = element.scrollHeight;
-}
 
-const KeepScrollDown = function (id) {
-  const config = { attributes: true, childList: true, subtree: true };
-  const observer = new MutationObserver(() => {
-    updateScroll(id);
-  });
-  observer.observe(document.getElementById(id), config);
-};
+  if (element.scrollHeight - element.scrollTop <= element.clientHeight + 145)
+    element.scrollTop = element.scrollHeight;
+}
 
 const InitializeSmartDevicesContainer = function (selector) {
   let smartDevicesDiv = document.createElement("div");
@@ -963,6 +986,7 @@ export async function StartApplication(runTimeData) {
 
                 // Start whenConditions
                 StartWhenTimeout();
+
                 break;
 
               default:

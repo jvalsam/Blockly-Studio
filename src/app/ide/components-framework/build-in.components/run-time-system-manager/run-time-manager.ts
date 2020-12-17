@@ -254,6 +254,11 @@ export class RuntimeManager extends IDEUIComponent {
         return this._environmentData;
     }
 
+    @ExportedFunction
+    public foldLivePreview() {
+        this._view["foldLivePreview"]();
+    }
+
     private _startMsgHookId: String;
 
     @RequiredFunction("ProjectManager", "getRunApplicationData")

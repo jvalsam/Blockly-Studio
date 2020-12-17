@@ -123,6 +123,20 @@ export class RuntimeEnvironmentRelease {
     }
 
     browseBlocklyBlock(projectElementId, blockId) {
+        this._runtimeEnv.functionRequest(
+            RuntimeEnvironmentRelease.name,
+            "RuntimeManager",
+            "foldLivePreview",
+            []
+        );
         
+        this._runtimeEnv.functionRequest(
+          RuntimeEnvironmentRelease.name,
+          "BlocklyVPL",
+          "highlightBlockOfPItem",
+            [
+                projectElementId,
+                blockId
+            ]);
     }
 }

@@ -1,6 +1,16 @@
+html,
 body {
+  min-height: 100%;
+}
+body {
+  height: 100vh;
   background-color: #e8e7e7 !important;
-  /* overflow-y: hidden; */
+  overflow-y: hidden;
+}
+
+#run-application-view-container {
+  overflow: hidden;
+  max-height: 100vh;
 }
 
 #runtime-smart-devices-container {
@@ -10,6 +20,8 @@ body {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   background-color: #4a81b126;
+  overflow-y: auto;
+  height: 58vh;
 }
 
 /* For calendar */
@@ -114,6 +126,11 @@ body {
   margin-top: 1rem;
   margin-bottom: 1rem;
   display: block;
+}
+
+.log-bubble:hover {
+  opacity: 0.95;
+  cursor: pointer;
 }
 
 .log-bubble-name {

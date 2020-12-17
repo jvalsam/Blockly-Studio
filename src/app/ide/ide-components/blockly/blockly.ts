@@ -602,4 +602,19 @@ export class BlocklyVPL extends Editor {
       [pitem.systemID]
     );
   }
+
+  @RequiredFunction("ProjectManager", "getProjectItem")
+  @ExportedFunction
+  public highlightBlockOfPItem(pitemId: string, blockId: string) {
+    let pitem = ComponentsCommunication.functionRequest(
+      this.name,
+      "ProjectManager",
+      "getProjectItem",
+      [pitemId]
+    ).value;
+    this.openPItem(pitem);
+    let editorData = pitem._editorsData.items[Object.keys(pitem._editorsData.items)[0]];
+    this.instancesMap[editorData.editorId].getBlockById(blockId)["select"]();
+    // highlightBlock(blockId);
+  }
 }
