@@ -150,49 +150,58 @@ body {
 }
 
 /* Smart Devices Preview */
-.resource-card {
+#runtime-smart-devices-container .resource-card {
   width: 16rem !important;
   /* margin-left: 0 !important; */
   height: 12rem !important;
 }
 
-.resource-card .card-header {
+#runtime-smart-devices-container .resource-card .card-header {
   padding: 0 !important;
   padding-top: 0.5rem !important;
   padding-bottom: 0.5rem !important;
 }
 
-.resource-card .card-header span {
+#runtime-smart-devices-container .resource-card .card-header span {
   font-size: 14px !important;
 }
 
-.resource-card .card-body {
+#runtime-smart-devices-container .resource-img {
+  margin-left: 0;
+}
+
+#runtime-smart-devices-container .resource-title {
+  margin-left: 0.5rem;
+}
+
+#runtime-smart-devices-container .resource-card .card-body {
   padding-top: 0.5rem !important;
   padding-bottom: 0 !important;
   padding-left: 1.25rem !important;
   padding-right: 1.25rem !important;
 }
 
-.resource-card .property-title {
+#runtime-smart-devices-container .resource-card .property-title {
   font-size: small;
 }
 
-.property-value-string,
-.property-value-number {
+#runtime-smart-devices-container .property-value-string,
+#runtime-smart-devices-container .property-value-number {
   max-width: 6rem !important;
   height: 2rem !important;
 }
-.resource-card hr {
+
+#runtime-smart-devices-container .resource-card hr {
   margin-top: 0.1rem !important;
   margin-bottom: 0.1rem !important;
 }
 
-.runtime-cards {
+#runtime-smart-devices-container .runtime-cards {
   transition: all 200ms ease-out;
   border-radius: 3px;
 }
 
-.runtime-cards-update {
+#runtime-smart-devices-container .runtime-cards-update {
   box-shadow: 0 0 8px rgb(35 173 255);
 }
 

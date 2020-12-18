@@ -849,6 +849,7 @@ const RerenderDevice = function (device, propsDiff) {
 const MergeNameOfSmartObjectWithResource = function (so, resource) {
   // Merge all we need
   resource.name = so.editorsData[0].generated.title;
+  resource.options.image = so.editorsData[0].generated.img;
 };
 
 const MergeNameOfSmartObjectsWithResources = function (
@@ -862,7 +863,10 @@ const MergeNameOfSmartObjectsWithResources = function (
         resource.id === so.editorsData[0].generated.details.iotivityResourceID
     );
 
-    if (device) device.name = so.editorsData[0].generated.title;
+    if (device) {
+      device.name = so.editorsData[0].generated.title;
+      device.options.image = so.editorsData[0].generated.img;
+    }
   });
 };
 
