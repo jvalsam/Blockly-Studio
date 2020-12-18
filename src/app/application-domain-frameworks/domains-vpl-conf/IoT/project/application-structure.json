@@ -165,7 +165,7 @@
                 ],
                 "actions" : [
                     {
-                        "title" : "New Smart Device",
+                        "title" : "Import Smart Device",
                         "img" : "fa fa-plus",
                         "events" : [ 
                             {
@@ -197,7 +197,7 @@
                         ]
                     }, 
                     {
-                        "title" : "New Smart Environment",
+                        "title" : "Create Smart Environment",
                         "img" : "fa fa-plus",
                         "events" : [ 
                             {

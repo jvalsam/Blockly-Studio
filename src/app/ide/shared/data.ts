@@ -37,6 +37,7 @@ class _RunPlatformData {
             default:
                 this._URL = _URL;
                 this._MONGO_URL = _MONGO_URL;
+                this._UPLOAD_FILES_URL = _UPLOAD_FILES_URL_RELEASE;
         }
     }
 

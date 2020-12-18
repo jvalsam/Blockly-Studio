@@ -984,7 +984,7 @@ export class ProjectManager extends IDEUIComponent {
 
             dialoguesData.push(
                 createDialogue(
-                    "Create New ",
+                    "",
                     {
                         formElems: renderData,
                         options: this.currModalData.itemData.options,
@@ -1449,9 +1449,12 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public onRenameElement(event: IEventData, concerned: ProjectManagerItemView): void {
         let execOpenDialogue = () => {
-            let options = this.fixOptionsOnEdit(
-                concerned["_editorsData"].options,
-                JSON.parse(JSON.stringify(concerned["_meta"].options)));
+            let options = [];
+            if (concerned["_editorsData"].options && concerned["_editorsData"].options.length>0) {
+                this.fixOptionsOnEdit(
+                    concerned["_editorsData"].options,
+                    JSON.parse(JSON.stringify(concerned["_meta"].options)));
+            }
 
             let projInstView = (<ProjectManagerJSTreeView>this._view)
                 .getProject(concerned["project"].projectID);
