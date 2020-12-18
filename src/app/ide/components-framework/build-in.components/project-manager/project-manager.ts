@@ -465,7 +465,7 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemUpdated(pitemId: any, type: any, data: any, callback): boolean {
-        let pitem = this.getPItem(pitemId);
+        let pitem = this.getProjectItemView(pitemId);
         let projectId = pitemId.split("_")[0];
 
         switch(type) {
@@ -513,6 +513,19 @@ export class ProjectManager extends IDEUIComponent {
                 let project = this.loadedProjects[projectId];
                 let pitem = this.pitemviewtoData(elem);
                 project.projectItems.push(pitem);
+
+                //
+                for(const key in pitem.editorsData.items) {
+                    ComponentsCommunication.functionRequest(
+                        this.name,
+                        pitem.editorsData.items[key].editorName,
+                        "loadSource",
+                        [
+                            pitem.editorsData.items[key],
+                            elem
+                        ]
+                    )
+                }
                 callback(pitem);
             }
         );

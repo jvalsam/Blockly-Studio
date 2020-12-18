@@ -244,8 +244,7 @@ export class CollaborationManager extends IDEUIComponent {
             icon: "../../../../../../images/collaboration/name.png",
             action: () => alert(pitem["renderParts"][1].value.text)
         });
-        return [];
-        let settings = this.shProject.componentsData.collaborationData.projectInfo;
+        let settings = this.getProjectComponentData(this.shProject._id).projectInfo;
         let collabData = pitem.componentsData.collaborationData;
         if(settings.createPItem){ // Add Logic if "Allow members to create project item" was enabled
             opts.push(

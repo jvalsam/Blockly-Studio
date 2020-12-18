@@ -262,6 +262,10 @@ export class BlocklyInstance {
     this.state = InstStateEnum.OPEN;
   }
 
+  updateWSPToText() {
+    this.text = this.getText();
+  }
+
   onResize(e) {
     // Compute the absolute coordinates and dimensions of blocklyArea.
     let element = this._blocklyArea;

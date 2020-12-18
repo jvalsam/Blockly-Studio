@@ -55,7 +55,7 @@ export function collaborationFilter(projectObj, myInfo, settings){
     //projectObj.componentsData = projectObj.componentsData ? projectObj.componentsData : {};
     //projectObj.componentsData.collabInfo = tempCollabData;
     let collabData = collabInfo.plugin.getComponentData(projectObj._id);
-    collabData.collabInfo = tempCollabData;
+    collabData = tempCollabData;
     collabInfo.plugin.saveComponentData(collabData,projectObj._id);
     // pin privileges per pitem
     projectObj.projectItems.forEach(pitem => {

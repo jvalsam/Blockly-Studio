@@ -17,9 +17,8 @@ import {
 
 //Receive functions
 export function receiveRegisterUser(data,conn){
-    let DB = collabInfo.plugin.getProject();
     let info = data.info;
-    let members = collabInfo.plugin.getComponentData().collabInfo.members;
+    let members = collabInfo.plugin.getComponentData().members;
 	for(let item in members){
 		item = members[item];
 		if(item.name === info.name){
@@ -32,21 +31,22 @@ export function receiveRegisterUser(data,conn){
 }
 
 export function receiveAddUser(data,conn){
-    let DB = collabInfo.plugin.getProject();
-    DB.componentsData.collaborationData.members.push(data.info);
-    debugger;
+    let compData = collabInfo.plugin.getComponentData();
+    compData.members.push(data.info);
+    collabInfo.plugin.saveComponentData(compData);
     collabInfo.UI.addMember(data.info);
     printDB();
 }
 
 export function receiveRemoveUser(data,conn){
-    let DB = collabInfo.plugin.getProject();
 	var info = data.info;
-	var position = 0;
-	for(var item in DB.componentsData.collaborationData.members){
-		item = DB.componentsData.collaborationData.members[item];
+    var position = 0;
+    let compData = collabInfo.plugin.getComponentData();
+	for(var item in compData.members){
+		item = compData.members[item];
 		if(item.name === info.name){
-            DB.componentsData.collaborationData.members.splice(position, 1);
+            compData.members.splice(position, 1);
+            collabInfo.plugin.saveComponentData(compData);
 			printDB();
 			return;
 		}
@@ -125,7 +125,7 @@ function acceptUser(conn,infom){
     conn.name = infom.name;
     collabInfo.connected_users.push(conn);
     
-    let toUpdate = collabInfo.plugin.getComponentData().collabInfo;
+    let toUpdate = collabInfo.plugin.getComponentData();
 	toUpdate.members.push({
         name: infom.name,
         icon: infom.icon
