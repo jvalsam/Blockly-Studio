@@ -165,9 +165,9 @@ export class BlocklyVPL extends Editor {
       );
     }
     // lazy update for the text of the existing wsp 
-    else {
-      this.instancesMap[editorData.editorId].text = editorData.src;
-    }
+    // else {
+    //   this.instancesMap[editorData.editorId].text = editorData.src;
+    // }
     this.instancesMap[editorData.editorId].open();
   }
 
@@ -267,14 +267,14 @@ export class BlocklyVPL extends Editor {
     let id = data.editorId;
     let event = data.event;
     
-    if (focus) {
-      this.instancesMap[id].syncWSP(event);
-    }
-    else {
-      console.warn("Blockly instance not implement. Has to mark that visual src is not updated");
+    this.instancesMap[id].syncWSP(event);
+
+    if (!focus) {
+      this.instancesMap[id].refresh();
+      this.instancesMap[id].updateWSPToText();
     }
 
-    this.handleBlocksTracker(id, pitem.pi, event);
+    this.handleBlocksTracker(id, pitem, event);
   }
 
   @ExportedFunction
