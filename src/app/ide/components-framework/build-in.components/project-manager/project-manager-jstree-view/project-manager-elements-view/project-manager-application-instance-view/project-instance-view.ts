@@ -624,6 +624,9 @@ export class ProjectInstanceView extends View {
     }
 
     public onActionItem(element: ProjectElement, action): void {
+        action.createTitle = element["_meta"].actions
+            .find(_action => _action.events[0].action === action.action)
+            .title;
         this.parent["onClickMenuItem"](action, element);
     }
 

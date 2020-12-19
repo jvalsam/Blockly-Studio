@@ -105,7 +105,7 @@ export const BlocklyConditional = {
       ],
     },
     {
-      name: "Smart Objects",
+      name: "Smart Devices",
       type: "Category",
       colour: "210",
       elements: [
@@ -120,7 +120,7 @@ export const BlocklyConditional = {
       ],
     },
     {
-      name: "Smart Groups",
+      name: "Smart Device Groups",
       type: "Category",
       colour: "210",
       elements: [

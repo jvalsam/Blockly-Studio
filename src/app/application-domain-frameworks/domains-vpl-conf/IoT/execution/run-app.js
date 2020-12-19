@@ -967,7 +967,7 @@ export async function StartApplication(runTimeData) {
                     if (
                       events.options.find(
                         (option) => option.id === "starts_on_execution"
-                      ).value === "Yes"
+                      ).value === "Automatically"
                     ) {
                       let projectElementId = events.id;
                       eval(

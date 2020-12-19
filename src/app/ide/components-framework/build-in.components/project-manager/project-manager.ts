@@ -46,6 +46,7 @@ import {
     getTitleOfRenderParts
 } from "../../common-views/sequential-dialogues-modal-view/dialogue-data";
 import { ProjectInstanceView } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-instance-view";
+import { Action } from "blockly";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -997,7 +998,8 @@ export class ProjectManager extends IDEUIComponent {
 
             dialoguesData.push(
                 createDialogue(
-                    "",
+                    "create",
+                    event["createTitle"],
                     {
                         formElems: renderData,
                         options: this.currModalData.itemData.options,
@@ -1056,7 +1058,8 @@ export class ProjectManager extends IDEUIComponent {
                     .default;
                 titles.push(title);
                 let dialogue = createDialogue(
-                    "Create New ",
+                    "create",
+                    event["createTitle"],
                     {
                         formElems: renderData,
                         systemIDs: systemIDs
@@ -1253,6 +1256,7 @@ export class ProjectManager extends IDEUIComponent {
             (<ModalView>ViewRegistry.getEntry("SequentialDialoguesModalView").create(
                 this,
                 [createDialogue (
+                    "remove",
                     "Remove ",
                     {
                         text: "Deleting <b>"
@@ -1464,7 +1468,7 @@ export class ProjectManager extends IDEUIComponent {
         let execOpenDialogue = () => {
             let options = [];
             if (concerned["_editorsData"].options && concerned["_editorsData"].options.length>0) {
-                this.fixOptionsOnEdit(
+                options = this.fixOptionsOnEdit(
                     concerned["_editorsData"].options,
                     JSON.parse(JSON.stringify(concerned["_meta"].options)));
             }
@@ -1486,7 +1490,8 @@ export class ProjectManager extends IDEUIComponent {
                 .create(
                     this,
                     [createDialogue (
-                        "Settings: ",
+                        "rename",
+                        "Settings for ",
                         {
                             formElems: renderMData,
                             options: options

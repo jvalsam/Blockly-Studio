@@ -23,9 +23,9 @@
     color: rgb(0, 0, 0) !important;
 }
 
-.dark-s-item a:hover {
-    color: rgb(0, 0, 0) !important;
-    /* background-color: rgb(248, 249, 250) */
+.dark-s-item :hover {
+    /* color: rgb(0, 0, 0) !important; */
+    background-color: rgb(119 161 204)!important;
 }
 
 .dropdown-submenu {
@@ -76,4 +76,8 @@
     -webkit-border-radius: 6px 0 6px 6px;
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
+}
+
+.ts-menu-item-btn :hover {
+    background-color: rgb(119 161 204)!important;
 }

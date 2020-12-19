@@ -104,7 +104,7 @@ export const BlocklyCalendar = {
       ],
     },
     {
-      name: "Smart Objects",
+      name: "Smart Devices",
       type: "Category",
       colour: "210",
       elements: [
@@ -119,7 +119,7 @@ export const BlocklyCalendar = {
       ],
     },
     {
-      name: "Smart Groups",
+      name: "Smart Device Groups",
       type: "Category",
       colour: "210",
       elements: [

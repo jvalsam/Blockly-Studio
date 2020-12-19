@@ -60,7 +60,7 @@ export const AutomationTask = {
       gap: "200",
     },
     {
-      name: "Smart Objects",
+      name: "Smart Devices",
       type: "Category",
       colour: "210",
       elements: [
@@ -75,7 +75,7 @@ export const AutomationTask = {
       ],
     },
     {
-      name: "Smart Groups",
+      name: "Smart Device Groups",
       type: "Category",
       colour: "210",
       elements: [

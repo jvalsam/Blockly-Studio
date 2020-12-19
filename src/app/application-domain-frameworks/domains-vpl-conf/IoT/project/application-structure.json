@@ -197,7 +197,7 @@
                         ]
                     }, 
                     {
-                        "title" : "Create Smart Environment",
+                        "title" : "New Smart Environment",
                         "img" : "fa fa-plus",
                         "events" : [ 
                             {
@@ -706,7 +706,7 @@
                 ],
                 "actions" : [
                     {
-                        "title" : "New Conditional Task",
+                        "title" : "New Conditional Automation Task",
                         "img" : "fa fa-plus",
                         "events" : [
                             {
@@ -796,15 +796,15 @@
                         "options": [
                             {
                                 "id" : "starts_on_execution",
-                                "name": "Starts on execution",
+                                "name": "Starts:",
                                 "type": "select",
                                 "values": [
-                                    "Yes",
-                                    "No"
+                                    "Automatically",
+                                    "Manually"
                                 ],
-                                "selected": "Yes",
+                                "selected": "Automatically",
                                 "renderOnProjectManager":
-                                    "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
+                                    "function(value) { return value === 'Automatically' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
                                 "selectedBy": "user",
                                 "KeyValueCollector": "selected"
                             }
@@ -896,7 +896,7 @@
               ],
               "actions": [
                 {
-                  "title": "New Calendar Task",
+                  "title": "New Calendar Automation Task",
                   "img": "fa fa-plus",
                   "events": [
                     {
@@ -982,15 +982,15 @@
                   "options": [
                     {
                         "id" : "starts_on_execution",
-                        "name": "Starts on execution",
+                        "name": "Starts:",
                         "type": "select",
                         "values": [
-                            "Yes",
-                            "No"
+                            "Automatically",
+                            "Manually"
                         ],
-                        "selected": "Yes",
+                        "selected": "Automatically",
                         "renderOnProjectManager":
-                            "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
+                            "function(value) { return value === 'Automatically' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
                         "selectedBy": "user",
                         "KeyValueCollector": "selected"
                     }
@@ -1166,15 +1166,15 @@
                   "options": [
                     {
                         "id" : "starts_on_execution",
-                        "name": "Starts on execution",
+                        "name": "Starts:",
                         "type": "select",
                         "values": [
-                            "Yes",
-                            "No"
+                            "Automatically",
+                            "Manually"
                         ],
-                        "selected": "No",
+                        "selected": "Manually",
                         "renderOnProjectManager":
-                            "function(value) { return value === 'Yes' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
+                            "function(value) { return value === 'Automatically' ? '<i class=\"fas fa-play fa-xs\" style=\"color: green;\"></i>' : ''; }",
                         "selectedBy": "user",
                         "KeyValueCollector": "selected"
                     }

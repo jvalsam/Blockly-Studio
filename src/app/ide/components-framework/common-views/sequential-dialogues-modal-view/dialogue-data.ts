@@ -28,6 +28,7 @@ function createDialogueTitle(action: string, renderParts, type) {
 }
 
 export function createDialogue(
+    actionType: string,
     actionTitle: string,
     body: {
         formElems?: any,
@@ -40,20 +41,24 @@ export function createDialogue(
     dtype: string = "simple"
 ) {
     let title = actionTitle;
-    if (body.formElems) {
-        let value = body.formElems
-            .find(x=>x.type === 'title')
-            .value;
-        title += value.default || value.text;
+    if (actionType !== 'create') {
+        if (body.formElems) {
+            let value = body.formElems
+                .find(x=>x.type === 'title')
+                .value;
+            title += value.default || value.text;
+        }
+        else {
+            title += type;
+        }
     }
-    else {
-        title += type;
-    }
+
     if (body.formElems) {
         body.formElems = RenderPartsToPropertyData(
             body.formElems,
             body.systemIDs);
     }
+
     return {
         type: dtype,
         data: {
