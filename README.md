@@ -24,7 +24,7 @@ Domain authors are able to design the application domain in the context of:
 - define extra run-time views (e.g. view area of monitoring smart objects)
 
 
-* How to build and run the project:
+# How to build and run the project:
 
 0. git clone --recurse-submodules url_path_blocklystudio_repo
 1. Install MongoDB (3.6.21), python 2.7, latest npm and node
