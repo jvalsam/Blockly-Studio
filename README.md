@@ -23,13 +23,14 @@ Domain authors are able to design the application domain in the context of:
 - define the script for run-time purposes (implementing the interfaces for run-time scripts)
 - define extra run-time views (e.g. view area of monitoring smart objects)
 
-* Build and run the project:
 
-git clone --recurse-submodules url_blocklystudio_repo
+* How to build and run the project:
 
+0. git clone --recurse-submodules url_path_blocklystudio_repo
 1. Install MongoDB (3.6.21), python 2.7, latest npm and node
-2. Start DB: mongod --port=3032 --dbpath="path of the DB/data" #default port is 27017
-3. npm install #in the folder includes webpack
-4. Run server: cd ./src/app/ide/backend/ & node --inspect server.js # default port is 3031
-5. webpack --watch # deafult port is 8080
-6. choose index.html from the list of sources will be presented on webpage will open automatically in the browser
+2. Set up the environment variables for mongo and python
+3. npm install
+3. python git_pull_update.py
+4. Download and put the BlocklyStudioDB in the git folder
+5. python start.py
+6. when browser opens, choose index.html
