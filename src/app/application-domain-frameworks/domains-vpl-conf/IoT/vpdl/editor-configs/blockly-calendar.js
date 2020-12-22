@@ -64,7 +64,7 @@ export const BlocklyCalendar = {
       gap: "200",
     },
     {
-      name: "Calendar",
+      name: "Scheduler",
       type: "DomainStatic",
       colour: "75",
       elements: [

@@ -83,7 +83,7 @@ export const BlocklyConditional = {
       ],
     },
     {
-      name: "Calendar",
+      name: "Scheduler",
       type: "DomainStatic",
       colour: "75",
       elements: [
