@@ -14,46 +14,50 @@ export const BlocklyConditional = {
       gap: "200",
     },
     {
-      name: "Automation Tasks",
+      name: "Automations",
       type: "Category",
       colour: "300",
       elements: [
         {
-          name: {
-            domainElem: "ec-automation-task",
-            item: "invoke_task",
-          },
-          type: "Element",
+          name: "Basic Tasks",
+          type: "Category",
+          elements: [
+            {
+              name: {
+                domainElem: "ec-automation-task",
+                item: "invoke_task",
+              },
+              type: "Element",
+            },
+          ],
         },
-      ],
-    },
-    {
-      name: "Calendar Automation Tasks",
-      type: "Category",
-      colour: "300",
-      elements: [
         {
-          name: {
-            domainElem: "ec-blockly-calendar-event",
-            item: "invoke_calendar_task",
-          },
-          type: "Element",
+          name: "Conditional Tasks",
+          type: "Category",
+          elements: [
+            {
+              name: {
+                domainElem: "ec-blockly-conditional-event",
+                item: "invoke_conditional_task",
+              },
+              type: "Element",
+            },
+          ],
         },
-      ],
-    },
-    {
-      name: "Conditional Automation Tasks",
-      type: "Category",
-      colour: "300",
-      elements: [
         {
-          name: {
-            domainElem: "ec-blockly-conditional-event",
-            item: "invoke_conditional_task",
-          },
-          type: "Element",
-        },
-      ],
+          name: "Scheduled Tasks",
+          type: "Category",
+          elements: [
+            {
+              name: {
+                domainElem: "ec-blockly-calendar-event",
+                item: "invoke_calendar_task",
+              },
+              type: "Element",
+            },
+          ],
+        }
+      ]
     },
     {
       type: "Separator",

@@ -16,7 +16,7 @@ export const AutomationTask = {
                 { alt: "*", flipRtl: "FALSE" }
               )
             )
-            .appendField("Invoke Automation:")
+            .appendField("Start Automation:")
             .appendField(
               new Blockly.FieldImage(data.img, 20, 20, {
                 alt: "*",

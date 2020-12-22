@@ -165,7 +165,7 @@
                 ],
                 "actions" : [
                     {
-                        "title" : "Import Smart Device",
+                        "title" : "Define Smart Device",
                         "img" : "fa fa-plus",
                         "events" : [ 
                             {
@@ -557,7 +557,7 @@
                     {
                         "type" : "title",
                         "value" : {
-                            "text" : "Smart Groups"
+                            "text" : "Smart Device Groups"
                         },
                         "selectedBy" : "domain"
                     }
@@ -603,7 +603,7 @@
                                 "id" : "smartgroup_title",
                                 "value" : {
                                     "property" : "Name",
-                                    "default" : "Smart Group"
+                                    "default" : "Smart Device Group"
                                 },
                                 "formElemItemRenderNO" : 1,
                                 "selectedBy" : "user"
@@ -699,14 +699,14 @@
                     {
                         "type" : "title",
                         "value" : {
-                            "text" : "Conditional Automation Tasks"
+                            "text" : "Automations for Conditional Tasks"
                         },
                         "selectedBy" : "domain"
                     }
                 ],
                 "actions" : [
                     {
-                        "title" : "New Conditional Automation Task",
+                        "title" : "New Conditional for Automation Task",
                         "img" : "fa fa-plus",
                         "events" : [
                             {
@@ -889,14 +889,14 @@
                 {
                   "type": "title",
                   "value": {
-                    "text": "Calendar Automation Tasks"
+                    "text": "Automations for Scheduled Tasks"
                   },
                   "selectedBy": "domain"
                 }
               ],
               "actions": [
                 {
-                  "title": "New Calendar Automation Task",
+                  "title": "New Automation for Scheduled Tasks",
                   "img": "fa fa-plus",
                   "events": [
                     {
@@ -963,7 +963,7 @@
                       "id": "blocklycalendar_title",
                       "value": {
                         "property": "Name",
-                        "default": "Calendar Task"
+                        "default": "Automation for Scheduled Tasks"
                       },
                       "formElemItemRenderNO": 1,
                       "selectedBy": "user"
@@ -1073,14 +1073,14 @@
                 {
                   "type": "title",
                   "value": {
-                    "text": "Automation Tasks"
+                    "text": "Automations for Basic Tasks"
                   },
                   "selectedBy": "domain"
                 }
               ],
               "actions": [
                 {
-                  "title": "New Automation Task",
+                  "title": "New Automation for Basic Tasks",
                   "img": "fa fa-plus",
                   "events": [
                     {
@@ -1147,7 +1147,7 @@
                       "id": "blocklyautomationtask_title",
                       "value": {
                         "property": "Name",
-                        "default": "Automation Task"
+                        "default": "Automation for Basic Tasks"
                       },
                       "formElemItemRenderNO": 1,
                       "selectedBy": "user"

@@ -16,7 +16,7 @@ export const CalendarTask = {
                 { alt: "*", flipRtl: "FALSE" }
               )
             )
-            .appendField("Invoke Calendar:")
+            .appendField("Start Calendar:")
             .appendField(
               new Blockly.FieldImage(data.img, 20, 20, {
                 alt: "*",

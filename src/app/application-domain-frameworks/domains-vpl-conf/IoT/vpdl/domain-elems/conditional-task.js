@@ -16,7 +16,7 @@ export const ConditionalTask = {
                 { alt: "*", flipRtl: "FALSE" }
               )
             )
-            .appendField("Invoke Conditional:")
+            .appendField("Start Conditional:")
             .appendField(
               new Blockly.FieldImage(data.img, 20, 20, {
                 alt: "*",
