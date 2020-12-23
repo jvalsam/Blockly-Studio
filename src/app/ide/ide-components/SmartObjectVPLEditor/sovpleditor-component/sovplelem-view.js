@@ -53,6 +53,7 @@ let CreateModal = function (dom, idPrefix) {
 
   let modalDialog = CreateDOMElement("div", {
     classList: ["modal-dialog", "modal-lg"],
+    id: idPrefix + "-modal-dialog",
   });
   modalDialog.setAttribute("role", "document");
   modal.appendChild(modalDialog);
@@ -265,18 +266,16 @@ let CreateDifferencesTableInGroupSelection = function (
   });
   domSel.appendChild(tableDifferences);
 
-  if (isSO) {
-    let firstTHead = CreateDOMElement("thead");
-    tableDifferences.appendChild(firstTHead);
+  let firstTHead = CreateDOMElement("thead");
+  tableDifferences.appendChild(firstTHead);
 
-    let trHeader = CreateDOMElement("tr");
-    firstTHead.appendChild(trHeader);
+  let trHeader = CreateDOMElement("tr");
+  firstTHead.appendChild(trHeader);
 
-    let thSOName = CreateDOMElement("th", { innerHtml: elemName });
-    thSOName.setAttribute("colspan", "2");
-    thSOName.setAttribute("scope", "colgroup");
-    trHeader.appendChild(thSOName);
-  }
+  let thSOName = CreateDOMElement("th", { innerHtml: elemName });
+  thSOName.setAttribute("colspan", "2");
+  thSOName.setAttribute("scope", "colgroup");
+  trHeader.appendChild(thSOName);
 
   let secondTHead = CreateDOMElement("thead");
   tableDifferences.appendChild(secondTHead);
@@ -424,6 +423,9 @@ export function CreateAndRenderSelectGroupsModal(
     document.getElementsByClassName("modal-platform-container")[0].innerHTML =
       "";
   });
+
+  $("#select-group-modal-dialog").removeClass("modal-lg");
+  $("#select-group-modal-dialog").addClass("modal-xl");
 
   $("#select-group-modal").modal("show");
 }
@@ -740,7 +742,7 @@ function RenderSelectGroupsModal(
       tabPane.appendChild(tabPaneRow);
 
       let firstTableCol = CreateDOMElement("div", { classList: ["col"] });
-      firstTableCol.style.maxWidth = "fit-content";
+      // firstTableCol.style.maxWidth = "fit-content";
       tabPaneRow.appendChild(firstTableCol);
 
       CreateDifferencesTableInGroupSelection(
@@ -751,7 +753,7 @@ function RenderSelectGroupsModal(
       );
 
       let secondTableCol = CreateDOMElement("div", { classList: ["col"] });
-      secondTableCol.style.maxWidth = "fit-content";
+      // secondTableCol.style.maxWidth = "fit-content";
       tabPaneRow.appendChild(secondTableCol);
 
       CreateDifferencesTableInGroupSelection(

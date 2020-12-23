@@ -9,7 +9,6 @@
   margin-left: 1.5rem;
   margin-top: 0.7rem;
   padding-left: 0.5rem;
-  width: 8.5rem;
   padding-right: 1.8rem;
   line-height: 19px;
   cursor: pointer;
@@ -21,7 +20,7 @@
 }
 
 .delete-bubble {
-  margin-left: -1.7rem;
+  margin-left: -1.4rem;
   margin-top: 0.75rem;
   color: white;
   cursor: pointer;
