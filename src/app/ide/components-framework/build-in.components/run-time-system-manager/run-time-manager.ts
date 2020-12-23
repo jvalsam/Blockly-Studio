@@ -269,8 +269,6 @@ export class RuntimeManager extends IDEUIComponent {
         toolbarView.disableButtons();
         toolbarView.activateStopBtn();
 
-        (<RuntimeManagerView>this._view).openRuntimeEnvironmentDialogue();
-
         // this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
@@ -283,6 +281,9 @@ export class RuntimeManager extends IDEUIComponent {
         );
 
         this.setEnvironmentRunData();
+
+        (<RuntimeManagerView>this._view).openRuntimeEnvironmentDialogue(
+            this._environmentData.execData.title);
 
         RuntimeSystem.initialize(
             "BlocklyStudioIDE_MainRuntimeEnvironment",

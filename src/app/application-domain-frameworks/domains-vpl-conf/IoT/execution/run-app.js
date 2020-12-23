@@ -691,7 +691,7 @@ const InitializeActionsLog = function () {
 
   let loggerHeader = document.createElement("div");
   loggerHeader.id = "logger-header";
-  loggerHeader.innerHTML = "ACTIONS LOG";
+  loggerHeader.innerHTML = "HISTORY";
   loggerContainer.appendChild(loggerHeader);
 
   let loggerBody = document.createElement("div");

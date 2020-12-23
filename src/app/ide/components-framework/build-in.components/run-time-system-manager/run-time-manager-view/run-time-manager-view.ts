@@ -77,14 +77,17 @@ export class RuntimeManagerView extends ComponentView {
     document.getElementById("fold-runtime-modal").click();
   }
 
-  public openRuntimeEnvironmentDialogue() {
+  public openRuntimeEnvironmentDialogue(applicationName: string) {
     // reset modal if it isn't visible
     if (!$("#runtime-modal.in").length) {
       $("#runtime-modal-dialog").css({
-        top: 0,
-        left: 0,
+        top: 44,
+        left: 113,
       });
     }
+
+    document.getElementById("runtime-modal-title").innerHTML =
+      "Running Automations for " + applicationName;
 
     document.getElementById("fold-runtime-modal").onclick = () => {
       let modalDialog = document.getElementById("runtime-modal-dialog");
@@ -93,35 +96,69 @@ export class RuntimeManagerView extends ComponentView {
       modalDialog.style.top = "30px";
       modalDialog.style.left = "94rem";
 
-      document.getElementById("fold-runtime-modal").style.display = "none";
-      document.getElementById("expand-runtime-modal").style.display = "flex";
-      document.getElementById("expand-runtime-modal").style.marginTop =
-        "0.5rem";
-
       document.getElementById("runtime-modal-body").style.height = "0rem";
+
       let modalHeader = document.getElementById("runtime-modal-header");
       modalHeader.style.borderRadius = "10px";
       modalHeader.style.backgroundColor = "#419ff1";
       modalHeader.style.boxShadow = "0 15px 15px -5px rgb(0 0 0 / 20%)";
+
+      $("#runtime-modal-header").hover(
+        function () {
+          $(this).css("background-color", "#4a81b1");
+          $(this).css("cursor", "pointer");
+        },
+        function () {
+          $(this).css("background-color", "rgb(97 159 214)");
+          $(this).css("cursor", "");
+        }
+      );
+
+      document.getElementById(
+        "runtime-modal-title-outer"
+      ).onclick = ExpandRunTime;
+      document
+        .getElementById("runtime-modal-title-outer")
+        .style.setProperty("text-align", "center");
+
+      document.getElementById("fold-runtime-modal").style.display = "none";
+      document.getElementById("runtime-modal-title").innerHTML =
+        "Running Automations";
+
       $("#runtime-modal-dialog").draggable({ disabled: true });
     };
 
-    document.getElementById("expand-runtime-modal").onclick = () => {
+    const ExpandRunTime = function () {
       let modalDialog = document.getElementById("runtime-modal-dialog");
       modalDialog.style.height = "90%";
       modalDialog.style.maxWidth = "108rem !important;";
       modalDialog.style.width = "100%";
-      modalDialog.style.top = "0px";
-      modalDialog.style.left = "0px";
+      modalDialog.style.top = "44px";
+      modalDialog.style.left = "113px";
 
       document.getElementById("fold-runtime-modal").style.display = "flex";
-      document.getElementById("expand-runtime-modal").style.display = "none";
 
       document.getElementById("runtime-modal-body").style.height = "100%";
+
       let modalHeader = document.getElementById("runtime-modal-header");
       modalHeader.style.backgroundColor = "#4a81b1";
       modalHeader.style.removeProperty("border-radius");
       modalHeader.style.removeProperty("box-shadow");
+      $("#runtime-modal-header").unbind("mouseenter mouseleave");
+      $("#runtime-modal-header").css("cursor", "");
+
+      document
+        .getElementById("runtime-modal-title-outer")
+        .style.removeProperty("text-align");
+      document.getElementById("runtime-modal-title-outer").onclick = null;
+
+      document.getElementById("runtime-modal-title").innerHTML =
+        "Running Automations for " + applicationName;
+
+      document
+        .getElementById("runtime-modal-title")
+        .style.removeProperty("margin-left");
+
       $("#runtime-modal-dialog").draggable({ disabled: false });
     };
 

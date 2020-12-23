@@ -28,19 +28,14 @@
         role="document"
       >
         <div class="modal-content">
-          <div
-            class="modal-header"
-            id="runtime-modal-header"
-            style="
-              color: cornsilk;
-              background-color: #4a81b1;
-              padding: 0.3rem 1rem;
-            "
-          >
-            <h5 class="modal-title">Live Preview</h5>
-
+          <div class="modal-header" id="runtime-modal-header">
+            <div id="runtime-modal-title-outer" style="width: 100%">
+              <h5 class="modal-title" id="runtime-modal-title"></h5>
+            </div>
             <i class="fas fa-minus-square fa-lg" id="fold-runtime-modal"></i>
-            <i class="fas fa-plus-square fa-lg" id="expand-runtime-modal"></i>
+
+            <!-- <i class="fas fa-minus-square fa-lg" id="fold-runtime-modal"></i> -->
+            <!-- <i class="fas fa-plus-square fa-lg" id="expand-runtime-modal"></i> -->
           </div>
           <div class="modal-body" id="runtime-modal-body" style="padding: 0">
             <!-- <p>Modal body text goes here.</p> -->
