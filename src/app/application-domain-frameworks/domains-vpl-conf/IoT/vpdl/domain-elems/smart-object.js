@@ -1,3 +1,4 @@
+import { RuntimeManager } from "../../../../../ide/components-framework/build-in.components/run-time-system-manager/run-time-manager";
 import * as Blockly from "blockly";
 
 var definedOnce = false;
@@ -56,30 +57,33 @@ export const SmartObject = {
       },
       codeGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
-
-        // (function () {
-        //   let property = devicesOnAutomations
-        //     .find(
-        //       (device) => device.id === block.soData.details.iotivityResourceID
-        //     )
-        //     .properties.find((prop) => prop.name === dropdown_properties);
-        //   return property.value;
-        // })()
-
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "let property = devicesOnAutomations";
-        strBuilder += ".find(";
-        strBuilder +=
-          "(device) => device.id === " +
-          JSON.stringify(block.soData.details.iotivityResourceID);
-        strBuilder += ")";
-        strBuilder +=
-          ".properties.find((prop) => prop.name === " +
-          JSON.stringify(dropdown_properties) +
-          ");";
-        strBuilder += "return property.value;";
-        strBuilder += "})()";
+
+        if (RuntimeManager.getMode() === "RELEASE") {
+          // (function () {
+          //   let property = devicesOnAutomations
+          //     .find(
+          //       (device) => device.id === block.soData.details.iotivityResourceID
+          //     )
+          //     .properties.find((prop) => prop.name === dropdown_properties);
+          //   return property.value;
+          // })()
+
+          strBuilder += "(function () {";
+          strBuilder += "let property = devicesOnAutomations";
+          strBuilder += ".find(";
+          strBuilder +=
+            "(device) => device.id === " +
+            JSON.stringify(block.soData.details.iotivityResourceID);
+          strBuilder += ")";
+          strBuilder +=
+            ".properties.find((prop) => prop.name === " +
+            JSON.stringify(dropdown_properties) +
+            ");";
+          strBuilder += "return property.value;";
+          strBuilder += "})()";
+        } else {
+        }
 
         var code = strBuilder + "\n";
         // TODO: Change ORDER_NONE to the correct strength.

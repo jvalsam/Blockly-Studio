@@ -22,6 +22,7 @@ import { ITool } from "../../components-framework/build-in.components/editor-man
 import { ComponentsCommunication } from "../../components-framework/component/components-communication";
 import { ModalView } from "../../components-framework/component/view";
 import { ViewRegistry } from "../../components-framework/component/registry";
+import { RuntimeManager } from "../../components-framework/build-in.components/run-time-system-manager/run-time-manager";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -522,8 +523,12 @@ export class SmartObjectVPLEditor extends Editor {
 
   @ExportedFunction
   public generateCodeDataForExecution(data: any) {
+    // if (RuntimeManager.getMode() === "RELEASE") {
     // alert("Not implemented generateCodeDataForExecution in " + this.name);
     return data;
+    // } else {
+    //   return this.instancesMap[data.domainElementId];
+    // }
   }
 
   @ExportedFunction

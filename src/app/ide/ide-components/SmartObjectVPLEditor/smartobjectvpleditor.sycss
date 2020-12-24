@@ -1,7 +1,16 @@
 .resource-card {
-  width: 31rem !important;
+  width: 39rem !important;
   max-height: 57rem;
   height: fit-content;
+}
+
+.action-conf-info-not-defined {
+  border: solid #ffb612 1px;
+  box-shadow: 0 0 0 0.2rem #ffb6124f;
+}
+
+.action-conf-info {
+  height: min-content;
 }
 
 /* Bubbles at card style */

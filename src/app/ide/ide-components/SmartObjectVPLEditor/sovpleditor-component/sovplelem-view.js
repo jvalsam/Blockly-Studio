@@ -890,7 +890,7 @@ let FilterRegisteredDevicesForScan = function (
 let BuildPropertiesArea = function (dom, smartElem) {
   // Properties
   let propertiesRow = CreateDOMElement("div", { classList: ["row"] });
-  propertiesRow.style.marginTop = "2rem";
+  // propertiesRow.style.marginTop = "1rem";
   dom.appendChild(propertiesRow);
 
   let propertiesCol = CreateDOMElement("div", { classList: ["col-sm"] });
@@ -914,6 +914,34 @@ let BuildPropertiesArea = function (dom, smartElem) {
   dom.appendChild(propertiesContainer);
 
   return propertiesContainer;
+};
+
+let BuildActionsArea = function (dom, smartElem) {
+  // Actions
+  let actionsRow = CreateDOMElement("div", { classList: ["row"] });
+  // actionsRow.style.marginTop = "1rem";
+  dom.appendChild(actionsRow);
+
+  let actionsCol = CreateDOMElement("div", { classList: ["col-sm"] });
+  actionsRow.appendChild(actionsCol);
+
+  let actionsHeader = CreateDOMElement("span", {
+    classList: ["font-weight-bold"],
+    innerHtml: "Actions (" + smartElem.editorData.details.actions.length + ")",
+  });
+  actionsHeader.style.fontSize = "large";
+  actionsCol.appendChild(actionsHeader);
+
+  let actionsContainer = CreateDOMElement("div", {
+    classList: ["container-fluid", "overflow-auto"],
+  });
+  actionsContainer.style.paddingTop = ".5rem";
+  actionsContainer.style.maxHeight = "21rem";
+  actionsContainer.style.marginTop = ".5rem";
+  actionsContainer.style.backgroundColor = "#f7f7f7";
+  dom.appendChild(actionsContainer);
+
+  return actionsContainer;
 };
 
 /* Start functions for bubbles at smart elements */
@@ -1060,6 +1088,10 @@ let RenderSmartObjectProperty = function (
   );
 };
 
+let RenderSmartObjectAction = function (selector, id, action, callbacks) {
+  soUIGenerator.RenderActionAsPropertyView(selector, id, action, callbacks);
+};
+
 let RenderSmartObjectRegistered = function (
   selector,
   soData,
@@ -1070,6 +1102,7 @@ let RenderSmartObjectRegistered = function (
     selector: selector,
     id: soData.editorData.editorId,
   });
+  cardDiv.style.setProperty("overflow-y", "auto");
 
   // Card Body
   let cardBodyDiv = CreateDOMElement("div", {
@@ -1129,6 +1162,20 @@ let RenderSmartObjectRegistered = function (
   let hrPropGroups = CreateDOMElement("hr");
   cardBodyDiv.appendChild(hrPropGroups);
 
+  let actionsContainer = BuildActionsArea(cardBodyDiv, soData);
+
+  for (const action of soData.editorData.details.actions) {
+    RenderSmartObjectAction(
+      actionsContainer,
+      soData.editorData.editorId,
+      action,
+      {}
+    );
+  }
+
+  let hrActionGroups = CreateDOMElement("hr");
+  cardBodyDiv.appendChild(hrActionGroups);
+
   // Groups
   let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Groups");
 
@@ -1142,6 +1189,7 @@ let RenderSmartObjectRegistered = function (
 
   let buttonsRow = CreateDOMElement("div", { classList: ["row"] });
   buttonsRow.style.marginTop = "1.5rem";
+  buttonsRow.style.paddingBottom = "2rem";
   cardBodyDiv.appendChild(buttonsRow);
 
   let createGroupsButtonCol = CreateDOMElement("div", {

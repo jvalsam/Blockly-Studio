@@ -1,16 +1,86 @@
+import { urlInfo } from "../../../../ide/ide-components/SmartObjectVPLEditor/iotivity-server-conf.js";
+
 let calendar,
   organizer,
   calendarData = {};
 
+async function GetRequest(url = "") {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+  });
+  return response.json(); // parses JSON response into native JavaScript objects
+}
+
+async function PostRequest(url = "", data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+  });
+  return response.json(); // parses JSON response into native JavaScript objects
+}
+
 const CollectRegisteredDevices = function (smartObjects) {
-  const returnArray = [];
+  const returnObject = { devicesIDsForGetRequest: [], devicesIDs: [] };
 
   smartObjects.forEach((so) => {
+    // for GET query
+    returnObject.devicesIDsForGetRequest.push([
+      so.editorsData[0].generated.details.iotivityResourceID,
+      "",
+    ]);
+
     // for registered devices
-    returnArray.push(so);
+    returnObject.devicesIDs.push(
+      so.editorsData[0].generated.details.iotivityResourceID
+    );
   });
 
-  return returnArray;
+  return returnObject;
+};
+
+const InitializeSocketConnection = function (onSuccess) {
+  // Create WebSocket connection.
+  const socket = new WebSocket("ws://" + urlInfo.iotivityUrl);
+
+  /* Add function for validate JSON.parse */
+  socket.isJsonString = function (str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  };
+
+  // Connection opened
+  socket.addEventListener("open", function (event) {
+    onSuccess(socket);
+  });
+};
+
+const StartObserving = function (socket, devicesIDs) {
+  let dataToSend = { type: "start_observe", resources: devicesIDs };
+  socket.send(JSON.stringify(dataToSend));
 };
 
 const Initialize = function (selector) {
@@ -775,43 +845,161 @@ const RerenderDevice = function (device, propsDiff) {
 };
 /* End UI for runtime environment */
 
+/* Start functionality for smart devices */
+const MergeNameOfSmartObjectWithResource = function (so, resource) {
+  // Merge all we need
+  resource.name = so.editorsData[0].generated.title;
+  resource.options.image = so.editorsData[0].generated.img;
+};
+
+const MergeNameOfSmartObjectsWithResources = function (
+  smartObjects,
+  resources
+) {
+  smartObjects.forEach((so) => {
+    // find resource
+    let device = resources.find(
+      (resource) =>
+        resource.id === so.editorsData[0].generated.details.iotivityResourceID
+    );
+
+    if (device) {
+      device.name = so.editorsData[0].generated.title;
+      device.options.image = so.editorsData[0].generated.img;
+    }
+  });
+};
+
+/* End functionality for smart devices */
+
 export async function StartApplication(runTimeData) {
   try {
-    let devicesOnAutomations = CollectRegisteredDevices(
+    // return {devicesIDsForGetRequest, devicesIDs} the first to construct Get query
+    let devicesIDsObject = CollectRegisteredDevices(
       runTimeData.execData.project.SmartObjects
     );
 
     Initialize(runTimeData.UISelector);
 
-    // Listen for messages
-    RenderClocks();
+    // Construct request to get the registered devices
+    var url = new URL("http://" + urlInfo.iotivityUrl + "/resources");
+    url.search = new URLSearchParams(
+      devicesIDsObject.devicesIDsForGetRequest
+    ).toString();
 
-    // Render Smart Devices
-    // RenderSmartDevices(devicesOnAutomations);
+    // Get registered devices from iotivity
+    GetRequest(url).then((responseData) => {
+      // data.resources
+      const devicesOnAutomations = responseData.resources;
 
-    // const RunAutomations = async function (automations) {
-    //   automations.forEach((events) => {
-    //     if (
-    //       events.options.find((option) => option.id === "starts_on_execution")
-    //         .value === "Automatically"
-    //     ) {
-    //       let projectElementId = events.id;
-    //       eval("(async () => { " + events.editorsData[0].generated + "})()");
-    //     }
-    //   });
-    // };
+      // open socket connection
+      InitializeSocketConnection((socket) => {
+        // Start Observing
+        StartObserving(socket, devicesIDsObject.devicesIDs);
 
-    // // automations tasks
-    // RunAutomations(runTimeData.execData.project.AutomationTasks);
+        // Listen for messages
+        socket.addEventListener("message", function (event) {
+          if (socket.isJsonString(event.data)) {
+            let socketData = JSON.parse(event.data);
+            switch (socketData.type) {
+              case "update":
+                let oldDeviceIndex = devicesOnAutomations.findIndex(
+                  (elem) => elem.id === socketData.resource.id
+                );
+                // find smart object
+                let smartObject = runTimeData.execData.project.SmartObjects.find(
+                  (so) =>
+                    devicesOnAutomations[oldDeviceIndex].id ===
+                    so.editorsData[0].generated.details.iotivityResourceID
+                );
+                // merge smart object with resource to avoid update
+                MergeNameOfSmartObjectWithResource(
+                  smartObject,
+                  socketData.resource
+                );
 
-    // // calendar tasks
-    // RunAutomations(runTimeData.execData.project.CalendarEvents);
+                // replace old resource with the new one
+                if (
+                  !_.isEqual(
+                    socketData.resource,
+                    devicesOnAutomations[oldDeviceIndex]
+                  )
+                ) {
+                  // find property difference
+                  let propsDiff = socketData.resource.properties.filter(
+                    (x) =>
+                      !devicesOnAutomations[oldDeviceIndex].properties
+                        .map((y) => y.value)
+                        .includes(x.value)
+                  );
 
-    // // conditional tasks
-    // RunAutomations(runTimeData.execData.project.ConditionalEvents);
+                  devicesOnAutomations[oldDeviceIndex] = socketData.resource;
 
-    // Start whenConditions
-    // StartWhenTimeout();
+                  // Merge name into resource for rendering
+                  MergeNameOfSmartObjectWithResource(
+                    smartObject,
+                    devicesOnAutomations[oldDeviceIndex]
+                  );
+
+                  // render device
+                  RerenderDevice(
+                    devicesOnAutomations[oldDeviceIndex],
+                    propsDiff
+                  );
+                }
+                break;
+
+              case "start_observe_response":
+                RenderClocks();
+
+                // RenderDigitalClock();
+
+                MergeNameOfSmartObjectsWithResources(
+                  runTimeData.execData.project.SmartObjects,
+                  devicesOnAutomations
+                );
+
+                // Render Smart Devices
+                RenderSmartDevices(devicesOnAutomations);
+
+                const RunAutomations = async function (automations) {
+                  automations.forEach((events) => {
+                    if (
+                      events.options.find(
+                        (option) => option.id === "starts_on_execution"
+                      ).value === "Automatically"
+                    ) {
+                      let projectElementId = events.id;
+                      eval(
+                        "(async () => { " +
+                          events.editorsData[0].generated +
+                          "})()"
+                      );
+                    }
+                  });
+                };
+
+                // automations tasks
+                RunAutomations(runTimeData.execData.project.AutomationTasks);
+
+                // calendar tasks
+                RunAutomations(runTimeData.execData.project.CalendarEvents);
+
+                // conditional tasks
+                RunAutomations(runTimeData.execData.project.ConditionalEvents);
+
+                // Start whenConditions
+                StartWhenTimeout();
+
+                break;
+
+              default:
+                break;
+            }
+          }
+        });
+      });
+    });
   } catch (e) {
     alert(e);
   }
