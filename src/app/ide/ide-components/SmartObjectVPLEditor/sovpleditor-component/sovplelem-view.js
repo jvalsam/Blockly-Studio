@@ -979,6 +979,7 @@ let BuildBubblesArea = function (dom, htmlForHeading) {
   smartElemHeaderRow.appendChild(smartElemName);
 
   let bubblesDiv = CreateDOMElement("div", { classList: ["bubbles-area"] });
+  bubblesDiv.style.setProperty("margin-top", "0.5rem");
   dom.appendChild(bubblesDiv);
 
   return bubblesDiv;
@@ -1113,11 +1114,10 @@ let RenderSmartObjectRegistered = function (
 
   // Environment
   let environmentRow = CreateDOMElement("div", { classList: ["row"] });
-  environmentRow.style.marginTop = "1rem";
   cardBodyDiv.appendChild(environmentRow);
 
   let environmentName = CreateDOMElement("div", {
-    classList: ["col-sm-6", "font-weight-bold"],
+    classList: ["col-5", "font-weight-bold"],
     innerHtml: "Environment",
   });
   environmentName.style.fontSize = "large";
@@ -1126,14 +1126,14 @@ let RenderSmartObjectRegistered = function (
   environmentRow.appendChild(environmentName);
 
   let environmentSelectCol = CreateDOMElement("div", {
-    classList: ["col-sm-6"],
+    classList: ["col"],
   });
   environmentRow.appendChild(environmentSelectCol);
 
   let environmentSelect = CreateDOMElement("select", {
     classList: ["form-control"],
   });
-  environmentSelect.style.maxWidth = "7rem";
+  environmentSelect.style.width = "fit-content";
   environmentSelectCol.appendChild(environmentSelect);
 
   let environmentOption = CreateDOMElement("option", { innerHtml: "Home" });
@@ -1187,16 +1187,20 @@ let RenderSmartObjectRegistered = function (
     selector
   );
 
-  let buttonsRow = CreateDOMElement("div", { classList: ["row"] });
-  buttonsRow.style.marginTop = "1.5rem";
-  buttonsRow.style.paddingBottom = "2rem";
-  cardBodyDiv.appendChild(buttonsRow);
+  // let buttonsRow = CreateDOMElement("div", { classList: ["row"] });
+  // buttonsRow.style.marginTop = "1.5rem";
+  // buttonsRow.style.paddingBottom = "2rem";
+  // selector.appendChild(buttonsRow);
 
-  let createGroupsButtonCol = CreateDOMElement("div", {
-    classList: ["col-sm"],
-  });
-  createGroupsButtonCol.style.textAlign = "right";
-  buttonsRow.appendChild(createGroupsButtonCol);
+  // let createGroupsButtonCol = CreateDOMElement("div", {
+  //   classList: ["col-sm"],
+  // });
+  // createGroupsButtonCol.style.textAlign = "right";
+  // buttonsRow.appendChild(createGroupsButtonCol);
+
+  let createGroupButtonOuter = CreateDOMElement("div");
+  createGroupButtonOuter.style.setProperty("margin-left", "57rem");
+  selector.appendChild(createGroupButtonOuter);
 
   let createGroupsButton = CreateDOMElement("button", {
     classList: ["btn", "btn-info"],
@@ -1206,6 +1210,7 @@ let RenderSmartObjectRegistered = function (
   let eventFunc = () => {
     callbacksMap.onCreateSmartGroup({
       properties: soData.editorData.details.properties,
+      actions: soData.editorData.details.actions,
       mapPropsAlias: soData.editorData.details.mapPropsAlias,
       soDataID: soData.editorData.systemID.split("SmartObjectVPLEditor_")[1],
       soName: soData.name,
@@ -1213,14 +1218,14 @@ let RenderSmartObjectRegistered = function (
   };
 
   eventsManager[selector.id].push({
-    dom: createGroupsButtonCol,
+    dom: createGroupsButton,
     eventType: "click",
     eventFunc: eventFunc,
   });
 
-  createGroupsButtonCol.addEventListener("click", eventFunc, false);
+  createGroupsButton.addEventListener("click", eventFunc, false);
 
-  createGroupsButtonCol.appendChild(createGroupsButton);
+  createGroupButtonOuter.appendChild(createGroupsButton);
 };
 
 let RenderSmartObjectUnregistered = function (
@@ -1365,6 +1370,7 @@ export function RenderSmartGroup(
   projectComponentsData,
   callbacksMap
 ) {
+  console.log(sgData);
   // Check if there are events to remove them
   CheckAndDeleteEventsOnRender(selector);
 
@@ -1421,9 +1427,22 @@ export function RenderSmartGroup(
   resetButton.addEventListener("click", eventFunc, false);
 
   resetButton.style.cssFloat = "right";
-  resetButton.style.marginRight = "2rem";
+  resetButton.style.marginRight = "1rem";
   resetRow.appendChild(resetButton);
 
+  let actionsContainer = BuildActionsArea(cardBodyDiv, sgData);
+
+  for (const action of sgData.editorData.details.actions) {
+    RenderSmartObjectAction(
+      actionsContainer,
+      sgData.editorData.editorId,
+      action,
+      {}
+    );
+  }
+
+  let hrActionGroups = CreateDOMElement("hr");
+  cardBodyDiv.appendChild(hrActionGroups);
   // Smart Objects
   let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Objects");
   RenderBubbles(

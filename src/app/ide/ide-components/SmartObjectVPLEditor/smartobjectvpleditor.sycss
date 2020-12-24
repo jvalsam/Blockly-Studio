@@ -2,6 +2,15 @@
   width: 39rem !important;
   max-height: 57rem;
   height: fit-content;
+  max-height: 88%;
+}
+.resource-card .card-body {
+  overflow: auto;
+}
+
+.resource-card hr {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .action-conf-info-not-defined {
@@ -17,7 +26,7 @@
 .bubble {
   margin-left: 1.5rem;
   margin-top: 0.7rem;
-  padding-left: 0.5rem;
+  padding-left: 1rem;
   padding-right: 1.8rem;
   line-height: 19px;
   cursor: pointer;

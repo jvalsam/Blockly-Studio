@@ -219,6 +219,7 @@ export class SOVPLElemInstance {
     group.elemData = { editorData: { details: {} } };
     group.elemData.editorData.details = {};
     group.elemData.editorData.details.properties = group.properties;
+    group.elemData.editorData.details.actions = group.actions;
     group.elemData.editorData.details.smartObjects = [
       { id: group.soDataID, name: group.soName },
     ];
