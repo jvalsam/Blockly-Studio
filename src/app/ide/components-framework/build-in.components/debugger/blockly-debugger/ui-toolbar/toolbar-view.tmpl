@@ -1,32 +1,32 @@
+<button id = "debugger-toggle">Show Debugger</button>
 <div id = "debugger-toolbar"> 
     <div id = "debugger-header-container" class = "vcenter">
-        <svg id = "debugger-icon" class = "size30x30"> </svg>
+        <img src="https://img.icons8.com/ios-filled/50/000000/bug.png"/ id = "debugger-icon" class = "size22x22">
         <div id = "debugger-title"> Debugger </div>
-        <div id = "debugger-burger" class = "size22x22 middle-right" data-toggle="collapse" data-target="#debugger-toolbar"></div> 
+        <button type="button" id = "debugger-close" class="close middle-right size30x30" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
         <div class = "clear"></div>
     </div>
     <div id="debugger-content">
-        <div id = "debugger-control" > Debugger Control </div >
-        <div id="debugger-variables-tab-ui" class="center debugger-tab-ui debugger-tab-active"> Variables </div>
-        <div id="debugger-watches-tab-ui" class="center debugger-tab-ui"> Watches </div>
-        <div id="debugger-explanations-tab-ui" class="center debugger-tab-ui"> Explanations </div>
-        <div id="debugger-variables-content" class="clear">
-            <div id="debugger-variables"></div>
-            <div id="debugger-watches"></div>
-            <div id="debugger-explanations"></div>
+        <div id = "debugger-control">
+            <button id="ContinueButton" title="Continue"></button>
+            <button id="StepInButton" title="Step In"><img src="https://img.icons8.com/ios/50/000000/step-into.png" class= "center size30x30"/></button>
+            <button id="StepOverButton" title="Step Over"><img src="https://img.icons8.com/ios/100/000000/step-over.png" class= "center size30x30"/></button>
+            <button id="StepParentButton" title="Step Parent">Par</button>
+            <button id="StepOutButton" title="Step Out"><img src="https://img.icons8.com/ios/100/000000/step-out.png" class= "center size30x30"/></button>
+        </div>
+        <div id = "debug-tabs">
+            <div id="debugger-variables-tab-ui" class="center debugger-tab-ui debugger-tab-active"> Variables </div>
+            <div id="debugger-watches-tab-ui" class="center debugger-tab-ui"> Watches </div>
+            <div id="debugger-explanations-tab-ui" class="center debugger-tab-ui"> Explanations </div>
+            <div id="debugger-variables-content" class="clear">
+                <div id="debugger-variables"></div>
+                <div id="debugger-watches"></div>
+                <div id="debugger-explanations"></div>
+            </div>
         </div>
         <div id="personal-files"></div>
         <div id="debugger-shared-files-ui">
-    </div>
-        <div>
-            <!-- Header node for the debugger-shared-files-ui -->
-            <div id="dummy-js-tree-1"></div>
-        </div>
-
-        <div>
-            <div id="dummy-js-tree-2"> </div>
-            <div id="debugger-recent-actions-ui">
-            </div>
-        </div>
     </div>
 </div >

@@ -1,7 +1,8 @@
 import ToolbarViewTmpl from "./toolbar-view.tmpl";
 
 export class Toolbar {
-    constructor(container) {
+    constructor(container, callback) {
+
         this._DataObjectsA = {
             'style': "                               \
                             display: flex;              \
@@ -25,17 +26,16 @@ export class Toolbar {
         };
 
         this._DataObjectRequests = {};
-        this._injectHtml(container);
+        this._injectHtml(container, callback);
         this._initTrees();
-        
-         /*
-            Trees
-        */
-       this._DataObjects = $.jstree.reference('#debugger-DataObjects');
-       this._personalFiles = $.jstree.reference('#personal-files');
-       this._debugVariables = $.jstree.reference('#debugger-variables');
-       this._debugWatches = $.jstree.reference('#debugger-watches');
 
+        /*
+           Trees
+       */
+        this._DataObjects = $.jstree.reference('#debugger-DataObjects');
+        this._personalFiles = $.jstree.reference('#personal-files');
+        //this._debugVariables = $.jstree.reference('#debugger-variables');
+        //this._debugWatches = $.jstree.reference('#debugger-watches');
         /*
             HTML IDS
         */
@@ -106,124 +106,8 @@ export class Toolbar {
 
         $.jstree.defaults.core.animation = false;
 
-        $('#dummy-js-tree-1').jstree({
-            "plugins": [
-                "wholerow",
-                "contextmenu",
-                "sort",
-                "unique",
-                "types"
-            ],
-            'types': {
-                'smart_object': {},
-                'other': {}
-            },
-            'core': {
-                'check_callback': true,
-            }
-        });
 
-        let dummyTree1 = $.jstree.reference('#dummy-js-tree-1');
-
-        /* 
-        programmaticaly create the root node and a dummy node (so that the root has the > symbol on its left)
-        and overide the double click event
-        */
-
-        dummyTree1.create_node(
-            '#',
-            {
-                'id': 'dummy-js-tree-1-root',
-                'parent': '#',
-                'type': 'other',
-                'text': 'Shared Personal Files',
-                'icon': false,
-                'state': { 'opened': true },
-                'a_attr': this._DataObjectsA
-            },
-            0,
-            function cb() {
-                dummyTree1.create_node(
-                    'dummy-js-tree-1-root',
-                    {
-                        'parent': 'dummy-js-tree-1-root',
-                        'id': 'dummy-js-tree-1-node'
-                    },
-                    0,
-                    function cb() {
-                        $('#dummy-js-tree-1-node').remove();
-
-                        $("#dummy-js-tree-1").off("dblclick").dblclick(function () {
-                            dummyTree1.is_open('dummy-js-tree-1-root') ? dummyTree1.close_node('dummy-js-tree-1-root') : dummyTree1.open_node('dummy-js-tree-1-root');
-                            $.when($('#dummy-js-tree-1-node').remove()).then(function () {
-                                $('#debugger-shared-files-ui').toggle(200);
-                            });
-                        });
-                    },
-                    true
-                );
-            },
-            true
-        );
-
-        $('#debugger-variables').jstree({
-            "plugins": [
-                "colorv",
-                "sort",
-                "wholerow",
-                "contextmenu",
-                "unique",
-                "types"
-            ],
-            'types': {
-                'smart_object': {},
-                'other': {}
-            },
-            'core': {
-                'check_callback': true,
-                'data': []
-            }
-        });
-
-        $('#debugger-watches').jstree({
-            "plugins": [
-                "colorv",
-                "sort",
-                "wholerow",
-                "contextmenu",
-                "unique",
-                "types"
-            ],
-            'types': {
-                'smart_object': {},
-                'other': {}
-            },
-            'core': {
-                'check_callback': true,
-                'data': []
-            }
-        });
-
-        $('#debugger-explanations').jstree({
-            "plugins": [
-                "colorv",
-                "sort",
-                "wholerow",
-                "contextmenu",
-                "unique",
-                "types"
-            ],
-            'types': {
-                'smart_object': {},
-                'other': {}
-            },
-            'core': {
-                'check_callback': true,
-                'data': []
-            }
-        });
-
-       function TabSwitcher(tab1, tab2, tab3) {
+        function TabSwitcher(tab1, tab2, tab3) {
             let focused = tab1;
             this.focusTab = function (tab) {
                 if (tab != focused) {
@@ -256,11 +140,13 @@ export class Toolbar {
         });
     }
 
-    _injectHtml(container) {
+    _injectHtml(container, callback) {
         if (typeof container === 'string')
             $(container).append(ToolbarViewTmpl);
         else
             container.append(ToolbarViewTmpl);
+
+        callback();
     }
 
 
@@ -340,7 +226,7 @@ export class Toolbar {
                 'last',
                 cb);
             console.log(file);
-            
+
             let node = this._personalFiles.get_node(this._PERSONAL_FILE_PREFIX + currId);
             node['color'] = file.color ? file.color : 'red';
             this._personalFiles.redraw_node(this._PERSONAL_FILE_PREFIX + currId);
@@ -374,7 +260,7 @@ export class Toolbar {
                 if (!files.length) cb();
             });
 
-       for (var i = 0; i < files.length - 1; i++)
+        for (var i = 0; i < files.length - 1; i++)
             this.addPersonalFile(files[i]);
 
         if (files.length) this.addPersonalFile(files[files.length - 1], cb);
