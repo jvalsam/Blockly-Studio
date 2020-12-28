@@ -3,6 +3,7 @@ import {
   RenderSmartGroup,
   CreateAndRenderSelectGroupsModal,
   DeleteEventsFromEventsManager,
+  RenderDebugConfigurationOfAction,
 } from "./sovplelem-view";
 
 export const VPLElemNames = Object.freeze({
@@ -168,12 +169,16 @@ export class SOVPLElemInstance {
     this.elemData.editorData.details.state = SmartObjectState.REGISTERED;
     this.elemData.editorData.details.properties = props;
     this.elemData.editorData.details.actions = [];
+    this.elemData.editorData.details.actionsDebugConfigurations = {};
     this.elemData.editorData.details.methods = [];
     for (const method of methods) {
       this.elemData.editorData.details.methods.push(method);
     }
     for (const action of actions) {
       this.elemData.editorData.details.actions.push(action);
+      this.elemData.editorData.details.actionsDebugConfigurations[
+        action.name
+      ] = [];
     }
     this.elemData.editorData.details.iotivityResourceID = iotivityResourceID;
 
@@ -202,9 +207,13 @@ export class SOVPLElemInstance {
     });
   }
 
-  onSOEditPropAlias(prop) {
-    this.elemData.editorData.details.mapPropsAlias[prop.name] = prop.alias;
-    this.parent.updateSmartObjectPropAlias(this);
+  onClickDebugConfigurationOfAction(action) {
+    RenderDebugConfigurationOfAction(
+      action,
+      this.elemData.editorData.details.actionsDebugConfigurations[action.name],
+      this.elemData.editorData.details.properties,
+      this.elemData.editorData.details.iotivityResourceID
+    );
   }
 
   onSOEditPropProgrammingActive(prop) {
@@ -365,7 +374,8 @@ export class SOVPLElemInstance {
         RenderSmartObject(domSel, this.elemData, componentData, {
           onRegister: (props, actions, methods, iotivityResourceID) =>
             this.onSORegister(props, actions, methods, iotivityResourceID),
-          onEditPropertyAlias: (prop) => this.onSOEditPropAlias(prop),
+          onClickDebugConfigurationOfAction: (action) =>
+            this.onClickDebugConfigurationOfAction(action),
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),
           onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),

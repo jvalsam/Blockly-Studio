@@ -877,6 +877,205 @@ function RenderSelectGroupsModal(
 }
 /* End functions for selection group modal */
 
+/* Start functions for debug configuring action */
+export let RenderDebugConfigurationOfAction = function (
+  action,
+  actionDebugConfiguration,
+  props,
+  resourceId
+) {
+  // Create Modal
+  CreateModal(
+    document.getElementsByClassName("modal-platform-container")[0],
+    "debug-configuration-" + action.name
+  );
+
+  // title
+  $("#" + "debug-configuration-" + action.name + "-modal-title").html(
+    "Simulate action: " + action.name
+  );
+
+  var tmpActionDebugConfiguration = [].concat(actionDebugConfiguration);
+
+  /* add time 0 if no configuaration exists */
+  if (tmpActionDebugConfiguration.length == 0) {
+    tmpActionDebugConfiguration.push({
+      time: 0,
+      properties: [],
+    });
+  }
+
+  /* render all timelines */
+  tmpActionDebugConfiguration.forEach((element) => {
+    RenderTimeLine(
+      document.getElementById(
+        "debug-configuration-" + action.name + "-modal-body"
+      ),
+      element.time,
+      action,
+      props,
+      resourceId,
+      element.properties
+    );
+  });
+
+  $("#" + "debug-configuration-" + action.name + "-modal").on(
+    "hidden.bs.modal",
+    function () {
+      document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+        "";
+    }
+  );
+
+  $("#" + "debug-configuration-" + action.name + "-modal").modal("show");
+};
+
+let RenderTimeLine = function (
+  domSelecor,
+  time,
+  action,
+  deviceProps,
+  resourceId,
+  propertiesForTimeline
+) {
+  let tmpPropertiesForTimeline = [].concat(propertiesForTimeline);
+
+  let timelineRow = document.createElement("div");
+  timelineRow.classList.add("row");
+  domSelecor.appendChild(timelineRow);
+
+  let timeCol = document.createElement("div");
+  timeCol.classList.add("col-3");
+  timeCol.style.setProperty("border-right", "1px solid rgb(35 30 30 / 45%)");
+  if (time === 0) timeCol.innerHTML = "On start Action (after 0 seconds)";
+  else timeCol.innerHTML = "After " + time + " seconds";
+  timelineRow.appendChild(timeCol);
+
+  let propertiesCol = document.createElement("div");
+  propertiesCol.classList.add("col");
+  timelineRow.appendChild(propertiesCol);
+
+  let propertiesContainer = document.createElement("div");
+  propertiesContainer.id = "properties-contatainer";
+  propertiesCol.appendChild(propertiesContainer);
+
+  let addPropertyOuterDiv = document.createElement("div");
+  addPropertyOuterDiv.style.setProperty("padding-top", "1rem");
+  propertiesCol.appendChild(addPropertyOuterDiv);
+
+  let addPropertyConfiguration = document.createElement("a");
+  addPropertyConfiguration.href = "#";
+  addPropertyConfiguration.onclick = () => {
+    addPropertyConfiguration.style.setProperty("display", "none");
+
+    AddPropertyChangeForAction(
+      propertiesContainer,
+      deviceProps,
+      (propertyName) => {
+        addPropertyConfiguration.style.display = "block";
+        propertiesContainer.innerHTML = "";
+
+        tmpPropertiesForTimeline.push(
+          deviceProps.find((property) => property.name === propertyName)
+        );
+
+        tmpPropertiesForTimeline.forEach((property) => {
+          // render all properties again
+          RenderPropertyForActionConfiguration(
+            propertiesContainer,
+            property,
+            resourceId
+          );
+        });
+      }
+    );
+  };
+  addPropertyConfiguration.innerHTML =
+    "Add property change for the " + action.name;
+  addPropertyOuterDiv.appendChild(addPropertyConfiguration);
+
+  if (tmpPropertiesForTimeline.length === 0) {
+    let message = document.createElement("div");
+    message.style.setProperty("font-size", "large");
+    message.style.setProperty("font-style", "italic");
+    message.innerHTML = "Not defined properties changes for the " + action.name;
+    propertiesContainer.appendChild(message);
+  } else {
+    tmpPropertiesForTimeline.forEach((property) => {
+      RenderPropertyForActionConfiguration(
+        propertiesContainer,
+        property,
+        resourceId
+      );
+    });
+  }
+};
+
+let AddPropertyChangeForAction = function (domSelector, props, onAdd) {
+  this;
+
+  let selectionDiv = document.createElement("div");
+  selectionDiv.style.setProperty("margin-top", "1rem");
+  domSelector.appendChild(selectionDiv);
+
+  let selectProp = document.createElement("select");
+  selectionDiv.appendChild(selectProp);
+
+  let optionDefault = document.createElement("option");
+  optionDefault.selected = true;
+  optionDefault.text = "<select property>";
+  selectProp.appendChild(optionDefault);
+
+  props.forEach((property) => {
+    let option = document.createElement("option");
+    option.innerHTML = property.name;
+    selectProp.appendChild(option);
+  });
+
+  let addPropertyButton = document.createElement("button");
+  addPropertyButton.classList.add("btn", "btn-success");
+  addPropertyButton.style.setProperty("margin-left", "1rem");
+  addPropertyButton.innerHTML = "Add";
+  addPropertyButton.onclick = () => {
+    if (selectProp.value !== "<select property>") onAdd(selectProp.value);
+  };
+  selectionDiv.appendChild(addPropertyButton);
+};
+
+let RenderPropertyForActionConfiguration = function (
+  domSelector,
+  property,
+  resourceId
+) {
+  let propertyOuter = document.createElement("div");
+  propertyOuter.style.display = "flex";
+  domSelector.appendChild(propertyOuter);
+
+  let spanPropertyView = document.createElement("span");
+  spanPropertyView.style.setProperty("width", "76%");
+  spanPropertyView.style.setProperty("margin-left", "2rem");
+  propertyOuter.appendChild(spanPropertyView);
+
+  soUIGenerator.RenderPropertyForDebugConfiguration(
+    spanPropertyView,
+    resourceId,
+    property
+  );
+
+  let spanDeleteProperty = document.createElement("span");
+  propertyOuter.appendChild(spanDeleteProperty);
+
+  let deleteProperty = document.createElement("button");
+  deleteProperty.classList.add("btn", "btn-danger");
+  spanDeleteProperty.appendChild(deleteProperty);
+
+  let deleteIcon = document.createElement("i");
+  deleteIcon.classList.add("far", "fa-trash-alt");
+  deleteProperty.appendChild(deleteIcon);
+};
+
+/* End functionsfor debug configuring action */
+
 let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}
   scannedDevices
@@ -1162,6 +1361,7 @@ let RenderSmartObjectRegistered = function (
   let hrPropGroups = CreateDOMElement("hr");
   cardBodyDiv.appendChild(hrPropGroups);
 
+  // Actions
   let actionsContainer = BuildActionsArea(cardBodyDiv, soData);
 
   for (const action of soData.editorData.details.actions) {
@@ -1169,7 +1369,10 @@ let RenderSmartObjectRegistered = function (
       actionsContainer,
       soData.editorData.editorId,
       action,
-      {}
+      {
+        onClickDebugConfigurationOfAction:
+          callbacksMap.onClickDebugConfigurationOfAction,
+      }
     );
   }
 
