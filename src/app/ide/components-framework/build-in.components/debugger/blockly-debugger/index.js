@@ -10,7 +10,7 @@ import './src/generator/blockly/core/generator.js';
 import './src/generator/blockly/core/block_svg.js';
 import './src/generator/blockly/core/block.js';
 import './src/generator/blockly/blockly_init.js';
-import { Toolbar } from "./ui-toolbar/Toolbar.js";
+import { Toolbar, Toolbar_API_Examples } from "./ui-toolbar/Toolbar.js";
 
 import {
     Debuggee_Worker,
@@ -35,7 +35,7 @@ export function BlocklyDebugger(plugin) {
     generation.getBlocklyWSP = (editorId) => {
         return generation.workspaces[editorId];
     };
-
+    
     this.initiateToolbar = (selector, onReady) => {
         this.toolbar_ui = new Toolbar(selector, () => {
             $('#debugger-close').click(function () {
@@ -65,7 +65,8 @@ export function BlocklyDebugger(plugin) {
             Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
             onReady();
         });
-        //let example = Toolbar_API_Examples(this.toolbar_ui);
+
+        let ex = new Toolbar_API_Examples(this.toolbar_ui);
     };
 
     this.onmessage = (msg, callback) => {

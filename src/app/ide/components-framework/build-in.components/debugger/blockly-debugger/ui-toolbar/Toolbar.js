@@ -34,7 +34,7 @@ export class Toolbar {
        */
         this._DataObjects = $.jstree.reference('#debugger-DataObjects');
         this._personalFiles = $.jstree.reference('#personal-files');
-        //this._debugVariables = $.jstree.reference('#debugger-variables');
+        this._debugVariables = $.jstree.reference('#debugger-variables');
         //this._debugWatches = $.jstree.reference('#debugger-watches');
         /*
             HTML IDS
@@ -42,10 +42,11 @@ export class Toolbar {
 
         //tree root ids
         this._PERSONAL_FILES = 'personal-files';
-
+        this._VARIABLES_ = 'debugger-variables';
         //prefixes for adding new nodes
         this._ANNOTATION_FILE_PREFIX = '-file-';
         this._PERSONAL_FILE_PREFIX = 'personal-file-';
+        this._VARIABLE_PREFIX = 'variable-';
     }
 
     /*
@@ -71,7 +72,7 @@ export class Toolbar {
             }
         });
 
-        let DataObjects = $.jstree.reference('#debugger-DataObjects');
+        //let DataObjects = $.jstree.reference('#debugger-DataObjects');
 
         $('#personal-files').jstree({
             "plugins": [
@@ -104,6 +105,37 @@ export class Toolbar {
             }
         });
 
+        $('#debugger-variables').jstree({
+            "plugins": [
+                "colorv",
+                "sort",
+                "wholerow",
+                "contextmenu",
+                "unique",
+                "types"
+            ],
+            'types': {
+                'smart_object': {},
+                'other': {}
+            },
+            'core': {
+                'check_callback': true,
+                'data': [
+                    {
+                        'id': 'debugger-variables',
+                        'parent': '#',
+                        'type': 'other',
+                        'text': 'Smart Automations',
+                        'icon': false,
+                        'state': {
+                            'opened': true,
+                        },
+                        'a_attr': this._DataObjectsA
+                    },
+                ]
+            }
+        });
+
         $.jstree.defaults.core.animation = false;
 
 
@@ -111,9 +143,19 @@ export class Toolbar {
             let focused = tab1;
             this.focusTab = function (tab) {
                 if (tab != focused) {
-                    $('#' + tab1).toggle();
-                    $('#' + tab2).toggle();
-                    $('#' + tab3).toggle();
+                    if(tab == tab1) {
+                        $('#' + tab1).show();
+                        $('#' + tab2).hide();
+                        $('#' + tab3).hide();
+                    } else if (tab == tab2){
+                        $('#' + tab1).hide();
+                        $('#' + tab2).show();
+                        $('#' + tab3).hide();
+                    } else {
+                        $('#' + tab1).hide();
+                        $('#' + tab2).hide();
+                        $('#' + tab3).show();
+                    }
                     focused = tab;
                 }
             };
@@ -150,39 +192,39 @@ export class Toolbar {
     }
 
 
-    _addDataObject(DataObject, me, cb = undefined) {
+    _addVariable(variable, parent = undefined, callback = undefined) {
         var node = {
-            'id': (me ? this._DataObject_ME_PREFIX : this._DataObject_PREFIX) + DataObject.name,
-            'text': DataObject.name,
-            'icon': DataObject.icon,
+            'id': this._VARIABLE_PREFIX + variable.name,
+            'text': variable.name,
+            'icon': variable.icon,
             'a_attr': this._DataObjectsA
         };
 
-        let dest = me ? this._COLLABORATOR_ME : this._COLLABORATORS;
-
-        if (!this._DataObjects.get_node(dest)) {
-
-            if (!this._DataObjectRequests[dest])
-                this._DataObjectRequests[dest] = [];
-
-            this._DataObjectRequests[dest].push(node);
-        } else
-            this._DataObjects.create_node(dest, node, "last", cb);
+        //let dest = this._debugVariables.get_node($("debugger-variables"));
+        if(parent !== undefined){
+            dest = this._debugVariables.get_node(this._VARIABLE_PREFIX + parent.name);
+        }
+        this._debugVariables.create_node('#', node, "last", callback);
     }
 
     /* API */
 
     /**
-     * 
-     * @param {Object} DataObject Should contain name and icon
-     * @param {Function} cb 
+     * Adds variable to variables tree
+     * @param {Object} variable Should contain name and icon
+     * @param {Object} parent If included should contain name
+     * @param {Function} callback
      */
-    addDataObject(DataObject, cb = undefined) {
-        this._addDataObject(DataObject, false, cb);
+    addVariable(variable, parent=undefined, callback = undefined) {
+        this._addVariable(variable, parent, callback);
     }
 
-    removeDataObject(DataObjectName) {
-        this._DataObjects.delete_node(this._DataObject_PREFIX + DataObjectName);
+    /**
+     * Removes variable from Variables tree
+     * @param {Object} variable 
+     */
+    removeVariable(variable) {
+        this._Variables.delete_node(this._VARIABLE_PREFIX + variable.name);
     }
 
     /**
@@ -270,31 +312,36 @@ export class Toolbar {
 /* Examples */
 
 export function Toolbar_API_Examples(ui) {
-
-    /*function makeDummyFiles() {
-        var somefile1 = {
-            'path': 'Whatever1/Whatever2',
-            'name': 'example1',
-            'color': 'red',
-            'icon': './Icons/water.png'
+    
+    function makeDummyVars() {
+        let var1 = {
+            'name': 'Automations for Basic Tasks',
+            'icon': false
         };
-        var somefile2 = {
-            'path': 'Folder1/Folder2/Folder3',
-            'name': 'example2',
-            'color': 'blue',
-            'icon': './Icons/water.png'
-        };
-        var somefile3 = {
-            'path': 'Folder1/Folder2/Folder3',
-            'name': 'example3',
-            'color': 'purple',
-            'icon': './Icons/water.png'
-        };
-        var files = [somefile1, somefile2, somefile3];
-        ui.clearAndAddDataObjectPersonalFiles('My', files);
+        let var2 = {
+            'name': 'Automations for conditional Tasks',
+            'icon': false
+        }
+        let var3 = {
+            'name': 'Automations for scheduled Tasks',
+            'icon': false
+        }
+        let var4 = {
+            'name': 'smart device groups',
+            'icon': false
+        }
+        let var5 = {
+            'name': 'smart devices',
+            'icon': false
+        }
+        ui.addVariable(var1);
+        ui.addVariable(var2);
+        ui.addVariable(var3);
+        ui.addVariable(var4);
+        ui.addVariable(var5);
     }
 
-    makeDummyFiles();*/
+    makeDummyVars();
 }
 
 

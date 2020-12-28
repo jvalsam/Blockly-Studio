@@ -57,7 +57,7 @@ export class Debugger extends IDEUIComponent {
         
         this.blocklyDebugger.initiateToolbar(
             ".debugger-toolbar-container",
-            () => onSuccess("complete view of the debugger toolbar"),
+            () => {onSuccess("complete view of the debugger toolbar")},
         );
     }
 
