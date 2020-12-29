@@ -122,3 +122,17 @@
   padding-bottom: 0rem;
   height: 0%;
 }
+
+/* Action debug configuration */
+.action-configure-properties-contatainer hr {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.action-configure-properties-contatainer .property-value-number {
+  width: fit-content;
+}
+
+.action-configure-properties-contatainer label {
+  margin-bottom: 0rem;
+}

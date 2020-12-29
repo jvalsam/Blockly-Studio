@@ -901,23 +901,39 @@ export let RenderDebugConfigurationOfAction = function (
   if (tmpActionDebugConfiguration.length == 0) {
     tmpActionDebugConfiguration.push({
       time: 0,
+      description: "Default description",
       properties: [],
     });
   }
 
-  /* render all timelines */
-  tmpActionDebugConfiguration.forEach((element) => {
-    RenderTimeLine(
-      document.getElementById(
-        "debug-configuration-" + action.name + "-modal-body"
-      ),
-      element.time,
-      action,
-      props,
-      resourceId,
-      element.properties
-    );
-  });
+  let timelinesOuter = document.createElement("div");
+  timelinesOuter.id = "timelines-container";
+  document
+    .getElementById("debug-configuration-" + action.name + "-modal-body")
+    .appendChild(timelinesOuter);
+
+  /* Headers */
+  let titlesRow = document.createElement("div");
+  titlesRow.classList.add("row");
+  titlesRow.style.setProperty("font-size", "large");
+  titlesRow.style.setProperty("font-weight", "600");
+  titlesRow.style.setProperty("padding-bottom", "0.2rem");
+  titlesRow.style.setProperty("border-bottom", "1px solid #27252545");
+  timelinesOuter.appendChild(titlesRow);
+
+  let timeSlotsHeader = document.createElement("div");
+  timeSlotsHeader.classList.add("col-4");
+  timeSlotsHeader.innerHTML = "Time Slots";
+  titlesRow.appendChild(timeSlotsHeader);
+
+  let propertiesChangesHeader = document.createElement("div");
+  propertiesChangesHeader.classList.add("col");
+  propertiesChangesHeader.innerHTML = "Properties Changes";
+  titlesRow.appendChild(propertiesChangesHeader);
+
+  for (const [index, element] of tmpActionDebugConfiguration.entries()) {
+    RenderTimeLine(timelinesOuter, element, action, props, resourceId);
+  }
 
   $("#" + "debug-configuration-" + action.name + "-modal").on(
     "hidden.bs.modal",
@@ -927,36 +943,138 @@ export let RenderDebugConfigurationOfAction = function (
     }
   );
 
+  /* change modal size */
+  document
+    .getElementById("debug-configuration-" + action.name + "-modal-dialog")
+    .classList.remove("modal-lg");
+  document
+    .getElementById("debug-configuration-" + action.name + "-modal-dialog")
+    .classList.add("modal-xl");
+
   $("#" + "debug-configuration-" + action.name + "-modal").modal("show");
 };
 
 let RenderTimeLine = function (
   domSelecor,
-  time,
+  timeLine,
   action,
   deviceProps,
-  resourceId,
-  propertiesForTimeline
+  resourceId
 ) {
-  let tmpPropertiesForTimeline = [].concat(propertiesForTimeline);
-
   let timelineRow = document.createElement("div");
   timelineRow.classList.add("row");
+  timelineRow.style.setProperty("padding-bottom", "1rem");
+  timelineRow.style.setProperty("padding-top", "1rem");
   domSelecor.appendChild(timelineRow);
 
+  /* Column for the timeslot */
   let timeCol = document.createElement("div");
-  timeCol.classList.add("col-3");
+  timeCol.classList.add("col-4");
   timeCol.style.setProperty("border-right", "1px solid rgb(35 30 30 / 45%)");
-  if (time === 0) timeCol.innerHTML = "On start Action (after 0 seconds)";
-  else timeCol.innerHTML = "After " + time + " seconds";
+  timeCol.style.setProperty("position", "relative");
+  timeCol.style.setProperty("display", "flex");
+  timeCol.style.setProperty("align-items", "center");
   timelineRow.appendChild(timeCol);
 
+  let timelineInfo = document.createElement("div");
+  timelineInfo.style.setProperty("width", "100%");
+  timelineInfo.style.setProperty("padding-bottom", "3rem");
+  timeCol.appendChild(timelineInfo);
+
+  /* Time in timeslot */
+  let timelineTitleRow = document.createElement("div");
+  timelineTitleRow.classList.add("row");
+  timelineInfo.appendChild(timelineTitleRow);
+
+  let timelineTitleTimeCol = document.createElement("div");
+  timelineTitleTimeCol.classList.add("col-4");
+  timelineTitleRow.appendChild(timelineTitleTimeCol);
+
+  let timelineTitleTime = document.createElement("div");
+  timelineTitleTime.innerHTML = "Time: ";
+  timelineTitleTime.style.setProperty("font-size", "large");
+  timelineTitleTimeCol.appendChild(timelineTitleTime);
+
+  let timeSecondsCol = document.createElement("div");
+  timeSecondsCol.classList.add("col");
+  timelineTitleRow.appendChild(timeSecondsCol);
+
+  let timeSeconds = document.createElement("div");
+  timeSeconds.innerHTML = timeLine.time + " seconds";
+  timeSeconds.style.setProperty("font-style", "italic");
+  timeSeconds.style.setProperty("font-size", "large");
+  timeSecondsCol.appendChild(timeSeconds);
+
+  /* Description in timeslot */
+  let timelineDescriptionRow = document.createElement("div");
+  timelineDescriptionRow.classList.add("row");
+  timelineInfo.appendChild(timelineDescriptionRow);
+
+  let timelineTitleDescriptionCol = document.createElement("div");
+  timelineTitleDescriptionCol.classList.add("col-4");
+  timelineTitleDescriptionCol.style.setProperty("font-size", "large");
+  timelineDescriptionRow.appendChild(timelineTitleDescriptionCol);
+
+  let timelineTitleDescription = document.createElement("div");
+  timelineTitleDescription.innerHTML = "Description: ";
+  timelineTitleDescriptionCol.appendChild(timelineTitleDescription);
+
+  let timelineTitleDescriptionValueCol = document.createElement("div");
+  timelineTitleDescriptionValueCol.classList.add("col");
+  timelineDescriptionRow.appendChild(timelineTitleDescriptionValueCol);
+
+  let timeDescription = document.createElement("span");
+  timeDescription.innerHTML = timeLine.description;
+  timeDescription.style.setProperty("font-style", "italic");
+  timeDescription.style.setProperty("font-size", "large");
+  timelineTitleDescriptionValueCol.appendChild(timeDescription);
+
+  /* Functionality in timeslot */
+  let timelineFunctionalityOuter = document.createElement("div");
+  timelineFunctionalityOuter.style.setProperty("position", "absolute");
+  timelineFunctionalityOuter.style.setProperty("bottom", "0px");
+  timelineFunctionalityOuter.style.setProperty("right", "11px");
+  timeCol.appendChild(timelineFunctionalityOuter);
+
+  let timelineEditSpan = document.createElement("span");
+  timelineFunctionalityOuter.appendChild(timelineEditSpan);
+
+  let timelineEditButton = document.createElement("button");
+  timelineEditButton.classList.add("btn", "btn-sm", "btn-info");
+  timelineEditButton.innerHTML = "<i class='fas fa-edit'></i>";
+  timelineEditSpan.appendChild(timelineEditButton);
+
+  let timelineDeleteSpan = document.createElement("span");
+  timelineDeleteSpan.style.setProperty("margin-left", "0.7rem");
+  timelineFunctionalityOuter.appendChild(timelineDeleteSpan);
+
+  let timelineDeleteButton = document.createElement("button");
+  timelineDeleteButton.classList.add("btn", "btn-sm", "btn-danger");
+  timelineDeleteButton.innerHTML = "<i class='far fa-trash-alt'></i>";
+  timelineDeleteSpan.appendChild(timelineDeleteButton);
+
+  /* Add time slot */
+  let addTimeLineOuter = document.createElement("div");
+  // addTimeLineOuter.style.setProperty("padding-top", "1rem");
+  addTimeLineOuter.style.setProperty("position", "absolute");
+  addTimeLineOuter.style.setProperty("bottom", "0px");
+  timeCol.appendChild(addTimeLineOuter);
+
+  let addTimeLineLink = document.createElement("a");
+  addTimeLineLink.style.setProperty("width", "fit-content");
+  addTimeLineLink.href = "#";
+  addTimeLineLink.innerHTML = "Add time slot";
+  addTimeLineOuter.appendChild(addTimeLineLink);
+
+  /* Properties Column */
   let propertiesCol = document.createElement("div");
   propertiesCol.classList.add("col");
   timelineRow.appendChild(propertiesCol);
 
   let propertiesContainer = document.createElement("div");
-  propertiesContainer.id = "properties-contatainer";
+  propertiesContainer.classList.add("action-configure-properties-contatainer");
+  propertiesContainer.style.setProperty("max-height", "19rem");
+  propertiesContainer.style.setProperty("overflow-y", "auto");
   propertiesCol.appendChild(propertiesContainer);
 
   let addPropertyOuterDiv = document.createElement("div");
@@ -969,45 +1087,61 @@ let RenderTimeLine = function (
     addPropertyConfiguration.style.setProperty("display", "none");
 
     AddPropertyChangeForAction(
-      propertiesContainer,
+      addPropertyOuterDiv,
       deviceProps,
       (propertyName) => {
         addPropertyConfiguration.style.display = "block";
         propertiesContainer.innerHTML = "";
 
-        tmpPropertiesForTimeline.push(
+        timeLine.properties.push(
           deviceProps.find((property) => property.name === propertyName)
         );
 
-        tmpPropertiesForTimeline.forEach((property) => {
+        for (const [index, property] of timeLine.properties.entries()) {
           // render all properties again
           RenderPropertyForActionConfiguration(
             propertiesContainer,
             property,
-            resourceId
+            resourceId,
+            resourceId +
+              "-" +
+              property.name +
+              "-" +
+              timeLine.time +
+              "-" +
+              index +
+              "-value"
           );
-        });
+        }
       }
     );
   };
-  addPropertyConfiguration.innerHTML =
-    "Add property change for the " + action.name;
+  addPropertyConfiguration.innerHTML = "Add property change";
+  addPropertyConfiguration.style.setProperty("width", "fit-content");
   addPropertyOuterDiv.appendChild(addPropertyConfiguration);
 
-  if (tmpPropertiesForTimeline.length === 0) {
+  if (timeLine.properties.length === 0) {
     let message = document.createElement("div");
     message.style.setProperty("font-size", "large");
     message.style.setProperty("font-style", "italic");
-    message.innerHTML = "Not defined properties changes for the " + action.name;
+    message.innerHTML = "There is not any property change";
     propertiesContainer.appendChild(message);
   } else {
-    tmpPropertiesForTimeline.forEach((property) => {
+    for (const [index, property] of timeLine.properties.entries()) {
       RenderPropertyForActionConfiguration(
         propertiesContainer,
         property,
-        resourceId
+        resourceId,
+        resourceId +
+          "-" +
+          property.name +
+          "-" +
+          timeLine.time +
+          "-" +
+          index +
+          "-value"
       );
-    });
+    }
   }
 };
 
@@ -1037,6 +1171,7 @@ let AddPropertyChangeForAction = function (domSelector, props, onAdd) {
   addPropertyButton.style.setProperty("margin-left", "1rem");
   addPropertyButton.innerHTML = "Add";
   addPropertyButton.onclick = () => {
+    selectionDiv.remove();
     if (selectProp.value !== "<select property>") onAdd(selectProp.value);
   };
   selectionDiv.appendChild(addPropertyButton);
@@ -1045,7 +1180,8 @@ let AddPropertyChangeForAction = function (domSelector, props, onAdd) {
 let RenderPropertyForActionConfiguration = function (
   domSelector,
   property,
-  resourceId
+  resourceId,
+  propertyInputID
 ) {
   let propertyOuter = document.createElement("div");
   propertyOuter.style.display = "flex";
@@ -1059,14 +1195,15 @@ let RenderPropertyForActionConfiguration = function (
   soUIGenerator.RenderPropertyForDebugConfiguration(
     spanPropertyView,
     resourceId,
-    property
+    property,
+    propertyInputID
   );
 
   let spanDeleteProperty = document.createElement("span");
   propertyOuter.appendChild(spanDeleteProperty);
 
   let deleteProperty = document.createElement("button");
-  deleteProperty.classList.add("btn", "btn-danger");
+  deleteProperty.classList.add("btn", "btn-danger", "btn-sm");
   spanDeleteProperty.appendChild(deleteProperty);
 
   let deleteIcon = document.createElement("i");
