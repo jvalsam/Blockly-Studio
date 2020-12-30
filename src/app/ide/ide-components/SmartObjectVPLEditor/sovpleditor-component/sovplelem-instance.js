@@ -212,7 +212,13 @@ export class SOVPLElemInstance {
       action,
       this.elemData.editorData.details.actionsDebugConfigurations[action.name],
       this.elemData.editorData.details.properties,
-      this.elemData.editorData.details.iotivityResourceID
+      this.elemData.editorData.details.iotivityResourceID,
+      (configurationOfAction) => {
+        this.elemData.editorData.details.actionsDebugConfigurations[
+          action.name
+        ] = configurationOfAction;
+        this.parent.saveElement(this);
+      }
     );
   }
 
