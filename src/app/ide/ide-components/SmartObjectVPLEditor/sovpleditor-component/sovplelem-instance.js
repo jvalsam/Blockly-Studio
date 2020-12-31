@@ -218,6 +218,7 @@ export class SOVPLElemInstance {
           action.name
         ] = configurationOfAction;
         this.parent.saveElement(this);
+        this.render();
       }
     );
   }

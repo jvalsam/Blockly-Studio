@@ -1002,6 +1002,11 @@ export let RenderDebugConfigurationOfAction = function (
     .getElementById("debug-configuration-" + action.name + "-modal-dialog")
     .classList.add("modal-xl");
 
+  $("#" + "debug-configuration-" + action.name + "-modal").modal({
+    backdrop: "static",
+    keyboard: false,
+  });
+
   $("#" + "debug-configuration-" + action.name + "-modal").modal("show");
 };
 
@@ -1328,15 +1333,11 @@ let RenderTimeSlot = function (
           deviceProps.find((property) => property.name === propertyName)
         );
 
-        for (const [index, property] of timeSlot.properties.entries()) {
-          // render all properties again
-          RenderPropertyForActionConfiguration(
-            propertiesContainer,
-            property,
-            resourceId,
-            timeSlot.time + "-" + index + "-value"
-          );
-        }
+        RenderPropertiesForActionConfiguration(
+          propertiesContainer,
+          resourceId,
+          timeSlot
+        );
       }
     );
   };
@@ -1353,14 +1354,11 @@ let RenderTimeSlot = function (
     message.innerHTML = "There is not any property change";
     propertiesContainer.appendChild(message);
   } else {
-    for (const [index, property] of timeSlot.properties.entries()) {
-      RenderPropertyForActionConfiguration(
-        propertiesContainer,
-        property,
-        resourceId,
-        timeSlot.time + "-" + index + "-value"
-      );
-    }
+    RenderPropertiesForActionConfiguration(
+      propertiesContainer,
+      resourceId,
+      timeSlot
+    );
   }
 };
 
@@ -1396,11 +1394,41 @@ let AddPropertyChangeForAction = function (domSelector, props, onAdd) {
   selectionDiv.appendChild(addPropertyButton);
 };
 
+let RenderPropertiesForActionConfiguration = function (
+  domContainer,
+  resourceId,
+  timeSlot
+) {
+  for (const [index, property] of timeSlot.properties.entries()) {
+    RenderPropertyForActionConfiguration(
+      domContainer,
+      property,
+      resourceId,
+      timeSlot.time + "-" + index + "-value",
+      () => {
+        /* remove property */
+        timeSlot.properties.splice(index, 1);
+
+        /* clear container of properties */
+        domContainer.innerHTML = "";
+
+        /* render again properties */
+        RenderPropertiesForActionConfiguration(
+          domContainer,
+          resourceId,
+          timeSlot
+        );
+      }
+    );
+  }
+};
+
 let RenderPropertyForActionConfiguration = function (
   domSelector,
   property,
   resourceId,
-  propertyInputID
+  propertyInputID,
+  onDeleteProperty
 ) {
   let propertyOuter = document.createElement("div");
   propertyOuter.style.display = "flex";
@@ -1419,10 +1447,12 @@ let RenderPropertyForActionConfiguration = function (
   );
 
   let spanDeleteProperty = document.createElement("span");
+  spanDeleteProperty.style.setProperty("margin-left", "1rem");
   propertyOuter.appendChild(spanDeleteProperty);
 
   let deleteProperty = document.createElement("button");
   deleteProperty.classList.add("btn", "btn-danger", "btn-sm");
+  deleteProperty.onclick = onDeleteProperty;
   spanDeleteProperty.appendChild(deleteProperty);
 
   let deleteIcon = document.createElement("i");
@@ -1657,8 +1687,20 @@ let RenderSmartObjectProperty = function (
   );
 };
 
-let RenderSmartObjectAction = function (selector, id, action, callbacks) {
-  soUIGenerator.RenderActionAsPropertyView(selector, id, action, callbacks);
+let RenderSmartObjectAction = function (
+  selector,
+  id,
+  action,
+  configuration,
+  callbacks
+) {
+  soUIGenerator.RenderActionAsPropertyView(
+    selector,
+    id,
+    action,
+    configuration,
+    callbacks
+  );
 };
 
 let RenderSmartObjectRegistered = function (
@@ -1738,6 +1780,7 @@ let RenderSmartObjectRegistered = function (
       actionsContainer,
       soData.editorData.editorId,
       action,
+      soData.editorData.details.actionsDebugConfigurations[action.name],
       {
         onClickDebugConfigurationOfAction:
           callbacksMap.onClickDebugConfigurationOfAction,
@@ -2002,19 +2045,20 @@ export function RenderSmartGroup(
   resetButton.style.marginRight = "1rem";
   resetRow.appendChild(resetButton);
 
-  let actionsContainer = BuildActionsArea(cardBodyDiv, sgData);
+  // let actionsContainer = BuildActionsArea(cardBodyDiv, sgData);
 
-  for (const action of sgData.editorData.details.actions) {
-    RenderSmartObjectAction(
-      actionsContainer,
-      sgData.editorData.editorId,
-      action,
-      {}
-    );
-  }
+  // for (const action of sgData.editorData.details.actions) {
+  //   RenderSmartObjectAction(
+  //     actionsContainer,
+  //     sgData.editorData.editorId,
+  //     action,
+  //     soData.editorData.details.actionsDebugConfigurations[action.name],
+  //     {}
+  //   );
+  // }
 
-  let hrActionGroups = CreateDOMElement("hr");
-  cardBodyDiv.appendChild(hrActionGroups);
+  // let hrActionGroups = CreateDOMElement("hr");
+  // cardBodyDiv.appendChild(hrActionGroups);
   // Smart Objects
   let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Objects");
   RenderBubbles(
