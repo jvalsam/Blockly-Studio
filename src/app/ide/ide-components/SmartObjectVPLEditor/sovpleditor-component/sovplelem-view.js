@@ -1025,6 +1025,14 @@ let RenderTimeLine = function (
   resourceProperties,
   resourceId
 ) {
+  if (timeSlotsArray.length === 0) {
+    let emptyHeader = document.createElement("div");
+    emptyHeader.style.setProperty("font-style", "italic");
+    emptyHeader.style.setProperty("font-size", "large");
+    emptyHeader.innerHTML = "There are not time slots";
+    domSelector.appendChild(emptyHeader);
+  }
+
   let unvalidTimes = timeSlotsArray.map((x) => x.time);
   for (const [index, element] of timeSlotsArray.entries()) {
     /* give unvalid times but not the value for the element itself */
