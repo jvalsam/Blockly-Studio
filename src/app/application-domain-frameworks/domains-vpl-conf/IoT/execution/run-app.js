@@ -2,12 +2,26 @@ let calendar,
   organizer,
   calendarData = {};
 
-const CollectRegisteredDevices = function (smartObjects) {
+const InitDevice = function (smartDevice) {
+  return {
+    id: smartDevice.editorsData[0].generated.details.iotivityResourceID,
+    name: smartDevice.title,
+    options: {
+      image: smartDevice.img,
+    },
+    properties: smartDevice.editorsData[0].generated.details.properties,
+    actions: smartDevice.editorsData[0].generated.details.actions,
+    actionsDebugConfigurations:
+      smartDevice.editorsData[0].generated.details.actionsDebugConfigurations,
+  };
+};
+
+const CollectRegisteredDevices = function (smartDevices) {
   const returnArray = [];
 
-  smartObjects.forEach((so) => {
+  smartDevices.forEach((so) => {
     // for registered devices
-    returnArray.push(so);
+    returnArray.push(InitDevice(so));
   });
 
   return returnArray;
