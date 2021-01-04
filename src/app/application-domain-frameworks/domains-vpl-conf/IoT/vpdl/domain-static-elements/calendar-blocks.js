@@ -130,6 +130,38 @@ export const CalendarStaticBlocks = [
           return strBuilder;
         }
 
+        // (function () {
+        //   arrayIntervals.push({
+        //     type: "calendar_at",
+        //     time: setTimeout(async function () {
+        //       // if simulated time >= value_time
+
+        //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+        //         (e) =>
+        //           e.startTime === timeIdsToDate[id].startTime && e.id === id
+        //       ).isFired = true;
+
+        //       // strBuilder += statements_statement;
+        //       let endTime =
+        //         ("0" + dayjs().hour()).slice(-2) +
+        //         ":" +
+        //         ("0" + dayjs().minute()).slice(-2) +
+        //         ":" +
+        //         ("0" + dayjs().second()).slice(-2);
+
+        //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+        //         (e) =>
+        //           e.startTime === timeIdsToDate[id].startTime && e.id === id
+        //       ).endTime = endTime;
+
+        //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+        //         (e) =>
+        //           e.startTime === timeIdsToDate[id].startTime && e.id === id
+        //       ).isCompleted = true;
+        //     }, 500),
+        //   });
+        // })();
+
         const id = ID();
 
         let strBuilder = "";

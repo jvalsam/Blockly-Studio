@@ -2,6 +2,8 @@ let calendar,
   organizer,
   calendarData = {};
 
+let simulatedTime = dayjs();
+
 const InitDevice = function (smartDevice) {
   return {
     id: smartDevice.editorsData[0].generated.details.iotivityResourceID,
