@@ -112,6 +112,91 @@ export const CalendarStaticBlocks = [
         var code = strBuilder + "\n";
         return code;
       },
+    debugGen: () =>
+      function (block) {
+        var value_time = Blockly.JavaScript.valueToCode(
+          block,
+          "TIME",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statement = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENT"
+        );
+
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
+        const id = ID();
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder +=
+          "arrayIntervals.push({type: 'calendar_at', time: setTimeout(async function () {";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id);
+        strBuilder += ").isFired = true;";
+
+        strBuilder += statements_statement;
+
+        strBuilder +=
+          "let endTime =" +
+          "(" +
+          JSON.stringify("0") +
+          " + dayjs().hour()).slice(-2) +" +
+          JSON.stringify(":") +
+          " +" +
+          "(" +
+          JSON.stringify("0") +
+          " + dayjs().minute()).slice(-2) +" +
+          JSON.stringify(":") +
+          " + (" +
+          JSON.stringify("0") +
+          " + dayjs().second()).slice(-2);";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(" +
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id) +
+          ").endTime = endTime;";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(" +
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id) +
+          ").isCompleted = true;";
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          ")," +
+          JSON.stringify(block.getCommentText()) +
+          ", " +
+          JSON.stringify(id) +
+          "))";
+        strBuilder += "});";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
   },
   {
     name: "calendar_at_top_bottom",
@@ -135,6 +220,91 @@ export const CalendarStaticBlocks = [
       },
     }),
     codeGen: () =>
+      function (block) {
+        var value_time = Blockly.JavaScript.valueToCode(
+          block,
+          "TIME",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statement = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENT"
+        );
+
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
+        const id = ID();
+
+        let strBuilder = "";
+        strBuilder += "(function(){";
+        strBuilder +=
+          "arrayIntervals.push({type: 'calendar_at_top_bottom', time: setTimeout(async function () {";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id);
+        strBuilder += ").isFired = true;";
+
+        strBuilder += statements_statement;
+
+        strBuilder +=
+          "let endTime =" +
+          "(" +
+          JSON.stringify("0") +
+          " + dayjs().hour()).slice(-2) +" +
+          JSON.stringify(":") +
+          " +" +
+          "(" +
+          JSON.stringify("0") +
+          " + dayjs().minute()).slice(-2) +" +
+          JSON.stringify(":") +
+          " + (" +
+          JSON.stringify("0") +
+          " + dayjs().second()).slice(-2);";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(" +
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id) +
+          ").endTime = endTime;";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(" +
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id) +
+          ").isCompleted = true;";
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          ")," +
+          JSON.stringify(block.getCommentText()) +
+          ", " +
+          JSON.stringify(id) +
+          "))";
+        strBuilder += "});";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+    debugGen: () =>
       function (block) {
         var value_time = Blockly.JavaScript.valueToCode(
           block,
@@ -368,6 +538,131 @@ export const CalendarStaticBlocks = [
         var code = strBuilder + "\n";
         return code;
       },
+    debugGen: () =>
+      function (block) {
+        var value_time = Blockly.JavaScript.valueToCode(
+          block,
+          "TIME",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statement = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENT"
+        );
+
+        const id = ID();
+
+        // (function () {
+        //   let index = arrayIntervals.length;
+        //   arrayIntervals.push({ type: "calendar_every" });
+        //   let f = function () {
+        //     arrayIntervals[index].time = setTimeout(async () => {
+        //       try {
+        //         statements_statement;
+        //         // update fire boolean
+        //         activeDateOnCalendar[timeIdsToDate[id].day][
+        //           timeIdsToDate[id].startTime
+        //         ].isFired = true;
+        //       } catch (e) {
+        //         if (e === "break") {
+        //           clearTimeout(arrayIntervals[index].time);
+        //           arrayIntervals.slice(index, 1);
+        //           return;
+        //         } else if (e === "continue") {
+        //         }
+        //       }
+        //       arrayIntervals[index].func();
+        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id));
+        //   };
+        //   arrayIntervals[index].func = f;
+        //   arrayIntervals[index].func();
+        // })();
+
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let index = arrayIntervals.length;";
+        strBuilder += "arrayIntervals.push({type: 'calendar_every'});";
+        strBuilder += "let f = function () {";
+        strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
+        strBuilder += "try {";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id);
+        strBuilder += ").isFired = true;";
+
+        strBuilder += statements_statement;
+
+        strBuilder +=
+          "let endTime =" +
+          "(" +
+          JSON.stringify("0") +
+          " + dayjs().hour()).slice(-2) +" +
+          JSON.stringify(":") +
+          " +" +
+          "(" +
+          JSON.stringify("0") +
+          " + dayjs().minute()).slice(-2) +" +
+          JSON.stringify(":") +
+          " + (" +
+          JSON.stringify("0") +
+          " + dayjs().second()).slice(-2);";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(" +
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id) +
+          ").endTime = endTime;";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(" +
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id) +
+          ").isCompleted = true;";
+        strBuilder += "} catch (e) {";
+        strBuilder += 'if (e === "break") {';
+        strBuilder += "clearTimeout(arrayIntervals[index].time);";
+        strBuilder += "arrayIntervals.slice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += '} else if (e === "continue") {';
+        strBuilder += "}";
+        strBuilder += "}";
+        strBuilder += "arrayIntervals[index].func();";
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          "), " +
+          JSON.stringify(block.getCommentText()) +
+          ", " +
+          JSON.stringify(id) +
+          "));";
+        strBuilder += "};";
+        strBuilder += "arrayIntervals[index].func = f;";
+        strBuilder += "arrayIntervals[index].func();";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
   },
   {
     name: "calendar_every_top_bottom",
@@ -413,6 +708,132 @@ export const CalendarStaticBlocks = [
       },
     }),
     codeGen: () =>
+      function (block) {
+        var value_time = Blockly.JavaScript.valueToCode(
+          block,
+          "TIME",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        var statements_statement = Blockly.JavaScript.statementToCode(
+          block,
+          "STATEMENT"
+        );
+
+        const id = ID();
+
+        // (function () {
+        //   let index = arrayIntervals.length;
+        //   arrayIntervals.push({ type: "calendar_every_top_bottom" });
+        //   let f = function () {
+        //     arrayIntervals[index].time = setTimeout(() => {
+        //       try {
+        //         statements_statement;
+        //         // update fire boolean
+        //         activeDateOnCalendar[timeIdsToDate[id].day][
+        //           timeIdsToDate[id].startTime
+        //         ].isFired = true;
+        //       } catch (e) {
+        //         if (e === "break") {
+        //           clearTimeout(arrayIntervals[index].time);
+        //           arrayIntervals.slice(index, 1);
+        //           return;
+        //         } else if (e === "continue") {
+        //         }
+        //       }
+        //       arrayIntervals[index].func();
+        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id));
+        //   };
+        //   arrayIntervals[index].func = f;
+        //   arrayIntervals[index].func();
+        // })();
+
+        if (value_time === "") {
+          let strBuilder = "";
+          return strBuilder;
+        }
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let index = arrayIntervals.length;";
+        strBuilder +=
+          "arrayIntervals.push({type: 'calendar_every_top_bottom'});";
+        strBuilder += "let f = function () {";
+        strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
+        strBuilder += "try {";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(";
+        strBuilder +=
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id);
+        strBuilder += ").isFired = true;";
+
+        strBuilder += statements_statement;
+
+        strBuilder +=
+          "let endTime =" +
+          "(" +
+          JSON.stringify("0") +
+          " + dayjs().hour()).slice(-2) +" +
+          JSON.stringify(":") +
+          " +" +
+          "(" +
+          JSON.stringify("0") +
+          " + dayjs().minute()).slice(-2) +" +
+          JSON.stringify(":") +
+          " + (" +
+          JSON.stringify("0") +
+          " + dayjs().second()).slice(-2);";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(" +
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id) +
+          ").endTime = endTime;";
+        strBuilder +=
+          "activeDateOnCalendar[timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].day].find(" +
+          "(e) => e.startTime === timeIdsToDate[" +
+          JSON.stringify(id) +
+          "].startTime && e.id === " +
+          JSON.stringify(id) +
+          ").isCompleted = true;";
+        strBuilder += "} catch (e) {";
+        strBuilder += 'if (e === "break") {';
+        strBuilder += "clearTimeout(arrayIntervals[index].time);";
+        strBuilder += "arrayIntervals.slice(index, 1);";
+        strBuilder += "return;";
+        strBuilder += '} else if (e === "continue") {';
+        strBuilder += "}";
+        strBuilder += "}";
+        strBuilder += "arrayIntervals[index].func();";
+        strBuilder +=
+          "}, timeDispatch[JSON.parse(" +
+          value_time +
+          ").type](JSON.parse(" +
+          value_time +
+          "), " +
+          JSON.stringify(block.getCommentText()) +
+          ", " +
+          JSON.stringify(id) +
+          "));";
+        strBuilder += "};";
+        strBuilder += "arrayIntervals[index].func = f;";
+        strBuilder += "arrayIntervals[index].func();";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+    debugGen: () =>
       function (block) {
         var value_time = Blockly.JavaScript.valueToCode(
           block,

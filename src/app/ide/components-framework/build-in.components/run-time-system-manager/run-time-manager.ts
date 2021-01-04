@@ -243,8 +243,7 @@ export class RuntimeManager extends IDEUIComponent {
         ).value;
 
         this._environmentData = {
-          execType: "RELEASE",
-        //   execType: RuntimeManager.getMode(),
+          execType: RuntimeManager.getMode(),
           domainType: appData.domain,
           execData: appData,
         };
@@ -416,8 +415,7 @@ export class RuntimeManager extends IDEUIComponent {
 
     // @ExportedStaticFunction
     public static getMode(): string {
-        return "DEBUG";
-        // return RuntimeManager.modes[RuntimeManager.currentMode];
+        return RuntimeManager.modes[RuntimeManager.currentMode];
     }
 
     @ExportedFunction

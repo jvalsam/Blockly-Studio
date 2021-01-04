@@ -1,4 +1,3 @@
-import { RuntimeManager } from "../../../../../ide/components-framework/build-in.components/run-time-system-manager/run-time-manager";
 import * as Blockly from "blockly";
 
 var definedOnce = false;
@@ -83,7 +82,60 @@ export const SmartObject = {
           strBuilder += "return property.value;";
           strBuilder += "})()";
         } else {
+          // (function () {
+          //   let property = devicesOnAutomations
+          //     .find(
+          //       (device) => device.id === block.soData.details.iotivityResourceID
+          //     )
+          //     .properties.find((prop) => prop.name === dropdown_properties);
+          //   return property.value;
+          // })()
+
+          strBuilder += "(function () {";
+          strBuilder += "let property = devicesOnAutomations";
+          strBuilder += ".find(";
+          strBuilder +=
+            "(device) => device.id === " +
+            JSON.stringify(block.soData.details.iotivityResourceID);
+          strBuilder += ")";
+          strBuilder +=
+            ".properties.find((prop) => prop.name === " +
+            JSON.stringify(dropdown_properties) +
+            ");";
+          strBuilder += "return property.value;";
+          strBuilder += "})()";
         }
+
+        var code = strBuilder + "\n";
+        // TODO: Change ORDER_NONE to the correct strength.
+        return [code, Blockly.JavaScript.ORDER_NONE];
+      },
+      debugGen: (block) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+        let strBuilder = "";
+
+        // (function () {
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   return property.value;
+        // })()
+
+        strBuilder += "(function () {";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");";
+        strBuilder += "return property.value;";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         // TODO: Change ORDER_NONE to the correct strength.
@@ -130,6 +182,37 @@ export const SmartObject = {
         };
       },
       codeGen: (block) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+
+        // (function () {
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   return property.value ? true : false;
+        // })()
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");\n";
+        strBuilder += "return property.value;";
+        strBuilder += "})()";
+
+        var code = strBuilder + "\n";
+        // TODO: Change ORDER_NONE to the correct strength.
+        return [code, Blockly.JavaScript.ORDER_NONE];
+      },
+      debugGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
 
         // (function () {
@@ -381,6 +464,139 @@ export const SmartObject = {
         var code = strBuilder + "\n";
         return code;
       },
+      debugGen: (block) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+
+        var value_value = Blockly.JavaScript.valueToCode(
+          block,
+          "VALUE_INPUT",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        let checkArray = block.getInput("VALUE_INPUT").connection.getCheck();
+
+        // TODO: console warning when the value is number and < minimum or > maximum
+
+        // (function () {
+        //   let newValue;
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   if (checkArray[0] === "Number") {
+        //     let number = parseFloat(value_value);
+        //     // check for minimum and maximum values
+        //     if (
+        //       property.options.minimum_value &&
+        //       number < property.options.minimum_value
+        //     ) {
+        //       newValue = property.options.minimum_value;
+        //     } else if (
+        //       property.options.maximum_value &&
+        //       number > property.options.maximum_value
+        //     ) {
+        //       newValue = property.options.maximum_value;
+        //     } else {
+        //       newValue = number;
+        //     }
+        //   } else if (checkArray[0] === "Boolean") {
+        //     newValue = value_value === "true" ? true : false;
+        //   } else if (checkArray[0] === "String") {
+        //     newValue = value_value;
+        //   }
+        //   // change value in data and then send request
+        //   if (property.value !== newValue) {
+        //     property.value = newValue;
+        //     let oldDeviceIndex = devicesOnAutomations.findIndex(
+        //       (elem) => elem.id === block.soData.details.iotivityResourceID
+        //     );
+        //     CreateDeviceBubbleForLog(
+        //       data.title,
+        //       data.img,
+        //       bgColor,
+        //       "Text",
+        //       () =>
+        //         runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(
+        //           projectElementId,
+        //           block.blockId
+        //         )
+        //     );
+        //     RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);
+        //   }
+        // })();
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder += "let newValue;\n";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");\n";
+        strBuilder += "if ('" + checkArray[0] + '\' === "Number") {';
+        strBuilder += "let number = parseFloat(" + value_value + ");\n";
+        strBuilder += "if (";
+        strBuilder += "property.options.minimum_value && ";
+        strBuilder += "number < property.options.minimum_value";
+        strBuilder += ") {";
+        strBuilder += "newValue = property.options.minimum_value;\n";
+        strBuilder += "} else if (";
+        strBuilder += "property.options.maximum_value && ";
+        strBuilder += "number > property.options.maximum_value";
+        strBuilder += ") {";
+        strBuilder += "newValue = property.options.maximum_value;\n";
+        strBuilder += "} else {";
+        strBuilder += "newValue = number;\n";
+        strBuilder += "}\n";
+        strBuilder +=
+          "} else if (" + JSON.stringify(checkArray[0]) + ' === "Boolean") {';
+        strBuilder +=
+          "newValue = " + value_value + ' === "true" ? true : false;\n';
+        strBuilder +=
+          "} else if (" + JSON.stringify(checkArray[0]) + ' === "String") {';
+        strBuilder += "newValue = " + value_value + ";\n";
+        strBuilder += "}";
+        strBuilder += "if (property.value !== newValue) {";
+        strBuilder += "CreateDeviceBubbleForLog(";
+        strBuilder += JSON.stringify(block.soData.title) + ",";
+        strBuilder += JSON.stringify(block.soData.img) + ",";
+        strBuilder += JSON.stringify(block.soData.colour) + ",";
+        strBuilder +=
+          JSON.stringify("Set property ") +
+          "+ property.name +" +
+          JSON.stringify(": old value = <b>") +
+          "+ property.value +" +
+          JSON.stringify("</b>, current value =  <b>") +
+          "+ newValue +" +
+          JSON.stringify("</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
+        strBuilder += "property.value = newValue;\n";
+        strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
+        strBuilder +=
+          "(elem) => elem.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder += ");";
+        strBuilder +=
+          "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
+        strBuilder += "}";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
     },
     {
       name: "setter_enum",
@@ -541,6 +757,75 @@ export const SmartObject = {
           "',\n";
         strBuilder += "arguments: JSON.stringify(args)\n";
         strBuilder += "});";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+      debugGen: (block) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+        var dropdown_possible_values = block.getFieldValue("POSSIBLE_VALUES");
+
+        // (function () {
+        //   let newValue = dropdown_possible_values;
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   if (property.value !== newValue) {
+        //     property.value = newValue;
+        //     let oldDeviceIndex = devicesOnAutomations.findIndex(
+        //       (elem) => elem.id === block.soData.details.iotivityResourceID
+        //     );
+        //     RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);
+        //   }
+        // })();
+
+        let strBuilder = "";
+        strBuilder += "(function () {";
+        strBuilder +=
+          "let newValue =" + JSON.stringify(dropdown_possible_values) + ";\n";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");\n";
+        strBuilder += "if (property.value !== newValue) {";
+        strBuilder += "CreateDeviceBubbleForLog(";
+        strBuilder += JSON.stringify(block.soData.title) + ",";
+        strBuilder += JSON.stringify(block.soData.img) + ",";
+        strBuilder += JSON.stringify(block.soData.colour) + ",";
+        strBuilder +=
+          JSON.stringify("Set property ") +
+          "+ property.name +" +
+          JSON.stringify(": old value = <b>") +
+          "+ property.value +" +
+          JSON.stringify("</b>, current value =  <b>") +
+          "+ newValue +" +
+          JSON.stringify("</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
+        strBuilder += "property.value = newValue;";
+        strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
+        strBuilder +=
+          "(elem) => elem.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder += ");";
+        strBuilder +=
+          "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
+        strBuilder += "}";
         strBuilder += "})();";
 
         var code = strBuilder + "\n";
@@ -711,6 +996,146 @@ export const SmartObject = {
         //       }
         //     ).then(() => {
 
+        //       resolve();
+        //     });
+        //   });
+        // })();
+
+        let strBuilder = "";
+        strBuilder += "await(function () {\n";
+        strBuilder += "new Promise((resolve) => {\n";
+        strBuilder += "let args = [];\n";
+        strBuilder +=
+          "let inputsToCode = JSON.parse('" +
+          JSON.stringify(inputsToCode) +
+          "');\n";
+        strBuilder +=
+          "let checksArray = JSON.parse('" +
+          JSON.stringify(checksArray) +
+          "');\n";
+        strBuilder += "for (let i = 0; i < " + parametersLength + "; ++i) {\n";
+        strBuilder += 'if (checksArray["INPUT" + i][0] === "Number") {\n';
+        strBuilder += "let number = parseFloat(inputsToCode[i]);\n";
+        strBuilder += "args.push(number);\n";
+        strBuilder +=
+          '} else if (checksArray["INPUT" + i][0] === "Boolean") {\n';
+        strBuilder += 'args.push(inputsToCode[i] === "true" ? true : false);\n';
+        strBuilder +=
+          '} else if (checksArray["INPUT" + i][0] === "String") {\n';
+        strBuilder += "args.push(inputsToCode[i]);\n";
+        strBuilder += "}\n";
+        strBuilder += "}\n";
+        strBuilder +=
+          'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {\n';
+        strBuilder +=
+          "resourceId: " +
+          JSON.stringify(block.soData.details.iotivityResourceID) +
+          ",\n";
+        strBuilder +=
+          "methodId: 'action-" +
+          block.soData.details.iotivityResourceID +
+          "-" +
+          dropdown_actions +
+          "',\n";
+        strBuilder += "arguments: JSON.stringify(args)\n";
+        strBuilder += "}).then(() => { ";
+        strBuilder += "let argsStr = '';";
+        strBuilder +=
+          "if (args.length !== 0) argsStr += " +
+          JSON.stringify("with arguments: ") +
+          ";";
+        strBuilder += "args.forEach((arg, idx, array) => {";
+        strBuilder +=
+          "argsStr += " +
+          JSON.stringify("<b>") +
+          " + arg +" +
+          JSON.stringify("</b>") +
+          ";";
+        strBuilder += "if (idx !== array.length - 1) {";
+        strBuilder += "argsStr += " + JSON.stringify(", ") + ";";
+        strBuilder += "}";
+        strBuilder += "});";
+        strBuilder += "CreateDeviceBubbleForLog(";
+        strBuilder += JSON.stringify(block.soData.title) + ",";
+        strBuilder += JSON.stringify(block.soData.img) + ",";
+        strBuilder += JSON.stringify(block.soData.colour) + ",";
+        strBuilder +=
+          JSON.stringify("Execute Action: <b>" + dropdown_actions + "</b>  ") +
+          "+ argsStr" +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        strBuilder += JSON.stringify(block.id);
+        strBuilder += ")";
+        strBuilder += ");";
+        strBuilder += "resolve()});\n";
+        strBuilder += "});\n";
+        strBuilder += "})();";
+
+        var code = strBuilder + "\n";
+        return code;
+      },
+      debugGen: (block) => {
+        var dropdown_actions = block.getFieldValue("ACTIONS");
+
+        // get parameters to check the length
+        let parametersLength = block.soData.details.actions.find(
+          (elem) => elem.name === dropdown_actions
+        ).parameters.length;
+
+        let inputsToCode = [];
+        let checksArray = {};
+
+        // get code and type from every input
+        for (let i = 0; i < parametersLength; ++i) {
+          if (block.getInput("INPUT" + i).type === 1) {
+            // type 1
+            inputsToCode.push(
+              eval(
+                Blockly.JavaScript.valueToCode(
+                  block,
+                  "INPUT" + i,
+                  Blockly.JavaScript.ORDER_ATOMIC
+                )
+              )
+            );
+            checksArray["INPUT" + i] = block
+              .getInput("INPUT" + i)
+              .connection.getCheck();
+          } else if (block.getInput("INPUT" + i).type === 5) {
+            // type 5
+            inputsToCode.push(block.getFieldValue("ENUM" + i));
+            checksArray["INPUT" + i] = ["String"];
+          }
+        }
+
+        // await(function () {
+        //   new Promise((resolve) => {
+        //     let args = [];
+        //     for (let i = 0; i < parametersLength; ++i) {
+        //       if (checksArray["INPUT" + i][0] === "Number") {
+        //         let number = parseFloat(inputsToCode[i]);
+        //         args.push(number);
+        //       } else if (checksArray["INPUT" + i][0] === "Boolean") {
+        //         args.push(inputsToCode[i] === "true" ? true : false);
+        //       } else if (checksArray["INPUT" + i][0] === "String") {
+        //         args.push(inputsToCode[i]);
+        //       }
+        //     }
+        //     PostRequest(
+        //       "http://" + urlInfo.iotivityUrl + "/resource/execute-method",
+        //       {
+        //         resourceId: block.soData.details.iotivityResourceID,
+        //         methodId:
+        //           "action-" +
+        //           data.details.iotivityResourceID +
+        //           "-" +
+        //           dropdown_actions,
+        //         arguments: JSON.stringify(args),
+        //       }
+        //     ).then(() => {
         //       resolve();
         //     });
         //   });

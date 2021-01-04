@@ -20,7 +20,10 @@ export class VPLDomainElements {
         vplStaticElements.forEach(vplBlocks => {
             vplBlocks.forEach(vplBlock => {
                 Blockly.Blocks[vplBlock.name] = vplBlock.blockDef();
-                Blockly.JavaScript[vplBlock.name] = vplBlock.codeGen();
+                Blockly.JavaScript[vplBlock.name] =
+                    () => RuntimeManager.getMode() === "RELEASE"
+                        ? vplBlock.codeGen()
+                        : vplBlock.debugGen();
             });
         });
     }
@@ -39,7 +42,7 @@ export class VPLDomainElements {
                             blockDef: vplElem.init,
                             uniqueInstance: vplElem.uniqueInstance,
                             codeGen: vplElem.codeGen,
-                            debGen: vplElem.debGen
+                            debugGen: vplElem.debugGen
                         },
                         vplElem.name
                       );

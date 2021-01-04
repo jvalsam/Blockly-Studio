@@ -801,22 +801,22 @@ export async function StartApplication(runTimeData) {
     RenderClocks();
 
     // Render Smart Devices
-    // RenderSmartDevices(devicesOnAutomations);
+    RenderSmartDevices(devicesOnAutomations);
 
-    // const RunAutomations = async function (automations) {
-    //   automations.forEach((events) => {
-    //     if (
-    //       events.options.find((option) => option.id === "starts_on_execution")
-    //         .value === "Automatically"
-    //     ) {
-    //       let projectElementId = events.id;
-    //       eval("(async () => { " + events.editorsData[0].generated + "})()");
-    //     }
-    //   });
-    // };
+    const RunAutomations = async function (automations) {
+      automations.forEach((events) => {
+        if (
+          events.options.find((option) => option.id === "starts_on_execution")
+            .value === "Automatically"
+        ) {
+          let projectElementId = events.id;
+          eval("(async () => { " + events.editorsData[0].generated + "})()");
+        }
+      });
+    };
 
-    // // automations tasks
-    // RunAutomations(runTimeData.execData.project.AutomationTasks);
+    // automations tasks
+    RunAutomations(runTimeData.execData.project.AutomationTasks);
 
     // // calendar tasks
     // RunAutomations(runTimeData.execData.project.CalendarEvents);
