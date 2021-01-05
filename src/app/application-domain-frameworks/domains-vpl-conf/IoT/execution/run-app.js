@@ -30,7 +30,7 @@ const CollectRegisteredDevices = function (smartDevices) {
 };
 
 const Initialize = function (selector) {
-  dayjs().format();
+  // dayjs().format();
   InitializeClocks(selector);
 
   InitializeCalendar(selector);
@@ -49,6 +49,8 @@ const whenCondData = [];
 
 const changesData = [];
 
+const simulatedTimeTable = [];
+
 const StartWhenTimeout = function () {
   let index = arrayIntervals.length;
   arrayIntervals.push({ type: "when_cond" });
@@ -63,7 +65,7 @@ const StartWhenTimeout = function () {
         cond.func();
       });
       arrayIntervals[index].func();
-    }, 400);
+    }, 500);
   };
   arrayIntervals[index].func = f;
   arrayIntervals[index].func();
@@ -99,26 +101,25 @@ const TakeDifferenceFromSpecificTime = function (
   calendarInfo,
   calendarBlockId
 ) {
-  let futureTime = dayjs()
+  let futureTime = simulatedTime
     .set("second", time.second)
     .set("minute", time.minute)
     .set("hour", time.hour);
 
-  let ms = futureTime.diff(dayjs());
+  let ms = futureTime.diff(simulatedTime);
 
   if (ms <= 0) {
-    futureTime = dayjs()
+    futureTime = simulatedTime
       .set("second", time.second)
       .set("minute", time.minute)
       .set("hour", time.hour)
-      .set("day", dayjs().day() + 1);
-    ms = futureTime.diff(dayjs());
+      .set("day", simulatedTime.day() + 1);
   }
 
   // Pin in calendar
   PinEventInCalendar(futureTime, calendarInfo, calendarBlockId);
 
-  return ms;
+  return futureTime;
 };
 
 const TakeDifferenceFromSpecificDay = function (
@@ -128,18 +129,18 @@ const TakeDifferenceFromSpecificDay = function (
 ) {
   let intDay = weekDays.indexOf(time.day);
 
-  let futureDate = dayjs().day(intDay);
-  let ms = futureDate.diff(dayjs());
+  let futureDate = simulatedTime.day(intDay);
+  let ms = futureDate.diff(simulatedTime);
 
   if (ms <= 0) {
-    futureDate = dayjs().day(7 + intDay);
-    ms = futureDate.diff(dayjs());
+    futureDate = simulatedTime.day(7 + intDay);
+    // ms = futureDate.diff(simulatedTime);
   }
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  return ms;
+  return futureDate;
 };
 
 const TakeDifferenceFromSpecificMonth = function (
@@ -149,62 +150,61 @@ const TakeDifferenceFromSpecificMonth = function (
 ) {
   let intMonth = months.indexOf(time.month);
 
-  let futureDate = dayjs().month(intMonth);
-  let ms = futureDate.diff(dayjs());
+  let futureDate = simulatedTime.month(intMonth);
+  let ms = futureDate.diff(simulatedTime);
 
   if (ms <= 0) {
-    futureDate = dayjs().month(12 + intMonth);
-    ms = futureDate.diff(dayjs());
+    futureDate = simulatedTime.month(12 + intMonth);
   }
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  return ms;
+  return futureDate;
 };
 
 const EverySecond = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = dayjs().second(dayjs().second() + time.second);
+  let futureDate = simulatedTime.second(simulatedTime.second() + time.second);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
-  return time.second * 1000;
+  return futureDate;
 };
 
 const EveryMinute = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = dayjs().minute(dayjs().minute() + time.minute);
+  let futureDate = simulatedTime.minute(simulatedTime.minute() + time.minute);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  return time.minute * 60000;
+  return futureDate;
 };
 
 const EveryHour = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = dayjs().hour(dayjs().hour() + time.hour);
+  let futureDate = simulatedTime.hour(simulatedTime.hour() + time.hour);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  return time.hour * 3600000;
+  return futureDate;
 };
 
 const EveryDay = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = dayjs().day(dayjs().day() + time.day);
+  let futureDate = simulatedTime.day(simulatedTime.day() + time.day);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  return time.day * 86400000;
+  return futureDate;
 };
 
 const EveryMonth = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = dayjs().month(dayjs().month() + time.month);
+  let futureDate = simulatedTime.month(simulatedTime.month() + time.month);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  return time.month * 2592000000;
+  return futureDate;
 };
 
 const timeDispatch = {
@@ -549,6 +549,7 @@ const InitializeCalendar = function (selector) {
       indicator: true,
       indicator_type: 1,
       indicator_pos: "top",
+      todayDate: simulatedTime.toDate(),
       // placeholder: "<span>Custom Placeholder</span>",
     }
   );
@@ -681,7 +682,7 @@ const CreateDeviceBubbleForLog = function (
 
   let logBubbleTime = document.createElement("span");
   logBubbleTime.classList.add("log-bubble-time");
-  logBubbleTime.innerHTML = dayjs().format("HH:mm:ss, DD/MM");
+  logBubbleTime.innerHTML = simulatedTime.format("HH:mm:ss, DD/MM");
   logBubbleInfo.appendChild(logBubbleTime);
 
   let logBubbleText = document.createElement("div");
@@ -725,7 +726,7 @@ const CreateStaticBubbleForLog = function (
 
   let logBubbleTime = document.createElement("span");
   logBubbleTime.classList.add("log-bubble-time");
-  logBubbleTime.innerHTML = dayjs().format("HH:mm:ss, DD/MM");
+  logBubbleTime.innerHTML = simulatedTime.format("HH:mm:ss, DD/MM");
   logBubbleInfo.appendChild(logBubbleTime);
 
   let logBubbleText = document.createElement("div");

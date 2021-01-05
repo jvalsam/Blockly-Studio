@@ -87,7 +87,7 @@ export class RuntimeManagerView extends ComponentView {
     }
 
     document.getElementById("runtime-modal-title").innerHTML =
-      "Running Automations for " + applicationName;
+      "Running Automations of " + applicationName;
 
     document.getElementById("fold-runtime-modal").onclick = () => {
       let modalDialog = document.getElementById("runtime-modal-dialog");
@@ -153,7 +153,7 @@ export class RuntimeManagerView extends ComponentView {
       document.getElementById("runtime-modal-title-outer").onclick = null;
 
       document.getElementById("runtime-modal-title").innerHTML =
-        "Running Automations for " + applicationName;
+        "Running Automations of " + applicationName;
 
       document
         .getElementById("runtime-modal-title")
