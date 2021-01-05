@@ -42,6 +42,16 @@ export const CalendarTask = {
           ').editorsData[0].generated + "})()" );';
         return code;
       },
+      debugGen: (block) => {
+        // Build eval for the main eval in run-app.js
+        var code =
+          'eval( "(async () => { let projectElementId = " + JSON.stringify(' +
+          JSON.stringify(block.pitemData.pitemId) +
+          ") + runTimeData.execData.project.CalendarEvents.find(e => e.id === " +
+          JSON.stringify(block.pitemData.pitemId) +
+          ').editorsData[0].generated + "})()" );';
+        return code;
+      },
     },
   ],
   signals: [

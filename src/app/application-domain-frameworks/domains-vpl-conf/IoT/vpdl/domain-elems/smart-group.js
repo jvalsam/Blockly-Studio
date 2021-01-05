@@ -127,6 +127,22 @@ export const SmartGroup = {
         var code = "...;\n";
         return code;
       },
+      debugGen: (block) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+        var value_value = Blockly.JavaScript.valueToCode(
+          block,
+          "VALUE",
+          Blockly.JavaScript.ORDER_ATOMIC
+        );
+
+        data.details.properties.forEach((property) => {
+          //code generation based on the choice
+        });
+
+        // TODO: Assemble JavaScript into code variable.
+        var code = "...;\n";
+        return code;
+      },
     },
     {
       name: "setter_enum",
@@ -194,6 +210,18 @@ export const SmartGroup = {
         };
       },
       codeGen: (block) => {
+        var dropdown_properties = block.getFieldValue("PROPERTIES");
+        var dropdown_possible_values = block.getFieldValue("POSSIBLE_VALUES");
+
+        data.details.properties.forEach((property) => {
+          //code generation based on the choice
+        });
+
+        // TODO: Assemble JavaScript into code variable.
+        var code = "...;\n";
+        return code;
+      },
+      debugGen: (block) => {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         var dropdown_possible_values = block.getFieldValue("POSSIBLE_VALUES");
 
