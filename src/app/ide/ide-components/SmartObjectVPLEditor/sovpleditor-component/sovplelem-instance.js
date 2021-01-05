@@ -312,7 +312,8 @@ export class SOVPLElemInstance {
 
   // --- Start SmartGroup Actions ---
   onSGEditPropAlias(prop) {
-    this.elemData.editorData.details.mapPropsAlias[prop.name] = prop.alias;
+    this.elemData.editorData.details.mapPropsAlias[prop.name] =
+      prop.universal_id;
     this.parent.updateSmartGroupPropAlias(this);
   }
 

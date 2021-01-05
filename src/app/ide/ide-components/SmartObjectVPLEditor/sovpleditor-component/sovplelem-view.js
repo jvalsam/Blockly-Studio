@@ -291,7 +291,7 @@ let CreateDifferencesTableInGroupSelection = function (
   thSOPropAliasHeader.setAttribute("scope", "col");
   trSecondHeader.appendChild(thSOPropAliasHeader);
 
-  let spanAlias = CreateDOMElement("span", { innerHtml: "Alias" });
+  let spanAlias = CreateDOMElement("span", { innerHtml: "Universal ID" });
   thSOPropAliasHeader.appendChild(spanAlias);
 
   if (isSO) {
@@ -546,7 +546,7 @@ function RenderSelectGroupsModal(
   trHead.appendChild(thName);
 
   let thAlias = CreateDOMElement("th", {
-    innerHtml: "Alias",
+    innerHtml: "Universal ID",
   });
   thAlias.setAttribute("scope", "col");
   trHead.appendChild(thAlias);
@@ -1682,7 +1682,7 @@ let RenderSmartObjectProperty = function (
   selector,
   id,
   property,
-  alias,
+  universal_id,
   callbacks
 ) {
   soUIGenerator.RenderReadOnlyProperty(
@@ -1690,7 +1690,7 @@ let RenderSmartObjectProperty = function (
     id,
     property,
     "smartObject",
-    alias,
+    universal_id,
     callbacks
   );
 };
@@ -1974,7 +1974,7 @@ let RenderSmartGroupProperty = function (
   selector,
   id,
   property,
-  alias,
+  universal_id,
   callbacks
 ) {
   soUIGenerator.RenderReadOnlyProperty(
@@ -1982,7 +1982,7 @@ let RenderSmartGroupProperty = function (
     id,
     property,
     "smartGroup",
-    alias,
+    universal_id,
     callbacks
   );
 };
