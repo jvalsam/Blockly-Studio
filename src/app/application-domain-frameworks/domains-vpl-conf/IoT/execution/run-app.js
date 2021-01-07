@@ -2,7 +2,12 @@ let calendar,
   organizer,
   calendarData = {};
 
-let simulatedTime = dayjs();
+const ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return "_" + Math.random().toString(36).substr(2, 9);
+};
 
 const InitDevice = function (smartDevice) {
   return {
@@ -30,7 +35,7 @@ const CollectRegisteredDevices = function (smartDevices) {
 };
 
 const Initialize = function (selector) {
-  // dayjs().format();
+  InitializeSimulatedTime();
   InitializeClocks(selector);
 
   InitializeCalendar(selector);
@@ -43,13 +48,11 @@ const Initialize = function (selector) {
 const timeIdsToDate = {}; //  <id>: { day: "December 14, 2020", startTime: "16:54:33" }
 const activeDateOnCalendar = {}; // "December 14, 2020": [ {startTime:"16:54:33", endTime: "" id: <id>, isFired: false, isCompleted = true } ]
 
-const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, func: Function (for recursive)}
+const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, endTime: Time, func: Function (for recursive)}
 
 const whenCondData = [];
 
 const changesData = [];
-
-const simulatedTimeTable = [];
 
 const StartWhenTimeout = function () {
   let index = arrayIntervals.length;
@@ -101,7 +104,7 @@ const TakeDifferenceFromSpecificTime = function (
   calendarInfo,
   calendarBlockId
 ) {
-  let futureTime = simulatedTime
+  let futureTime = dayjs(simulatedTime)
     .set("second", time.second)
     .set("minute", time.minute)
     .set("hour", time.hour);
@@ -109,7 +112,7 @@ const TakeDifferenceFromSpecificTime = function (
   let ms = futureTime.diff(simulatedTime);
 
   if (ms <= 0) {
-    futureTime = simulatedTime
+    futureTime = dayjs(simulatedTime)
       .set("second", time.second)
       .set("minute", time.minute)
       .set("hour", time.hour)
@@ -118,6 +121,8 @@ const TakeDifferenceFromSpecificTime = function (
 
   // Pin in calendar
   PinEventInCalendar(futureTime, calendarInfo, calendarBlockId);
+
+  AddTimeInSimulatedTable(futureTime);
 
   return futureTime;
 };
@@ -129,16 +134,18 @@ const TakeDifferenceFromSpecificDay = function (
 ) {
   let intDay = weekDays.indexOf(time.day);
 
-  let futureDate = simulatedTime.day(intDay);
+  let futureDate = dayjs(simulatedTime).day(intDay);
   let ms = futureDate.diff(simulatedTime);
 
   if (ms <= 0) {
-    futureDate = simulatedTime.day(7 + intDay);
+    futureDate = dayjs(simulatedTime).day(7 + intDay);
     // ms = futureDate.diff(simulatedTime);
   }
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
+
+  AddTimeInSimulatedTable(futureDate);
 
   return futureDate;
 };
@@ -150,59 +157,78 @@ const TakeDifferenceFromSpecificMonth = function (
 ) {
   let intMonth = months.indexOf(time.month);
 
-  let futureDate = simulatedTime.month(intMonth);
+  let futureDate = dayjs(simulatedTime).month(intMonth);
   let ms = futureDate.diff(simulatedTime);
 
   if (ms <= 0) {
-    futureDate = simulatedTime.month(12 + intMonth);
+    futureDate = dayjs(simulatedTime).month(12 + intMonth);
   }
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
+  AddTimeInSimulatedTable(futureDate);
+
   return futureDate;
 };
 
 const EverySecond = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = simulatedTime.second(simulatedTime.second() + time.second);
+  let futureDate = dayjs(simulatedTime).second(
+    simulatedTime.second() + time.second
+  );
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
+
+  AddTimeInSimulatedTable(futureDate);
+
   return futureDate;
 };
 
 const EveryMinute = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = simulatedTime.minute(simulatedTime.minute() + time.minute);
+  let futureDate = dayjs(simulatedTime).minute(
+    simulatedTime.minute() + time.minute
+  );
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
+
+  AddTimeInSimulatedTable(futureDate);
 
   return futureDate;
 };
 
 const EveryHour = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = simulatedTime.hour(simulatedTime.hour() + time.hour);
+  let futureDate = dayjs(simulatedTime).hour(simulatedTime.hour() + time.hour);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
+
+  AddTimeInSimulatedTable(futureDate);
 
   return futureDate;
 };
 
 const EveryDay = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = simulatedTime.day(simulatedTime.day() + time.day);
+  let futureDate = dayjs(simulatedTime).day(simulatedTime.day() + time.day);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
+
+  AddTimeInSimulatedTable(futureDate);
 
   return futureDate;
 };
 
 const EveryMonth = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = simulatedTime.month(simulatedTime.month() + time.month);
+  let futureDate = dayjs(simulatedTime).month(
+    simulatedTime.month() + time.month
+  );
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
+
+  AddTimeInSimulatedTable(futureDate);
 
   return futureDate;
 };
@@ -284,9 +310,81 @@ const PinEventInCalendar = function (
   calendarData[year][month][date].sort(compareStartingDate);
 
   organizer.updateData(calendarData);
-  updateScroll("organizer-container-list-container");
+  UpdateScroll("organizer-container-list-container");
 };
 /* End data and functions for calendar - conditional blocks */
+
+/* Start of functions for simulating time */
+const TIME_MODE = Object.freeze({ normal: "NORMAL", speed: "SPEED" });
+
+let simulatedTime,
+  timeSpeed = 1000,
+  timeMode = TIME_MODE.normal,
+  timeFunc;
+
+const simulatedTimeTable = [];
+
+const InitializeSimulatedTime = function () {
+  simulatedTime = dayjs();
+  NormalSimulatedTime();
+};
+
+const NormalSimulatedTime = function () {
+  if (timeMode !== TIME_MODE.normal) timeMode = TIME_MODE.normal;
+  simulatedTime = dayjs(simulatedTime).set(
+    "second",
+    simulatedTime.second() + 1
+  );
+  // TODO: update calendar
+  timeFunc = setTimeout(NormalSimulatedTime, 1000);
+};
+
+const SpeedUpSimulatedTime = function () {
+  if (timeMode !== TIME_MODE.speed) timeMode = TIME_MODE.speed;
+  simulatedTime = dayjs(simulatedTime).set(
+    "second",
+    simulatedTime.second() + 1
+  );
+  // TODO: update calendar
+  timeFunc = setTimeout(SpeedUpSimulatedTime, timeSpeed);
+};
+
+const PauseSimulatedTime = function () {
+  clearTimeout(timeFunc);
+};
+
+const ResetSimulatedTime = function () {
+  PauseSimulatedTime();
+  simulatedTime = dayjs();
+  NormalSimulatedTime();
+};
+
+const GoToSpecificTime = function () {
+  PauseSimulatedTime();
+
+  // TODO: implement goto hour with simulatedTimeTable
+  // TODO: update calendar
+};
+
+const AddTimeInSimulatedTable = function (time) {
+  if (!simulatedTimeTable.includes(time)) simulatedTimeTable.push(time);
+  simulatedTimeTable.sort(compareTimes);
+};
+
+const compareTimes = function (a, b) {
+  // Use toUpperCase() to ignore character casing
+  const timeA = a;
+  const timeB = b;
+
+  let comparison = 0;
+  if (timeA.diff(timeB) > 0) {
+    comparison = 1;
+  } else if (timeA.diff(timeB) < 0) {
+    comparison = -1;
+  }
+  return comparison;
+};
+/* End of functions for simulating time */
 
 /* Start UI for runtime environment */
 const InitializeClocks = function (selector) {
@@ -386,7 +484,7 @@ const InitializeClocks = function (selector) {
   centre.appendChild(circle_2);
 };
 
-function utilityClock(container) {
+const UtilityClock = function (container) {
   var dynamic = container.querySelector(".dynamic");
   var hourElement = container.querySelector(".hour");
   var minuteElement = container.querySelector(".minute");
@@ -451,7 +549,8 @@ function utilityClock(container) {
   };
 
   var animate = function () {
-    var now = new Date();
+    /* analog clock */
+    var now = simulatedTime.toDate();
     var time =
       now.getHours() * 3600 +
       now.getMinutes() * 60 +
@@ -460,17 +559,31 @@ function utilityClock(container) {
     rotate(secondElement, time);
     rotate(minuteElement, time / 60);
     rotate(hourElement, time / 60 / 12);
+
+    /* digital clock */
+    var date = simulatedTime.toDate();
+    var h = date.getHours(); // 0 - 23
+    var m = date.getMinutes(); // 0 - 59
+    var s = date.getSeconds(); // 0 - 59
+
+    h = h < 10 ? "0" + h : h;
+    m = m < 10 ? "0" + m : m;
+    s = s < 10 ? "0" + s : s;
+
+    var time = h + ":" + m + ":" + s;
+    document.getElementById("digital-clock").innerText = time;
+    document.getElementById("digital-clock").textContent = time;
+
     requestAnimationFrame(animate);
   };
 
   for (var i = 1 / 4; i <= 60; i += 1 / 4) minute(i);
   for (var i = 1; i <= 12; i++) hour(i);
 
-  RenderDigitalClock();
   animate();
-}
+};
 
-function autoResize(element, nativeSize) {
+const AutoResize = function (element, nativeSize) {
   var update = function () {
     var parent = element.offsetParent;
     var scale = Math.min(parent.offsetWidth, parent.offsetHeight) / nativeSize;
@@ -479,29 +592,12 @@ function autoResize(element, nativeSize) {
   };
   update();
   window.addEventListener("resize", update);
-}
+};
 
 const RenderClocks = function () {
   var clock = document.getElementById("utility-clock");
-  utilityClock(clock);
-  autoResize(clock, 295 + 32);
-};
-
-const RenderDigitalClock = function () {
-  var date = new Date();
-  var h = date.getHours(); // 0 - 23
-  var m = date.getMinutes(); // 0 - 59
-  var s = date.getSeconds(); // 0 - 59
-
-  h = h < 10 ? "0" + h : h;
-  m = m < 10 ? "0" + m : m;
-  s = s < 10 ? "0" + s : s;
-
-  var time = h + ":" + m + ":" + s;
-  document.getElementById("digital-clock").innerText = time;
-  document.getElementById("digital-clock").textContent = time;
-
-  setTimeout(RenderDigitalClock, 1000);
+  UtilityClock(clock);
+  AutoResize(clock, 295 + 32);
 };
 
 const InitializeCalendar = function (selector) {
@@ -689,7 +785,7 @@ const CreateDeviceBubbleForLog = function (
   logBubbleText.classList.add("log-bubble-text");
   logBubbleText.innerHTML = actionText;
   logBubble.appendChild(logBubbleText);
-  updateScroll("logger-body");
+  UpdateScroll("logger-body");
 };
 
 const CreateStaticBubbleForLog = function (
@@ -733,15 +829,15 @@ const CreateStaticBubbleForLog = function (
   logBubbleText.classList.add("log-bubble-text");
   logBubbleText.innerHTML = actionText;
   logBubble.appendChild(logBubbleText);
-  updateScroll("logger-body");
+  UpdateScroll("logger-body");
 };
 
-function updateScroll(id) {
+const UpdateScroll = function (id) {
   var element = document.getElementById(id);
 
   if (element.scrollHeight - element.scrollTop <= element.clientHeight + 145)
     element.scrollTop = element.scrollHeight;
-}
+};
 
 const InitializeSmartDevicesContainer = function (selector) {
   let smartDevicesDiv = document.createElement("div");
@@ -821,8 +917,8 @@ export async function StartApplication(runTimeData) {
     // automations tasks
     RunAutomations(runTimeData.execData.project.AutomationTasks);
 
-    // // calendar tasks
-    // RunAutomations(runTimeData.execData.project.CalendarEvents);
+    // calendar tasks
+    RunAutomations(runTimeData.execData.project.CalendarEvents);
 
     // // conditional tasks
     // RunAutomations(runTimeData.execData.project.ConditionalEvents);

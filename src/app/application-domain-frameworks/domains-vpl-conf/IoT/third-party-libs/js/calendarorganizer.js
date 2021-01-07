@@ -665,7 +665,7 @@ Organizer.prototype.update = function () {
   document.getElementById(this.id + "-date").innerHTML =
     this.calendar.months[this.calendar.date.getMonth()] +
     " " +
-    this.calendar.date.getDate() +
+    ("0" + this.calendar.date.getDate()).slice(-2) +
     ", " +
     this.calendar.date.getFullYear();
   document.getElementById(this.id + "-list").innerHTML = "";

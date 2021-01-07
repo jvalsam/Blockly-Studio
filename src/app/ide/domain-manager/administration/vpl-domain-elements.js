@@ -6,6 +6,7 @@ import {
 import { VPLMission } from './vpl-mission';
 import { VPLProjectItem } from './vpl-project-item';
 import { VPLDomainElementsManager } from './vpl-domain-elements-manager';
+import { RuntimeManager } from "../../components-framework/build-in.components/run-time-system-manager/run-time-manager";
 
 
 export class VPLDomainElements {
@@ -20,10 +21,11 @@ export class VPLDomainElements {
         vplStaticElements.forEach(vplBlocks => {
             vplBlocks.forEach(vplBlock => {
                 Blockly.Blocks[vplBlock.name] = vplBlock.blockDef();
-                Blockly.JavaScript[vplBlock.name] =
-                    () => RuntimeManager.getMode() === "RELEASE"
-                        ? vplBlock.codeGen()
-                        : vplBlock.debugGen();
+                Blockly.JavaScript[vplBlock.name] = (block) =>
+                  //   RuntimeManager.getMode() === "RELEASE"
+                  //     ? vplBlock.codeGen(block)
+                  //     : vplBlock.debugGen(block);
+                  vplBlock.debugGen(block);
             });
         });
     }
