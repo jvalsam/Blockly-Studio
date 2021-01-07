@@ -318,7 +318,7 @@ const PinEventInCalendar = function (
 const TIME_MODE = Object.freeze({ normal: "NORMAL", speed: "SPEED" });
 
 let simulatedTime,
-  timeSpeed = 1000,
+  timeSpeed = 50,
   timeMode = TIME_MODE.normal,
   timeFunc;
 
@@ -327,23 +327,24 @@ const simulatedTimeTable = [];
 const InitializeSimulatedTime = function () {
   simulatedTime = dayjs();
   NormalSimulatedTime();
+  // SpeedUpSimulatedTime();
 };
 
 const NormalSimulatedTime = function () {
   if (timeMode !== TIME_MODE.normal) timeMode = TIME_MODE.normal;
   simulatedTime = dayjs(simulatedTime).set(
-    "second",
-    simulatedTime.second() + 1
+    "millisecond",
+    simulatedTime.millisecond() + 10
   );
   // TODO: update calendar
-  timeFunc = setTimeout(NormalSimulatedTime, 1000);
+  timeFunc = setTimeout(NormalSimulatedTime, 10);
 };
 
 const SpeedUpSimulatedTime = function () {
   if (timeMode !== TIME_MODE.speed) timeMode = TIME_MODE.speed;
   simulatedTime = dayjs(simulatedTime).set(
-    "second",
-    simulatedTime.second() + 1
+    "millisecond",
+    simulatedTime.millisecond() + 100
   );
   // TODO: update calendar
   timeFunc = setTimeout(SpeedUpSimulatedTime, timeSpeed);
@@ -560,26 +561,13 @@ const UtilityClock = function (container) {
     rotate(minuteElement, time / 60);
     rotate(hourElement, time / 60 / 12);
 
-    /* digital clock */
-    var date = simulatedTime.toDate();
-    var h = date.getHours(); // 0 - 23
-    var m = date.getMinutes(); // 0 - 59
-    var s = date.getSeconds(); // 0 - 59
-
-    h = h < 10 ? "0" + h : h;
-    m = m < 10 ? "0" + m : m;
-    s = s < 10 ? "0" + s : s;
-
-    var time = h + ":" + m + ":" + s;
-    document.getElementById("digital-clock").innerText = time;
-    document.getElementById("digital-clock").textContent = time;
-
     requestAnimationFrame(animate);
   };
 
   for (var i = 1 / 4; i <= 60; i += 1 / 4) minute(i);
   for (var i = 1; i <= 12; i++) hour(i);
 
+  RenderDigitalClock();
   animate();
 };
 
@@ -598,6 +586,23 @@ const RenderClocks = function () {
   var clock = document.getElementById("utility-clock");
   UtilityClock(clock);
   AutoResize(clock, 295 + 32);
+};
+
+const RenderDigitalClock = function () {
+  var date = simulatedTime.toDate();
+  var h = date.getHours(); // 0 - 23
+  var m = date.getMinutes(); // 0 - 59
+  var s = date.getSeconds(); // 0 - 59
+
+  h = h < 10 ? "0" + h : h;
+  m = m < 10 ? "0" + m : m;
+  s = s < 10 ? "0" + s : s;
+
+  var time = h + ":" + m + ":" + s;
+  document.getElementById("digital-clock").innerText = time;
+  document.getElementById("digital-clock").textContent = time;
+
+  setTimeout(RenderDigitalClock, 10);
 };
 
 const InitializeCalendar = function (selector) {

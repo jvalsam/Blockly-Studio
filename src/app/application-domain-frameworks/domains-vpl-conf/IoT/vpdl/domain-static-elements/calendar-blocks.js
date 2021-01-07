@@ -719,8 +719,8 @@ export const CalendarStaticBlocks = [
       //           }
       //         }
       //         arrayIntervals[index].realEndTime = timeDispatch[
-      //           JSON.parse(value_time).type
-      //         ](JSON.parse(value_time), block.getCommentText(), id);
+      //         JSON.parse(value_time).type
+      //        ](JSON.parse(value_time), block.getCommentText(), id);
       //       }
       //       arrayIntervals[index].func();
       //     }, 500);
@@ -785,14 +785,14 @@ export const CalendarStaticBlocks = [
       strBuilder += "} else if (e === 'continue') {";
       strBuilder += "}";
       strBuilder += "}";
-      strBuilder += "arrayIntervals[index].realEndTime = timeDispatch[";
-      strBuilder += "JSON.parse(" + value_time + ").type";
       strBuilder +=
-        "](JSON.parse(" +
+        "arrayIntervals[index].realEndTime = timeDispatch[JSON.parse(" +
         value_time +
-        "), " +
-        JSON.stringify(block.getCommentText()) +
-        ", id);";
+        ").type](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += "id";
+      strBuilder += ");";
       strBuilder += "}";
       strBuilder += "arrayIntervals[index].func();";
       strBuilder += "}, 500);";
@@ -1007,9 +1007,9 @@ export const CalendarStaticBlocks = [
       //           } else if (e === "continue") {
       //           }
       //         }
-      //         arrayIntervals[index].endTime = timeDispatch[
-      //           JSON.parse(value_time).type
-      //         ](JSON.parse(value_time), block.getCommentText(), id);
+      //         arrayIntervals[index].realEndTime = timeDispatch[
+      //         JSON.parse(value_time).type
+      //        ](JSON.parse(value_time), block.getCommentText(), id);
       //       }
       //       arrayIntervals[index].func();
       //     }, 500);
@@ -1025,6 +1025,7 @@ export const CalendarStaticBlocks = [
 
       let strBuilder = "";
       strBuilder += "(function () {";
+      strBuilder += "let id = ID();";
       strBuilder += "let index = arrayIntervals.length;";
       strBuilder += "arrayIntervals.push({";
       strBuilder += "type: 'calendar_every_top_bottom',";
@@ -1032,61 +1033,38 @@ export const CalendarStaticBlocks = [
         "realEndTime: timeDispatch[JSON.parse(" + value_time + ").type](";
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
-      strBuilder += JSON.stringify(id);
-      strBuilder += strBuilder += "),";
+      strBuilder += "id";
+      strBuilder += "),";
       strBuilder += "});";
       strBuilder += "let func = function () {";
       strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
       strBuilder +=
         "if (simulatedTime.diff(arrayIntervals[index].realEndTime) >= 0) {";
       strBuilder += "try {";
-      strBuilder +=
-        "activeDateOnCalendar[timeIdsToDate[" +
-        JSON.stringify(id) +
-        "].day].find(";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
       strBuilder += "(e) =>";
       strBuilder +=
-        "e.startTime === timeIdsToDate[" +
-        JSON.stringify(id) +
-        "].startTime && e.id ===" +
-        JSON.stringify(id);
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
       strBuilder += ").isFired = true;";
       strBuilder += statements_statement;
+      strBuilder += "let endTime =";
       strBuilder +=
-        "let endTime =" +
-        "(" +
-        JSON.stringify("0") +
-        " + simulatedTime.hour()).slice(-2) +" +
-        JSON.stringify(":") +
-        " +" +
-        "(" +
-        JSON.stringify("0") +
-        " + simulatedTime.minute()).slice(-2) +" +
-        JSON.stringify(":") +
-        " + (" +
-        JSON.stringify("0") +
-        " + simulatedTime.second()).slice(-2);";
+        "(" + JSON.stringify("0") + "+ simulatedTime.hour()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + "+";
       strBuilder +=
-        "activeDateOnCalendar[timeIdsToDate[" +
-        JSON.stringify(id) +
-        "].day].find(";
+        "(" + JSON.stringify("0") + "+ simulatedTime.minute()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + " +";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ simulatedTime.second()).slice(-2);";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
       strBuilder += "(e) =>";
       strBuilder +=
-        "e.startTime === timeIdsToDate[" +
-        JSON.stringify(id) +
-        "].startTime && e.id ===" +
-        JSON.stringify(id);
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
       strBuilder += ").endTime = endTime;";
-      strBuilder +=
-        "activeDateOnCalendar[timeIdsToDate[" +
-        JSON.stringify(id) +
-        "].day].find(";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
       strBuilder += "(e) =>";
       strBuilder +=
-        "e.startTime === timeIdsToDate[" +
-        JSON.stringify(id) +
-        "].startTime && e.id ===" +
-        JSON.stringify(id);
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
       strBuilder += ").isCompleted = true;";
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
@@ -1096,16 +1074,14 @@ export const CalendarStaticBlocks = [
       strBuilder += "} else if (e === 'continue') {";
       strBuilder += "}";
       strBuilder += "}";
-      strBuilder += "arrayIntervals[index].endTime = timeDispatch[";
-      strBuilder += "JSON.parse(" + value_time + ").type";
       strBuilder +=
-        "](JSON.parse(" +
+        "arrayIntervals[index].realEndTime = timeDispatch[JSON.parse(" +
         value_time +
-        "), " +
-        JSON.stringify(block.getCommentText()) +
-        "," +
-        JSON.stringify(id) +
-        ");";
+        ").type](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += "id";
+      strBuilder += ");";
       strBuilder += "}";
       strBuilder += "arrayIntervals[index].func();";
       strBuilder += "}, 500);";
