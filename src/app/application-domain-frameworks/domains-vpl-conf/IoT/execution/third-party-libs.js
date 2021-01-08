@@ -10,6 +10,7 @@ export function ThirdPartyLibsList() {
     tpl_path + "js/lodash.min.js",
     tpl_path + "js/calendarorganizer.min.js",
     tpl_path + "js/deepmerge.js",
+    tpl_path + "js/all.min.js",
     "./domains-libs/IoT/AutoIoTGen/iot-interfaces/dist/iot-ui.js",
   ];
 }
@@ -18,5 +19,6 @@ export function ThirdPartyStylesList() {
   return [
     tpl_path + "css/bootstrap.min.css",
     tpl_path + "css/calendarorganizer.min.css",
+    tpl_path + "css/all.min.css",
   ];
 }

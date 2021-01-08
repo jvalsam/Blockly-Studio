@@ -368,9 +368,11 @@ const UpdateUIForCompletedEventsInCalendar = function () {
 /* Start of functions for simulating time */
 const TIME_MODE = Object.freeze({ normal: "NORMAL", speed: "SPEED" });
 
+const timeSpeed = 100;
+
 let simulatedTime,
-  timeSpeed = 50,
-  timeMode = TIME_MODE.normal,
+  nowTimeSpeed = timeSpeed,
+  timeSpeedMultiplier = 1,
   timeFunc;
 
 const simulatedTimeTable = [];
@@ -381,24 +383,35 @@ const InitializeSimulatedTime = function () {
   // SpeedUpSimulatedTime();
 };
 
+const CalculateMillisecondsForNextTime = function (time) {
+  if (time.type === "everySecond") {
+    return time.second * 1000;
+  } else if (time.type === "everyMinute") {
+    return time.minute * 60000;
+  } else if (time.type === "everyHour") {
+    return time.hour * 3600000;
+  }
+  return -1;
+};
+
+const NextStartTime = function (time, millisecond) {
+  if (millisecond > 0) return dayjs(time).set("millisecond", millisecond);
+  return millisecond;
+};
+
 const NormalSimulatedTime = function () {
-  if (timeMode !== TIME_MODE.normal) timeMode = TIME_MODE.normal;
-  simulatedTime = dayjs(simulatedTime).set(
-    "millisecond",
-    simulatedTime.millisecond() + 10
-  );
-  // TODO: update calendar
-  timeFunc = setTimeout(NormalSimulatedTime, 10);
+  nowTimeSpeed = timeSpeed;
+  timeSpeedMultiplier = 1;
+  SpeedUpSimulatedTime();
 };
 
 const SpeedUpSimulatedTime = function () {
-  if (timeMode !== TIME_MODE.speed) timeMode = TIME_MODE.speed;
   simulatedTime = dayjs(simulatedTime).set(
     "millisecond",
     simulatedTime.millisecond() + 100
   );
   // TODO: update calendar
-  timeFunc = setTimeout(SpeedUpSimulatedTime, timeSpeed);
+  timeFunc = setTimeout(SpeedUpSimulatedTime, nowTimeSpeed);
 };
 
 const PauseSimulatedTime = function () {
@@ -444,15 +457,51 @@ const InitializeClocks = function (selector) {
   outterClockDiv.style.cssFloat = "right";
   selector.appendChild(outterClockDiv);
 
+  let digitalClock = document.createElement("div");
+  digitalClock.id = "digital-clock";
+  digitalClock.style.setProperty("margin-top", ".5rem");
+  outterClockDiv.appendChild(digitalClock);
+
   let fill = document.createElement("div");
   fill.classList.add("fill");
   fill.style.width = "130px";
   fill.style.height = "130px";
+  fill.style.setProperty("margin-left", "0.7rem");
   outterClockDiv.appendChild(fill);
 
-  let digitalClock = document.createElement("div");
-  digitalClock.id = "digital-clock";
-  outterClockDiv.appendChild(digitalClock);
+  InitializeSimulatorControls(
+    outterClockDiv,
+    () => {
+      PauseSimulatedTime();
+      NormalSimulatedTime();
+      document.getElementById("time-speed-info").innerHTML =
+        "x" + timeSpeedMultiplier;
+    },
+    () => {
+      PauseSimulatedTime();
+      document.getElementById("time-speed-info").innerHTML = "Pause";
+    },
+    () => {
+      if (timeSpeedMultiplier > 0.25) {
+        timeSpeedMultiplier = timeSpeedMultiplier - 0.25;
+        nowTimeSpeed = timeSpeed / timeSpeedMultiplier;
+      }
+      PauseSimulatedTime();
+      SpeedUpSimulatedTime();
+      document.getElementById("time-speed-info").innerHTML =
+        "x" + timeSpeedMultiplier;
+    },
+    () => {
+      if (timeSpeedMultiplier < 8) {
+        timeSpeedMultiplier = timeSpeedMultiplier + 0.25;
+        nowTimeSpeed = timeSpeed / timeSpeedMultiplier;
+      }
+      PauseSimulatedTime();
+      SpeedUpSimulatedTime();
+      document.getElementById("time-speed-info").innerHTML =
+        "x" + timeSpeedMultiplier;
+    }
+  );
 
   let utility_clock = document.createElement("div");
   utility_clock.id = "utility-clock";
@@ -534,6 +583,76 @@ const InitializeClocks = function (selector) {
   circle_2.classList.add("round");
   circle_2.classList.add("circle-2");
   centre.appendChild(circle_2);
+};
+
+const InitializeSimulatorControls = function (
+  dom,
+  onNormalSpeed,
+  onPauseTime,
+  onBackward,
+  onSpeedUpTime
+) {
+  let timeSpeedOuter = document.createElement("div");
+  timeSpeedOuter.id = "time-speed-outer";
+  timeSpeedOuter.style.setProperty("text-align", "center");
+  timeSpeedOuter.style.setProperty("font-size", "large");
+  dom.appendChild(timeSpeedOuter);
+
+  let timeSpeedTitle = document.createElement("span");
+  timeSpeedTitle.innerHTML = "Speed: ";
+  timeSpeedTitle.style.setProperty("font-style", "italic");
+  timeSpeedOuter.appendChild(timeSpeedTitle);
+
+  let timeSpeedInfo = document.createElement("span");
+  timeSpeedInfo.id = "time-speed-info";
+  timeSpeedInfo.innerHTML = "x" + timeSpeedMultiplier;
+  timeSpeedInfo.style.setProperty("font-weight", "700");
+  timeSpeedOuter.appendChild(timeSpeedInfo);
+
+  let controlsOuter = document.createElement("div");
+  controlsOuter.id = "simulator-controls";
+  controlsOuter.style.setProperty("text-align", "center");
+  controlsOuter.style.setProperty("margin-top", ".5rem");
+  dom.appendChild(controlsOuter);
+
+  let playButtonSpan = document.createElement("span");
+  controlsOuter.appendChild(playButtonSpan);
+
+  let pauseButtonSpan = document.createElement("span");
+  pauseButtonSpan.style.setProperty("margin-left", ".5rem");
+  controlsOuter.appendChild(pauseButtonSpan);
+
+  let backwardButtonSpan = document.createElement("span");
+  backwardButtonSpan.style.setProperty("margin-left", ".5rem");
+  controlsOuter.appendChild(backwardButtonSpan);
+
+  let forwardButtonSpan = document.createElement("span");
+  forwardButtonSpan.style.setProperty("margin-left", ".5rem");
+  controlsOuter.appendChild(forwardButtonSpan);
+
+  let playButton = document.createElement("button");
+  playButton.classList.add("btn", "btn-sm", "btn-primary");
+  playButton.innerHTML = "<i class='fas fa-play'></i>";
+  playButton.onclick = onNormalSpeed;
+  playButtonSpan.appendChild(playButton);
+
+  let pauseButton = document.createElement("button");
+  pauseButton.classList.add("btn", "btn-sm", "btn-secondary");
+  pauseButton.innerHTML = "<i class='fas fa-pause'></i>";
+  pauseButton.onclick = onPauseTime;
+  pauseButtonSpan.appendChild(pauseButton);
+
+  let backwardButton = document.createElement("button");
+  backwardButton.classList.add("btn", "btn-sm", "btn-secondary");
+  backwardButton.innerHTML = "<i class='fas fa-backward'></i>";
+  backwardButton.onclick = onBackward;
+  backwardButtonSpan.appendChild(backwardButton);
+
+  let forwardButton = document.createElement("button");
+  forwardButton.classList.add("btn", "btn-sm", "btn-secondary");
+  forwardButton.innerHTML = "<i class='fas fa-forward'></i>";
+  forwardButton.onclick = onSpeedUpTime;
+  forwardButtonSpan.appendChild(forwardButton);
 };
 
 const UtilityClock = function (container) {
