@@ -102,7 +102,8 @@ const months = [
 const TakeDifferenceFromSpecificTime = function (
   time,
   calendarInfo,
-  calendarBlockId
+  calendarBlockId,
+  startTime
 ) {
   let futureTime = dayjs(simulatedTime)
     .set("second", time.second)
@@ -130,7 +131,8 @@ const TakeDifferenceFromSpecificTime = function (
 const TakeDifferenceFromSpecificDay = function (
   time,
   calendarInfo,
-  calendarBlockId
+  calendarBlockId,
+  startTime
 ) {
   let intDay = weekDays.indexOf(time.day);
 
@@ -153,7 +155,8 @@ const TakeDifferenceFromSpecificDay = function (
 const TakeDifferenceFromSpecificMonth = function (
   time,
   calendarInfo,
-  calendarBlockId
+  calendarBlockId,
+  startTime
 ) {
   let intMonth = months.indexOf(time.month);
 
@@ -172,10 +175,13 @@ const TakeDifferenceFromSpecificMonth = function (
   return futureDate;
 };
 
-const EverySecond = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = dayjs(simulatedTime).second(
-    simulatedTime.second() + time.second
-  );
+const EverySecond = function (time, calendarInfo, calendarBlockId, startTime) {
+  let futureDate;
+  if (startTime) futureDate = startTime;
+  else
+    futureDate = dayjs(simulatedTime).second(
+      simulatedTime.second() + time.second
+    );
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
@@ -185,10 +191,13 @@ const EverySecond = function (time, calendarInfo, calendarBlockId) {
   return futureDate;
 };
 
-const EveryMinute = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = dayjs(simulatedTime).minute(
-    simulatedTime.minute() + time.minute
-  );
+const EveryMinute = function (time, calendarInfo, calendarBlockId, startTime) {
+  let futureDate;
+  if (startTime) futureDate = startTime;
+  else
+    futureDate = dayjs(simulatedTime).minute(
+      simulatedTime.minute() + time.minute
+    );
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
@@ -198,8 +207,10 @@ const EveryMinute = function (time, calendarInfo, calendarBlockId) {
   return futureDate;
 };
 
-const EveryHour = function (time, calendarInfo, calendarBlockId) {
-  let futureDate = dayjs(simulatedTime).hour(simulatedTime.hour() + time.hour);
+const EveryHour = function (time, calendarInfo, calendarBlockId, startTime) {
+  let futureDate;
+  if (startTime) futureDate = startTime;
+  else futureDate = dayjs(simulatedTime).hour(simulatedTime.hour() + time.hour);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
@@ -209,7 +220,7 @@ const EveryHour = function (time, calendarInfo, calendarBlockId) {
   return futureDate;
 };
 
-const EveryDay = function (time, calendarInfo, calendarBlockId) {
+const EveryDay = function (time, calendarInfo, calendarBlockId, startTime) {
   let futureDate = dayjs(simulatedTime).day(simulatedTime.day() + time.day);
 
   // Pin in calendar
@@ -220,7 +231,7 @@ const EveryDay = function (time, calendarInfo, calendarBlockId) {
   return futureDate;
 };
 
-const EveryMonth = function (time, calendarInfo, calendarBlockId) {
+const EveryMonth = function (time, calendarInfo, calendarBlockId, startTime) {
   let futureDate = dayjs(simulatedTime).month(
     simulatedTime.month() + time.month
   );
@@ -369,6 +380,7 @@ const UpdateUIForCompletedEventsInCalendar = function () {
 const TIME_MODE = Object.freeze({ normal: "NORMAL", speed: "SPEED" });
 
 const timeSpeed = 100;
+const timeSpeedInSpeedUp = 300;
 
 let simulatedTime,
   nowTimeSpeed = timeSpeed,
@@ -402,13 +414,19 @@ const NextStartTime = function (time, millisecond) {
 const NormalSimulatedTime = function () {
   nowTimeSpeed = timeSpeed;
   timeSpeedMultiplier = 1;
-  SpeedUpSimulatedTime();
+
+  simulatedTime = dayjs(simulatedTime).set(
+    "millisecond",
+    simulatedTime.millisecond() + nowTimeSpeed
+  );
+  // TODO: update calendar
+  timeFunc = setTimeout(NormalSimulatedTime, nowTimeSpeed);
 };
 
 const SpeedUpSimulatedTime = function () {
   simulatedTime = dayjs(simulatedTime).set(
     "millisecond",
-    simulatedTime.millisecond() + 100
+    simulatedTime.millisecond() + timeSpeedInSpeedUp
   );
   // TODO: update calendar
   timeFunc = setTimeout(SpeedUpSimulatedTime, nowTimeSpeed);
@@ -484,20 +502,22 @@ const InitializeClocks = function (selector) {
     () => {
       if (timeSpeedMultiplier > 0.25) {
         timeSpeedMultiplier = timeSpeedMultiplier - 0.25;
-        nowTimeSpeed = timeSpeed / timeSpeedMultiplier;
+        nowTimeSpeed = timeSpeedInSpeedUp / timeSpeedMultiplier;
       }
       PauseSimulatedTime();
-      SpeedUpSimulatedTime();
+      if (timeSpeedMultiplier === 1) NormalSimulatedTime();
+      else SpeedUpSimulatedTime();
       document.getElementById("time-speed-info").innerHTML =
         "x" + timeSpeedMultiplier;
     },
     () => {
       if (timeSpeedMultiplier < 8) {
         timeSpeedMultiplier = timeSpeedMultiplier + 0.25;
-        nowTimeSpeed = timeSpeed / timeSpeedMultiplier;
+        nowTimeSpeed = timeSpeedInSpeedUp / timeSpeedMultiplier;
       }
       PauseSimulatedTime();
-      SpeedUpSimulatedTime();
+      if (timeSpeedMultiplier === 1) NormalSimulatedTime();
+      else SpeedUpSimulatedTime();
       document.getElementById("time-speed-info").innerHTML =
         "x" + timeSpeedMultiplier;
     }
