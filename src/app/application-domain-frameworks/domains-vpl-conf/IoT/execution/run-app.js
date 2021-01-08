@@ -310,7 +310,58 @@ const PinEventInCalendar = function (
   calendarData[year][month][date].sort(compareStartingDate);
 
   organizer.updateData(calendarData);
+
+  UpdateUIForCompletedEventsInCalendar();
+
   UpdateScroll("organizer-container-list-container");
+};
+
+const UpdateUIForCompletedEventsInCalendar = function () {
+  let day = document.getElementById("organizer-container-date").innerHTML;
+
+  // parse the date and take which event is marked as fired
+  if (activeDateOnCalendar[day]) {
+    for (let i = 0; i < activeDateOnCalendar[day].length; ++i) {
+      if (document.getElementById("organizer-container-list-item-" + i)) {
+        if (activeDateOnCalendar[day][i].isFired) {
+          // add green border to show that the event is fired
+          if (
+            !document
+              .getElementById("organizer-container-list-item-" + i)
+              .classList.contains("calendar-event-finished")
+          )
+            document
+              .getElementById("organizer-container-list-item-" + i)
+              .classList.add("calendar-event-finished");
+        }
+        if (activeDateOnCalendar[day][i].isCompleted) {
+          let text = document.getElementById(
+            "organizer-container-list-item-" + i + "-time"
+          ).innerHTML;
+          text = text.replace("end", activeDateOnCalendar[day][i].endTime);
+          document.getElementById(
+            "organizer-container-list-item-" + i + "-time"
+          ).innerHTML = text;
+          if (
+            $("#organizer-container-list-item-" + i + "-text").children()
+              .length === 0
+          ) {
+            document.getElementById(
+              "organizer-container-list-item-" + i + "-text"
+            ).style.display = "block";
+            let icon = document.createElement("img");
+            icon.width = 20;
+            icon.height = 20;
+            icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+            icon.style.cssFloat = "right";
+            document
+              .getElementById("organizer-container-list-item-" + i + "-text")
+              .appendChild(icon);
+          }
+        }
+      }
+    }
+  }
 };
 /* End data and functions for calendar - conditional blocks */
 
@@ -670,53 +721,7 @@ const InitializeOrganizerForCalendar = function () {
     mutations
   ) {
     mutations.forEach(function (mutationRecord) {
-      let day = document.getElementById("organizer-container-date").innerHTML;
-
-      // parse the date and take which event is marked as fired
-      if (activeDateOnCalendar[day]) {
-        for (let i = 0; i < activeDateOnCalendar[day].length; ++i) {
-          if (document.getElementById("organizer-container-list-item-" + i)) {
-            if (activeDateOnCalendar[day][i].isFired) {
-              // add green border to show that the event is fired
-              if (
-                !document
-                  .getElementById("organizer-container-list-item-" + i)
-                  .classList.contains("calendar-event-finished")
-              )
-                document
-                  .getElementById("organizer-container-list-item-" + i)
-                  .classList.add("calendar-event-finished");
-            }
-            if (activeDateOnCalendar[day][i].isCompleted) {
-              let text = document.getElementById(
-                "organizer-container-list-item-" + i + "-time"
-              ).innerHTML;
-              text = text.replace("end", activeDateOnCalendar[day][i].endTime);
-              document.getElementById(
-                "organizer-container-list-item-" + i + "-time"
-              ).innerHTML = text;
-              if (
-                $("#organizer-container-list-item-" + i + "-text").children()
-                  .length === 0
-              ) {
-                document.getElementById(
-                  "organizer-container-list-item-" + i + "-text"
-                ).style.display = "block";
-                let icon = document.createElement("img");
-                icon.width = 20;
-                icon.height = 20;
-                icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
-                icon.style.cssFloat = "right";
-                document
-                  .getElementById(
-                    "organizer-container-list-item-" + i + "-text"
-                  )
-                  .appendChild(icon);
-              }
-            }
-          }
-        }
-      }
+      UpdateUIForCompletedEventsInCalendar();
     });
   });
 
