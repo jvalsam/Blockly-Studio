@@ -7,6 +7,7 @@ export function ThirdPartyLibsList() {
     tpl_path + "js/popper.min.js",
     tpl_path + "js/bootstrap.min.js",
     tpl_path + "js/dayjs.min.js",
+    tpl_path + "js/utc.js",
     tpl_path + "js/lodash.min.js",
     tpl_path + "js/calendarorganizer.min.js",
     tpl_path + "js/deepmerge.js",

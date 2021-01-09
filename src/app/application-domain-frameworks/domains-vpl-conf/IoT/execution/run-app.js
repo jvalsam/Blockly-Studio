@@ -35,12 +35,26 @@ const CollectRegisteredDevices = function (smartDevices) {
 };
 
 const Initialize = function (selector) {
+  // install utc plugin for dayjs
+  dayjs.extend(window.dayjs_plugin_utc);
   InitializeSimulatedTime();
-  InitializeClocks(selector);
 
   InitializeCalendar(selector);
   InitializeOrganizerForCalendar();
   InitializeActionsLog();
+  InitializeClocks(document.getElementById("calendar-outter"), () => {
+    // hack to live update the completed events:
+    // bind an observer to seconds of utility clock
+    const observeChangesOfUtilityClockCSS = new MutationObserver(function () {
+      UpdateUIForCompletedEventsInCalendar();
+    });
+
+    let target = document.getElementById("anchor-second");
+    observeChangesOfUtilityClockCSS.observe(target, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+  });
   InitializeSmartDevicesContainer(selector);
 };
 
@@ -414,26 +428,27 @@ const NextStartTime = function (time, millisecond) {
 const NormalSimulatedTime = function () {
   nowTimeSpeed = timeSpeed;
   timeSpeedMultiplier = 1;
-
-  simulatedTime = dayjs(simulatedTime).set(
-    "millisecond",
-    simulatedTime.millisecond() + nowTimeSpeed
-  );
-  // TODO: update calendar
-  timeFunc = setTimeout(NormalSimulatedTime, nowTimeSpeed);
+  timeFunc = setInterval(() => {
+    simulatedTime = dayjs(simulatedTime).set(
+      "millisecond",
+      simulatedTime.millisecond() + nowTimeSpeed
+    );
+    // TODO: update calendar
+  }, nowTimeSpeed);
 };
 
 const SpeedUpSimulatedTime = function () {
-  simulatedTime = dayjs(simulatedTime).set(
-    "millisecond",
-    simulatedTime.millisecond() + timeSpeedInSpeedUp
-  );
-  // TODO: update calendar
-  timeFunc = setTimeout(SpeedUpSimulatedTime, nowTimeSpeed);
+  timeFunc = setInterval(() => {
+    simulatedTime = dayjs(simulatedTime).set(
+      "millisecond",
+      simulatedTime.millisecond() + timeSpeedInSpeedUp
+    );
+    // TODO: update calendar
+  }, nowTimeSpeed);
 };
 
 const PauseSimulatedTime = function () {
-  clearTimeout(timeFunc);
+  clearInterval(timeFunc);
 };
 
 const ResetSimulatedTime = function () {
@@ -470,36 +485,44 @@ const compareTimes = function (a, b) {
 /* End of functions for simulating time */
 
 /* Start UI for runtime environment */
-const InitializeClocks = function (selector) {
-  let outterClockDiv = document.createElement("div");
-  outterClockDiv.style.cssFloat = "right";
-  selector.appendChild(outterClockDiv);
+const InitializeClocks = function (selector, onComplete) {
+  let outerClockDiv = document.createElement("div");
+  // outerClockDiv.style.setProperty("float", "right");
+  // outerClockDiv.style.setProperty("max-width", "10rem");
+  selector.appendChild(outerClockDiv);
 
   let digitalClock = document.createElement("div");
   digitalClock.id = "digital-clock";
   digitalClock.style.setProperty("margin-top", ".5rem");
-  outterClockDiv.appendChild(digitalClock);
+  outerClockDiv.appendChild(digitalClock);
 
   let fill = document.createElement("div");
   fill.classList.add("fill");
-  fill.style.width = "130px";
-  fill.style.height = "130px";
-  fill.style.setProperty("margin-left", "0.7rem");
-  outterClockDiv.appendChild(fill);
+  fill.style.setProperty("width", "130px");
+  fill.style.setProperty("height", "130px");
+  fill.style.setProperty("margin-left", "3.3rem");
+  outerClockDiv.appendChild(fill);
 
-  InitializeSimulatorControls(
-    outterClockDiv,
-    () => {
+  InitializeSimulatorControls({
+    dom: outerClockDiv,
+    onNormalSpeed: () => {
       PauseSimulatedTime();
       NormalSimulatedTime();
+      RefreshUiOnContinueTime();
       document.getElementById("time-speed-info").innerHTML =
         "x" + timeSpeedMultiplier;
     },
-    () => {
+    onPauseTime: () => {
       PauseSimulatedTime();
-      document.getElementById("time-speed-info").innerHTML = "Pause";
+      document
+        .getElementById("time-speed-title")
+        .style.setProperty("display", "none");
+      document.getElementById("time-speed-info").innerHTML = "Paused";
+      document
+        .getElementById("time-speed-info")
+        .style.setProperty("color", "#ff9966");
     },
-    () => {
+    onBackward: () => {
       if (timeSpeedMultiplier > 0.25) {
         timeSpeedMultiplier = timeSpeedMultiplier - 0.25;
         nowTimeSpeed = timeSpeedInSpeedUp / timeSpeedMultiplier;
@@ -509,8 +532,9 @@ const InitializeClocks = function (selector) {
       else SpeedUpSimulatedTime();
       document.getElementById("time-speed-info").innerHTML =
         "x" + timeSpeedMultiplier;
+      RefreshUiOnContinueTime();
     },
-    () => {
+    onSpeedUpTime: () => {
       if (timeSpeedMultiplier < 8) {
         timeSpeedMultiplier = timeSpeedMultiplier + 0.25;
         nowTimeSpeed = timeSpeedInSpeedUp / timeSpeedMultiplier;
@@ -520,8 +544,10 @@ const InitializeClocks = function (selector) {
       else SpeedUpSimulatedTime();
       document.getElementById("time-speed-info").innerHTML =
         "x" + timeSpeedMultiplier;
-    }
-  );
+      RefreshUiOnContinueTime();
+    },
+    onGoToSpecificTime: () => {},
+  });
 
   let utility_clock = document.createElement("div");
   utility_clock.id = "utility-clock";
@@ -603,15 +629,18 @@ const InitializeClocks = function (selector) {
   circle_2.classList.add("round");
   circle_2.classList.add("circle-2");
   centre.appendChild(circle_2);
+
+  onComplete();
 };
 
-const InitializeSimulatorControls = function (
+const InitializeSimulatorControls = function ({
   dom,
   onNormalSpeed,
   onPauseTime,
   onBackward,
-  onSpeedUpTime
-) {
+  onSpeedUpTime,
+  onGoToSpecificTime,
+}) {
   let timeSpeedOuter = document.createElement("div");
   timeSpeedOuter.id = "time-speed-outer";
   timeSpeedOuter.style.setProperty("text-align", "center");
@@ -619,6 +648,7 @@ const InitializeSimulatorControls = function (
   dom.appendChild(timeSpeedOuter);
 
   let timeSpeedTitle = document.createElement("span");
+  timeSpeedTitle.id = "time-speed-title";
   timeSpeedTitle.innerHTML = "Speed: ";
   timeSpeedTitle.style.setProperty("font-style", "italic");
   timeSpeedOuter.appendChild(timeSpeedTitle);
@@ -633,46 +663,142 @@ const InitializeSimulatorControls = function (
   controlsOuter.id = "simulator-controls";
   controlsOuter.style.setProperty("text-align", "center");
   controlsOuter.style.setProperty("margin-top", ".5rem");
+  controlsOuter.style.setProperty("display", "flex");
+  controlsOuter.style.setProperty("align-items", "flex-end");
   dom.appendChild(controlsOuter);
 
   let playButtonSpan = document.createElement("span");
   controlsOuter.appendChild(playButtonSpan);
 
   let pauseButtonSpan = document.createElement("span");
-  pauseButtonSpan.style.setProperty("margin-left", ".5rem");
+  pauseButtonSpan.style.setProperty("margin-left", ".6rem");
   controlsOuter.appendChild(pauseButtonSpan);
 
-  let backwardButtonSpan = document.createElement("span");
-  backwardButtonSpan.style.setProperty("margin-left", ".5rem");
-  controlsOuter.appendChild(backwardButtonSpan);
+  let slowerButtonSpan = document.createElement("span");
+  slowerButtonSpan.style.setProperty("margin-left", ".6rem");
+  controlsOuter.appendChild(slowerButtonSpan);
 
-  let forwardButtonSpan = document.createElement("span");
-  forwardButtonSpan.style.setProperty("margin-left", ".5rem");
-  controlsOuter.appendChild(forwardButtonSpan);
+  let fasterButtonSpan = document.createElement("span");
+  fasterButtonSpan.style.setProperty("margin-left", ".6rem");
+  controlsOuter.appendChild(fasterButtonSpan);
+
+  let goToButtonSpan = document.createElement("span");
+  goToButtonSpan.style.setProperty("margin-left", ".6rem");
+  controlsOuter.appendChild(goToButtonSpan);
+
+  // let goToOuter = document.createElement("div");
+  // goToOuter.style.setProperty("padding-top", ".3rem");
+  // goToOuter.style.setProperty("margin-top", ".7rem");
+  // // goToOuter.style.setProperty("text-align", "left");
+  // goToOuter.style.setProperty("border-top", "solid 1px #0000004a");
+  // controlsOuter.appendChild(goToOuter);
 
   let playButton = document.createElement("button");
-  playButton.classList.add("btn", "btn-sm", "btn-primary");
+  playButton.classList.add("btn", "btn", "btn-info");
   playButton.innerHTML = "<i class='fas fa-play'></i>";
   playButton.onclick = onNormalSpeed;
+  playButton.setAttribute("data-toggle", "tooltip");
+  playButton.setAttribute("data-placement", "top");
+  playButton.setAttribute("title", "Continue time at normal speed");
   playButtonSpan.appendChild(playButton);
 
+  let slowerButton = document.createElement("button");
+  slowerButton.classList.add("btn", "btn-sm", "btn-info");
+  slowerButton.innerHTML =
+    "<img src='./images/turtle.png' width='20' height='20'></img>";
+  slowerButton.onclick = onBackward;
+  slowerButton.setAttribute("data-toggle", "tooltip");
+  slowerButton.setAttribute("data-placement", "top");
+  slowerButton.setAttribute("title", "Slower by 0.25");
+  slowerButtonSpan.appendChild(slowerButton);
+
   let pauseButton = document.createElement("button");
-  pauseButton.classList.add("btn", "btn-sm", "btn-secondary");
-  pauseButton.innerHTML = "<i class='fas fa-pause'></i>";
+  pauseButton.classList.add("btn", "btn-sm", "btn-info");
+  pauseButton.innerHTML =
+    "<img src='./images/pause-time.png' width='20' height='20'></img>";
   pauseButton.onclick = onPauseTime;
+  pauseButton.setAttribute("data-toggle", "tooltip");
+  pauseButton.setAttribute("data-placement", "top");
+  pauseButton.setAttribute("title", "Pause time");
   pauseButtonSpan.appendChild(pauseButton);
 
-  let backwardButton = document.createElement("button");
-  backwardButton.classList.add("btn", "btn-sm", "btn-secondary");
-  backwardButton.innerHTML = "<i class='fas fa-backward'></i>";
-  backwardButton.onclick = onBackward;
-  backwardButtonSpan.appendChild(backwardButton);
+  let fasterButton = document.createElement("button");
+  fasterButton.classList.add("btn", "btn-sm", "btn-info");
+  fasterButton.innerHTML =
+    "<img src='./images/rabbit.png' width='20' height='20'></img>";
+  fasterButton.onclick = onSpeedUpTime;
+  fasterButton.setAttribute("data-toggle", "tooltip");
+  fasterButton.setAttribute("data-placement", "top");
+  fasterButton.setAttribute("title", "Faster by 0.25");
+  fasterButtonSpan.appendChild(fasterButton);
 
-  let forwardButton = document.createElement("button");
-  forwardButton.classList.add("btn", "btn-sm", "btn-secondary");
-  forwardButton.innerHTML = "<i class='fas fa-forward'></i>";
-  forwardButton.onclick = onSpeedUpTime;
-  forwardButtonSpan.appendChild(forwardButton);
+  let goToButton = document.createElement("button");
+  goToButton.classList.add("btn", "btn-sm", "btn-info");
+  goToButton.innerHTML =
+    "<img src='./images/skip-time.png' width='20' height='20'></img>";
+  goToButton.onclick = onSpeedUpTime;
+  goToButton.setAttribute("data-toggle", "tooltip");
+  goToButton.setAttribute("data-placement", "top");
+  goToButton.setAttribute("title", "Go to specific time");
+  goToButtonSpan.appendChild(goToButton);
+
+  // let dateLabel = document.createElement("label");
+  // dateLabel.setAttribute("for", "specific-date-input");
+  // dateLabel.innerHTML = "Day: ";
+  // dateLabel.style.setProperty("display", "none");
+  // goToOuter.appendChild(dateLabel);
+
+  // let dateInput = document.createElement("input");
+  // dateInput.type = "date";
+  // dateInput.id = "specific-date-input";
+  // dateInput.name = "specific-date-input";
+  // dateInput.classList.add("form-control");
+  // dateInput.value = simulatedTime.format("YYYY-MM-DD");
+  // dateInput.style.setProperty("display", "none");
+  // goToOuter.appendChild(dateInput);
+
+  // let timeLabel = document.createElement("label");
+  // timeLabel.setAttribute("for", "specific-time-input");
+  // timeLabel.innerHTML = "Time: ";
+  // timeLabel.style.setProperty("margin-top", ".5rem");
+  // timeLabel.style.setProperty("display", "none");
+  // goToOuter.appendChild(timeLabel);
+
+  // let timeInput = document.createElement("input");
+  // timeInput.type = "time";
+  // timeInput.id = "specific-time-input";
+  // timeInput.name = "specific-time-input";
+  // timeInput.classList.add("form-control");
+  // timeInput.value = simulatedTime.format("HH:mm:ss");
+  // timeInput.step = "1";
+  // timeInput.style.setProperty("display", "none");
+  // goToOuter.appendChild(timeInput);
+
+  // let goToButtonOuter = document.createElement("div");
+  // // goToButtonOuter.style.setProperty("text-align", "right");
+  // goToOuter.appendChild(goToButtonOuter);
+
+  // let goToSpecificDateButton = document.createElement("button");
+  // goToSpecificDateButton.classList.add("btn", "btn-info");
+  // goToSpecificDateButton.innerHTML = "Set simulated time";
+  // goToSpecificDateButton.style.setProperty("margin-top", ".5rem");
+  // goToButtonOuter.appendChild(goToSpecificDateButton);
+
+  // let goButton = document.createElement("button");
+  // goButton.classList.add("btn", "btn-info");
+  // goButton.innerHTML = "Go";
+  // goButton.style.setProperty("margin-top", ".5rem");
+  // goButton.style.setProperty("display", "none");
+  // goToButtonOuter.appendChild(goButton);
+};
+
+const RefreshUiOnContinueTime = function () {
+  document
+    .getElementById("time-speed-title")
+    .style.setProperty("display", "initial");
+  document
+    .getElementById("time-speed-info")
+    .style.setProperty("color", "initial");
 };
 
 const UtilityClock = function (container) {
@@ -792,7 +918,7 @@ const RenderDigitalClock = function () {
   document.getElementById("digital-clock").innerText = time;
   document.getElementById("digital-clock").textContent = time;
 
-  setTimeout(RenderDigitalClock, 10);
+  requestAnimationFrame(RenderDigitalClock);
 };
 
 const InitializeCalendar = function (selector) {
@@ -806,6 +932,7 @@ const InitializeCalendar = function (selector) {
   let calendarDiv = document.createElement("span");
   calendarDiv.classList.add("col-3");
   calendarDiv.id = "calendar-container";
+  calendarDiv.style.setProperty("max-height", "22rem");
   calendarRow.appendChild(calendarDiv);
 
   calendar = new Calendar(
@@ -850,31 +977,17 @@ const InitializeOrganizerForCalendar = function () {
   let organizerDiv = document.createElement("span");
   organizerDiv.classList.add("col-4");
   organizerDiv.id = "organizer-container";
+  organizerDiv.style.setProperty("max-height", "22rem");
   document.getElementById("calendar-outter").appendChild(organizerDiv);
 
   organizer = new Organizer("organizer-container", calendar, {});
-
-  // hack to live update the completed events:
-  // bind an observer to seconds of utility clock
-  const observeChangesOfUtilityClockCSS = new MutationObserver(function (
-    mutations
-  ) {
-    mutations.forEach(function (mutationRecord) {
-      UpdateUIForCompletedEventsInCalendar();
-    });
-  });
-
-  let target = document.getElementById("anchor-second");
-  observeChangesOfUtilityClockCSS.observe(target, {
-    attributes: true,
-    attributeFilter: ["style"],
-  });
 };
 
 const InitializeActionsLog = function () {
   let loggerOutterDiv = document.createElement("span");
   loggerOutterDiv.classList.add("col");
   loggerOutterDiv.id = "logger-outter";
+  loggerOutterDiv.style.setProperty("max-height", "22rem");
   document.getElementById("calendar-outter").appendChild(loggerOutterDiv);
 
   let loggerContainer = document.createElement("div");
