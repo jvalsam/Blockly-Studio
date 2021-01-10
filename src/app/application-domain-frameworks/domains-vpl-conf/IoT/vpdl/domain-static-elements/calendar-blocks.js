@@ -178,6 +178,10 @@ export const CalendarStaticBlocks = [
 
       //         clearTimeout(arrayIntervals[index].time);
       //         arrayIntervals.slice(index, 1);
+      //         simulatedTimeTable.find(
+      //           (x) =>
+      //             x.time === arrayIntervals[index].realEndTime && x.id === id
+      //         ).finished = true;
       //         return;
       //       }
       //       arrayIntervals[index].func();
@@ -257,6 +261,11 @@ export const CalendarStaticBlocks = [
       strBuilder += ").isCompleted = true;";
       strBuilder += "clearTimeout(arrayIntervals[index].time);";
       strBuilder += "arrayIntervals.slice(index, 1);";
+      strBuilder += "simulatedTimeTable.find(";
+      strBuilder +=
+        "(x) => x.time === arrayIntervals[index].realEndTime && x.id === " +
+        JSON.stringify(id);
+      strBuilder += ").finished = true;";
       strBuilder += "return;";
       strBuilder += "}";
       strBuilder += "arrayIntervals[index].func();";
@@ -442,6 +451,10 @@ export const CalendarStaticBlocks = [
 
       //         clearTimeout(arrayIntervals[index].time);
       //         arrayIntervals.slice(index, 1);
+      //         simulatedTimeTable.find(
+      //           (x) =>
+      //             x.time === arrayIntervals[index].realEndTime && x.id === id
+      //         ).finished = true;
       //         return;
       //       }
       //       arrayIntervals[index].func();
@@ -521,6 +534,11 @@ export const CalendarStaticBlocks = [
       strBuilder += ").isCompleted = true;";
       strBuilder += "clearTimeout(arrayIntervals[index].time);";
       strBuilder += "arrayIntervals.slice(index, 1);";
+      strBuilder += "simulatedTimeTable.find(";
+      strBuilder +=
+        "(x) => x.time === arrayIntervals[index].realEndTime && x.id === " +
+        JSON.stringify(id);
+      strBuilder += ").finished = true;";
       strBuilder += "return;";
       strBuilder += "}";
       strBuilder += "arrayIntervals[index].func();";
@@ -709,7 +727,7 @@ export const CalendarStaticBlocks = [
       //     arrayIntervals[index].time = setTimeout(async () => {
       //       // if simulated time >= value_time
       //       if (simulatedTime.diff(arrayIntervals[index].realEndTime) >= 0) {
-      //         let calculatedEndTime;
+      //         let calculatedEndTime, keepRealTime;
       //         try {
       //           activeDateOnCalendar[timeIdsToDate[id].day].find(
       //             (e) =>
@@ -717,6 +735,7 @@ export const CalendarStaticBlocks = [
       //           ).isFired = true;
 
       //           let calculateTime = dayjs();
+      //           keepRealTime = arrayIntervals[index].realEndTime;
 
       //           statements_statement;
 
@@ -749,6 +768,10 @@ export const CalendarStaticBlocks = [
       //           if (e === "break") {
       //             clearTimeout(arrayIntervals[index].time);
       //             arrayIntervals.slice(index, 1);
+      //         simulatedTimeTable.find(
+      //           (x) =>
+      //             x.time === keepRealTime && x.id === id
+      //         ).finished = true;
       //             return;
       //           } else if (e === "continue") {
       //           }
@@ -770,6 +793,10 @@ export const CalendarStaticBlocks = [
       //             id,
       //             nextStartTime
       //           );
+      //         simulatedTimeTable.find(
+      //           (x) =>
+      //             x.time === keepRealTime && x.id === id
+      //         ).finished = true;
       //       }
       //       arrayIntervals[index].func();
       //     }, 500);
@@ -804,7 +831,7 @@ export const CalendarStaticBlocks = [
       strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
       strBuilder +=
         "if (simulatedTime.diff(arrayIntervals[index].realEndTime) >= 0) {";
-      strBuilder += "let calculatedEndTime;";
+      strBuilder += "let calculatedEndTime, keepRealTime;";
       strBuilder += "try {";
       strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
       strBuilder += "(e) =>";
@@ -812,6 +839,7 @@ export const CalendarStaticBlocks = [
         "e.startTime === timeIdsToDate[id].startTime && e.id === id";
       strBuilder += ").isFired = true;";
       strBuilder += "let calculateTime = dayjs();";
+      strBuilder += "keepRealTime = arrayIntervals[index].realEndTime;";
       strBuilder += statements_statement;
       strBuilder += "let diffTime = dayjs().diff(calculateTime);";
       strBuilder +=
@@ -843,6 +871,10 @@ export const CalendarStaticBlocks = [
       strBuilder += "if (e === 'break') {";
       strBuilder += "clearTimeout(arrayIntervals[index].time);";
       strBuilder += "arrayIntervals.slice(index, 1);";
+      strBuilder += "simulatedTimeTable.find(";
+      strBuilder += "(x) =>";
+      strBuilder += "x.time === keepRealTime && x.id === id";
+      strBuilder += ").finished = true;";
       strBuilder += "return;";
       strBuilder += "} else if (e === 'continue') {";
       strBuilder += "}";
@@ -869,6 +901,10 @@ export const CalendarStaticBlocks = [
       strBuilder += "id,";
       strBuilder += "nextStartTime";
       strBuilder += ");";
+      strBuilder += "simulatedTimeTable.find(";
+      strBuilder += "(x) =>";
+      strBuilder += "x.time === keepRealTime && x.id === id";
+      strBuilder += ").finished = true;";
       strBuilder += "}";
       strBuilder += "arrayIntervals[index].func();";
       strBuilder += "}, 500);";
@@ -1034,8 +1070,6 @@ export const CalendarStaticBlocks = [
         "STATEMENT"
       );
 
-      const id = ID();
-
       // (function () {
       //   let index = arrayIntervals.length;
       //   arrayIntervals.push({
@@ -1052,7 +1086,7 @@ export const CalendarStaticBlocks = [
       //     arrayIntervals[index].time = setTimeout(async () => {
       //       // if simulated time >= value_time
       //       if (simulatedTime.diff(arrayIntervals[index].realEndTime) >= 0) {
-      //         let calculatedEndTime;
+      //         let calculatedEndTime, keepRealTime;
       //         try {
       //           activeDateOnCalendar[timeIdsToDate[id].day].find(
       //             (e) =>
@@ -1060,6 +1094,7 @@ export const CalendarStaticBlocks = [
       //           ).isFired = true;
 
       //           let calculateTime = dayjs();
+      //           keepRealTime = arrayIntervals[index].realEndTime;
 
       //           statements_statement;
 
@@ -1092,6 +1127,10 @@ export const CalendarStaticBlocks = [
       //           if (e === "break") {
       //             clearTimeout(arrayIntervals[index].time);
       //             arrayIntervals.slice(index, 1);
+      //         simulatedTimeTable.find(
+      //           (x) =>
+      //             x.time === keepRealTime && x.id === id
+      //         ).finished = true;
       //             return;
       //           } else if (e === "continue") {
       //           }
@@ -1113,6 +1152,10 @@ export const CalendarStaticBlocks = [
       //             id,
       //             nextStartTime
       //           );
+      //         simulatedTimeTable.find(
+      //           (x) =>
+      //             x.time === keepRealTime && x.id === id
+      //         ).finished = true;
       //       }
       //       arrayIntervals[index].func();
       //     }, 500);
@@ -1147,7 +1190,7 @@ export const CalendarStaticBlocks = [
       strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
       strBuilder +=
         "if (simulatedTime.diff(arrayIntervals[index].realEndTime) >= 0) {";
-      strBuilder += "let calculatedEndTime;";
+      strBuilder += "let calculatedEndTime, keepRealTime;";
       strBuilder += "try {";
       strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
       strBuilder += "(e) =>";
@@ -1155,6 +1198,7 @@ export const CalendarStaticBlocks = [
         "e.startTime === timeIdsToDate[id].startTime && e.id === id";
       strBuilder += ").isFired = true;";
       strBuilder += "let calculateTime = dayjs();";
+      strBuilder += "keepRealTime = arrayIntervals[index].realEndTime;";
       strBuilder += statements_statement;
       strBuilder += "let diffTime = dayjs().diff(calculateTime);";
       strBuilder +=
@@ -1186,6 +1230,10 @@ export const CalendarStaticBlocks = [
       strBuilder += "if (e === 'break') {";
       strBuilder += "clearTimeout(arrayIntervals[index].time);";
       strBuilder += "arrayIntervals.slice(index, 1);";
+      strBuilder += "simulatedTimeTable.find(";
+      strBuilder += "(x) =>";
+      strBuilder += "x.time === keepRealTime && x.id === id";
+      strBuilder += ").finished = true;";
       strBuilder += "return;";
       strBuilder += "} else if (e === 'continue') {";
       strBuilder += "}";
@@ -1212,6 +1260,10 @@ export const CalendarStaticBlocks = [
       strBuilder += "id,";
       strBuilder += "nextStartTime";
       strBuilder += ");";
+      strBuilder += "simulatedTimeTable.find(";
+      strBuilder += "(x) =>";
+      strBuilder += "x.time === keepRealTime && x.id === id";
+      strBuilder += ").finished = true;";
       strBuilder += "}";
       strBuilder += "arrayIntervals[index].func();";
       strBuilder += "}, 500);";
@@ -1490,6 +1542,10 @@ export const CalendarStaticBlocks = [
 
       //         clearTimeout(arrayIntervals[index].time);
       //         arrayIntervals.slice(index, 1);
+      //         simulatedTimeTable.find(
+      //           (x) =>
+      //             x.time === arrayIntervals[index].realEndTime && x.id === id
+      //         ).finished = true;
       //         return;
       //       }
       //       arrayIntervals[index].func();
@@ -1572,6 +1628,11 @@ export const CalendarStaticBlocks = [
       strBuilder += ").isCompleted = true;";
       strBuilder += "clearTimeout(arrayIntervals[index].time);";
       strBuilder += "arrayIntervals.slice(index, 1);";
+      strBuilder += "simulatedTimeTable.find(";
+      strBuilder +=
+        "(x) => x.time === arrayIntervals[index].realEndTime && x.id === " +
+        JSON.stringify(id);
+      strBuilder += ").finished = true;";
       strBuilder += "return;";
       strBuilder += "}";
       strBuilder += "arrayIntervals[index].func();";
@@ -1767,6 +1828,10 @@ export const CalendarStaticBlocks = [
 
       //         clearTimeout(arrayIntervals[index].time);
       //         arrayIntervals.slice(index, 1);
+      //         simulatedTimeTable.find(
+      //           (x) =>
+      //             x.time === arrayIntervals[index].realEndTime && x.id === id
+      //         ).finished = true;
       //         return;
       //       }
       //       arrayIntervals[index].func();
@@ -1849,6 +1914,11 @@ export const CalendarStaticBlocks = [
       strBuilder += ").isCompleted = true;";
       strBuilder += "clearTimeout(arrayIntervals[index].time);";
       strBuilder += "arrayIntervals.slice(index, 1);";
+      strBuilder += "simulatedTimeTable.find(";
+      strBuilder +=
+        "(x) => x.time === arrayIntervals[index].realEndTime && x.id === " +
+        JSON.stringify(id);
+      strBuilder += ").finished = true;";
       strBuilder += "return;";
       strBuilder += "}";
       strBuilder += "arrayIntervals[index].func();";

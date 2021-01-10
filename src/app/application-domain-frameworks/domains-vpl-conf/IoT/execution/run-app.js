@@ -37,6 +37,7 @@ const CollectRegisteredDevices = function (smartDevices) {
 const Initialize = function (selector) {
   // install utc plugin for dayjs
   dayjs.extend(window.dayjs_plugin_utc);
+  dayjs.extend(window.dayjs_plugin_customParseFormat);
   InitializeSimulatedTime();
 
   InitializeCalendar(selector);
@@ -137,7 +138,7 @@ const TakeDifferenceFromSpecificTime = function (
   // Pin in calendar
   PinEventInCalendar(futureTime, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureTime);
+  AddTimeInSimulatedTable(futureTime, calendarBlockId);
 
   return futureTime;
 };
@@ -161,7 +162,7 @@ const TakeDifferenceFromSpecificDay = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId);
 
   return futureDate;
 };
@@ -184,7 +185,7 @@ const TakeDifferenceFromSpecificMonth = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId);
 
   return futureDate;
 };
@@ -200,7 +201,7 @@ const EverySecond = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId);
 
   return futureDate;
 };
@@ -216,7 +217,7 @@ const EveryMinute = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId);
 
   return futureDate;
 };
@@ -229,7 +230,7 @@ const EveryHour = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId);
 
   return futureDate;
 };
@@ -240,7 +241,7 @@ const EveryDay = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId);
 
   return futureDate;
 };
@@ -253,7 +254,7 @@ const EveryMonth = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId);
 
   return futureDate;
 };
@@ -464,15 +465,15 @@ const GoToSpecificTime = function () {
   // TODO: update calendar
 };
 
-const AddTimeInSimulatedTable = function (time) {
-  if (!simulatedTimeTable.includes(time)) simulatedTimeTable.push(time);
+const AddTimeInSimulatedTable = function (time, id) {
+  simulatedTimeTable.push({ time: time, id: id, finished: false });
   simulatedTimeTable.sort(compareTimes);
 };
 
 const compareTimes = function (a, b) {
   // Use toUpperCase() to ignore character casing
-  const timeA = a;
-  const timeB = b;
+  const timeA = a.time;
+  const timeB = b.time;
 
   let comparison = 0;
   if (timeA.diff(timeB) > 0) {
@@ -497,6 +498,7 @@ const InitializeClocks = function (selector, onComplete) {
   outerClockDiv.appendChild(digitalClock);
 
   let fill = document.createElement("div");
+  fill.id = "analog-clock";
   fill.classList.add("fill");
   fill.style.setProperty("width", "130px");
   fill.style.setProperty("height", "130px");
@@ -546,7 +548,29 @@ const InitializeClocks = function (selector, onComplete) {
         "x" + timeSpeedMultiplier;
       RefreshUiOnContinueTime();
     },
-    onGoToSpecificTime: () => {},
+    onGoToSpecificTime: (onSuccessGoTO) => {
+      let day = document.getElementById("specific-date-input").value;
+      let time = document.getElementById("specific-time-input").value;
+      let dateString = day + "-" + time;
+      let specificDate = dayjs(dateString, "YYYY-MM-DD-HH:mm:ss", true);
+      if (specificDate.diff(simulatedTime) < -1000) {
+        // TODO: cannot go to past time
+        return;
+      } else {
+        // jump to specific date but with simulatedTimeTable
+        for (const [index, element] of simulatedTimeTable.entries()) {
+          if (specificDate.diff(element.time) < 0) {
+            simulatedTime = element.time;
+            // set a boolean to go next time in simulatedTimeTable
+            while (!element.finished) {}
+          } else {
+            break;
+          }
+        }
+        simulatedTime = specificDate;
+        onSuccessGoTO();
+      }
+    },
   });
 
   let utility_clock = document.createElement("div");
@@ -686,13 +710,6 @@ const InitializeSimulatorControls = function ({
   goToButtonSpan.style.setProperty("margin-left", ".6rem");
   controlsOuter.appendChild(goToButtonSpan);
 
-  // let goToOuter = document.createElement("div");
-  // goToOuter.style.setProperty("padding-top", ".3rem");
-  // goToOuter.style.setProperty("margin-top", ".7rem");
-  // // goToOuter.style.setProperty("text-align", "left");
-  // goToOuter.style.setProperty("border-top", "solid 1px #0000004a");
-  // controlsOuter.appendChild(goToOuter);
-
   let playButton = document.createElement("button");
   playButton.classList.add("btn", "btn", "btn-info");
   playButton.innerHTML = "<i class='fas fa-play'></i>";
@@ -736,60 +753,88 @@ const InitializeSimulatorControls = function ({
   goToButton.classList.add("btn", "btn-sm", "btn-info");
   goToButton.innerHTML =
     "<img src='./images/skip-time.png' width='20' height='20'></img>";
-  goToButton.onclick = onSpeedUpTime;
+  goToButton.onclick = () => {
+    timeSpeedOuter.style.setProperty("display", "none");
+    controlsOuter.style.setProperty("display", "none");
+    goToOuter.style.setProperty("display", "block");
+    document
+      .getElementById("analog-clock")
+      .style.setProperty("margin-left", "2.1rem");
+    PauseSimulatedTime();
+    timeInput.value = simulatedTime.format("HH:mm:ss");
+    dateInput.value = simulatedTime.format("YYYY-MM-DD");
+  };
   goToButton.setAttribute("data-toggle", "tooltip");
   goToButton.setAttribute("data-placement", "top");
   goToButton.setAttribute("title", "Go to specific time");
   goToButtonSpan.appendChild(goToButton);
 
-  // let dateLabel = document.createElement("label");
-  // dateLabel.setAttribute("for", "specific-date-input");
-  // dateLabel.innerHTML = "Day: ";
-  // dateLabel.style.setProperty("display", "none");
-  // goToOuter.appendChild(dateLabel);
+  let goToOuter = document.createElement("div");
+  goToOuter.style.setProperty("display", "none");
+  dom.appendChild(goToOuter);
 
-  // let dateInput = document.createElement("input");
-  // dateInput.type = "date";
-  // dateInput.id = "specific-date-input";
-  // dateInput.name = "specific-date-input";
-  // dateInput.classList.add("form-control");
-  // dateInput.value = simulatedTime.format("YYYY-MM-DD");
-  // dateInput.style.setProperty("display", "none");
-  // goToOuter.appendChild(dateInput);
+  let dateLabel = document.createElement("label");
+  dateLabel.setAttribute("for", "specific-date-input");
+  dateLabel.innerHTML = "Day: ";
+  goToOuter.appendChild(dateLabel);
 
-  // let timeLabel = document.createElement("label");
-  // timeLabel.setAttribute("for", "specific-time-input");
-  // timeLabel.innerHTML = "Time: ";
-  // timeLabel.style.setProperty("margin-top", ".5rem");
-  // timeLabel.style.setProperty("display", "none");
-  // goToOuter.appendChild(timeLabel);
+  let dateInput = document.createElement("input");
+  dateInput.type = "date";
+  dateInput.id = "specific-date-input";
+  dateInput.name = "specific-date-input";
+  dateInput.classList.add("form-control");
+  goToOuter.appendChild(dateInput);
 
-  // let timeInput = document.createElement("input");
-  // timeInput.type = "time";
-  // timeInput.id = "specific-time-input";
-  // timeInput.name = "specific-time-input";
-  // timeInput.classList.add("form-control");
-  // timeInput.value = simulatedTime.format("HH:mm:ss");
-  // timeInput.step = "1";
-  // timeInput.style.setProperty("display", "none");
-  // goToOuter.appendChild(timeInput);
+  let timeLabel = document.createElement("label");
+  timeLabel.setAttribute("for", "specific-time-input");
+  timeLabel.innerHTML = "Time: ";
+  timeLabel.style.setProperty("margin-top", ".5rem");
+  goToOuter.appendChild(timeLabel);
 
-  // let goToButtonOuter = document.createElement("div");
-  // // goToButtonOuter.style.setProperty("text-align", "right");
-  // goToOuter.appendChild(goToButtonOuter);
+  let timeInput = document.createElement("input");
+  timeInput.type = "time";
+  timeInput.id = "specific-time-input";
+  timeInput.name = "specific-time-input";
+  timeInput.classList.add("form-control");
+  timeInput.step = "1";
+  goToOuter.appendChild(timeInput);
 
-  // let goToSpecificDateButton = document.createElement("button");
-  // goToSpecificDateButton.classList.add("btn", "btn-info");
-  // goToSpecificDateButton.innerHTML = "Set simulated time";
-  // goToSpecificDateButton.style.setProperty("margin-top", ".5rem");
-  // goToButtonOuter.appendChild(goToSpecificDateButton);
+  const HideGoToOuter = function () {
+    goToOuter.style.setProperty("display", "none");
+    timeSpeedOuter.style.setProperty("display", "block");
+    controlsOuter.style.setProperty("display", "flex");
+    document
+      .getElementById("analog-clock")
+      .style.setProperty("margin-left", "3.3rem");
+    NormalSimulatedTime();
+  };
 
-  // let goButton = document.createElement("button");
-  // goButton.classList.add("btn", "btn-info");
-  // goButton.innerHTML = "Go";
-  // goButton.style.setProperty("margin-top", ".5rem");
-  // goButton.style.setProperty("display", "none");
-  // goToButtonOuter.appendChild(goButton);
+  let buttonsOuter = document.createElement("div");
+  buttonsOuter.style.setProperty("margin-top", ".5rem");
+  goToOuter.appendChild(buttonsOuter);
+
+  let goButtonOuter = document.createElement("span");
+  goButtonOuter.style.setProperty("float", "right");
+  buttonsOuter.appendChild(goButtonOuter);
+
+  let goButton = document.createElement("button");
+  goButton.classList.add("btn", "btn-info");
+  goButton.innerHTML = "Go";
+  goButton.onclick = () => {
+    onGoToSpecificTime(HideGoToOuter);
+  };
+  goButtonOuter.appendChild(goButton);
+
+  let cancelButtonOuter = document.createElement("span");
+  cancelButtonOuter.style.setProperty("float", "right");
+  cancelButtonOuter.style.setProperty("margin-right", ".5rem");
+  buttonsOuter.appendChild(cancelButtonOuter);
+
+  let cancelButton = document.createElement("button");
+  cancelButton.classList.add("btn", "btn-secondary");
+  cancelButton.innerHTML = "Cancel";
+  cancelButton.onclick = HideGoToOuter;
+  cancelButtonOuter.appendChild(cancelButton);
 };
 
 const RefreshUiOnContinueTime = function () {
