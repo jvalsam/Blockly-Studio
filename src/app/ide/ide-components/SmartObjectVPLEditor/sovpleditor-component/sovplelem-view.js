@@ -111,11 +111,6 @@ let CreateModal = function (dom, idPrefix) {
 };
 
 let ClearModal = function (idPrefix) {
-  idPrefix + "-modal-title";
-  idPrefix + "-modal-body";
-  idPrefix + "-modal-cancel-button";
-  idPrefix + "-modal-confirm-button";
-
   document.getElementById(idPrefix + "-modal-title").innerHTML = "";
   document.getElementById(idPrefix + "-modal-body").innerHTML = "";
   document.getElementById(idPrefix + "-modal-cancel-button").innerHTML =

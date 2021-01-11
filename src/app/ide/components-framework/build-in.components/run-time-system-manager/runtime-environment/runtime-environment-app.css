@@ -74,7 +74,8 @@ body {
 }
 
 /* Actions logger */
-#logger-container {
+#logger-container,
+#simulated-actions-container {
   height: 100%;
   font-family: Satellite, Roboto, sans-serif;
   -webkit-box-shadow: 0 0 4px rgb(21 21 21 / 21%);
@@ -95,7 +96,8 @@ body {
   -o-user-select: none;
 }
 
-#logger-header {
+#logger-header,
+#simulated-actions-header {
   width: 100% !important;
   background-color: rgb(74 129 177) !important;
   color: rgb(255, 236, 179);
@@ -105,7 +107,8 @@ body {
   height: 9%;
 }
 
-#logger-body {
+#logger-body,
+#simulated-actions-body {
   background-color: #f6f6f6;
   display: block;
   height: 91%;

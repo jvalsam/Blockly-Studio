@@ -40,10 +40,15 @@ const Initialize = function (selector) {
   dayjs.extend(window.dayjs_plugin_customParseFormat);
   InitializeSimulatedTime();
 
+  let modalContainer = document.createElement("div");
+  modalContainer.id = "modal-container";
+  selector.appendChild(modalContainer);
+
   InitializeCalendar(selector);
   InitializeOrganizerForCalendar();
   InitializeActionsLog();
-  InitializeClocks(document.getElementById("calendar-outter"), () => {
+  InitializeSimulatedHistory();
+  InitializeClocks(document.getElementById("calendar-outer"), () => {
     // hack to live update the completed events:
     // bind an observer to seconds of utility clock
     const observeChangesOfUtilityClockCSS = new MutationObserver(function () {
@@ -55,6 +60,59 @@ const Initialize = function (selector) {
       attributes: true,
       attributeFilter: ["style"],
     });
+  });
+  InitializeSimulatorControls({
+    dom: document.getElementById("clocks-controls-outer"),
+    onNormalSpeed: () => {
+      PauseSimulatedTime();
+      NormalSimulatedTime();
+    },
+    onPauseTime: () => {
+      PauseSimulatedTime();
+    },
+    onBackward: () => {
+      if (timeSpeedMultiplier > 0.25) {
+        timeSpeedMultiplier = timeSpeedMultiplier - 0.25;
+        nowTimeSpeed = timeSpeedInSpeedUp / timeSpeedMultiplier;
+      }
+      PauseSimulatedTime();
+      if (timeSpeedMultiplier === 1) NormalSimulatedTime();
+      else SpeedUpSimulatedTime();
+    },
+    onSpeedUpTime: () => {
+      if (timeSpeedMultiplier < 8) {
+        timeSpeedMultiplier = timeSpeedMultiplier + 0.25;
+        nowTimeSpeed = timeSpeedInSpeedUp / timeSpeedMultiplier;
+      }
+      PauseSimulatedTime();
+      if (timeSpeedMultiplier === 1) NormalSimulatedTime();
+      else SpeedUpSimulatedTime();
+    },
+    onGoToSpecificTime: (onSuccessGoTo) => {
+      let day = document.getElementById("specific-date-input").value;
+      let time = document.getElementById("specific-time-input").value;
+      let dateString = day + "-" + time;
+      let specificDate = dayjs(dateString, "YYYY-MM-DD-HH:mm:ss", true);
+      if (specificDate.diff(simulatedTime) < -1000) {
+        // TODO: cannot go to past time
+        return;
+      } else if (specificDate.diff(simulatedTimeTable[0].time) < 0) {
+      } else {
+        // jump to specific date but with simulatedTimeTable
+        for (const [index, element] of simulatedTimeTable.entries()) {
+          if (specificDate.diff(element.time) < 0) {
+            simulatedTime = element.time;
+            // set a boolean to go next time in simulatedTimeTable
+            while (!element.finished) {}
+          } else {
+            break;
+          }
+        }
+      }
+      simulatedTime = specificDate;
+      // NormalSimulatedTime();
+      onSuccessGoTo();
+    },
   });
   InitializeSmartDevicesContainer(selector);
 };
@@ -407,7 +465,6 @@ const simulatedTimeTable = [];
 const InitializeSimulatedTime = function () {
   simulatedTime = dayjs();
   NormalSimulatedTime();
-  // SpeedUpSimulatedTime();
 };
 
 const CalculateMillisecondsForNextTime = function (time) {
@@ -436,6 +493,10 @@ const NormalSimulatedTime = function () {
     );
     // TODO: update calendar
   }, nowTimeSpeed);
+  RefreshUiOnContinueTime();
+  if (document.getElementById("time-speed-info"))
+    document.getElementById("time-speed-info").innerHTML =
+      "x" + timeSpeedMultiplier;
 };
 
 const SpeedUpSimulatedTime = function () {
@@ -446,10 +507,21 @@ const SpeedUpSimulatedTime = function () {
     );
     // TODO: update calendar
   }, nowTimeSpeed);
+  RefreshUiOnContinueTime();
+  if (document.getElementById("time-speed-info"))
+    document.getElementById("time-speed-info").innerHTML =
+      "x" + timeSpeedMultiplier;
 };
 
 const PauseSimulatedTime = function () {
   clearInterval(timeFunc);
+  document
+    .getElementById("time-speed-title")
+    .style.setProperty("display", "none");
+  document.getElementById("time-speed-info").innerHTML = "Paused";
+  document
+    .getElementById("time-speed-info")
+    .style.setProperty("color", "#ff9966");
 };
 
 const ResetSimulatedTime = function () {
@@ -483,13 +555,103 @@ const compareTimes = function (a, b) {
   }
   return comparison;
 };
+
+const CreateModal = function (idPrefix) {
+  let modal = document.createElement("div");
+  modal.classList.add("modal", "fade");
+  modal.id = idPrefix + "-modal";
+  modal.setAttribute("tabindex", "-1");
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-hidden", "true");
+  document.getElementById("modal-container").appendChild(modal);
+
+  let modalDialog = document.createElement("div");
+  modalDialog.classList.add("modal-dialog", "modal-lg");
+  modalDialog.id = idPrefix + "-modal-dialog";
+  modalDialog.setAttribute("role", "document");
+  modal.appendChild(modalDialog);
+
+  let modalContent = document.createElement("div");
+  modalContent.classList.add("modal-content");
+  modalDialog.appendChild(modalContent);
+
+  let modalHeader = document.createElement("div");
+  modalHeader.classList.add("modal-header");
+  modalContent.appendChild(modalHeader);
+
+  let modalTitle = document.createElement("h5");
+  modalTitle.classList.add("modal-title");
+  modalTitle.id = idPrefix + "-modal-title";
+  modalHeader.appendChild(modalTitle);
+
+  // let closeModal = document.createElement("button");
+  // closeModal.classList.add("close");
+  // closeModal.setAttribute("type", "button");
+  // closeModal.setAttribute("data-dismiss", "modal");
+  // closeModal.setAttribute("aria-label", "Close");
+  // modalHeader.appendChild(closeModal);
+
+  // let closeSpan = document.createElement("span");
+  // closeSpan.setAttribute("aria-hidden", "true");
+  // closeSpan.innerHTML = "&times;";
+  // closeModal.appendChild(closeSpan);
+
+  let modalBody = document.createElement("div");
+  modalBody.classList.add("modal-body");
+  modalBody.id = idPrefix + "-modal-body";
+  modalContent.appendChild(modalBody);
+
+  let modalFooter = document.createElement("div");
+  modalFooter.classList.add("modal-footer");
+  modalContent.appendChild(modalFooter);
+
+  let cancelButton = document.createElement("button");
+  cancelButton.classList.add("btn", "btn-secondary");
+  cancelButton.id = idPrefix + "-modal-cancel-button";
+  cancelButton.innerHTML = "Cancel";
+  cancelButton.setAttribute("type", "button");
+  cancelButton.setAttribute("data-dismiss", "modal");
+  modalFooter.appendChild(cancelButton);
+
+  let confirmButton = document.createElement("button");
+  confirmButton.classList.add("btn", "btn-primary");
+  confirmButton.id = idPrefix + "-modal-confirm-button";
+  confirmButton.innerHTML = "Confirm";
+  confirmButton.setAttribute("type", "button");
+  modalFooter.appendChild(confirmButton);
+};
+
+const CreateAndRenderModal = function (idPrefix) {
+  CreateModal(idPrefix);
+
+  $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
+    DestroyModal(idPrefix);
+  });
+
+  $("#" + idPrefix + "-modal").modal("show");
+};
+
+const ClearModal = function (idPrefix) {
+  document.getElementById(idPrefix + "-modal-title").innerHTML = "";
+  document.getElementById(idPrefix + "-modal-body").innerHTML = "";
+  document.getElementById(idPrefix + "-modal-cancel-button").innerHTML =
+    "Cancel";
+  document.getElementById(idPrefix + "-modal-confirm-button").innerHTML =
+    "Confirm";
+};
+
+const DestroyModal = function (idPrefix) {
+  document.getElementById(idPrefix + "-modal").remove();
+};
+
 /* End of functions for simulating time */
 
 /* Start UI for runtime environment */
 const InitializeClocks = function (selector, onComplete) {
   let outerClockDiv = document.createElement("div");
-  // outerClockDiv.style.setProperty("float", "right");
-  // outerClockDiv.style.setProperty("max-width", "10rem");
+  outerClockDiv.id = "clocks-controls-outer";
+  outerClockDiv.style.setProperty("margin-left", "1rem");
+  outerClockDiv.style.setProperty("width", "14.5rem");
   selector.appendChild(outerClockDiv);
 
   let digitalClock = document.createElement("div");
@@ -502,76 +664,8 @@ const InitializeClocks = function (selector, onComplete) {
   fill.classList.add("fill");
   fill.style.setProperty("width", "130px");
   fill.style.setProperty("height", "130px");
-  fill.style.setProperty("margin-left", "3.3rem");
+  fill.style.setProperty("margin-left", "3.5rem");
   outerClockDiv.appendChild(fill);
-
-  InitializeSimulatorControls({
-    dom: outerClockDiv,
-    onNormalSpeed: () => {
-      PauseSimulatedTime();
-      NormalSimulatedTime();
-      RefreshUiOnContinueTime();
-      document.getElementById("time-speed-info").innerHTML =
-        "x" + timeSpeedMultiplier;
-    },
-    onPauseTime: () => {
-      PauseSimulatedTime();
-      document
-        .getElementById("time-speed-title")
-        .style.setProperty("display", "none");
-      document.getElementById("time-speed-info").innerHTML = "Paused";
-      document
-        .getElementById("time-speed-info")
-        .style.setProperty("color", "#ff9966");
-    },
-    onBackward: () => {
-      if (timeSpeedMultiplier > 0.25) {
-        timeSpeedMultiplier = timeSpeedMultiplier - 0.25;
-        nowTimeSpeed = timeSpeedInSpeedUp / timeSpeedMultiplier;
-      }
-      PauseSimulatedTime();
-      if (timeSpeedMultiplier === 1) NormalSimulatedTime();
-      else SpeedUpSimulatedTime();
-      document.getElementById("time-speed-info").innerHTML =
-        "x" + timeSpeedMultiplier;
-      RefreshUiOnContinueTime();
-    },
-    onSpeedUpTime: () => {
-      if (timeSpeedMultiplier < 8) {
-        timeSpeedMultiplier = timeSpeedMultiplier + 0.25;
-        nowTimeSpeed = timeSpeedInSpeedUp / timeSpeedMultiplier;
-      }
-      PauseSimulatedTime();
-      if (timeSpeedMultiplier === 1) NormalSimulatedTime();
-      else SpeedUpSimulatedTime();
-      document.getElementById("time-speed-info").innerHTML =
-        "x" + timeSpeedMultiplier;
-      RefreshUiOnContinueTime();
-    },
-    onGoToSpecificTime: (onSuccessGoTO) => {
-      let day = document.getElementById("specific-date-input").value;
-      let time = document.getElementById("specific-time-input").value;
-      let dateString = day + "-" + time;
-      let specificDate = dayjs(dateString, "YYYY-MM-DD-HH:mm:ss", true);
-      if (specificDate.diff(simulatedTime) < -1000) {
-        // TODO: cannot go to past time
-        return;
-      } else {
-        // jump to specific date but with simulatedTimeTable
-        for (const [index, element] of simulatedTimeTable.entries()) {
-          if (specificDate.diff(element.time) < 0) {
-            simulatedTime = element.time;
-            // set a boolean to go next time in simulatedTimeTable
-            while (!element.finished) {}
-          } else {
-            break;
-          }
-        }
-        simulatedTime = specificDate;
-        onSuccessGoTO();
-      }
-    },
-  });
 
   let utility_clock = document.createElement("div");
   utility_clock.id = "utility-clock";
@@ -688,7 +782,7 @@ const InitializeSimulatorControls = function ({
   controlsOuter.style.setProperty("text-align", "center");
   controlsOuter.style.setProperty("margin-top", ".5rem");
   controlsOuter.style.setProperty("display", "flex");
-  controlsOuter.style.setProperty("align-items", "flex-end");
+  controlsOuter.style.setProperty("align-items", "center");
   dom.appendChild(controlsOuter);
 
   let playButtonSpan = document.createElement("span");
@@ -754,12 +848,10 @@ const InitializeSimulatorControls = function ({
   goToButton.innerHTML =
     "<img src='./images/skip-time.png' width='20' height='20'></img>";
   goToButton.onclick = () => {
-    timeSpeedOuter.style.setProperty("display", "none");
-    controlsOuter.style.setProperty("display", "none");
-    goToOuter.style.setProperty("display", "block");
     document
-      .getElementById("analog-clock")
-      .style.setProperty("margin-left", "2.1rem");
+      .querySelectorAll("#simulator-controls button")
+      .forEach((x) => (x.disabled = true));
+    goToOuter.style.setProperty("display", "inline-block");
     PauseSimulatedTime();
     timeInput.value = simulatedTime.format("HH:mm:ss");
     dateInput.value = simulatedTime.format("YYYY-MM-DD");
@@ -773,39 +865,65 @@ const InitializeSimulatorControls = function ({
   goToOuter.style.setProperty("display", "none");
   dom.appendChild(goToOuter);
 
-  let dateLabel = document.createElement("label");
-  dateLabel.setAttribute("for", "specific-date-input");
-  dateLabel.innerHTML = "Day: ";
-  goToOuter.appendChild(dateLabel);
+  let dateTitleOuter = document.createElement("div");
+  dateTitleOuter.classList.add("input-group");
+  // dateTitleOuter.style.setProperty("width", "91%");
+  dateTitleOuter.style.setProperty("margin-top", ".5rem");
+
+  goToOuter.appendChild(dateTitleOuter);
+
+  let dateTitleDiv = document.createElement("div");
+  dateTitleDiv.classList.add("input-group-prepend");
+  dateTitleOuter.appendChild(dateTitleDiv);
+
+  let dateTitle = document.createElement("span");
+  dateTitle.classList.add("input-group-text");
+  dateTitle.id = "date-title";
+  dateTitle.innerHTML = "Day";
+  dateTitleDiv.appendChild(dateTitle);
 
   let dateInput = document.createElement("input");
   dateInput.type = "date";
   dateInput.id = "specific-date-input";
   dateInput.name = "specific-date-input";
   dateInput.classList.add("form-control");
-  goToOuter.appendChild(dateInput);
+  dateInput.setAttribute("aria-describedby", dateTitle.id);
+  dateTitleOuter.appendChild(dateInput);
 
-  let timeLabel = document.createElement("label");
-  timeLabel.setAttribute("for", "specific-time-input");
-  timeLabel.innerHTML = "Time: ";
-  timeLabel.style.setProperty("margin-top", ".5rem");
-  goToOuter.appendChild(timeLabel);
+  let timeTitleOuter = document.createElement("div");
+  timeTitleOuter.classList.add("input-group");
+  // timeTitleOuter.style.setProperty("width", "91%");
+  timeTitleOuter.style.setProperty("margin-top", ".5rem");
+  goToOuter.appendChild(timeTitleOuter);
+
+  let timeTitleDiv = document.createElement("div");
+  timeTitleDiv.classList.add("input-group-prepend");
+  timeTitleOuter.appendChild(timeTitleDiv);
+
+  let timeTitle = document.createElement("span");
+  timeTitle.classList.add("input-group-text");
+  timeTitle.id = "date-title";
+  timeTitle.innerHTML = "Time";
+  timeTitleDiv.appendChild(timeTitle);
 
   let timeInput = document.createElement("input");
   timeInput.type = "time";
   timeInput.id = "specific-time-input";
   timeInput.name = "specific-time-input";
   timeInput.classList.add("form-control");
+  timeInput.setAttribute("aria-describedby", timeTitle.id);
   timeInput.step = "1";
-  goToOuter.appendChild(timeInput);
+  timeTitleOuter.appendChild(timeInput);
 
   const HideGoToOuter = function () {
     goToOuter.style.setProperty("display", "none");
-    timeSpeedOuter.style.setProperty("display", "block");
-    controlsOuter.style.setProperty("display", "flex");
+    // simulateTestOuter.style.setProperty("display", "block");
     document
-      .getElementById("analog-clock")
-      .style.setProperty("margin-left", "3.3rem");
+      .querySelectorAll("#simulator-controls button")
+      .forEach((x) => (x.disabled = false));
+    // document
+    //   .getElementById("analog-clock")
+    //   .style.setProperty("margin-left", "3.4rem");
     NormalSimulatedTime();
   };
 
@@ -835,15 +953,31 @@ const InitializeSimulatorControls = function ({
   cancelButton.innerHTML = "Cancel";
   cancelButton.onclick = HideGoToOuter;
   cancelButtonOuter.appendChild(cancelButton);
+
+  // let simulateTestOuter = document.createElement("div");
+  // simulateTestOuter.style.setProperty("width", "100%");
+  // simulateTestOuter.style.setProperty("margin-top", "2rem");
+  // simulateTestOuter.style.setProperty("text-align", "center");
+  // dom.appendChild(simulateTestOuter);
+
+  // let simulateTestButton = document.createElement("button");
+  // simulateTestButton.classList.add("btn", "btn-outline-info");
+  // simulateTestButton.innerHTML = "Create test";
+  // simulateTestButton.onclick = () => {
+  //   CreateAndRenderModal("create-test");
+  // };
+  // simulateTestOuter.appendChild(simulateTestButton);
 };
 
 const RefreshUiOnContinueTime = function () {
-  document
-    .getElementById("time-speed-title")
-    .style.setProperty("display", "initial");
-  document
-    .getElementById("time-speed-info")
-    .style.setProperty("color", "initial");
+  if (document.getElementById("time-speed-title"))
+    document
+      .getElementById("time-speed-title")
+      .style.setProperty("display", "initial");
+  if (document.getElementById("time-speed-info"))
+    document
+      .getElementById("time-speed-info")
+      .style.setProperty("color", "initial");
 };
 
 const UtilityClock = function (container) {
@@ -971,13 +1105,14 @@ const InitializeCalendar = function (selector) {
   calendarRow.classList.add("row");
   calendarRow.classList.add("rounded");
   calendarRow.classList.add("p-2");
-  calendarRow.id = "calendar-outter";
+  calendarRow.id = "calendar-outer";
   selector.appendChild(calendarRow);
 
   let calendarDiv = document.createElement("span");
-  calendarDiv.classList.add("col-3");
+  // calendarDiv.classList.add("col");
   calendarDiv.id = "calendar-container";
   calendarDiv.style.setProperty("max-height", "22rem");
+  calendarDiv.style.setProperty("width", "20rem");
   calendarRow.appendChild(calendarDiv);
 
   calendar = new Calendar(
@@ -1020,24 +1155,26 @@ const InitializeCalendar = function (selector) {
 
 const InitializeOrganizerForCalendar = function () {
   let organizerDiv = document.createElement("span");
-  organizerDiv.classList.add("col-4");
   organizerDiv.id = "organizer-container";
   organizerDiv.style.setProperty("max-height", "22rem");
-  document.getElementById("calendar-outter").appendChild(organizerDiv);
+  organizerDiv.style.setProperty("margin-left", "1rem");
+  organizerDiv.style.setProperty("width", "22rem");
+  document.getElementById("calendar-outer").appendChild(organizerDiv);
 
   organizer = new Organizer("organizer-container", calendar, {});
 };
 
 const InitializeActionsLog = function () {
-  let loggerOutterDiv = document.createElement("span");
-  loggerOutterDiv.classList.add("col");
-  loggerOutterDiv.id = "logger-outter";
-  loggerOutterDiv.style.setProperty("max-height", "22rem");
-  document.getElementById("calendar-outter").appendChild(loggerOutterDiv);
+  let loggerOuterDiv = document.createElement("span");
+  loggerOuterDiv.id = "logger-outer";
+  loggerOuterDiv.style.setProperty("max-height", "22rem");
+  loggerOuterDiv.style.setProperty("margin-left", "1rem");
+  loggerOuterDiv.style.setProperty("width", "23rem");
+  document.getElementById("calendar-outer").appendChild(loggerOuterDiv);
 
   let loggerContainer = document.createElement("div");
   loggerContainer.id = "logger-container";
-  loggerOutterDiv.appendChild(loggerContainer);
+  loggerOuterDiv.appendChild(loggerContainer);
 
   let loggerHeader = document.createElement("div");
   loggerHeader.id = "logger-header";
@@ -1144,6 +1281,29 @@ const UpdateScroll = function (id) {
 
   if (element.scrollHeight - element.scrollTop <= element.clientHeight + 145)
     element.scrollTop = element.scrollHeight;
+};
+
+const InitializeSimulatedHistory = function () {
+  let loggerOuterDiv = document.createElement("span");
+  loggerOuterDiv.id = "simulated-actions-outer";
+  loggerOuterDiv.style.setProperty("max-height", "22rem");
+  loggerOuterDiv.style.setProperty("margin-left", "1rem");
+  loggerOuterDiv.style.setProperty("width", "22rem");
+  document.getElementById("calendar-outer").appendChild(loggerOuterDiv);
+
+  let loggerContainer = document.createElement("div");
+  loggerContainer.id = "simulated-actions-container";
+  loggerOuterDiv.appendChild(loggerContainer);
+
+  let loggerHeader = document.createElement("div");
+  loggerHeader.id = "simulated-actions-header";
+  loggerHeader.innerHTML = "TESTS CONTROL PANEL";
+  // TODO: at the beginning no tests added
+  loggerContainer.appendChild(loggerHeader);
+
+  let loggerBody = document.createElement("div");
+  loggerBody.id = "simulated-actions-body";
+  loggerContainer.appendChild(loggerBody);
 };
 
 const InitializeSmartDevicesContainer = function (selector) {

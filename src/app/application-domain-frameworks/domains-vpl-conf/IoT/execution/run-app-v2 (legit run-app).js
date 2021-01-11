@@ -563,7 +563,7 @@ const InitializeCalendar = function (selector) {
   calendarRow.classList.add("row");
   calendarRow.classList.add("rounded");
   calendarRow.classList.add("p-2");
-  calendarRow.id = "calendar-outter";
+  calendarRow.id = "calendar-outer";
   selector.appendChild(calendarRow);
 
   let calendarDiv = document.createElement("span");
@@ -612,7 +612,7 @@ const InitializeOrganizerForCalendar = function () {
   let organizerDiv = document.createElement("span");
   organizerDiv.classList.add("col-4");
   organizerDiv.id = "organizer-container";
-  document.getElementById("calendar-outter").appendChild(organizerDiv);
+  document.getElementById("calendar-outer").appendChild(organizerDiv);
 
   organizer = new Organizer("organizer-container", calendar, {});
 
@@ -682,8 +682,8 @@ const InitializeOrganizerForCalendar = function () {
 const InitializeActionsLog = function () {
   let loggerOutterDiv = document.createElement("span");
   loggerOutterDiv.classList.add("col");
-  loggerOutterDiv.id = "logger-outter";
-  document.getElementById("calendar-outter").appendChild(loggerOutterDiv);
+  loggerOutterDiv.id = "logger-outer";
+  document.getElementById("calendar-outer").appendChild(loggerOutterDiv);
 
   let loggerContainer = document.createElement("div");
   loggerContainer.id = "logger-container";
