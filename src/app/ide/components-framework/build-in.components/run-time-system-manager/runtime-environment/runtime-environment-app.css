@@ -460,3 +460,18 @@ body {
   background: black;
   border: 2px solid black;
 }
+
+/* Tests container */
+#add-test-button {
+  color: #17a2b8;
+  font-size: 1.3rem;
+  opacity: 53%;
+  position: absolute;
+  right: 17rem;
+  top: 18.8rem;
+}
+
+#add-test-button:hover {
+  cursor: pointer;
+  opacity: 100%;
+}

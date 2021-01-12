@@ -232,23 +232,28 @@ export class SOVPLElemInstance {
   // group: {properties: properties, soDataID: id, soName: name}
   onSOCreateSmartGroup(group) {
     // initialize group
-    group.elemData = { editorData: { details: {} } };
-    group.elemData.editorData.details = {};
-    group.elemData.editorData.details.properties = group.properties;
-    group.elemData.editorData.details.actions = group.actions;
-    group.elemData.editorData.details.smartObjects = [
+    let newGroup = {};
+    newGroup.elemData = { editorData: { details: {} } };
+    newGroup.elemData.editorData.details.properties = [];
+    newGroup.elemData.editorData.details.properties = [].concat(
+      group.properties
+    );
+    newGroup.elemData.editorData.details.actions = [];
+    newGroup.elemData.editorData.details.actions = group.actions;
+    newGroup.elemData.editorData.details.smartObjects = [
       { id: group.soDataID, name: group.soName },
     ];
-    group.elemData.editorData.details.mapPropsAlias = group.mapPropsAlias;
-    group.elemData.editorData.details.mapPropsActive = {};
-    for (let property of group.properties) {
+    newGroup.elemData.editorData.details.mapPropsAlias = {};
+    newGroup.elemData.editorData.details.mapPropsAlias = group.mapPropsAlias;
+    newGroup.elemData.editorData.details.mapPropsActive = {};
+    for (let property of newGroup.elemData.editorData.details.properties) {
       let propName = property.name;
       // group.elemData.editorData.details.mapPropsAlias[propName] = propName;
-      group.elemData.editorData.details.mapPropsActive[propName] = true;
+      newGroup.elemData.editorData.details.mapPropsActive[propName] = true;
     }
 
     this.parent.createSmartGroup(
-      group.elemData.editorData.details,
+      newGroup.elemData.editorData.details,
       this.elemData.editorData.projectID,
       (pItem) => {
         const key = Object.keys(pItem._editorsData.items)[0];
@@ -260,13 +265,6 @@ export class SOVPLElemInstance {
         });
       }
     );
-
-    group.properties = [];
-    delete group.properties;
-    group.mapPropsAlias = {};
-    delete group.mapPropsAlias;
-    delete group.soDataID;
-    delete group.soName;
   }
 
   onSOClickSmartGroup(groupID) {
