@@ -96,7 +96,10 @@ const Initialize = function (selector) {
       if (specificDate.diff(simulatedTime) < -1000) {
         // TODO: cannot go to past time
         return;
-      } else if (specificDate.diff(simulatedTimeTable[0].time) < 0) {
+      } else if (
+        simulatedTimeTable[0] &&
+        specificDate.diff(simulatedTimeTable[0].time) < 0
+      ) {
       } else {
         // jump to specific date but with simulatedTimeTable
         for (const [index, element] of simulatedTimeTable.entries()) {
