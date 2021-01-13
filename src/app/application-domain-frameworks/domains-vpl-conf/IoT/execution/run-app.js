@@ -648,13 +648,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   );
 
   title.innerHTML = "Create test";
-
-  // <div class="input-group mb-3">
-  //   <div class="input-group-prepend">
-  //     <span class="input-group-text" id="basic-addon1">@</span>
-  //   </div>
-  //   <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-  // </div>
+  // body.style.setProperty("max-height", "42rem");
 
   let container = document.createElement("div");
   body.appendChild(container);
@@ -711,58 +705,89 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   inputGroupColor.appendChild(inputColor);
 
   /* Input Type */
-  let inputGroupType = document.createElement("div");
-  inputGroupType.classList.add("input-group");
-  inputGroupType.style.setProperty("width", "50%");
-  inputGroupType.style.setProperty("margin-top", "1rem");
-  container.appendChild(inputGroupType);
+  // let inputGroupType = document.createElement("div");
+  // inputGroupType.classList.add("input-group");
+  // inputGroupType.style.setProperty("width", "50%");
+  // inputGroupType.style.setProperty("margin-top", "1rem");
+  // container.appendChild(inputGroupType);
 
-  let inputGroupPrependType = document.createElement("div");
-  inputGroupPrependType.classList.add("input-group-prepend");
-  inputGroupType.appendChild(inputGroupPrependType);
+  // let inputGroupPrependType = document.createElement("div");
+  // inputGroupPrependType.classList.add("input-group-prepend");
+  // inputGroupType.appendChild(inputGroupPrependType);
 
-  let inputGroupTextType = document.createElement("span");
-  inputGroupTextType.classList.add("input-group-text");
-  inputGroupTextType.id = "test-type";
-  inputGroupTextType.innerHTML = "Type";
-  inputGroupTextType.style.setProperty("width", "4rem");
-  inputGroupPrependType.appendChild(inputGroupTextType);
+  // let inputGroupTextType = document.createElement("span");
+  // inputGroupTextType.classList.add("input-group-text");
+  // inputGroupTextType.id = "test-type";
+  // inputGroupTextType.innerHTML = "Type";
+  // inputGroupTextType.style.setProperty("width", "4rem");
+  // inputGroupPrependType.appendChild(inputGroupTextType);
 
-  let selectType = document.createElement("select");
-  selectType.classList.add("form-select");
-  selectType.setAttribute("aria-label", "type");
-  selectType.setAttribute("aria-describedby", "test-type");
-  selectType.style.setProperty("width", "83%");
-  selectType.style.setProperty("border", "1px solid #ced4da");
-  selectType.style.setProperty("border-radius", ".25rem");
-  selectType.style.setProperty(
-    "transition",
-    "border-color .15s ease-in-out,box-shadow .15s ease-in-out"
-  );
-  inputGroupType.appendChild(selectType);
+  // let selectType = document.createElement("select");
+  // selectType.classList.add("form-select");
+  // selectType.setAttribute("aria-label", "type");
+  // selectType.setAttribute("aria-describedby", "test-type");
+  // selectType.style.setProperty("width", "83%");
+  // selectType.style.setProperty("border", "1px solid #ced4da");
+  // selectType.style.setProperty("border-radius", ".25rem");
+  // selectType.style.setProperty(
+  //   "transition",
+  //   "border-color .15s ease-in-out,box-shadow .15s ease-in-out"
+  // );
+  // inputGroupType.appendChild(selectType);
 
-  let optionDeviceAction = document.createElement("option");
-  optionDeviceAction.selected = true;
-  optionDeviceAction.textContent = "<<Device action>>";
-  selectType.appendChild(optionDeviceAction);
+  // let optionDeviceAction = document.createElement("option");
+  // optionDeviceAction.selected = true;
+  // optionDeviceAction.textContent = "<<Device action>>";
+  // selectType.appendChild(optionDeviceAction);
 
-  let optionDateAction = document.createElement("option");
-  optionDateAction.textContent = "<<Date action>>";
-  selectType.appendChild(optionDateAction);
+  // let optionDateAction = document.createElement("option");
+  // optionDateAction.textContent = "<<Date action>>";
+  // selectType.appendChild(optionDateAction);
 
-  let optionCompositeAction = document.createElement("option");
-  optionCompositeAction.textContent = "<<Composite action>>";
-  selectType.appendChild(optionCompositeAction);
+  // let optionCompositeAction = document.createElement("option");
+  // optionCompositeAction.textContent = "<<Composite action>>";
+  // selectType.appendChild(optionCompositeAction);
 
   let actionContainer = document.createElement("div");
   actionContainer.id = "test-action-container";
+  actionContainer.style.setProperty("overflow-y", "auto");
+  actionContainer.style.setProperty("overflow-x", "hidden");
+  actionContainer.style.setProperty("padding-top", "1rem");
+  actionContainer.style.setProperty("margin-top", "1rem");
+  actionContainer.style.setProperty("max-height", "34rem");
   container.appendChild(actionContainer);
 
-  let tmpActionDebugConfiguration = [];
+  let testsTimeSlots = [];
 
   /* add time 0 if no time slot exists */
-  let timeSlot = CreateTimeSlot(0, "Default Description", []);
-  tmpActionDebugConfiguration.push(timeSlot);
+  let timeSlot = CreateTimeSlot(0, "Default Description");
+  testsTimeSlots.push(timeSlot);
+
+  /* Headers */
+  let titlesRow = document.createElement("div");
+  titlesRow.classList.add("row");
+  titlesRow.style.setProperty("font-size", "large");
+  titlesRow.style.setProperty("font-weight", "600");
+  titlesRow.style.setProperty("padding-bottom", "0.2rem");
+  titlesRow.style.setProperty("border-bottom", "1px solid #27252545");
+  actionContainer.appendChild(titlesRow);
+
+  let timeSlotsHeader = document.createElement("div");
+  timeSlotsHeader.classList.add("col-4");
+  timeSlotsHeader.innerHTML = "Time Slots";
+  titlesRow.appendChild(timeSlotsHeader);
+
+  let propertiesChangesHeader = document.createElement("div");
+  propertiesChangesHeader.classList.add("col");
+  propertiesChangesHeader.innerHTML = "Changes";
+  titlesRow.appendChild(propertiesChangesHeader);
+
+  let timelinesOuter = document.createElement("div");
+  timelinesOuter.id = "timelines-container";
+  timelinesOuter.style.setProperty("margin-top", "1rem");
+  actionContainer.appendChild(timelinesOuter);
+
+  RenderTimeLine(timelinesOuter, testsTimeSlots);
 
   $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
     DestroyModal(idPrefix);
@@ -782,153 +807,17 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
 /* End of functions for simulating time */
 
 /* Start functions for creating test */
-export let RenderDebugConfigurationOfAction = function (
-  action,
-  actionDebugConfiguration,
-  props,
-  resourceId,
-  onSave
-) {
-  // Create Modal
-  CreateModal(
-    document.getElementsByClassName("modal-platform-container")[0],
-    "debug-configuration-" + action.name
-  );
-
-  // title
-  $("#" + "debug-configuration-" + action.name + "-modal-title").html(
-    "Simulate action: " + action.name
-  );
-
-  /* height of modal body */
-  document
-    .getElementById("debug-configuration-" + action.name + "-modal-body")
-    .style.setProperty("max-height", "50rem");
-
-  document
-    .getElementById("debug-configuration-" + action.name + "-modal-body")
-    .style.setProperty("overflow-y", "auto");
-
-  var tmpActionDebugConfiguration = JSON.parse(
-    JSON.stringify(actionDebugConfiguration)
-  );
-
-  /* add time 0 if no time slot exists */
-  if (tmpActionDebugConfiguration.length == 0) {
-    let timeSlot = CreateTimeSlot(0, "Default Description", []);
-    tmpActionDebugConfiguration.push(timeSlot);
-  }
-
-  /* Headers */
-  let titlesRow = document.createElement("div");
-  titlesRow.classList.add("row");
-  titlesRow.style.setProperty("font-size", "large");
-  titlesRow.style.setProperty("font-weight", "600");
-  titlesRow.style.setProperty("padding-bottom", "0.2rem");
-  titlesRow.style.setProperty("border-bottom", "1px solid #27252545");
-  document
-    .getElementById("debug-configuration-" + action.name + "-modal-body")
-    .appendChild(titlesRow);
-
-  let timeSlotsHeader = document.createElement("div");
-  timeSlotsHeader.classList.add("col-4");
-  timeSlotsHeader.innerHTML = "Time Slots";
-  titlesRow.appendChild(timeSlotsHeader);
-
-  let propertiesChangesHeader = document.createElement("div");
-  propertiesChangesHeader.classList.add("col");
-  propertiesChangesHeader.innerHTML = "Properties Changes";
-  titlesRow.appendChild(propertiesChangesHeader);
-
-  let timelinesOuter = document.createElement("div");
-  timelinesOuter.id = "timelines-container";
-  timelinesOuter.style.setProperty("margin-top", "1rem");
-  document
-    .getElementById("debug-configuration-" + action.name + "-modal-body")
-    .appendChild(timelinesOuter);
-
-  RenderTimeLine(
-    timelinesOuter,
-    tmpActionDebugConfiguration,
-    props,
-    resourceId
-  );
-
-  $("#" + "debug-configuration-" + action.name + "-modal").on(
-    "hidden.bs.modal",
-    function () {
-      document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-        "";
-    }
-  );
-
-  /* change confirm name to save */
-  let confirmButton = document.getElementById(
-    "debug-configuration-" + action.name + "-modal-confirm-button"
-  );
-  confirmButton.innerHTML = "Save";
-
-  /* Save changes */
-  confirmButton.onclick = () => {
-    for (let [
-      timeSlotIndex,
-      timeSlot,
-    ] of tmpActionDebugConfiguration.entries()) {
-      /* collect all changes on properties */
-      for (let [propertyIndex, property] of timeSlot.properties.entries()) {
-        /* Get value from selector */
-        let value = document.getElementById(
-          timeSlot.time + "-" + propertyIndex + "-value"
-        ).value;
-
-        /* check type */
-        if (property.type === "number" || property.type === "intRange") {
-          parseFloat(value);
-        } else if (property.type === "boolean") {
-          value = value === "true";
-        }
-
-        /* set value */
-        property.value = value;
-      }
-    }
-
-    onSave(tmpActionDebugConfiguration);
-
-    $("#" + "debug-configuration-" + action.name + "-modal").modal("toggle");
-  };
-
-  /* change modal size */
-  document
-    .getElementById("debug-configuration-" + action.name + "-modal-dialog")
-    .classList.remove("modal-lg");
-  document
-    .getElementById("debug-configuration-" + action.name + "-modal-dialog")
-    .classList.add("modal-xl");
-
-  $("#" + "debug-configuration-" + action.name + "-modal").modal({
-    backdrop: "static",
-    keyboard: false,
-  });
-
-  $("#" + "debug-configuration-" + action.name + "-modal").modal("show");
-};
-
 let CreateTimeSlot = function (time, description, editMode = true) {
   return {
     time: time,
     description: description,
     properties: [],
+    actions: [],
     editMode: editMode,
   };
 };
 
-let RenderTimeLine = function (
-  domSelector,
-  timeSlotsArray,
-  resourceProperties,
-  resourceId
-) {
+let RenderTimeLine = function (domSelector, timeSlotsArray) {
   if (timeSlotsArray.length === 0) {
     let emptyHeader = document.createElement("div");
     emptyHeader.style.setProperty("font-style", "italic");
@@ -946,8 +835,6 @@ let RenderTimeLine = function (
       domSelector,
       element,
       unvalidForElement,
-      resourceProperties,
-      resourceId,
       () => {
         /* clear timelines-contatiner */
         document.getElementById("timelines-container").innerHTML = "";
@@ -958,9 +845,7 @@ let RenderTimeLine = function (
         /* rerend all time slots */
         RenderTimeLine(
           document.getElementById("timelines-container"),
-          timeSlotsArray,
-          resourceProperties,
-          resourceId
+          timeSlotsArray
         );
       },
       (newTimeSlot) => {
@@ -975,9 +860,7 @@ let RenderTimeLine = function (
         /* rerend all time slots */
         RenderTimeLine(
           document.getElementById("timelines-container"),
-          timeSlotsArray,
-          resourceProperties,
-          resourceId
+          timeSlotsArray
         );
       },
       (timeOfTimeSlot) => {
@@ -996,9 +879,7 @@ let RenderTimeLine = function (
         /* rerend all time slots */
         RenderTimeLine(
           document.getElementById("timelines-container"),
-          timeSlotsArray,
-          resourceProperties,
-          resourceId
+          timeSlotsArray
         );
       }
     );
@@ -1012,18 +893,16 @@ let RenderTimeLine = function (
 };
 
 let RenderTimeSlot = function (
-  domSelecor,
+  domSelector,
   timeSlot,
   unvalidTimes,
-  deviceProps,
-  resourceId,
   onSuccessEdit,
   onAddTimeSlot,
   onDeleteTimeSlot
 ) {
   let timelineRow = document.createElement("div");
   timelineRow.classList.add("row");
-  domSelecor.appendChild(timelineRow);
+  domSelector.appendChild(timelineRow);
 
   /* Column for the timeslot */
   let timeCol = document.createElement("div");
@@ -1164,7 +1043,7 @@ let RenderTimeSlot = function (
 
   let addTimeLineLink = document.createElement("a");
   addTimeLineLink.style.setProperty("width", "fit-content");
-  addTimeLineLink.href = "#";
+  addTimeLineLink.href = "javascript:void(0);";
   addTimeLineLink.innerHTML = "Add time slot";
   addTimeLineLink.onclick = () => {
     let newTime = timeSlot.time + 1;
@@ -1213,70 +1092,67 @@ let RenderTimeSlot = function (
     addTimeLineOuter.style.setProperty("display", "none");
   }
 
-  /* Properties Column */
-  let propertiesCol = document.createElement("div");
-  propertiesCol.classList.add("col");
-  propertiesCol.style.setProperty("position", "relative");
-  timelineRow.appendChild(propertiesCol);
+  /* Changes Column */
+  let changesCol = document.createElement("div");
+  changesCol.classList.add("col");
+  changesCol.style.setProperty("position", "relative");
+  timelineRow.appendChild(changesCol);
 
-  let propertiesContainer = document.createElement("div");
-  propertiesContainer.classList.add("action-configure-properties-contatainer");
-  propertiesContainer.style.setProperty("max-height", "15rem");
-  propertiesContainer.style.setProperty("overflow-y", "auto");
-  propertiesContainer.style.setProperty("padding-bottom", "2.5rem");
-  propertiesCol.appendChild(propertiesContainer);
+  let changesContainer = document.createElement("div");
+  changesContainer.classList.add("action-configure-properties-contatainer");
+  changesContainer.style.setProperty("max-height", "15rem");
+  changesContainer.style.setProperty("overflow-y", "auto");
+  changesContainer.style.setProperty("padding-bottom", "2.5rem");
+  changesCol.appendChild(changesContainer);
 
-  let addPropertyOuterDiv = document.createElement("div");
-  propertiesCol.appendChild(addPropertyOuterDiv);
+  let addChangeOuterDiv = document.createElement("div");
+  addChangeOuterDiv.style.setProperty("position", "absolute");
+  addChangeOuterDiv.style.setProperty("bottom", "0");
+  changesCol.appendChild(addChangeOuterDiv);
 
-  let addPropertyConfiguration = document.createElement("a");
-  addPropertyConfiguration.href = "#";
-  addPropertyConfiguration.onclick = () => {
-    addPropertyConfiguration.style.setProperty("display", "none");
-
-    AddPropertyChangeForAction(
-      addPropertyOuterDiv,
-      deviceProps,
-      (propertyName) => {
-        addPropertyConfiguration.style.display = "block";
-        propertiesContainer.innerHTML = "";
-
-        timeSlot.properties.push(
-          deviceProps.find((property) => property.name === propertyName)
-        );
-
-        RenderPropertiesForActionConfiguration(
-          propertiesContainer,
-          resourceId,
-          timeSlot
-        );
-      }
-    );
+  let addChange = document.createElement("a");
+  addChange.href = "javascript:void(0);";
+  addChange.onclick = () => {
+    addChange.style.setProperty("display", "none");
+    // AddDeviceActionOrPropertyChange(
+    //   addChangeOuterDiv,
+    //   devices,
+    //   (propertyName) => {
+    //     addChange.style.display = "block";
+    //     changesContainer.innerHTML = "";
+    //     timeSlot.properties.push(
+    //       deviceProps.find((property) => property.name === propertyName)
+    //     );
+    //     RenderPropertiesForActionConfiguration(
+    //       changesContainer,
+    //       resourceId,
+    //       timeSlot
+    //     );
+    //   }
+    // );
   };
-  addPropertyConfiguration.innerHTML = "Add property change";
-  addPropertyConfiguration.style.setProperty("width", "fit-content");
-  // addPropertyConfiguration.style.setProperty("position", "absolute");
-  // addPropertyConfiguration.style.setProperty("bottom", "0");
-  addPropertyOuterDiv.appendChild(addPropertyConfiguration);
+  addChange.innerHTML = "Add action or property change";
+  addChange.style.setProperty("width", "fit-content");
+  // addChange.style.setProperty("position", "absolute");
+  // addChange.style.setProperty("bottom", "0");
+  addChangeOuterDiv.appendChild(addChange);
 
   if (timeSlot.properties.length === 0) {
     let message = document.createElement("div");
     message.style.setProperty("font-size", "large");
     message.style.setProperty("font-style", "italic");
-    message.innerHTML = "There is not any property change";
-    propertiesContainer.appendChild(message);
+    message.innerHTML = "There is not any action or property change";
+    changesContainer.appendChild(message);
   } else {
     RenderPropertiesForActionConfiguration(
-      propertiesContainer,
+      changesContainer,
       resourceId,
       timeSlot
     );
   }
 };
 
-let AddPropertyChangeForAction = function (domSelector, props, onAdd) {
-  this;
-
+let AddDeviceActionOrPropertyChange = function (domSelector, props, onAdd) {
   let selectionDiv = document.createElement("div");
   selectionDiv.style.setProperty("margin-top", "1rem");
   domSelector.appendChild(selectionDiv);
