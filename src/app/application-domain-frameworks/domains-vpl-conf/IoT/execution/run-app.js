@@ -1109,8 +1109,8 @@ let RenderTimeSlot = function (
   changesCol.appendChild(changesContainer);
 
   let addChangeOuterDiv = document.createElement("div");
-  addChangeOuterDiv.style.setProperty("position", "absolute");
-  addChangeOuterDiv.style.setProperty("bottom", "0");
+  // addChangeOuterDiv.style.setProperty("position", "absolute");
+  // addChangeOuterDiv.style.setProperty("bottom", "0");
   changesCol.appendChild(addChangeOuterDiv);
 
   let addChange = document.createElement("a");
@@ -1125,7 +1125,7 @@ let RenderTimeSlot = function (
         changesContainer.innerHTML = "";
 
         addChangeOuterDiv.style.removeProperty("width");
-        addChangeOuterDiv.style.setProperty("position", "absolute");
+        // addChangeOuterDiv.style.setProperty("position", "absolute");
         if (!timeSlot.devices[deviceId]) {
           timeSlot.devices[deviceId] = { properties: [], actions: [] };
         }
@@ -1136,15 +1136,11 @@ let RenderTimeSlot = function (
           );
         } else if (typeOfChange === "action") {
           timeSlot.devices[deviceId].actions.push(
-            devicesOnAutomations[deviceIndex].actions[changeIndex]
+            devicesOnAutomations[deviceIndex].actions[changeIndex].name
           );
         }
 
-        // RenderPropertiesForActionConfiguration(
-        //   changesContainer,
-        //   resourceId,
-        //   timeSlot
-        // );
+        RenderChangesForCreatingTest(changesContainer, timeSlot);
       }
     );
   };
@@ -1161,11 +1157,7 @@ let RenderTimeSlot = function (
     message.innerHTML = "There is not any action or property change";
     changesContainer.appendChild(message);
   } else {
-    // RenderPropertiesForActionConfiguration(
-    //   changesContainer,
-    //   resourceId,
-    //   timeSlot
-    // );
+    RenderChangesForCreatingTest(changesContainer, timeSlot);
   }
 };
 
@@ -1320,39 +1312,69 @@ let AddDeviceActionOrPropertyChange = function (domSelector, onAdd) {
   selectionDeviceDiv.appendChild(addChangeButton);
 };
 
-let RenderPropertiesForActionConfiguration = function (
-  domContainer,
-  resourceId,
-  timeSlot
-) {
-  for (const [index, property] of timeSlot.properties.entries()) {
-    RenderPropertyForActionConfiguration(
-      domContainer,
-      property,
-      resourceId,
-      timeSlot.time + "-" + index + "-value",
-      () => {
-        /* remove property */
-        timeSlot.properties.splice(index, 1);
+let RenderChangesForCreatingTest = function (domContainer, timeSlot) {
+  let devicesLength = Object.keys(timeSlot.devices).length;
+  let i = 0;
+  for (const device in timeSlot.devices) {
+    if (
+      timeSlot.devices[device].properties.length > 0 ||
+      timeSlot.devices[device].actions.length > 0
+    ) {
+      let deviceName = devicesOnAutomations.find((x) => x.id === device).name;
 
-        /* clear container of properties */
-        domContainer.innerHTML = "";
+      let deviceContainer = document.createElement("div");
+      deviceContainer.id = device + "create-test-container";
+      if (i != 0) deviceContainer.style.setProperty("margin-top", "1rem");
+      domContainer.appendChild(deviceContainer);
 
-        /* render again properties */
-        RenderPropertiesForActionConfiguration(
-          domContainer,
-          resourceId,
-          timeSlot
+      let deviceTitle = document.createElement("div");
+      deviceTitle.innerHTML = deviceName;
+      deviceTitle.style.setProperty("font-size", "large");
+      deviceTitle.style.setProperty("font-weight", "600");
+      deviceContainer.appendChild(deviceTitle);
+
+      let deviceTitleHr = document.createElement("hr");
+      deviceTitleHr.style.setProperty("width", "100%");
+      deviceTitleHr.style.setProperty("background-color", "#00000038");
+      deviceContainer.appendChild(deviceTitleHr);
+
+      let deviceChangesContainer = document.createElement("div");
+      deviceChangesContainer.style.setProperty("margin-top", "1rem");
+      deviceContainer.appendChild(deviceChangesContainer);
+
+      for (const [index, property] of timeSlot.devices[
+        device
+      ].properties.entries()) {
+        RenderPropertyChangeForCreatingTest(
+          deviceChangesContainer,
+          property,
+          device,
+          timeSlot.time + "-" + device + "-properties-" + index + "-value",
+          () => {
+            /* remove property */
+            timeSlot.devices[device].properties.splice(index, 1);
+
+            /* clear container of properties */
+            domContainer.innerHTML = "";
+
+            /* render again properties */
+            RenderChangesForCreatingTest(domContainer, timeSlot);
+          }
         );
       }
-    );
+      for (const [index, actionName] of timeSlot.devices[
+        device
+      ].actions.entries()) {
+      }
+    }
+    i = i + 1;
   }
 };
 
-let RenderPropertyForActionConfiguration = function (
+let RenderPropertyChangeForCreatingTest = function (
   domSelector,
   property,
-  resourceId,
+  deviceId,
   propertyInputID,
   onDeleteProperty
 ) {
@@ -1365,9 +1387,9 @@ let RenderPropertyForActionConfiguration = function (
   spanPropertyView.style.setProperty("margin-left", "2rem");
   propertyOuter.appendChild(spanPropertyView);
 
-  soUIGenerator.RenderPropertyForDebugConfiguration(
+  Automatic_IoT_UI_Generator.RenderPropertyForDebugConfiguration(
     spanPropertyView,
-    resourceId,
+    deviceId,
     property,
     propertyInputID
   );
