@@ -1,6 +1,7 @@
 let calendar,
   organizer,
-  calendarData = {};
+  calendarData = {},
+  devicesOnAutomations;
 
 const ID = function () {
   // Math.random should be unique because of its seeding algorithm.
@@ -763,7 +764,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   let testsTimeSlots = [];
 
   /* add time 0 if no time slot exists */
-  let timeSlot = CreateTimeSlot(0, "Default Description");
+  let timeSlot = CreateTimeSlot(0, "Default Description", {});
   testsTimeSlots.push(timeSlot);
 
   /* Headers */
@@ -810,12 +811,11 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
 /* End of functions for simulating time */
 
 /* Start functions for creating test */
-let CreateTimeSlot = function (time, description, editMode = true) {
+let CreateTimeSlot = function (time, description, devices, editMode = true) {
   return {
     time: time,
     description: description,
-    properties: [],
-    actions: [],
+    devices: {},
     editMode: editMode,
   };
 };
@@ -1053,7 +1053,7 @@ let RenderTimeSlot = function (
     while (unvalidTimes.includes(newTime)) {
       newTime = newTime + 1;
     }
-    let newTimeSlot = CreateTimeSlot(newTime, "Default desctiption", []);
+    let newTimeSlot = CreateTimeSlot(newTime, "Default desctiption", {});
 
     onAddTimeSlot(newTimeSlot);
   };
@@ -1117,72 +1117,207 @@ let RenderTimeSlot = function (
   addChange.href = "javascript:void(0);";
   addChange.onclick = () => {
     addChange.style.setProperty("display", "none");
-    // AddDeviceActionOrPropertyChange(
-    //   addChangeOuterDiv,
-    //   devices,
-    //   (propertyName) => {
-    //     addChange.style.display = "block";
-    //     changesContainer.innerHTML = "";
-    //     timeSlot.properties.push(
-    //       deviceProps.find((property) => property.name === propertyName)
-    //     );
-    //     RenderPropertiesForActionConfiguration(
-    //       changesContainer,
-    //       resourceId,
-    //       timeSlot
-    //     );
-    //   }
-    // );
+    AddDeviceActionOrPropertyChange(
+      addChangeOuterDiv,
+      (deviceId, deviceIndex, typeOfChange, changeIndex) => {
+        addChange.style.display = "block";
+
+        changesContainer.innerHTML = "";
+
+        addChangeOuterDiv.style.removeProperty("width");
+        addChangeOuterDiv.style.setProperty("position", "absolute");
+        if (!timeSlot.devices[deviceId]) {
+          timeSlot.devices[deviceId] = { properties: [], actions: [] };
+        }
+
+        if (typeOfChange === "property") {
+          timeSlot.devices[deviceId].properties.push(
+            devicesOnAutomations[deviceIndex].properties[changeIndex]
+          );
+        } else if (typeOfChange === "action") {
+          timeSlot.devices[deviceId].actions.push(
+            devicesOnAutomations[deviceIndex].actions[changeIndex]
+          );
+        }
+
+        // RenderPropertiesForActionConfiguration(
+        //   changesContainer,
+        //   resourceId,
+        //   timeSlot
+        // );
+      }
+    );
   };
-  addChange.innerHTML = "Add action or property change";
+  addChange.innerHTML = "Add device's action or property change";
   addChange.style.setProperty("width", "fit-content");
   // addChange.style.setProperty("position", "absolute");
   // addChange.style.setProperty("bottom", "0");
   addChangeOuterDiv.appendChild(addChange);
 
-  if (timeSlot.properties.length === 0) {
+  if (Object.entries(timeSlot.devices).length === 0) {
     let message = document.createElement("div");
     message.style.setProperty("font-size", "large");
     message.style.setProperty("font-style", "italic");
     message.innerHTML = "There is not any action or property change";
     changesContainer.appendChild(message);
   } else {
-    RenderPropertiesForActionConfiguration(
-      changesContainer,
-      resourceId,
-      timeSlot
-    );
+    // RenderPropertiesForActionConfiguration(
+    //   changesContainer,
+    //   resourceId,
+    //   timeSlot
+    // );
   }
 };
 
-let AddDeviceActionOrPropertyChange = function (domSelector, props, onAdd) {
-  let selectionDiv = document.createElement("div");
-  selectionDiv.style.setProperty("margin-top", "1rem");
-  domSelector.appendChild(selectionDiv);
+let AddDeviceActionOrPropertyChange = function (domSelector, onAdd) {
+  domSelector.style.removeProperty("position");
+  domSelector.style.setProperty("width", "17rem");
 
-  let selectProp = document.createElement("select");
-  selectionDiv.appendChild(selectProp);
+  let selectionDeviceDiv = document.createElement("div");
+  selectionDeviceDiv.style.setProperty("margin-top", "1rem");
+  domSelector.appendChild(selectionDeviceDiv);
+
+  let inputGroupSelectDevice = document.createElement("div");
+  inputGroupSelectDevice.classList.add("input-group");
+  inputGroupSelectDevice.style.setProperty("width", "17rem");
+  selectionDeviceDiv.appendChild(inputGroupSelectDevice);
+
+  let inputGroupPrependSelectDevice = document.createElement("div");
+  inputGroupPrependSelectDevice.classList.add("input-group-prepend");
+  inputGroupSelectDevice.appendChild(inputGroupPrependSelectDevice);
+
+  let inputGroupTextSelectDevice = document.createElement("span");
+  inputGroupTextSelectDevice.classList.add("input-group-text");
+  inputGroupTextSelectDevice.id = "select-device-text";
+  inputGroupTextSelectDevice.style.setProperty("width", "5rem");
+  inputGroupTextSelectDevice.innerHTML = "Device";
+  inputGroupPrependSelectDevice.appendChild(inputGroupTextSelectDevice);
+
+  let selectDevice = document.createElement("select");
+  selectDevice.classList.add("form-control");
+  selectDevice.setAttribute("aria-label", "Device");
+  selectDevice.setAttribute("aria-describedby", "select-device-text");
+  selectDevice.oninput = function (e) {
+    // sting of device index
+    let deviceIndexStr =
+      e.target.options[e.target.selectedIndex].dataset.deviceIndex;
+    let deviceIndex = parseInt(deviceIndexStr);
+
+    let deviceId = e.target.options[e.target.selectedIndex].dataset.deviceId;
+
+    // remove children of select change
+    selectChange.innerHTML = "";
+
+    addChangeButton.style.setProperty("display", "none");
+
+    selectChange.dataset.forDeviceId = deviceId;
+    selectChange.dataset.forDeviceIndex = deviceIndex;
+
+    // update options
+    let optionChangeDefault = document.createElement("option");
+    optionChangeDefault.selected = true;
+    optionChangeDefault.disabled = true;
+    optionChangeDefault.textContent = "<select change>";
+    selectChange.appendChild(optionChangeDefault);
+
+    let optGroupAction = document.createElement("optgroup");
+    optGroupAction.setAttribute("label", "Actions");
+    selectChange.appendChild(optGroupAction);
+
+    for (const [index, action] of devicesOnAutomations[
+      deviceIndex
+    ].actions.entries()) {
+      let option = document.createElement("option");
+      option.dataset.index = index;
+      option.dataset.element = "action";
+      option.innerHTML = action.name;
+      selectChange.appendChild(option);
+    }
+
+    let optGroupProperty = document.createElement("optgroup");
+    optGroupProperty.setAttribute("label", "Properties");
+    selectChange.appendChild(optGroupProperty);
+
+    for (const [index, property] of devicesOnAutomations[
+      deviceIndex
+    ].properties.entries()) {
+      let option = document.createElement("option");
+      option.dataset.index = index;
+      option.dataset.element = "property";
+      option.innerHTML = property.name;
+      selectChange.appendChild(option);
+    }
+
+    inputGroupSelectChange.style.setProperty("display", "flex");
+  };
+  inputGroupSelectDevice.appendChild(selectDevice);
 
   let optionDefault = document.createElement("option");
   optionDefault.selected = true;
-  optionDefault.text = "<select property>";
-  selectProp.appendChild(optionDefault);
+  optionDefault.disabled = true;
+  optionDefault.textContent = "<select device>";
+  selectDevice.appendChild(optionDefault);
 
-  props.forEach((property) => {
+  for (const [index, device] of devicesOnAutomations.entries()) {
     let option = document.createElement("option");
-    option.innerHTML = property.name;
-    selectProp.appendChild(option);
-  });
+    option.dataset.deviceIndex = index;
+    option.dataset.deviceId = device.id;
+    option.innerHTML = device.name;
+    selectDevice.appendChild(option);
+  }
 
-  let addPropertyButton = document.createElement("button");
-  addPropertyButton.classList.add("btn", "btn-sm", "btn-success");
-  addPropertyButton.style.setProperty("margin-left", "1rem");
-  addPropertyButton.innerHTML = "Add";
-  addPropertyButton.onclick = () => {
-    selectionDiv.remove();
-    if (selectProp.value !== "<select property>") onAdd(selectProp.value);
+  // collect actions and properties of device
+  let inputGroupSelectChange = document.createElement("div");
+  inputGroupSelectChange.classList.add("input-group");
+  inputGroupSelectChange.style.setProperty("margin-top", ".5rem");
+  inputGroupSelectChange.style.setProperty("width", "17rem");
+  inputGroupSelectChange.style.setProperty("display", "none");
+  selectionDeviceDiv.appendChild(inputGroupSelectChange);
+
+  let inputGroupPrependSelectChange = document.createElement("div");
+  inputGroupPrependSelectChange.classList.add("input-group-prepend");
+  inputGroupSelectChange.appendChild(inputGroupPrependSelectChange);
+
+  let inputGrouptSelectChange = document.createElement("span");
+  inputGrouptSelectChange.classList.add("input-group-text");
+  inputGrouptSelectChange.id = "select-change-text";
+  inputGrouptSelectChange.style.setProperty("width", "5rem");
+  inputGrouptSelectChange.innerHTML = "Change";
+  inputGroupPrependSelectChange.appendChild(inputGrouptSelectChange);
+
+  let selectChange = document.createElement("select");
+  selectChange.classList.add("form-control");
+  selectChange.setAttribute("aria-label", "Device");
+  selectChange.setAttribute("aria-describedby", "select-device-text");
+  selectChange.oninput = function (e) {
+    addChangeButton.style.setProperty("display", "block");
+    // hide add button
+    addChangeButton.onclick = () => {
+      let deviceId = this.dataset.forDeviceId;
+
+      let deviceIndexStr = this.dataset.forDeviceIndex;
+      let deviceIndex = parseInt(deviceIndexStr);
+
+      let typeOfChange =
+        e.target.options[e.target.selectedIndex].dataset.element;
+
+      let changeIndexStr =
+        e.target.options[e.target.selectedIndex].dataset.index;
+      let changeIndex = parseInt(changeIndexStr);
+
+      selectionDeviceDiv.remove();
+      onAdd(deviceId, deviceIndex, typeOfChange, changeIndex);
+    };
   };
-  selectionDiv.appendChild(addPropertyButton);
+  inputGroupSelectChange.appendChild(selectChange);
+
+  let addChangeButton = document.createElement("button");
+  addChangeButton.classList.add("btn", "btn-sm", "btn-success");
+  addChangeButton.style.setProperty("float", "right");
+  addChangeButton.style.setProperty("margin-top", ".5rem");
+  addChangeButton.style.setProperty("display", "none");
+  addChangeButton.innerHTML = "Add";
+  selectionDeviceDiv.appendChild(addChangeButton);
 };
 
 let RenderPropertiesForActionConfiguration = function (
@@ -1988,7 +2123,7 @@ const RerenderDevice = function (device, propsDiff) {
 
 export async function StartApplication(runTimeData) {
   try {
-    let devicesOnAutomations = CollectRegisteredDevices(
+    devicesOnAutomations = CollectRegisteredDevices(
       runTimeData.execData.project.SmartObjects
     );
 
