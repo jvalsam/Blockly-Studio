@@ -104,15 +104,24 @@ const Initialize = function (selector, envData) {
         specificDate.diff(simulatedTimeTable[0].time) < 0
       ) {
       } else {
+        document
+          .getElementById("time-speed-title")
+          .style.setProperty("display", "none");
+
+        document.getElementById("time-speed-info").innerHTML =
+          "Go to: " + specificDate;
+
+        let i = 0;
         // jump to specific date but with simulatedTimeTable
-        for (const [index, element] of simulatedTimeTable.entries()) {
-          if (specificDate.diff(element.time) < 0) {
-            simulatedTime = element.time;
+        while (i < simulatedTimeTable.length) {
+          if (specificDate.diff(simulatedTimeTable[i].time) > 0) {
+            simulatedTime = simulatedTimeTable[i].time;
             // set a boolean to go next time in simulatedTimeTable
-            while (!element.finished) {}
+            // while (!simulatedTimeTable[i].finished) {}
           } else {
             break;
           }
+          i++;
         }
       }
       simulatedTime = specificDate;
@@ -1858,7 +1867,8 @@ const InitializeSimulatorControls = function ({
     // document
     //   .getElementById("analog-clock")
     //   .style.setProperty("margin-left", "3.4rem");
-    NormalSimulatedTime();
+    // NormalSimulatedTime();
+    PauseSimulatedTime();
   };
 
   let buttonsOuter = document.createElement("div");
