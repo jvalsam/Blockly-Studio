@@ -139,4 +139,22 @@ export class RuntimeEnvironmentRelease {
                 blockId
             ]);
     }
+
+    saveComponentsData(){
+        this._runtimeEnv.functionRequest(
+            RuntimeEnvironmentRelease.name,
+            "RuntimeManager",
+            "foldLivePreview",
+            []
+        );
+        
+        this._runtimeEnv.functionRequest(
+          RuntimeEnvironmentRelease.name,
+          "BlocklyVPL",
+          "highlightBlockOfPItem",
+            [
+                projectElementId,
+                blockId
+            ]);
+    }
 }

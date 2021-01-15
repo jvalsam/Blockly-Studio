@@ -476,16 +476,21 @@ body {
   opacity: 100%;
 }
 
-.action-configure-properties-contatainer hr {
+.fold-smart-device-create-test {
+  cursor: pointer;
+}
+
+.create-test-changes-container hr {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   width: 109%;
 }
 
-.action-configure-properties-contatainer .property-value-number {
-  width: fit-content;
+.create-test-changes-container .property-value-number,
+.create-test-changes-container .property-value-array {
+  width: 9.5rem;
 }
 
-.action-configure-properties-contatainer label {
+.create-test-changes-container label {
   margin-bottom: 0rem;
 }

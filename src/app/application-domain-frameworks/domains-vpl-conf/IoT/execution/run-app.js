@@ -1,7 +1,8 @@
 let calendar,
   organizer,
   calendarData = {},
-  devicesOnAutomations;
+  devicesOnAutomations,
+  testsCounter = 1;
 
 const ID = function () {
   // Math.random should be unique because of its seeding algorithm.
@@ -560,6 +561,10 @@ const compareTimes = function (a, b) {
   return comparison;
 };
 
+const IncreaseTestCounter = function () {
+  return testsCounter++;
+};
+
 const CreateModal = function (idPrefix) {
   let modal = document.createElement("div");
   modal.classList.add("modal", "fade");
@@ -651,7 +656,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
     idPrefix + "-modal-confirm-button"
   );
 
-  title.innerHTML = "Create test";
+  title.innerHTML = "New test";
   // body.style.setProperty("max-height", "42rem");
 
   let container = document.createElement("div");
@@ -660,7 +665,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   /* Input Title */
   let inputGroupTitle = document.createElement("div");
   inputGroupTitle.classList.add("input-group");
-  inputGroupTitle.style.setProperty("width", "50%");
+  inputGroupTitle.style.setProperty("width", "18rem");
   container.appendChild(inputGroupTitle);
 
   let inputGroupPrependTitle = document.createElement("div");
@@ -677,7 +682,9 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   let inputTitle = document.createElement("input");
   inputTitle.type = "text";
   inputTitle.classList.add("form-control");
-  inputTitle.placeholder = "Give a title";
+  // inputTitle.placeholder = "Test " + testsCounter;
+  inputTitle.value = "Test " + IncreaseTestCounter();
+
   inputTitle.setAttribute("aria-label", "title");
   inputTitle.setAttribute("aria-describedby", "test-title");
   inputGroupTitle.appendChild(inputTitle);
@@ -685,8 +692,9 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   /* Input Color */
   let inputGroupColor = document.createElement("div");
   inputGroupColor.classList.add("input-group");
-  inputGroupColor.style.setProperty("width", "50%");
+  inputGroupColor.style.setProperty("width", "18rem");
   inputGroupColor.style.setProperty("margin-top", "1rem");
+  inputGroupColor.style.setProperty("padding-bottom", "1rem");
   container.appendChild(inputGroupColor);
 
   let inputGroupPrependColor = document.createElement("div");
@@ -703,7 +711,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   let inputColor = document.createElement("input");
   inputColor.type = "color";
   inputColor.classList.add("form-control");
-  // inputColor.placeholder = "Give a title";
+  inputColor.value = "#cfcece";
   inputColor.setAttribute("aria-label", "color");
   inputColor.setAttribute("aria-describedby", "test-color");
   inputGroupColor.appendChild(inputColor);
@@ -752,21 +760,6 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   // optionCompositeAction.textContent = "<<Composite action>>";
   // selectType.appendChild(optionCompositeAction);
 
-  let actionContainer = document.createElement("div");
-  actionContainer.id = "test-action-container";
-  actionContainer.style.setProperty("overflow-y", "auto");
-  actionContainer.style.setProperty("overflow-x", "hidden");
-  actionContainer.style.setProperty("padding-top", "1rem");
-  actionContainer.style.setProperty("margin-top", "1rem");
-  actionContainer.style.setProperty("max-height", "34rem");
-  container.appendChild(actionContainer);
-
-  let testsTimeSlots = [];
-
-  /* add time 0 if no time slot exists */
-  let timeSlot = CreateTimeSlot(0, "Default Description", {});
-  testsTimeSlots.push(timeSlot);
-
   /* Headers */
   let titlesRow = document.createElement("div");
   titlesRow.classList.add("row");
@@ -774,7 +767,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   titlesRow.style.setProperty("font-weight", "600");
   titlesRow.style.setProperty("padding-bottom", "0.2rem");
   titlesRow.style.setProperty("border-bottom", "1px solid #27252545");
-  actionContainer.appendChild(titlesRow);
+  container.appendChild(titlesRow);
 
   let timeSlotsHeader = document.createElement("div");
   timeSlotsHeader.classList.add("col-4");
@@ -785,6 +778,21 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   propertiesChangesHeader.classList.add("col");
   propertiesChangesHeader.innerHTML = "Changes";
   titlesRow.appendChild(propertiesChangesHeader);
+
+  let actionContainer = document.createElement("div");
+  actionContainer.id = "test-action-container";
+  actionContainer.style.setProperty("overflow-y", "auto");
+  actionContainer.style.setProperty("overflow-x", "hidden");
+  // actionContainer.style.setProperty("padding-top", "1rem");
+  // actionContainer.style.setProperty("margin-top", "1rem");
+  actionContainer.style.setProperty("max-height", "26rem");
+  container.appendChild(actionContainer);
+
+  let testsTimeSlots = [];
+
+  /* add time 0 if no time slot exists */
+  let timeSlot = CreateTimeSlot(0, "Default Description", {});
+  testsTimeSlots.push(timeSlot);
 
   let timelinesOuter = document.createElement("div");
   timelinesOuter.id = "timelines-container";
@@ -803,6 +811,10 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
     .classList.remove("modal-lg");
   document.getElementById(idPrefix + "-modal-dialog").classList.add("modal-xl");
 
+  // confirmButton.onclick = () => {
+
+  // };
+
   $("#" + idPrefix + "-modal").modal({ backdrop: "static" });
 
   RenderModal(idPrefix);
@@ -811,7 +823,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
 /* End of functions for simulating time */
 
 /* Start functions for creating test */
-let CreateTimeSlot = function (time, description, devices, editMode = true) {
+const CreateTimeSlot = function (time, description, devices, editMode = true) {
   return {
     time: time,
     description: description,
@@ -820,7 +832,7 @@ let CreateTimeSlot = function (time, description, devices, editMode = true) {
   };
 };
 
-let RenderTimeLine = function (domSelector, timeSlotsArray) {
+const RenderTimeLine = function (domSelector, timeSlotsArray) {
   if (timeSlotsArray.length === 0) {
     let emptyHeader = document.createElement("div");
     emptyHeader.style.setProperty("font-style", "italic");
@@ -895,7 +907,7 @@ let RenderTimeLine = function (domSelector, timeSlotsArray) {
   }
 };
 
-let RenderTimeSlot = function (
+const RenderTimeSlot = function (
   domSelector,
   timeSlot,
   unvalidTimes,
@@ -1102,15 +1114,13 @@ let RenderTimeSlot = function (
   timelineRow.appendChild(changesCol);
 
   let changesContainer = document.createElement("div");
-  changesContainer.classList.add("action-configure-properties-contatainer");
-  changesContainer.style.setProperty("max-height", "15rem");
+  changesContainer.classList.add("create-test-changes-container");
+  changesContainer.style.setProperty("max-height", "23rem");
   changesContainer.style.setProperty("overflow-y", "auto");
   changesContainer.style.setProperty("padding-bottom", "2.5rem");
   changesCol.appendChild(changesContainer);
 
   let addChangeOuterDiv = document.createElement("div");
-  // addChangeOuterDiv.style.setProperty("position", "absolute");
-  // addChangeOuterDiv.style.setProperty("bottom", "0");
   changesCol.appendChild(addChangeOuterDiv);
 
   let addChange = document.createElement("a");
@@ -1136,7 +1146,7 @@ let RenderTimeSlot = function (
           );
         } else if (typeOfChange === "action") {
           timeSlot.devices[deviceId].actions.push(
-            devicesOnAutomations[deviceIndex].actions[changeIndex].name
+            devicesOnAutomations[deviceIndex].actions[changeIndex]
           );
         }
 
@@ -1146,8 +1156,6 @@ let RenderTimeSlot = function (
   };
   addChange.innerHTML = "Add device's action or property change";
   addChange.style.setProperty("width", "fit-content");
-  // addChange.style.setProperty("position", "absolute");
-  // addChange.style.setProperty("bottom", "0");
   addChangeOuterDiv.appendChild(addChange);
 
   if (Object.entries(timeSlot.devices).length === 0) {
@@ -1161,7 +1169,7 @@ let RenderTimeSlot = function (
   }
 };
 
-let AddDeviceActionOrPropertyChange = function (domSelector, onAdd) {
+const AddDeviceActionOrPropertyChange = function (domSelector, onAdd) {
   domSelector.style.removeProperty("position");
   domSelector.style.setProperty("width", "17rem");
 
@@ -1312,7 +1320,7 @@ let AddDeviceActionOrPropertyChange = function (domSelector, onAdd) {
   selectionDeviceDiv.appendChild(addChangeButton);
 };
 
-let RenderChangesForCreatingTest = function (domContainer, timeSlot) {
+const RenderChangesForCreatingTest = function (domContainer, timeSlot) {
   let devicesLength = Object.keys(timeSlot.devices).length;
   let i = 0;
   for (const device in timeSlot.devices) {
@@ -1321,24 +1329,62 @@ let RenderChangesForCreatingTest = function (domContainer, timeSlot) {
       timeSlot.devices[device].actions.length > 0
     ) {
       let deviceName = devicesOnAutomations.find((x) => x.id === device).name;
+      let deviceData = devicesOnAutomations.find((x) => x.id === device);
 
       let deviceContainer = document.createElement("div");
+      deviceContainer.classList.add("card");
       deviceContainer.id = device + "create-test-container";
       if (i != 0) deviceContainer.style.setProperty("margin-top", "1rem");
+      deviceContainer.style.setProperty("width", "98%");
       domContainer.appendChild(deviceContainer);
 
-      let deviceTitle = document.createElement("div");
-      deviceTitle.innerHTML = deviceName;
-      deviceTitle.style.setProperty("font-size", "large");
-      deviceTitle.style.setProperty("font-weight", "600");
-      deviceContainer.appendChild(deviceTitle);
+      let deviceTitleHeader = document.createElement("div");
+      deviceTitleHeader.classList.add("card-header");
+      deviceTitleHeader.style.setProperty("font-size", "large");
+      deviceTitleHeader.style.setProperty("font-weight", "600");
+      deviceTitleHeader.style.setProperty("padding-top", ".2rem");
+      deviceTitleHeader.style.setProperty("padding-bottom", ".2rem");
+      deviceContainer.appendChild(deviceTitleHeader);
 
-      let deviceTitleHr = document.createElement("hr");
-      deviceTitleHr.style.setProperty("width", "100%");
-      deviceTitleHr.style.setProperty("background-color", "#00000038");
-      deviceContainer.appendChild(deviceTitleHr);
+      let foldButtonOuter = document.createElement("span");
+      foldButtonOuter.classList.add("fold-smart-device-create-test");
+      foldButtonOuter.onclick = () => {
+        deviceChangesContainer.style.setProperty("display", "none");
+        foldButtonOuter.style.setProperty("display", "none");
+        expandButtonOuter.style.setProperty("display", "initial");
+      };
+      deviceTitleHeader.appendChild(foldButtonOuter);
+
+      let foldButton = document.createElement("i");
+      foldButton.classList.add("fas", "fa-caret-down", "fa-lg");
+      foldButtonOuter.appendChild(foldButton);
+
+      let expandButtonOuter = document.createElement("span");
+      expandButtonOuter.classList.add("fold-smart-device-create-test");
+      expandButtonOuter.style.setProperty("display", "none");
+      expandButtonOuter.onclick = () => {
+        deviceChangesContainer.style.setProperty("display", "block");
+        expandButtonOuter.style.setProperty("display", "none");
+        foldButtonOuter.style.setProperty("display", "initial");
+      };
+      deviceTitleHeader.appendChild(expandButtonOuter);
+
+      let expandButton = document.createElement("i");
+      expandButton.classList.add("fas", "fa-caret-right", "fa-lg");
+      expandButtonOuter.appendChild(expandButton);
+
+      let deviceTitle = document.createElement("span");
+      deviceTitle.innerHTML = deviceName;
+      deviceTitle.style.setProperty("margin-left", ".5rem");
+      deviceTitleHeader.appendChild(deviceTitle);
+
+      // let deviceTitleHr = document.createElement("hr");
+      // deviceTitleHr.style.setProperty("width", "100%");
+      // deviceTitleHr.style.setProperty("background-color", "#00000038");
+      // deviceContainer.appendChild(deviceTitleHr);
 
       let deviceChangesContainer = document.createElement("div");
+      deviceChangesContainer.classList.add("card-body");
       deviceChangesContainer.style.setProperty("margin-top", "1rem");
       deviceContainer.appendChild(deviceChangesContainer);
 
@@ -1362,16 +1408,34 @@ let RenderChangesForCreatingTest = function (domContainer, timeSlot) {
           }
         );
       }
-      for (const [index, actionName] of timeSlot.devices[
+      for (const [index, action] of timeSlot.devices[
         device
       ].actions.entries()) {
+        let actionCof;
+        RenderActionChangeForCreatingTest(
+          deviceChangesContainer,
+          action,
+          device,
+          timeSlot.time + "-" + device + "-actions-" + index + "-value",
+          deviceData.actionsDebugConfigurations[action.name],
+          () => {
+            /* remove property */
+            timeSlot.devices[device].actions.splice(index, 1);
+
+            /* clear container of properties */
+            domContainer.innerHTML = "";
+
+            /* render again properties */
+            RenderChangesForCreatingTest(domContainer, timeSlot);
+          }
+        );
       }
     }
     i = i + 1;
   }
 };
 
-let RenderPropertyChangeForCreatingTest = function (
+const RenderPropertyChangeForCreatingTest = function (
   domSelector,
   property,
   deviceId,
@@ -1387,11 +1451,12 @@ let RenderPropertyChangeForCreatingTest = function (
   spanPropertyView.style.setProperty("margin-left", "2rem");
   propertyOuter.appendChild(spanPropertyView);
 
-  Automatic_IoT_UI_Generator.RenderPropertyForDebugConfiguration(
+  Automatic_IoT_UI_Generator.RenderPropertyForCreatingTest(
     spanPropertyView,
     deviceId,
     property,
-    propertyInputID
+    propertyInputID,
+    "col-4"
   );
 
   let spanDeleteProperty = document.createElement("span");
@@ -1406,6 +1471,49 @@ let RenderPropertyChangeForCreatingTest = function (
   let deleteIcon = document.createElement("i");
   deleteIcon.classList.add("far", "fa-trash-alt");
   deleteProperty.appendChild(deleteIcon);
+};
+
+const RenderActionChangeForCreatingTest = function (
+  domSelector,
+  action,
+  deviceId,
+  actionID,
+  configuration,
+  onDeleteAction
+) {
+  let actionOuter = document.createElement("div");
+  actionOuter.style.display = "flex";
+  domSelector.appendChild(actionOuter);
+
+  let spanActionView = document.createElement("span");
+  spanActionView.style.setProperty("width", "76%");
+  spanActionView.style.setProperty("margin-left", "2rem");
+  actionOuter.appendChild(spanActionView);
+
+  Automatic_IoT_UI_Generator.RenderActionForCreatingTest(
+    spanActionView,
+    deviceId,
+    action,
+    configuration,
+    {
+      onClickDebugConfigurationOfAction: () => {},
+    },
+    actionID,
+    "col-6"
+  );
+
+  let spanDeleteAction = document.createElement("span");
+  spanDeleteAction.style.setProperty("margin-left", "1rem");
+  actionOuter.appendChild(spanDeleteAction);
+
+  let deleteAction = document.createElement("button");
+  deleteAction.classList.add("btn", "btn-danger", "btn-sm");
+  deleteAction.onclick = onDeleteAction;
+  spanDeleteAction.appendChild(deleteAction);
+
+  let deleteIcon = document.createElement("i");
+  deleteIcon.classList.add("far", "fa-trash-alt");
+  deleteAction.appendChild(deleteIcon);
 };
 
 const compareTimeSlots = function (a, b) {
@@ -2149,6 +2257,7 @@ export async function StartApplication(runTimeData) {
       runTimeData.execData.project.SmartObjects
     );
 
+    // console.log(runTimeData);
     Initialize(runTimeData.UISelector);
 
     // Listen for messages
