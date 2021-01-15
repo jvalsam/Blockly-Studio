@@ -565,7 +565,19 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @ExportedFunction
-  public clickDebugConfigurationOfAction(smartElementId: string, action: any) {
-    this.instancesMap[smartElementId].onClickDebugConfigurationOfAction(action);
+  public foldRunTimeModal() {
+    document.getElementById("fold-runtime-modal").click();
+  }
+
+  @ExportedFunction
+  public clickDebugConfigurationOfAction(
+    smartElementId: string,
+    action: any,
+    onSuccessFoldRuntime
+  ) {
+    this.instancesMap[smartElementId].onClickDebugConfigurationOfAction(
+      action,
+      onSuccessFoldRuntime
+    );
   }
 }

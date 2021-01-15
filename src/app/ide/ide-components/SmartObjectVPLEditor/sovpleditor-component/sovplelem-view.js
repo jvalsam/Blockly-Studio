@@ -878,7 +878,8 @@ export let RenderDebugConfigurationOfAction = function (
   actionDebugConfiguration,
   props,
   resourceId,
-  onSave
+  onSave,
+  onSuccessFoldRuntime
 ) {
   // Create Modal
   CreateModal(
@@ -950,6 +951,10 @@ export let RenderDebugConfigurationOfAction = function (
     function () {
       document.getElementsByClassName("modal-platform-container")[0].innerHTML =
         "";
+      document.getElementById("runtime-modal-title").click();
+      if (onSuccessFoldRuntime) {
+        onSuccessFoldRuntime();
+      }
     }
   );
 

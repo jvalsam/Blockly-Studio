@@ -207,7 +207,7 @@ export class SOVPLElemInstance {
     });
   }
 
-  onClickDebugConfigurationOfAction(action) {
+  onClickDebugConfigurationOfAction(action, onSuccessFoldRuntime) {
     RenderDebugConfigurationOfAction(
       action,
       this.elemData.editorData.details.actionsDebugConfigurations[action.name],
@@ -219,7 +219,8 @@ export class SOVPLElemInstance {
         ] = configurationOfAction;
         this.parent.saveElement(this);
         this.render();
-      }
+      },
+      onSuccessFoldRuntime
     );
   }
 
@@ -380,8 +381,11 @@ export class SOVPLElemInstance {
         RenderSmartObject(domSel, this.elemData, componentData, {
           onRegister: (props, actions, methods, iotivityResourceID) =>
             this.onSORegister(props, actions, methods, iotivityResourceID),
-          onClickDebugConfigurationOfAction: (action) =>
-            this.onClickDebugConfigurationOfAction(action),
+          onClickDebugConfigurationOfAction: (action, onSuccessFoldRuntime) =>
+            this.onClickDebugConfigurationOfAction(
+              action,
+              onSuccessFoldRuntime
+            ),
           onEditPropertyProgrammingActive: (prop) =>
             this.onSOEditPropProgrammingActive(prop),
           onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),

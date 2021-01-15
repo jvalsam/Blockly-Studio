@@ -1450,7 +1450,14 @@ const RenderChangesForCreatingTest = function (
             /* render again properties */
             RenderChangesForCreatingTest(domContainer, timeSlot, envData);
           },
-          envData
+          envData,
+          () => {
+            /* clear container of properties */
+            domContainer.innerHTML = "";
+
+            /* render again properties */
+            RenderChangesForCreatingTest(domContainer, timeSlot, envData);
+          }
         );
       }
     }
@@ -1503,7 +1510,8 @@ const RenderActionChangeForCreatingTest = function (
   actionID,
   configuration,
   onDeleteAction,
-  envData
+  envData,
+  onSuccessConfigure
 ) {
   let actionOuter = document.createElement("div");
   actionOuter.style.display = "flex";
@@ -1520,15 +1528,22 @@ const RenderActionChangeForCreatingTest = function (
     action,
     configuration,
     {
-      onClickDebugConfigurationOfAction: () => {
+      onClickDebugConfigurationOfAction: (action) => {
         // hide running automations
+        envData.RuntimeEnvironmentRelease.functionRequest(
+          "SmartObjectVPLEditor",
+          "foldRunTimeModal",
+          []
+        );
+
         // render modal for action configuration
         let deviceEditorId = devicesOnAutomations.find((x) => x.id === deviceId)
           .editorId;
+
         envData.RuntimeEnvironmentRelease.functionRequest(
           "SmartObjectVPLEditor",
           "clickDebugConfigurationOfAction",
-          [deviceEditorId, action]
+          [deviceEditorId, action, onSuccessConfigure]
         );
       },
     },
