@@ -140,21 +140,21 @@ export class RuntimeEnvironmentRelease {
             ]);
     }
 
-    saveComponentsData(){
-        this._runtimeEnv.functionRequest(
+    functionRequest(compDest, funcName, args) {
+        return this._runtimeEnv.functionRequest(
             RuntimeEnvironmentRelease.name,
-            "RuntimeManager",
-            "foldLivePreview",
-            []
+            compDest,
+            funcName,
+            args
         );
-        
-        this._runtimeEnv.functionRequest(
-          RuntimeEnvironmentRelease.name,
-          "BlocklyVPL",
-          "highlightBlockOfPItem",
-            [
-                projectElementId,
-                blockId
-            ]);
     }
+
+    // saveComponentsData(data) {
+    //     this._runtimeEnv.functionRequest(
+    //       RuntimeEnvironmentRelease.name,
+    //       "SmartObjectVPLEditor",
+    //       "saveDebugTests",
+    //       [data]
+    //     );
+    // }
 }

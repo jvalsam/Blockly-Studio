@@ -551,4 +551,21 @@ export class SmartObjectVPLEditor extends Editor {
       this.config
     );
   }
+
+  @ExportedFunction
+  public saveDebugTests(data: any) {
+    let compData = this.getProjectComponentData(data.projectID);
+    compData.debugTests = data.debugTests;
+    this.saveProjectComponentData(data.projectID, compData);
+  }
+
+  @ExportedFunction
+  public getDebugTests(projectID) {
+    return this.getProjectComponentData(projectID).debugTests;
+  }
+
+  @ExportedFunction
+  public clickDebugConfigurationOfAction(smartElementId: string, action: any) {
+    this.instancesMap[smartElementId].onClickDebugConfigurationOfAction(action);
+  }
 }

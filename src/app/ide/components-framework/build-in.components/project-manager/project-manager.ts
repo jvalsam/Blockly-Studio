@@ -247,7 +247,8 @@ export class ProjectManager extends IDEUIComponent {
             created: mainProject.created,
             description: mainProject.description,
             domain: mainProject.domainType,
-            project: {}
+            project: {},
+            projectId: mainProject._id
         };
         this.projManagerDescr.project.categories.forEach(category => {
             // collect data for each one of the project item with category.type

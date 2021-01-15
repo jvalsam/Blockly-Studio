@@ -14,6 +14,7 @@ const ID = function () {
 const InitDevice = function (smartDevice) {
   return {
     id: smartDevice.editorsData[0].generated.details.iotivityResourceID,
+    editorId: smartDevice.editorsData[0].generated.editorId,
     name: smartDevice.title,
     options: {
       image: smartDevice.img,
@@ -36,7 +37,7 @@ const CollectRegisteredDevices = function (smartDevices) {
   return returnArray;
 };
 
-const Initialize = function (selector) {
+const Initialize = function (selector, envData) {
   // install utc plugin for dayjs
   dayjs.extend(window.dayjs_plugin_utc);
   dayjs.extend(window.dayjs_plugin_customParseFormat);
@@ -49,7 +50,7 @@ const Initialize = function (selector) {
   InitializeCalendar(selector);
   InitializeOrganizerForCalendar();
   InitializeActionsLog();
-  InitializeSimulatedHistory();
+  InitializeSimulatedHistory(envData);
   InitializeClocks(document.getElementById("calendar-outer"), () => {
     // hack to live update the completed events:
     // bind an observer to seconds of utility clock
@@ -647,7 +648,7 @@ const DestroyModal = function (idPrefix) {
   document.getElementById(idPrefix + "-modal").remove();
 };
 
-const CreateAndRenderCreateTestModal = function (idPrefix) {
+const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
   CreateModal(idPrefix);
 
   let title = document.getElementById(idPrefix + "-modal-title");
@@ -799,7 +800,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
   timelinesOuter.style.setProperty("margin-top", "1rem");
   actionContainer.appendChild(timelinesOuter);
 
-  RenderTimeLine(timelinesOuter, testsTimeSlots);
+  RenderTimeLine(timelinesOuter, testsTimeSlots, envData);
 
   $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
     DestroyModal(idPrefix);
@@ -811,7 +812,18 @@ const CreateAndRenderCreateTestModal = function (idPrefix) {
     .classList.remove("modal-lg");
   document.getElementById(idPrefix + "-modal-dialog").classList.add("modal-xl");
 
-  // confirmButton.onclick = () => {
+  confirmButton.onclick = () => {
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
+      "saveDebugTests",
+      [
+        {
+          projectID: envData.execData.projectId,
+          debugTests: testsTimeSlots,
+        },
+      ]
+    );
+  };
 
   // };
 
@@ -832,7 +844,7 @@ const CreateTimeSlot = function (time, description, devices, editMode = true) {
   };
 };
 
-const RenderTimeLine = function (domSelector, timeSlotsArray) {
+const RenderTimeLine = function (domSelector, timeSlotsArray, envData) {
   if (timeSlotsArray.length === 0) {
     let emptyHeader = document.createElement("div");
     emptyHeader.style.setProperty("font-style", "italic");
@@ -860,7 +872,8 @@ const RenderTimeLine = function (domSelector, timeSlotsArray) {
         /* rerend all time slots */
         RenderTimeLine(
           document.getElementById("timelines-container"),
-          timeSlotsArray
+          timeSlotsArray,
+          envData
         );
       },
       (newTimeSlot) => {
@@ -875,7 +888,8 @@ const RenderTimeLine = function (domSelector, timeSlotsArray) {
         /* rerend all time slots */
         RenderTimeLine(
           document.getElementById("timelines-container"),
-          timeSlotsArray
+          timeSlotsArray,
+          envData
         );
       },
       (timeOfTimeSlot) => {
@@ -894,9 +908,11 @@ const RenderTimeLine = function (domSelector, timeSlotsArray) {
         /* rerend all time slots */
         RenderTimeLine(
           document.getElementById("timelines-container"),
-          timeSlotsArray
+          timeSlotsArray,
+          envData
         );
-      }
+      },
+      envData
     );
 
     if (timeSlotsArray.length > 0 && index < timeSlotsArray.length - 1) {
@@ -913,7 +929,8 @@ const RenderTimeSlot = function (
   unvalidTimes,
   onSuccessEdit,
   onAddTimeSlot,
-  onDeleteTimeSlot
+  onDeleteTimeSlot,
+  envData
 ) {
   let timelineRow = document.createElement("div");
   timelineRow.classList.add("row");
@@ -1150,7 +1167,7 @@ const RenderTimeSlot = function (
           );
         }
 
-        RenderChangesForCreatingTest(changesContainer, timeSlot);
+        RenderChangesForCreatingTest(changesContainer, timeSlot, envData);
       }
     );
   };
@@ -1165,7 +1182,7 @@ const RenderTimeSlot = function (
     message.innerHTML = "There is not any action or property change";
     changesContainer.appendChild(message);
   } else {
-    RenderChangesForCreatingTest(changesContainer, timeSlot);
+    RenderChangesForCreatingTest(changesContainer, timeSlot, envData);
   }
 };
 
@@ -1320,7 +1337,11 @@ const AddDeviceActionOrPropertyChange = function (domSelector, onAdd) {
   selectionDeviceDiv.appendChild(addChangeButton);
 };
 
-const RenderChangesForCreatingTest = function (domContainer, timeSlot) {
+const RenderChangesForCreatingTest = function (
+  domContainer,
+  timeSlot,
+  envData
+) {
   let devicesLength = Object.keys(timeSlot.devices).length;
   let i = 0;
   for (const device in timeSlot.devices) {
@@ -1404,8 +1425,9 @@ const RenderChangesForCreatingTest = function (domContainer, timeSlot) {
             domContainer.innerHTML = "";
 
             /* render again properties */
-            RenderChangesForCreatingTest(domContainer, timeSlot);
-          }
+            RenderChangesForCreatingTest(domContainer, timeSlot, envData);
+          },
+          envData
         );
       }
       for (const [index, action] of timeSlot.devices[
@@ -1426,8 +1448,9 @@ const RenderChangesForCreatingTest = function (domContainer, timeSlot) {
             domContainer.innerHTML = "";
 
             /* render again properties */
-            RenderChangesForCreatingTest(domContainer, timeSlot);
-          }
+            RenderChangesForCreatingTest(domContainer, timeSlot, envData);
+          },
+          envData
         );
       }
     }
@@ -1479,7 +1502,8 @@ const RenderActionChangeForCreatingTest = function (
   deviceId,
   actionID,
   configuration,
-  onDeleteAction
+  onDeleteAction,
+  envData
 ) {
   let actionOuter = document.createElement("div");
   actionOuter.style.display = "flex";
@@ -1496,7 +1520,17 @@ const RenderActionChangeForCreatingTest = function (
     action,
     configuration,
     {
-      onClickDebugConfigurationOfAction: () => {},
+      onClickDebugConfigurationOfAction: () => {
+        // hide running automations
+        // render modal for action configuration
+        let deviceEditorId = devicesOnAutomations.find((x) => x.id === deviceId)
+          .editorId;
+        envData.RuntimeEnvironmentRelease.functionRequest(
+          "SmartObjectVPLEditor",
+          "clickDebugConfigurationOfAction",
+          [deviceEditorId, action]
+        );
+      },
     },
     actionID,
     "col-6"
@@ -2168,7 +2202,7 @@ const UpdateScroll = function (id) {
     element.scrollTop = element.scrollHeight;
 };
 
-const InitializeSimulatedHistory = function () {
+const InitializeSimulatedHistory = function (envData) {
   let loggerOuterDiv = document.createElement("span");
   loggerOuterDiv.id = "simulated-actions-outer";
   loggerOuterDiv.style.setProperty("max-height", "22rem");
@@ -2193,7 +2227,7 @@ const InitializeSimulatedHistory = function () {
   let addTestButton = document.createElement("div");
   addTestButton.id = "add-test-button";
   addTestButton.onclick = () => {
-    CreateAndRenderCreateTestModal("create-test");
+    CreateAndRenderCreateTestModal("create-test", envData);
   };
   loggerOuterDiv.appendChild(addTestButton);
 
@@ -2258,7 +2292,7 @@ export async function StartApplication(runTimeData) {
     );
 
     // console.log(runTimeData);
-    Initialize(runTimeData.UISelector);
+    Initialize(runTimeData.UISelector, runTimeData);
 
     // Listen for messages
     RenderClocks();
