@@ -588,13 +588,36 @@ export class SmartObjectVPLEditor extends Editor {
     confName: string,
     selector: string,
     privileges: string,
-    zIndex: number
+    zIndex: number,
+    srcWs: string
   ) {
     ComponentsCommunication.functionRequest(
       this.name,
       "BlocklyVPL",
       "openInDialogue",
-      [editorsData, confName, selector, privileges, zIndex]
+      [editorsData, confName, selector, privileges, zIndex, srcWs]
+    );
+  }
+
+  @RequiredFunction("BlocklyVPL", "getEditorSrc")
+  @ExportedFunction
+  getSrcFromBlocklyInstance(editorId: string) {
+    return ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "getEditorSrc",
+      [editorId]
+    ).value;
+  }
+
+  @RequiredFunction("BlocklyVPL", "closeSRC")
+  @ExportedFunction
+  closeSrcForBlocklyInstance(editorId: string) {
+    ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "closeSRC",
+      [editorId]
     );
   }
 }

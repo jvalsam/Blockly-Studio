@@ -915,7 +915,7 @@ export let RenderDebugConfigurationOfAction = function (
     .style.setProperty("width", "100%");
   document
     .getElementById(prefix + "-modal-body")
-    .style.setProperty("height", "800px");
+    .style.setProperty("height", "750px");
 
   // create blockly workspace container
   // <div id="blocklyDiv" style="position: absolute"></div>;
@@ -923,15 +923,20 @@ export let RenderDebugConfigurationOfAction = function (
   blocklyWorkspaceDiv.id = prefix + "-blockly-container";
   blocklyWorkspaceDiv.style.setProperty("position", "absolute");
   blocklyWorkspaceDiv.style.setProperty("width", "97%");
-  blocklyWorkspaceDiv.style.setProperty("height", "780px");
+  blocklyWorkspaceDiv.style.setProperty("height", "720px");
   document
     .getElementById(prefix + "-modal-body")
     .appendChild(blocklyWorkspaceDiv);
+
+  $("#" + prefix + "-modal").on("hide.bs.modal", function () {
+    parent.closeSrcForBlocklyInstance(blocklyWorkspaceDiv.id);
+  });
 
   $("#" + prefix + "-modal").on("hidden.bs.modal", function () {
     document.getElementsByClassName("modal-platform-container")[0].innerHTML =
       "";
     document.getElementById("runtime-modal-title").click();
+    parent.closeSrcForBlocklyInstance(blocklyWorkspaceDiv.id);
     if (onSuccessFoldRuntime) {
       onSuccessFoldRuntime();
     }
@@ -943,30 +948,11 @@ export let RenderDebugConfigurationOfAction = function (
 
   /* Save changes */
   confirmButton.onclick = () => {
-    for (let [
-      timeSlotIndex,
-      timeSlot,
-    ] of tmpActionDebugConfiguration.entries()) {
-      /* collect all changes on properties */
-      for (let [propertyIndex, property] of timeSlot.properties.entries()) {
-        /* Get value from selector */
-        let value = document.getElementById(
-          timeSlot.time + "-" + propertyIndex + "-value"
-        ).value;
+    let blocklyInstanceSrc = parent.getSrcFromBlocklyInstance(
+      blocklyWorkspaceDiv.id
+    );
 
-        /* check type */
-        if (property.type === "number" || property.type === "intRange") {
-          parseFloat(value);
-        } else if (property.type === "boolean") {
-          value = value === "true";
-        }
-
-        /* set value */
-        property.value = value;
-      }
-    }
-
-    onSave(tmpActionDebugConfiguration);
+    onSave(blocklyInstanceSrc);
 
     $("#" + prefix + "-modal").modal("toggle");
   };
@@ -990,12 +976,61 @@ export let RenderDebugConfigurationOfAction = function (
       "ec-action-implementation-debug",
       blocklyWorkspaceDiv.id,
       "EDITING",
-      99999999
+      99999999,
+      DefineFunctionForDebugImplementation(action)
     );
+
     $(document).off("focusin.modal");
   });
 
   $("#" + prefix + "-modal").modal("show");
+};
+
+const DefineFunctionForDebugImplementation = function (action) {
+  let str = `<xml id="startBlocks" style="display: none">`;
+  if (action.parameters.length > 0) {
+    str += "<variables>";
+    for (const parameter of action.parameters) {
+      str +=
+        "<variable id='" +
+        action.id +
+        parameter.name +
+        "'>" +
+        parameter.name +
+        "_arg" +
+        "</variable>";
+    }
+    str += "</variables>";
+  }
+
+  str +=
+    `<block type="procedures_defnoreturn" id="` +
+    action.id +
+    `" x="138" y="38">`;
+  if (action.parameters.length > 0) {
+    str += "<mutation>";
+    for (const parameter of action.parameters) {
+      str +=
+        "<arg name='" +
+        parameter.name +
+        "_arg' varid='" +
+        action.id +
+        parameter.name +
+        "'></arg>";
+    }
+    str += "</mutation>";
+  }
+  str +=
+    `<field name="NAME">` +
+    action.name +
+    `</field>
+    <comment pinned="false" h="80" w="160">Implementation of action \"` +
+    action.name +
+    `\" that runs on debug mode
+    </comment>
+  </block>
+</xml>`;
+  return str;
 };
 /* End functions for debug configuring action */
 

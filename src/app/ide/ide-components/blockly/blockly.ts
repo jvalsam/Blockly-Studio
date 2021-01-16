@@ -172,23 +172,26 @@ export class BlocklyVPL extends Editor {
     config: string,
     selector: string,
     privileges: string, // "READ_ONLY" or "EDITING"
-    zIndex: number
+    zIndex: number,
+    srcWs: string
   ): void {
-    this.instancesMap[editorData.editorId] = new BlocklyInstance(
-      this,
-      null,
-      editorData.editorId,
-      selector, // selector has to be unique (injected in DOM, not in pitem template)
-      config,
-      this.configsMap[config],
-      (config) => this.getToolbox(config), // have to do work...
-      (event) => {
-        /* nope */
-      },
-      editorData.src || '<xml id="startBlocks" style="display: none"></xml>',
-      privileges,
-      zIndex
-    );
+    if(!this.instancesMap[editorData.editorId])
+      this.instancesMap[editorData.editorId] = new BlocklyInstance(
+        this,
+        null,
+        editorData.editorId,
+        selector, // selector has to be unique (injected in DOM, not in pitem template)
+        config,
+        this.configsMap[config],
+        (config) => this.getToolbox(config), // have to do work...
+        (event) => {
+          /* nope */
+        },
+        editorData.src || srcWs,
+        privileges,
+        zIndex
+      );
+      
     this.instancesMap[editorData.editorId].open();
   }
 
@@ -381,12 +384,16 @@ export class BlocklyVPL extends Editor {
     ];
   }
 
-  @ExportedFunction
   public getEditorData(editorId: string): any {
     return {
       editor: this.name,
       src: this.instancesMap[editorId].getText(),
     };
+  }
+
+  @ExportedFunction
+  public getEditorSrc(editorId: string): any {
+    return this.instancesMap[editorId].getText();
   }
 
   @ExportedFunction

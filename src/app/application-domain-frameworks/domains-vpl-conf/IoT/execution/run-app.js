@@ -115,8 +115,8 @@ const Initialize = function (selector, envData) {
         while (i < simulatedTimeTable.length) {
           if (specificDate.diff(simulatedTimeTable[i].time) > 0) {
             simulatedTime = simulatedTimeTable[i].time;
+            simulatedTimeTable[i].func();
             // set a boolean to go next time in simulatedTimeTable
-            // while (!simulatedTimeTable[i].finished) {}
           } else {
             break;
           }
@@ -190,6 +190,7 @@ const TakeDifferenceFromSpecificTime = function (
   time,
   calendarInfo,
   calendarBlockId,
+  func,
   startTime
 ) {
   let futureTime = dayjs(simulatedTime)
@@ -210,7 +211,7 @@ const TakeDifferenceFromSpecificTime = function (
   // Pin in calendar
   PinEventInCalendar(futureTime, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureTime, calendarBlockId);
+  AddTimeInSimulatedTable(futureTime, calendarBlockId, func);
 
   return futureTime;
 };
@@ -219,6 +220,7 @@ const TakeDifferenceFromSpecificDay = function (
   time,
   calendarInfo,
   calendarBlockId,
+  func,
   startTime
 ) {
   let intDay = weekDays.indexOf(time.day);
@@ -234,7 +236,7 @@ const TakeDifferenceFromSpecificDay = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
 
   return futureDate;
 };
@@ -243,6 +245,7 @@ const TakeDifferenceFromSpecificMonth = function (
   time,
   calendarInfo,
   calendarBlockId,
+  func,
   startTime
 ) {
   let intMonth = months.indexOf(time.month);
@@ -257,12 +260,18 @@ const TakeDifferenceFromSpecificMonth = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
 
   return futureDate;
 };
 
-const EverySecond = function (time, calendarInfo, calendarBlockId, startTime) {
+const EverySecond = function (
+  time,
+  calendarInfo,
+  calendarBlockId,
+  func,
+  startTime
+) {
   let futureDate;
   if (startTime) futureDate = startTime;
   else
@@ -273,12 +282,18 @@ const EverySecond = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
 
   return futureDate;
 };
 
-const EveryMinute = function (time, calendarInfo, calendarBlockId, startTime) {
+const EveryMinute = function (
+  time,
+  calendarInfo,
+  calendarBlockId,
+  func,
+  startTime
+) {
   let futureDate;
   if (startTime) futureDate = startTime;
   else
@@ -289,12 +304,18 @@ const EveryMinute = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
 
   return futureDate;
 };
 
-const EveryHour = function (time, calendarInfo, calendarBlockId, startTime) {
+const EveryHour = function (
+  time,
+  calendarInfo,
+  calendarBlockId,
+  func,
+  startTime
+) {
   let futureDate;
   if (startTime) futureDate = startTime;
   else futureDate = dayjs(simulatedTime).hour(simulatedTime.hour() + time.hour);
@@ -302,23 +323,35 @@ const EveryHour = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
 
   return futureDate;
 };
 
-const EveryDay = function (time, calendarInfo, calendarBlockId, startTime) {
+const EveryDay = function (
+  time,
+  calendarInfo,
+  calendarBlockId,
+  func,
+  startTime
+) {
   let futureDate = dayjs(simulatedTime).day(simulatedTime.day() + time.day);
 
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
 
   return futureDate;
 };
 
-const EveryMonth = function (time, calendarInfo, calendarBlockId, startTime) {
+const EveryMonth = function (
+  time,
+  calendarInfo,
+  calendarBlockId,
+  func,
+  startTime
+) {
   let futureDate = dayjs(simulatedTime).month(
     simulatedTime.month() + time.month
   );
@@ -326,7 +359,7 @@ const EveryMonth = function (time, calendarInfo, calendarBlockId, startTime) {
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId);
+  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
 
   return futureDate;
 };
@@ -551,8 +584,8 @@ const GoToSpecificTime = function () {
   // TODO: update calendar
 };
 
-const AddTimeInSimulatedTable = function (time, id) {
-  simulatedTimeTable.push({ time: time, id: id, finished: false });
+const AddTimeInSimulatedTable = function (time, id, func) {
+  simulatedTimeTable.push({ time: time, id: id, func: func });
   simulatedTimeTable.sort(compareTimes);
 };
 
@@ -1866,8 +1899,8 @@ const InitializeSimulatorControls = function ({
     // document
     //   .getElementById("analog-clock")
     //   .style.setProperty("margin-left", "3.4rem");
-    // NormalSimulatedTime();
-    PauseSimulatedTime();
+    NormalSimulatedTime();
+    // PauseSimulatedTime();
   };
 
   let buttonsOuter = document.createElement("div");
