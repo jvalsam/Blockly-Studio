@@ -21,8 +21,7 @@ const InitDevice = function (smartDevice) {
     },
     properties: smartDevice.editorsData[0].generated.details.properties,
     actions: smartDevice.editorsData[0].generated.details.actions,
-    actionsDebugConfigurations:
-      smartDevice.editorsData[0].generated.details.actionsDebugConfigurations,
+    blocklySrc: smartDevice.editorsData[0].generated.details.blocklySrc,
   };
 };
 
@@ -1448,7 +1447,7 @@ const RenderChangesForCreatingTest = function (
           action,
           device,
           timeSlot.time + "-" + device + "-actions-" + index + "-value",
-          deviceData.actionsDebugConfigurations[action.name],
+          deviceData.blocklySrc[action.name],
           () => {
             /* remove property */
             timeSlot.devices[device].actions.splice(index, 1);

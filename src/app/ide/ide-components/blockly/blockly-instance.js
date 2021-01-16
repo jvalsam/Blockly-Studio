@@ -139,7 +139,9 @@ export class BlocklyInstance {
     config,
     _toolbox,
     _syncWSP,
-    text
+    text,
+    _privilleges,
+    zIndex
   ) {
     this.parent = parent;
     this.pitem = pitem;
@@ -148,14 +150,16 @@ export class BlocklyInstance {
     this.type = type;
     this.config = config;
     this.text = text;
+    this._privilleges = _privilleges;
     this.wsp = null;
     this.state = InstStateEnum.INIT;
     this.toolbox = () => _toolbox(type);
     this._syncWSP = (event) => _syncWSP(event);
+    this._zIndex = zIndex;
   }
 
   get privilleges() {
-    return this.pitem.getPrivileges();
+    return this._privilleges || this.pitem.getPrivileges();
   }
 
   static update_src(data, pitem) {
@@ -240,6 +244,8 @@ export class BlocklyInstance {
         this.calcPItemBlocklyArea();
         this._blocklyDiv = document.getElementById(blocklySel);
       }
+
+      if(this._zIndex) this._blocklyDiv.style.setProperty("z-index", this._zIndex);
 
       this["initWSP_" + this.privilleges]();
 

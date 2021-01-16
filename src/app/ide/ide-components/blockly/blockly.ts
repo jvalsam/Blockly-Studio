@@ -42,23 +42,23 @@ var confJson: any = require("./conf_props.json");
     {
       name: "Yannis Valsamakis",
       email: "jvalsam@ics.forth.gr",
-      date: "April 2020"
-    }
+      date: "April 2020",
+    },
   ],
   isUnique: true,
   componentView: "BlocklyView",
   menuDef: menuJson,
   configDef: confJson,
-  version: "1.1"
+  version: "1.1",
 })
 export class BlocklyVPL extends Editor {
-  private instancesMap: {[id: string]: BlocklyInstance};
-  private configsMap: {[name: string]: BlocklyConfig};
+  private instancesMap: { [id: string]: BlocklyInstance };
+  private configsMap: { [name: string]: BlocklyConfig };
 
   private domainElementTracker: {
     [projectId: string]: {
-      [domainElemName: string]: DomainBlockTracker
-    }
+      [domainElemName: string]: DomainBlockTracker;
+    };
   };
 
   constructor(
@@ -67,12 +67,7 @@ export class BlocklyVPL extends Editor {
     compViewName: string,
     hookSelector: string
   ) {
-    super(
-      name,
-      description,
-      compViewName,
-      hookSelector
-    );
+    super(name, description, compViewName, hookSelector);
 
     this.instancesMap = {};
     this.configsMap = {};
@@ -98,7 +93,9 @@ export class BlocklyVPL extends Editor {
     this.domainElementTracker = {};
     this.domainElementTracker[projectId] = {};
     for (const domainElemName in componentsData.domainElementTracker) {
-      this.domainElementTracker[projectId][domainElemName] = new DomainBlockTracker(
+      this.domainElementTracker[projectId][
+        domainElemName
+      ] = new DomainBlockTracker(
         domainElemName,
         componentsData.domainElementTracker[domainElemName]
       );
@@ -123,7 +120,7 @@ export class BlocklyVPL extends Editor {
       this.name,
       "DomainsManager",
       "getToolbox",
-      [ config ]
+      [config]
     ).value;
   }
 
@@ -157,31 +154,61 @@ export class BlocklyVPL extends Editor {
         config,
         this.configsMap[config],
         (config) => this.getToolbox(config),
-        (event) => this.handleInstanceChange(
-          editorData.editorId,
-          pitem.pi,
-          event),
+        (event) =>
+          this.handleInstanceChange(editorData.editorId, pitem.pi, event),
         text
       );
     }
-    // lazy update for the text of the existing wsp 
+    // lazy update for the text of the existing wsp
     // else {
     //   this.instancesMap[editorData.editorId].text = editorData.src;
     // }
     this.instancesMap[editorData.editorId].open();
   }
 
+  @ExportedFunction
+  public openInDialogue(
+    editorData: any,
+    config: string,
+    selector: string,
+    privileges: string, // "READ_ONLY" or "EDITING"
+    zIndex: number
+  ): void {
+    this.instancesMap[editorData.editorId] = new BlocklyInstance(
+      this,
+      null,
+      editorData.editorId,
+      selector, // selector has to be unique (injected in DOM, not in pitem template)
+      config,
+      this.configsMap[config],
+      (config) => this.getToolbox(config), // have to do work...
+      (event) => {
+        /* nope */
+      },
+      editorData.src || '<xml id="startBlocks" style="display: none"></xml>',
+      privileges,
+      zIndex
+    );
+    this.instancesMap[editorData.editorId].open();
+  }
+
   fixBlocksTrackerInit(projectId: string, elemName: string) {
-    this.domainElementTracker[projectId] = this.domainElementTracker[projectId] || {};
+    this.domainElementTracker[projectId] =
+      this.domainElementTracker[projectId] || {};
     if (!this.domainElementTracker[projectId][elemName]) {
-      this.domainElementTracker[projectId][elemName] = new DomainBlockTracker(elemName, {});
+      this.domainElementTracker[projectId][elemName] = new DomainBlockTracker(
+        elemName,
+        {}
+      );
     }
   }
 
   @ExportedFunction
   getBlockEditorId(projectId: string, blockId: string): string {
-    for(const elemName in this.domainElementTracker[projectId]) {
-      let block = this.domainElementTracker[projectId][elemName].getBlockById(blockId);
+    for (const elemName in this.domainElementTracker[projectId]) {
+      let block = this.domainElementTracker[projectId][elemName].getBlockById(
+        blockId
+      );
       if (block) {
         return block;
       }
@@ -192,18 +219,19 @@ export class BlocklyVPL extends Editor {
   @RequiredFunction("ProjectManager", "getComponentData")
   @RequiredFunction("ProjectManager", "saveComponentData")
   // save is used for Collaboration purposes
-  private handleBlocksTracker(id, pi, event, save: boolean =false) {
-    if (event.type === 'create' || event.type === 'delete') {
+  private handleBlocksTracker(id, pi, event, save: boolean = false) {
+    if (event.type === "create" || event.type === "delete") {
       let projectId = pi.editorsData.projectID;
       let blocklyInst = this.instancesMap[id];
       let block = blocklyInst.getBlockById(event.blockId);
       let type;
       if (block) {
         type = block.type;
-      }
-      else {
+      } else {
         for (const elem in this.domainElementTracker[projectId]) {
-          block = this.domainElementTracker[projectId][elem].getBlockById(event.blockId);
+          block = this.domainElementTracker[projectId][elem].getBlockById(
+            event.blockId
+          );
           if (block) {
             type = block["blockType"];
             break;
@@ -214,14 +242,14 @@ export class BlocklyVPL extends Editor {
       if (elemName) {
         let confName = pi._editorsData.items[id].confName;
         this.fixBlocksTrackerInit(projectId, elemName);
-        this.domainElementTracker[projectId][elemName]
-          .createBlockId(
-            event.blockId,
-            type,
-            confName,
-            id,
-            pi.systemId,
-            pi._jstreeNode.text);
+        this.domainElementTracker[projectId][elemName].createBlockId(
+          event.blockId,
+          type,
+          confName,
+          id,
+          pi.systemId,
+          pi._jstreeNode.text
+        );
         if (save) {
           let data = this.getProjectComponentData(projectId);
           data.domainElementTracker = this.domainElementTracker[projectId];
@@ -235,38 +263,38 @@ export class BlocklyVPL extends Editor {
   public getVisualSourcesUseDomainElementInstaceById(
     projectId: string,
     domainElementId: string,
-    domainElementType: string) {
+    domainElementType: string
+  ) {
     let domainElem = this.domainElementTracker[projectId];
     if (domainElem && domainElem[domainElementType]) {
       return domainElem[domainElementType].domainElemsMap[domainElementId];
-    }
-    else {
+    } else {
       return null;
     }
   }
 
   private handleInstanceChange(id, pi, event) {
-    this.save(
-      id,
-      pi,
-      (mode) => mode === "SHARED"
-        ? event
-        : this.getEditorData(id));
-    
+    this.save(id, pi, (mode) =>
+      mode === "SHARED" ? event : this.getEditorData(id)
+    );
+
     this.handleBlocksTracker(id, pi, event, true);
   }
 
   @ExportedFunction
   public closeSRC(srcId: string): void {
-    assert(srcId in this.instancesMap, "Request to close not existing source ID in Blockly Editor!");
+    assert(
+      srcId in this.instancesMap,
+      "Request to close not existing source ID in Blockly Editor!"
+    );
     this.instancesMap[srcId].close();
   }
 
   @ExportedFunction
-  public update_src(data: any, pitem: any, focus: boolean =false): void {
+  public update_src(data: any, pitem: any, focus: boolean = false): void {
     let id = data.editorId;
     let event = data.event;
-    
+
     this.instancesMap[id].syncWSP(event);
 
     if (!focus) {
@@ -295,24 +323,24 @@ export class BlocklyVPL extends Editor {
     }
 
     //TODO: handle the toolbox extra
-    let items = document.getElementsByClassName('blocklyTreeRow');
-    document.getElementsByClassName('blocklyTreeLabel');
+    let items = document.getElementsByClassName("blocklyTreeRow");
+    document.getElementsByClassName("blocklyTreeLabel");
     //$('.blocklyTreeLabel').find('span:contains("Built-in")')["prevObject"][0]
     //    .nextSibling.style.marginLeft = '20px';
     let i = 0;
-    for (const elem of $('.blocklyTreeLabel').find('span:contains("Built-in")')["prevObject"]) {
-      if (i>0) {
-        elem.style.marginLeft = '10px';
-      }
-      else if (i===0) {
-        elem.style.marginTop = '10px';
+    for (const elem of $(".blocklyTreeLabel").find('span:contains("Built-in")')[
+      "prevObject"
+    ]) {
+      if (i > 0) {
+        elem.style.marginLeft = "10px";
+      } else if (i === 0) {
+        elem.style.marginTop = "10px";
       }
       ++i;
     }
 
-    items = document.getElementsByClassName('blocklyTreeSeparator');
-        Object.keys(items)
-            .forEach(i => items[i].style.marginTop = '10px');
+    items = document.getElementsByClassName("blocklyTreeSeparator");
+    Object.keys(items).forEach((i) => (items[i].style.marginTop = "10px"));
   }
 
   @ExportedFunction
@@ -322,9 +350,10 @@ export class BlocklyVPL extends Editor {
     let visualSources = this.getVisualSourcesUseDomainElementInstaceById(
       domainElem.projectID,
       domainElem.domainElementId,
-      domainElem.domainElementType);
-    
-    visualSources.blocks.forEach(block => {
+      domainElem.domainElementType
+    );
+
+    visualSources.blocks.forEach((block) => {
       this.instancesMap[block.editorId].deleteBlockById(block.blockId);
     });
 
@@ -333,7 +362,7 @@ export class BlocklyVPL extends Editor {
 
   @ExportedFunction
   public updatePItemData(editorId: string, pitem) {
-      // TODO:
+    // TODO:
   }
 
   @ExportedFunction
@@ -342,27 +371,26 @@ export class BlocklyVPL extends Editor {
       {
         icon: "../../../../../images/blockly/undo.png",
         tooltip: "undo",
-        action: () => this.instancesMap[editorId].undo()
+        action: () => this.instancesMap[editorId].undo(),
       },
       {
         icon: "../../../../../images/blockly/redo.png",
         tooltip: "redo",
-        action: () => this.instancesMap[editorId].redo()
-      }
+        action: () => this.instancesMap[editorId].redo(),
+      },
     ];
   }
 
+  @ExportedFunction
   public getEditorData(editorId: string): any {
     return {
       editor: this.name,
-      src: this.instancesMap[editorId].getText()
+      src: this.instancesMap[editorId].getText(),
     };
   }
 
   @ExportedFunction
-  public createSource(mission: string, selector: string) {
-
-  }
+  public createSource(mission: string, selector: string) {}
 
   @ExportedFunction
   public render(): void {
@@ -420,18 +448,14 @@ export class BlocklyVPL extends Editor {
   }
 
   public registerEvents(): void {
-      this.view.registerEvents();
+    this.view.registerEvents();
   }
 
   @ExportedFunction
-  public update(): void {
-
-  }
+  public update(): void {}
 
   @ExportedFunction
-  public destroy(): void{
-
-  }
+  public destroy(): void {}
 
   @ExportedFunction
   public undo(): void {
@@ -444,14 +468,10 @@ export class BlocklyVPL extends Editor {
   }
 
   @ExportedFunction
-  public copy() {
-
-  }
+  public copy() {}
 
   @ExportedFunction
-  public paste() {
-
-  }
+  public paste() {}
 
   // public static updateCode() {
   //   document.getElementById("js").innerText = Blockly.JavaScript.workspaceToCode(editor);
@@ -460,7 +480,7 @@ export class BlocklyVPL extends Editor {
   //   document.getElementById("dart").innerText = Blockly.Dart.workspaceToCode(editor);
   //   document.getElementById("python").innerText = Blockly.Python.workspaceToCode(editor);
   // }
-  
+
   // @RequiredFunction("EditorManager", "OnFocusEditorId")
   public requestOnFocusEditorId(): string {
     // let resp: ResponseValue = ComponentsCommunication.functionRequest(
@@ -474,22 +494,20 @@ export class BlocklyVPL extends Editor {
   /////////////////////////////////////////////////
   //// Establish Component Communication
 
-  @ExportedSignal('Open')
-  @ExportedSignal('Close')
-
-  @RequiredFunction('ICEVPL', 'loadProgram')
-
+  @ExportedSignal("Open")
+  @ExportedSignal("Close")
+  @RequiredFunction("ICEVPL", "loadProgram")
   @ExportedFunction
-  public openProject (path: string): void {
-    console.log('testing... openProject called!');
+  public openProject(path: string): void {
+    console.log("testing... openProject called!");
   }
 
-  @ListensSignal('ICEVPL', 'Close')
+  @ListensSignal("ICEVPL", "Close")
   public onCloseEditor(data: any): void {
-    console.log('testing... onCloseEditor called!');
+    console.log("testing... onCloseEditor called!");
   }
 
-  // first stmt 
+  // first stmt
   @ExportedFunction
   public onChangeConfig(values: any): void {
     alert("on change config data not developed yet in Blockly Component");
@@ -508,10 +526,10 @@ export class BlocklyVPL extends Editor {
         elem: {
           labelStyle: "task-label",
           color: elem.data.color,
-          tooltip: elem.data.tooltip
+          tooltip: elem.data.tooltip,
         },
-        mission: ""
-      }
+        mission: "",
+      },
     };
   }
 
@@ -521,9 +539,9 @@ export class BlocklyVPL extends Editor {
     let getDomainElementDataFunc = this["domainElementData_" + elem.name];
     assert(
       typeof getDomainElementDataFunc === "function",
-      "Function domainElementData_"
-      + elem.name
-      + " not exists on Blockly editor."
+      "Function domainElementData_" +
+        elem.name +
+        " not exists on Blockly editor."
     );
     return getDomainElementDataFunc(elem);
   }
@@ -538,7 +556,8 @@ export class BlocklyVPL extends Editor {
     econfigName: string,
     pitemInfo: any,
     editorConfig: any,
-    projectinfo: any): any {
+    projectinfo: any
+  ): any {
     let data = JSON.parse(JSON.stringify(pitemInfo));
     data.editorId = projectinfo.editorId;
     data.pitemId = projectinfo.pitemId;
@@ -548,17 +567,13 @@ export class BlocklyVPL extends Editor {
     data.domainElementType = econfigName;
     data.domainElementId = projectinfo.editorId;
 
-    ComponentsCommunication.postSignal(
-      this.name,
-      "create-" + pitemName,
-      data
-    );
+    ComponentsCommunication.postSignal(this.name, "create-" + pitemName, data);
 
-    return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
+    return { src: '<xml id="startBlocks" style="display: none"></xml>' };
   }
 
   @ExportedFunction
-  public generateCodeDataForExecution (data: any) {
+  public generateCodeDataForExecution(data: any) {
     return this.instancesMap[data.editorId].generateJavaScriptCode();
   }
 
@@ -567,20 +582,34 @@ export class BlocklyVPL extends Editor {
     // load data by creating instance of the visual domain element
     let text = editorData ? editorData.src : null;
     this.instancesMap[editorData.editorId] = new BlocklyInstance(
-        this,
-        pitem,
-        editorData.editorId,
-        editorData.editorId,
-        editorData.confName,
-        this.configsMap[editorData.confName],
-        (config) => this.getToolbox(config),
-        (event) => this.handleInstanceChange(
-          editorData.editorId,
-          pitem,
-          event),
-        text
-      );
-      this.instancesMap[editorData.editorId].load();
+      this,
+      pitem,
+      editorData.editorId,
+      editorData.editorId,
+      editorData.confName,
+      this.configsMap[editorData.confName],
+      (config) => this.getToolbox(config),
+      (event) => this.handleInstanceChange(editorData.editorId, pitem, event),
+      text
+    );
+    this.instancesMap[editorData.editorId].load();
+  }
+
+  @ExportedFunction
+  public loadSourceForDialogueInstance(editorData: any) {
+    // load data by creating instance of the visual domain element
+    this.instancesMap[editorData.editorId] = new BlocklyInstance(
+      this,
+      null,
+      editorData.editorId,
+      editorData.editorId,
+      editorData.confName,
+      this.configsMap[editorData.confName],
+      (config) => this.getToolbox(config),
+      (event) => {},
+      editorData.src || '<xml id="startBlocks" style="display: none"></xml>'
+    );
+    this.instancesMap[editorData.editorId].load();
   }
 
   @ExportedFunction
@@ -613,7 +642,8 @@ export class BlocklyVPL extends Editor {
       [pitemId]
     ).value;
     this.openPItem(pitem);
-    let editorData = pitem._editorsData.items[Object.keys(pitem._editorsData.items)[0]];
+    let editorData =
+      pitem._editorsData.items[Object.keys(pitem._editorsData.items)[0]];
     this.instancesMap[editorData.editorId].getBlockById(blockId)["select"]();
     // highlightBlock(blockId);
   }

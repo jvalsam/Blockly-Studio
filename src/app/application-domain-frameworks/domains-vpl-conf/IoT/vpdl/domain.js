@@ -28,6 +28,8 @@ import { CalendarTask as CalendarTaskVPLElem } from "./domain-elems/calendar-tas
 import { BlocklyCalendar as BlocklyCalendarConf } from "./editor-configs/blockly-calendar";
 import { BlocklyCalendar as BlocklyCalendarPI } from "./project-items/blockly-calendar/blockly-calendar";
 
+import { ActionImplementationDebug as ActionImplementationDebugConf } from "./editor-configs/action-implementation";
+
 let predefinedCategories = getPredefinedCategories();
 // domain author is able to edit them...
 defineGeneralCategories(predefinedCategories);
@@ -39,7 +41,7 @@ export function InitializeVPDL() {
       SmartGroupVPLElem,
       AutomationTaskVPLElem,
       ConditionalTaskVPLElem,
-      CalendarTaskVPLElem
+      CalendarTaskVPLElem,
     ],
     domainStaticElements: [
       ConditionalStaticBlocks,
@@ -52,6 +54,7 @@ export function InitializeVPDL() {
       AutomationTaskConf,
       BlocklyConditionalConf,
       BlocklyCalendarConf,
+      ActionImplementationDebugConf,
     ],
     projectItems: [
       SmartObjectPI,

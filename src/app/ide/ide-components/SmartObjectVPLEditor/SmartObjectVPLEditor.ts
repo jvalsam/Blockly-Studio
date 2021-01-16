@@ -580,4 +580,21 @@ export class SmartObjectVPLEditor extends Editor {
       onSuccessFoldRuntime
     );
   }
+
+  @RequiredFunction("BlocklyVPL", "openInDialogue")
+  @ExportedFunction
+  requestBlocklyInstance(
+    editorsData: any,
+    confName: string,
+    selector: string,
+    privileges: string,
+    zIndex: number
+  ) {
+    ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "openInDialogue",
+      [editorsData, confName, selector, privileges, zIndex]
+    );
+  }
 }

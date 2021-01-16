@@ -874,94 +874,71 @@ function RenderSelectGroupsModal(
 
 /* Start functions for debug configuring action */
 export let RenderDebugConfigurationOfAction = function (
+  parent,
   action,
-  actionDebugConfiguration,
+  blocklySrc,
   props,
   resourceId,
   onSave,
   onSuccessFoldRuntime
 ) {
+  let prefix = resourceId + "-debug-configuration-" + action.name;
+
   // Create Modal
   CreateModal(
     document.getElementsByClassName("modal-platform-container")[0],
-    "debug-configuration-" + action.name
+    prefix
   );
 
+  // document.getElementById(prefix + "-modal").setAttribute("tabindex", "-1");
+
   // title
-  $("#" + "debug-configuration-" + action.name + "-modal-title").html(
-    "Simulate action: " + action.name
+  $("#" + prefix + "-modal-title").html(
+    'Implementation of action "' + action.name + '" that runs on debug mode'
   );
 
   /* height of modal body */
-  document
-    .getElementById("debug-configuration-" + action.name + "-modal-body")
-    .style.setProperty("max-height", "50rem");
+  // document
+  //   .getElementById(prefix + "-modal-body")
+  //   .style.setProperty("max-height", "50rem");
 
   document
-    .getElementById("debug-configuration-" + action.name + "-modal-body")
+    .getElementById(prefix + "-modal-body")
     .style.setProperty("overflow-y", "auto");
 
-  var tmpActionDebugConfiguration = JSON.parse(
-    JSON.stringify(actionDebugConfiguration)
-  );
-
-  /* add time 0 if no time slot exists */
-  if (tmpActionDebugConfiguration.length == 0) {
-    let timeSlot = CreateTimeSlot(0, "Default Description", []);
-    tmpActionDebugConfiguration.push(timeSlot);
-  }
-
-  /* Headers */
-  let titlesRow = document.createElement("div");
-  titlesRow.classList.add("row");
-  titlesRow.style.setProperty("font-size", "large");
-  titlesRow.style.setProperty("font-weight", "600");
-  titlesRow.style.setProperty("padding-bottom", "0.2rem");
-  titlesRow.style.setProperty("border-bottom", "1px solid #27252545");
   document
-    .getElementById("debug-configuration-" + action.name + "-modal-body")
-    .appendChild(titlesRow);
+    .getElementById(prefix + "-modal-body")
+    .style.setProperty("position", "relative");
 
-  let timeSlotsHeader = document.createElement("div");
-  timeSlotsHeader.classList.add("col-4");
-  timeSlotsHeader.innerHTML = "Time Slots";
-  titlesRow.appendChild(timeSlotsHeader);
-
-  let propertiesChangesHeader = document.createElement("div");
-  propertiesChangesHeader.classList.add("col");
-  propertiesChangesHeader.innerHTML = "Properties Changes";
-  titlesRow.appendChild(propertiesChangesHeader);
-
-  let timelinesOuter = document.createElement("div");
-  timelinesOuter.id = "timelines-container";
-  timelinesOuter.style.setProperty("margin-top", "1rem");
   document
-    .getElementById("debug-configuration-" + action.name + "-modal-body")
-    .appendChild(timelinesOuter);
+    .getElementById(prefix + "-modal-body")
+    .style.setProperty("width", "100%");
+  document
+    .getElementById(prefix + "-modal-body")
+    .style.setProperty("height", "800px");
 
-  RenderTimeLine(
-    timelinesOuter,
-    tmpActionDebugConfiguration,
-    props,
-    resourceId
-  );
+  // create blockly workspace container
+  // <div id="blocklyDiv" style="position: absolute"></div>;
+  let blocklyWorkspaceDiv = document.createElement("div");
+  blocklyWorkspaceDiv.id = prefix + "-blockly-container";
+  blocklyWorkspaceDiv.style.setProperty("position", "absolute");
+  blocklyWorkspaceDiv.style.setProperty("width", "97%");
+  blocklyWorkspaceDiv.style.setProperty("height", "780px");
+  document
+    .getElementById(prefix + "-modal-body")
+    .appendChild(blocklyWorkspaceDiv);
 
-  $("#" + "debug-configuration-" + action.name + "-modal").on(
-    "hidden.bs.modal",
-    function () {
-      document.getElementsByClassName("modal-platform-container")[0].innerHTML =
-        "";
-      document.getElementById("runtime-modal-title").click();
-      if (onSuccessFoldRuntime) {
-        onSuccessFoldRuntime();
-      }
+  $("#" + prefix + "-modal").on("hidden.bs.modal", function () {
+    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+      "";
+    document.getElementById("runtime-modal-title").click();
+    if (onSuccessFoldRuntime) {
+      onSuccessFoldRuntime();
     }
-  );
+  });
 
   /* change confirm name to save */
-  let confirmButton = document.getElementById(
-    "debug-configuration-" + action.name + "-modal-confirm-button"
-  );
+  let confirmButton = document.getElementById(prefix + "-modal-confirm-button");
   confirmButton.innerHTML = "Save";
 
   /* Save changes */
@@ -991,495 +968,34 @@ export let RenderDebugConfigurationOfAction = function (
 
     onSave(tmpActionDebugConfiguration);
 
-    $("#" + "debug-configuration-" + action.name + "-modal").modal("toggle");
+    $("#" + prefix + "-modal").modal("toggle");
   };
 
   /* change modal size */
   document
-    .getElementById("debug-configuration-" + action.name + "-modal-dialog")
+    .getElementById(prefix + "-modal-dialog")
     .classList.remove("modal-lg");
-  document
-    .getElementById("debug-configuration-" + action.name + "-modal-dialog")
-    .classList.add("modal-xl");
+  document.getElementById(prefix + "-modal-dialog").classList.add("modal-xl");
 
-  $("#" + "debug-configuration-" + action.name + "-modal").modal({
+  $("#" + prefix + "-modal").modal({
     backdrop: "static",
-    keyboard: false,
   });
 
-  $("#" + "debug-configuration-" + action.name + "-modal").modal("show");
-};
-
-let CreateTimeSlot = function (time, description, editMode = true) {
-  return {
-    time: time,
-    description: description,
-    properties: [],
-    editMode: editMode,
-  };
-};
-
-let RenderTimeLine = function (
-  domSelector,
-  timeSlotsArray,
-  resourceProperties,
-  resourceId
-) {
-  if (timeSlotsArray.length === 0) {
-    let emptyHeader = document.createElement("div");
-    emptyHeader.style.setProperty("font-style", "italic");
-    emptyHeader.style.setProperty("font-size", "large");
-    emptyHeader.innerHTML = "There are not time slots";
-    domSelector.appendChild(emptyHeader);
-  }
-
-  let unvalidTimes = timeSlotsArray.map((x) => x.time);
-  for (const [index, element] of timeSlotsArray.entries()) {
-    /* give unvalid times but not the value for the element itself */
-    let unvalidForElement = unvalidTimes.filter((x) => x != element.time);
-
-    RenderTimeSlot(
-      domSelector,
-      element,
-      unvalidForElement,
-      resourceProperties,
-      resourceId,
-      () => {
-        /* clear timelines-contatiner */
-        document.getElementById("timelines-container").innerHTML = "";
-
-        /* sort because of editing */
-        timeSlotsArray.sort(compareTimeSlots);
-
-        /* rerend all time slots */
-        RenderTimeLine(
-          document.getElementById("timelines-container"),
-          timeSlotsArray,
-          resourceProperties,
-          resourceId
-        );
+  $("#" + prefix + "-modal").on("shown.bs.modal", function (e) {
+    parent.requestBlocklyInstance(
+      {
+        src: blocklySrc,
+        editorId: blocklyWorkspaceDiv.id,
       },
-      (newTimeSlot) => {
-        timeSlotsArray.push(newTimeSlot);
-
-        /* sort array */
-        timeSlotsArray.sort(compareTimeSlots);
-
-        /* clear timelines-contatiner */
-        document.getElementById("timelines-container").innerHTML = "";
-
-        /* rerend all time slots */
-        RenderTimeLine(
-          document.getElementById("timelines-container"),
-          timeSlotsArray,
-          resourceProperties,
-          resourceId
-        );
-      },
-      (timeOfTimeSlot) => {
-        let timeIndex = timeSlotsArray.findIndex(
-          (x) => x.time === timeOfTimeSlot
-        );
-
-        timeSlotsArray.splice(timeIndex, 1);
-
-        /* sort array */
-        timeSlotsArray.sort(compareTimeSlots);
-
-        /* clear timelines-contatiner */
-        document.getElementById("timelines-container").innerHTML = "";
-
-        /* rerend all time slots */
-        RenderTimeLine(
-          document.getElementById("timelines-container"),
-          timeSlotsArray,
-          resourceProperties,
-          resourceId
-        );
-      }
+      "ec-action-implementation-debug",
+      blocklyWorkspaceDiv.id,
+      "EDITING",
+      99999999
     );
-
-    if (timeSlotsArray.length > 0 && index < timeSlotsArray.length - 1) {
-      let hr = document.createElement("hr");
-      hr.style.setProperty("border-top", "1px solid rgb(0 0 0 / 28%)");
-      domSelector.appendChild(hr);
-    }
-  }
-};
-
-let RenderTimeSlot = function (
-  domSelecor,
-  timeSlot,
-  unvalidTimes,
-  deviceProps,
-  resourceId,
-  onSuccessEdit,
-  onAddTimeSlot,
-  onDeleteTimeSlot
-) {
-  let timelineRow = document.createElement("div");
-  timelineRow.classList.add("row");
-  domSelecor.appendChild(timelineRow);
-
-  /* Column for the timeslot */
-  let timeCol = document.createElement("div");
-  timeCol.classList.add("col-4");
-  timeCol.style.setProperty("border-right", "1px solid rgb(35 30 30 / 45%)");
-  timeCol.style.setProperty("position", "relative");
-  timeCol.style.setProperty("display", "flex");
-  timeCol.style.setProperty("align-items", "center");
-  timelineRow.appendChild(timeCol);
-
-  let timelineInfo = document.createElement("div");
-  timelineInfo.style.setProperty("width", "100%");
-  timelineInfo.style.setProperty("padding-bottom", "3rem");
-  timeCol.appendChild(timelineInfo);
-
-  /* Time in timeslot */
-  let timelineTitleRow = document.createElement("div");
-  timelineTitleRow.classList.add("row");
-  timelineInfo.appendChild(timelineTitleRow);
-
-  let timelineTitleTimeCol = document.createElement("div");
-  timelineTitleTimeCol.classList.add("col-5");
-  timelineTitleRow.appendChild(timelineTitleTimeCol);
-
-  let timelineTitleTime = document.createElement("div");
-  timelineTitleTime.innerHTML = "Time (seconds): ";
-  timelineTitleTime.style.setProperty("font-size", "large");
-  timelineTitleTimeCol.appendChild(timelineTitleTime);
-
-  let timeSecondsCol = document.createElement("div");
-  timeSecondsCol.classList.add("col");
-  timelineTitleRow.appendChild(timeSecondsCol);
-
-  let timeSeconds = document.createElement("div");
-  timeSeconds.id = "_time-" + timeSlot.time + "-time";
-  timeSeconds.innerHTML = timeSlot.time + " seconds";
-  timeSeconds.style.setProperty("font-style", "italic");
-  timeSeconds.style.setProperty("font-size", "large");
-  timeSecondsCol.appendChild(timeSeconds);
-
-  let timeSecondsInput = document.createElement("input");
-  timeSecondsInput.type = "number";
-  timeSecondsInput.min = 0;
-  timeSecondsInput.id = "_time-" + timeSlot.time + "-time-vlaue";
-  timeSecondsInput.value = timeSlot.time;
-  timeSecondsCol.appendChild(timeSecondsInput);
-
-  /* Description in timeslot */
-  let timelineDescriptionRow = document.createElement("div");
-  timelineDescriptionRow.classList.add("row");
-  timelineDescriptionRow.style.setProperty("margin-top", "0.5rem");
-  timelineInfo.appendChild(timelineDescriptionRow);
-
-  let timelineTitleDescriptionCol = document.createElement("div");
-  timelineTitleDescriptionCol.classList.add("col-5");
-  timelineTitleDescriptionCol.style.setProperty("font-size", "large");
-  timelineDescriptionRow.appendChild(timelineTitleDescriptionCol);
-
-  let timelineTitleDescription = document.createElement("div");
-  timelineTitleDescription.innerHTML = "Description: ";
-  timelineTitleDescriptionCol.appendChild(timelineTitleDescription);
-
-  let timelineTitleDescriptionValueCol = document.createElement("div");
-  timelineTitleDescriptionValueCol.classList.add("col");
-  timelineDescriptionRow.appendChild(timelineTitleDescriptionValueCol);
-
-  let timeDescription = document.createElement("span");
-  timeDescription.id = "_time-" + timeSlot.time + "-description";
-  timeDescription.innerHTML = timeSlot.description;
-  timeDescription.style.setProperty("font-style", "italic");
-  timeDescription.style.setProperty("font-size", "large");
-  timelineTitleDescriptionValueCol.appendChild(timeDescription);
-
-  let timeDescriptionInput = document.createElement("input");
-  timeDescriptionInput.type = "text";
-  timeDescriptionInput.id = "_time-" + timeSlot.time + "-description-value";
-  timeDescriptionInput.value = timeSlot.description;
-  timelineTitleDescriptionValueCol.appendChild(timeDescriptionInput);
-
-  if (!timeSlot.editMode) {
-    timeSecondsInput.style.setProperty("display", "none");
-    timeDescriptionInput.style.setProperty("display", "none");
-  } else {
-    timeSeconds.style.setProperty("display", "none");
-    timeDescription.style.setProperty("display", "none");
-  }
-
-  /* Functionality in timeslot */
-  let timelineFunctionalityOuter = document.createElement("div");
-  timelineFunctionalityOuter.style.setProperty("position", "absolute");
-  timelineFunctionalityOuter.style.setProperty("bottom", "0px");
-  timelineFunctionalityOuter.style.setProperty("right", "11px");
-  timeCol.appendChild(timelineFunctionalityOuter);
-
-  let timelineEditSpan = document.createElement("span");
-  timelineEditSpan.id = "_time-" + timeSlot.time + "edit-button";
-  timelineFunctionalityOuter.appendChild(timelineEditSpan);
-
-  let timelineEditButton = document.createElement("button");
-  timelineEditButton.classList.add("btn", "btn-sm", "btn-info");
-  timelineEditButton.innerHTML = "<i class='fas fa-edit'></i>";
-  timelineEditButton.onclick = () => {
-    /* Change view of buttons in time slot */
-    timelineEditSpan.style.setProperty("display", "none");
-    timelineDeleteSpan.style.setProperty("display", "none");
-    addTimeLineOuter.style.setProperty("display", "none");
-    applyButton.style.setProperty("display", "block");
-
-    timeSeconds.style.setProperty("display", "none");
-    timeDescription.style.setProperty("display", "none");
-
-    timeSecondsInput.style.setProperty("display", "block");
-    timeDescriptionInput.style.setProperty("display", "block");
-
-    timeSlot.editMode = true;
-  };
-  timelineEditSpan.appendChild(timelineEditButton);
-
-  let timelineDeleteSpan = document.createElement("span");
-  timelineDeleteSpan.style.setProperty("margin-left", "0.7rem");
-  timelineDeleteSpan.id = "_time-" + timeSlot.time + "delete-button";
-  timelineFunctionalityOuter.appendChild(timelineDeleteSpan);
-
-  let timelineDeleteButton = document.createElement("button");
-  timelineDeleteButton.classList.add("btn", "btn-sm", "btn-danger");
-  timelineDeleteButton.onclick = () => {
-    onDeleteTimeSlot(timeSlot.time);
-  };
-  timelineDeleteButton.innerHTML = "<i class='far fa-trash-alt'></i>";
-  timelineDeleteSpan.appendChild(timelineDeleteButton);
-
-  /* Add time slot */
-  let addTimeLineOuter = document.createElement("div");
-  // addTimeLineOuter.style.setProperty("padding-top", "1rem");
-  addTimeLineOuter.style.setProperty("position", "absolute");
-  addTimeLineOuter.style.setProperty("bottom", "0px");
-  timeCol.appendChild(addTimeLineOuter);
-
-  let addTimeLineLink = document.createElement("a");
-  addTimeLineLink.style.setProperty("width", "fit-content");
-  addTimeLineLink.href = "#";
-  addTimeLineLink.innerHTML = "Add time slot";
-  addTimeLineLink.onclick = () => {
-    let newTime = timeSlot.time + 1;
-    while (unvalidTimes.includes(newTime)) {
-      newTime = newTime + 1;
-    }
-    let newTimeSlot = CreateTimeSlot(newTime, "Default desctiption", []);
-
-    onAddTimeSlot(newTimeSlot);
-  };
-  addTimeLineOuter.appendChild(addTimeLineLink);
-
-  /* Apply button for editing */
-  let applyButton = document.createElement("button");
-  applyButton.classList.add("btn", "btn-sm", "btn-success");
-  timelineDeleteButton.id = "_time-" + timeSlot.time + "apply-button";
-  applyButton.innerHTML = "Apply";
-  applyButton.onclick = () => {
-    let newTime = parseFloat(
-      document.getElementById("_time-" + timeSlot.time + "-time-vlaue").value
-    );
-
-    if (unvalidTimes.includes(newTime)) {
-      /* unvalid time slot */
-    } else {
-      let newDescription = document.getElementById(
-        "_time-" + timeSlot.time + "-description-value"
-      ).value;
-      /* Set new values */
-      timeSlot.time = newTime;
-      timeSlot.description = newDescription;
-
-      timeSlot.editMode = false;
-
-      /* Chnage view on functionality */
-      onSuccessEdit();
-    }
-  };
-  timelineFunctionalityOuter.appendChild(applyButton);
-
-  if (!timeSlot.editMode) {
-    applyButton.style.setProperty("display", "none");
-  } else {
-    timelineEditSpan.style.setProperty("display", "none");
-    timelineDeleteSpan.style.setProperty("display", "none");
-    addTimeLineOuter.style.setProperty("display", "none");
-  }
-
-  /* Properties Column */
-  let propertiesCol = document.createElement("div");
-  propertiesCol.classList.add("col");
-  propertiesCol.style.setProperty("position", "relative");
-  timelineRow.appendChild(propertiesCol);
-
-  let propertiesContainer = document.createElement("div");
-  propertiesContainer.classList.add("action-configure-properties-contatainer");
-  propertiesContainer.style.setProperty("max-height", "15rem");
-  propertiesContainer.style.setProperty("overflow-y", "auto");
-  propertiesContainer.style.setProperty("padding-bottom", "2.5rem");
-  propertiesCol.appendChild(propertiesContainer);
-
-  let addPropertyOuterDiv = document.createElement("div");
-  propertiesCol.appendChild(addPropertyOuterDiv);
-
-  let addPropertyConfiguration = document.createElement("a");
-  addPropertyConfiguration.href = "#";
-  addPropertyConfiguration.onclick = () => {
-    addPropertyConfiguration.style.setProperty("display", "none");
-
-    AddPropertyChangeForAction(
-      addPropertyOuterDiv,
-      deviceProps,
-      (propertyName) => {
-        addPropertyConfiguration.style.display = "block";
-        propertiesContainer.innerHTML = "";
-
-        timeSlot.properties.push(
-          deviceProps.find((property) => property.name === propertyName)
-        );
-
-        RenderPropertiesForActionConfiguration(
-          propertiesContainer,
-          resourceId,
-          timeSlot
-        );
-      }
-    );
-  };
-  addPropertyConfiguration.innerHTML = "Add property change";
-  addPropertyConfiguration.style.setProperty("width", "fit-content");
-  // addPropertyConfiguration.style.setProperty("position", "absolute");
-  // addPropertyConfiguration.style.setProperty("bottom", "0");
-  addPropertyOuterDiv.appendChild(addPropertyConfiguration);
-
-  if (timeSlot.properties.length === 0) {
-    let message = document.createElement("div");
-    message.style.setProperty("font-size", "large");
-    message.style.setProperty("font-style", "italic");
-    message.innerHTML = "There is not any property change";
-    propertiesContainer.appendChild(message);
-  } else {
-    RenderPropertiesForActionConfiguration(
-      propertiesContainer,
-      resourceId,
-      timeSlot
-    );
-  }
-};
-
-let AddPropertyChangeForAction = function (domSelector, props, onAdd) {
-  this;
-
-  let selectionDiv = document.createElement("div");
-  selectionDiv.style.setProperty("margin-top", "1rem");
-  domSelector.appendChild(selectionDiv);
-
-  let selectProp = document.createElement("select");
-  selectionDiv.appendChild(selectProp);
-
-  let optionDefault = document.createElement("option");
-  optionDefault.selected = true;
-  optionDefault.text = "<select property>";
-  selectProp.appendChild(optionDefault);
-
-  props.forEach((property) => {
-    let option = document.createElement("option");
-    option.innerHTML = property.name;
-    selectProp.appendChild(option);
+    $(document).off("focusin.modal");
   });
 
-  let addPropertyButton = document.createElement("button");
-  addPropertyButton.classList.add("btn", "btn-sm", "btn-success");
-  addPropertyButton.style.setProperty("margin-left", "1rem");
-  addPropertyButton.innerHTML = "Add";
-  addPropertyButton.onclick = () => {
-    selectionDiv.remove();
-    if (selectProp.value !== "<select property>") onAdd(selectProp.value);
-  };
-  selectionDiv.appendChild(addPropertyButton);
-};
-
-let RenderPropertiesForActionConfiguration = function (
-  domContainer,
-  resourceId,
-  timeSlot
-) {
-  for (const [index, property] of timeSlot.properties.entries()) {
-    RenderPropertyForActionConfiguration(
-      domContainer,
-      property,
-      resourceId,
-      timeSlot.time + "-" + index + "-value",
-      () => {
-        /* remove property */
-        timeSlot.properties.splice(index, 1);
-
-        /* clear container of properties */
-        domContainer.innerHTML = "";
-
-        /* render again properties */
-        RenderPropertiesForActionConfiguration(
-          domContainer,
-          resourceId,
-          timeSlot
-        );
-      }
-    );
-  }
-};
-
-let RenderPropertyForActionConfiguration = function (
-  domSelector,
-  property,
-  resourceId,
-  propertyInputID,
-  onDeleteProperty
-) {
-  let propertyOuter = document.createElement("div");
-  propertyOuter.style.display = "flex";
-  domSelector.appendChild(propertyOuter);
-
-  let spanPropertyView = document.createElement("span");
-  spanPropertyView.style.setProperty("width", "76%");
-  spanPropertyView.style.setProperty("margin-left", "2rem");
-  propertyOuter.appendChild(spanPropertyView);
-
-  soUIGenerator.RenderPropertyForDebugConfiguration(
-    spanPropertyView,
-    resourceId,
-    property,
-    propertyInputID
-  );
-
-  let spanDeleteProperty = document.createElement("span");
-  spanDeleteProperty.style.setProperty("margin-left", "1rem");
-  propertyOuter.appendChild(spanDeleteProperty);
-
-  let deleteProperty = document.createElement("button");
-  deleteProperty.classList.add("btn", "btn-danger", "btn-sm");
-  deleteProperty.onclick = onDeleteProperty;
-  spanDeleteProperty.appendChild(deleteProperty);
-
-  let deleteIcon = document.createElement("i");
-  deleteIcon.classList.add("far", "fa-trash-alt");
-  deleteProperty.appendChild(deleteIcon);
-};
-
-const compareTimeSlots = function (a, b) {
-  // Use toUpperCase() to ignore character casing
-  const timeA = a.time;
-  const timeB = b.time;
-
-  let comparison = 0;
-  if (timeA > timeB) {
-    comparison = 1;
-  } else if (timeA < timeB) {
-    comparison = -1;
-  }
-  return comparison;
+  $("#" + prefix + "-modal").modal("show");
 };
 /* End functions for debug configuring action */
 
@@ -1788,7 +1304,7 @@ let RenderSmartObjectRegistered = function (
       actionsContainer,
       soData.editorData.editorId,
       action,
-      soData.editorData.details.actionsDebugConfigurations[action.name],
+      soData.editorData.details.blocklySrc[action.name],
       {
         onClickDebugConfigurationOfAction:
           callbacksMap.onClickDebugConfigurationOfAction,
@@ -2060,7 +1576,7 @@ export function RenderSmartGroup(
   //     actionsContainer,
   //     sgData.editorData.editorId,
   //     action,
-  //     soData.editorData.details.actionsDebugConfigurations[action.name],
+  //     soData.editorData.details.blocklySrc[action.name],
   //     {}
   //   );
   // }
