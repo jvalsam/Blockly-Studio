@@ -989,13 +989,31 @@ export const SmartObject = {
         //         resourceId: block.soData.details.iotivityResourceID,
         //         methodId:
         //           "action-" +
-        //           data.details.iotivityResourceID +
+        //           block.soData.details.iotivityResourceID +
         //           "-" +
         //           dropdown_actions,
         //         arguments: JSON.stringify(args),
         //       }
         //     ).then(() => {
-
+        //       let argsStr = "";
+        //       if (args.length !== 0) argsStr += "with arguments: ";
+        //       args.forEach((arg, idx, array) => {
+        //         argsStr += "<b>" + arg + "</b>";
+        //         if (idx !== array.length - 1) {
+        //           argsStr += ", ";
+        //         }
+        //       });
+        //       CreateDeviceBubbleForLog(
+        //         block.soData.title,
+        //         block.soData.img,
+        //         block.soData.colour,
+        //         "Execute Action: <b>" + dropdown_actions + "</b>  " + argsStr,
+        //         () =>
+        //           runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(
+        //             projectElementId,
+        //             block.id
+        //           )
+        //       );
         //       resolve();
         //     });
         //   });
