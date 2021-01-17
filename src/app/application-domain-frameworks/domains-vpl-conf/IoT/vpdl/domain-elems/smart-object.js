@@ -1133,39 +1133,52 @@ export const SmartObject = {
           }
         }
 
-        // await(function () {
-        //   new Promise((resolve) => {
-        //     let args = [];
-        //     for (let i = 0; i < parametersLength; ++i) {
-        //       if (checksArray["INPUT" + i][0] === "Number") {
-        //         let number = parseFloat(inputsToCode[i]);
-        //         args.push(number);
-        //       } else if (checksArray["INPUT" + i][0] === "Boolean") {
-        //         args.push(inputsToCode[i] === "true" ? true : false);
-        //       } else if (checksArray["INPUT" + i][0] === "String") {
-        //         args.push(inputsToCode[i]);
-        //       }
+        // (function () {
+        //   let args = [];
+        //   for (let i = 0; i < " + parametersLength + "; ++i) {
+        //     if (checksArray["INPUT" + i][0] === "Number") {
+        //       let number = parseFloat(inputsToCode[i]);
+        //       args.push(number);
+        //     } else if (checksArray["INPUT" + i][0] === "Boolean") {
+        //       args.push(inputsToCode[i] === "true" ? true : false);
+        //     } else if (checksArray["INPUT" + i][0] === "String") {
+        //       args.push(inputsToCode[i]);
         //     }
-        //     PostRequest(
-        //       "http://" + urlInfo.iotivityUrl + "/resource/execute-method",
-        //       {
-        //         resourceId: block.soData.details.iotivityResourceID,
-        //         methodId:
-        //           "action-" +
-        //           data.details.iotivityResourceID +
-        //           "-" +
-        //           dropdown_actions,
-        //         arguments: JSON.stringify(args),
-        //       }
-        //     ).then(() => {
-        //       resolve();
-        //     });
+        //   }
+        // if (block.soData.details.blocklySrc[dropdown_actions]) {
+        //   eval(block.soData.details.blocklySrc[dropdown_actions]);
+        //   let argsStr = "";
+        //   args.forEach((arg, idx, array) => {
+        //     argsStr += arg;
+        //     if (idx !== array.length - 1) {
+        //       argsStr += ", ";
+        //     }
         //   });
+        //   eval(dropdown_actions + "(" + argsStr + ")");
+        // }
+        //   let argsStr = "";
+        //   if (args.length !== 0) argsStr += "with arguments: ";
+        //   args.forEach((arg, idx, array) => {
+        //     argsStr += "<b>" + arg + "</b>";
+        //     if (idx !== array.length - 1) {
+        //       argsStr += ", ";
+        //     }
+        //   });
+        //   CreateDeviceBubbleForLog(
+        //     block.soData.title,
+        //     block.soData.img,
+        //     block.soData.colour,
+        //     "Execute Action: <b>" + dropdown_actions + "</b>  " + argsStr,
+        //     () =>
+        //       runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(
+        //         projectElementId,
+        //         block.id
+        //       )
+        //   );
         // })();
 
         let strBuilder = "";
-        strBuilder += "await(function () {\n";
-        strBuilder += "new Promise((resolve) => {\n";
+        strBuilder += "(function () {\n";
         strBuilder += "let args = [];\n";
         strBuilder +=
           "let inputsToCode = JSON.parse('" +
@@ -1188,19 +1201,23 @@ export const SmartObject = {
         strBuilder += "}\n";
         strBuilder += "}\n";
         strBuilder +=
-          'PostRequest("http://" + urlInfo.iotivityUrl + "/resource/execute-method", {\n';
+          "if (" +
+          JSON.stringify(
+            block.soData.details.blocklySrc[dropdown_actions] != ""
+          ) +
+          ") {";
         strBuilder +=
-          "resourceId: " +
-          JSON.stringify(block.soData.details.iotivityResourceID) +
-          ",\n";
-        strBuilder +=
-          "methodId: 'action-" +
-          block.soData.details.iotivityResourceID +
-          "-" +
-          dropdown_actions +
-          "',\n";
-        strBuilder += "arguments: JSON.stringify(args)\n";
-        strBuilder += "}).then(() => { ";
+          "eval(" + block.soData.details.blocklySrc[dropdown_actions] + ");";
+        strBuilder += 'let argsStr = "";';
+        strBuilder += "args.forEach((arg, idx, array) => {";
+        strBuilder += "argsStr += JSON.stringify(arg);";
+        strBuilder += "if (idx !== array.length - 1) {";
+        strBuilder += ' argsStr += ", ";';
+        strBuilder += "}";
+        strBuilder += "});";
+        // strBuilder +=
+        //   'eval(dropdown_actions + "(" + JSON.stringify(JSON.parse(argsStr)) + ")");';
+        strBuilder += "}";
         strBuilder += "let argsStr = '';";
         strBuilder +=
           "if (args.length !== 0) argsStr += " +
@@ -1232,8 +1249,6 @@ export const SmartObject = {
         strBuilder += JSON.stringify(block.id);
         strBuilder += ")";
         strBuilder += ");";
-        strBuilder += "resolve()});\n";
-        strBuilder += "});\n";
         strBuilder += "})();";
 
         var code = strBuilder + "\n";
