@@ -175,22 +175,24 @@ export class BlocklyVPL extends Editor {
     zIndex: number,
     srcWs: string
   ): void {
-    if(!this.instancesMap[editorData.editorId])
-      this.instancesMap[editorData.editorId] = new BlocklyInstance(
-        this,
-        null,
-        editorData.editorId,
-        selector, // selector has to be unique (injected in DOM, not in pitem template)
-        config,
-        this.configsMap[config],
-        (config) => this.getToolbox(config), // have to do work...
-        (event) => {
-          /* nope */
-        },
-        editorData.src || srcWs,
-        privileges,
-        zIndex
-      );
+    if (this.instancesMap[editorData.editorId])
+      this.instancesMap[editorData.editorId].destroy();
+    
+    this.instancesMap[editorData.editorId] = new BlocklyInstance(
+      this,
+      null,
+      editorData.editorId,
+      selector, // selector has to be unique (injected in DOM, not in pitem template)
+      config,
+      this.configsMap[config],
+      (config) => this.getToolbox(config), // have to do work...
+      (event) => {
+        /* nope */
+      },
+      editorData.src || srcWs,
+      privileges,
+      zIndex
+    );
       
     this.instancesMap[editorData.editorId].open();
   }

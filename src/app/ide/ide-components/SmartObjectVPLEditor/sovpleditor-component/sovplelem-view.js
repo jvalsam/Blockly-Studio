@@ -880,7 +880,8 @@ export let RenderDebugConfigurationOfAction = function (
   props,
   resourceId,
   onSave,
-  onSuccessFoldRuntime
+  onSuccessFoldRuntime,
+  privilege
 ) {
   let prefix = resourceId + "-debug-configuration-" + action.name;
 
@@ -896,11 +897,6 @@ export let RenderDebugConfigurationOfAction = function (
   $("#" + prefix + "-modal-title").html(
     'Implementation of action "' + action.name + '" that runs on debug mode'
   );
-
-  /* height of modal body */
-  // document
-  //   .getElementById(prefix + "-modal-body")
-  //   .style.setProperty("max-height", "50rem");
 
   document
     .getElementById(prefix + "-modal-body")
@@ -942,20 +938,27 @@ export let RenderDebugConfigurationOfAction = function (
     }
   });
 
-  /* change confirm name to save */
   let confirmButton = document.getElementById(prefix + "-modal-confirm-button");
-  confirmButton.innerHTML = "Save";
 
-  /* Save changes */
-  confirmButton.onclick = () => {
-    let blocklyInstanceSrc = parent.getSrcFromBlocklyInstance(
-      blocklyWorkspaceDiv.id
-    );
+  if (privilege === "READ_ONLY") {
+    confirmButton.style.setProperty("display", "none");
+    let cancelButton = document.getElementById(prefix + "-modal-cancel-button");
+    cancelButton.innerHTML = "Close";
+  } else {
+    /* change confirm name to save */
+    confirmButton.innerHTML = "Save";
 
-    onSave(blocklyInstanceSrc);
+    /* Save changes */
+    confirmButton.onclick = () => {
+      let blocklyInstanceSrc = parent.getSrcFromBlocklyInstance(
+        blocklyWorkspaceDiv.id
+      );
 
-    $("#" + prefix + "-modal").modal("toggle");
-  };
+      onSave(blocklyInstanceSrc);
+
+      $("#" + prefix + "-modal").modal("toggle");
+    };
+  }
 
   /* change modal size */
   document
@@ -975,7 +978,7 @@ export let RenderDebugConfigurationOfAction = function (
       },
       "ec-action-implementation-debug",
       blocklyWorkspaceDiv.id,
-      "EDITING",
+      privilege,
       99999999,
       DefineFunctionForDebugImplementation(action)
     );

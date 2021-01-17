@@ -1491,14 +1491,7 @@ const RenderChangesForCreatingTest = function (
             /* render again properties */
             RenderChangesForCreatingTest(domContainer, timeSlot, envData);
           },
-          envData,
-          () => {
-            /* clear container of properties */
-            domContainer.innerHTML = "";
-
-            /* render again properties */
-            RenderChangesForCreatingTest(domContainer, timeSlot, envData);
-          }
+          envData
         );
       }
     }
@@ -1558,8 +1551,7 @@ const RenderActionChangeForCreatingTest = function (
   actionID,
   configuration,
   onDeleteAction,
-  envData,
-  onSuccessConfigure
+  envData
 ) {
   let actionOuter = document.createElement("div");
   actionOuter.style.display = "flex";
@@ -1585,7 +1577,7 @@ const RenderActionChangeForCreatingTest = function (
     action,
     configuration,
     {
-      onClickDebugConfigurationOfAction: (action) => {
+      onClickDebugConfigurationOfAction: (action, privilege) => {
         // hide running automations
         envData.RuntimeEnvironmentRelease.functionRequest(
           "SmartObjectVPLEditor",
@@ -1600,7 +1592,7 @@ const RenderActionChangeForCreatingTest = function (
         envData.RuntimeEnvironmentRelease.functionRequest(
           "SmartObjectVPLEditor",
           "clickDebugConfigurationOfAction",
-          [deviceEditorId, action, onSuccessConfigure]
+          [deviceEditorId, action, privilege]
         );
       },
     },
@@ -1622,6 +1614,53 @@ const RenderActionChangeForCreatingTest = function (
   let deleteIcon = document.createElement("i");
   deleteIcon.classList.add("far", "fa-trash-alt");
   deleteAction.appendChild(deleteIcon);
+};
+
+const DefineFunctionForDebugImplementation = function (action) {
+  let str = `<xml id="startBlocks" style="display: none">`;
+  if (action.parameters.length > 0) {
+    str += "<variables>";
+    for (const parameter of action.parameters) {
+      str +=
+        "<variable id='" +
+        action.id +
+        parameter.name +
+        "'>" +
+        parameter.name +
+        "_arg" +
+        "</variable>";
+    }
+    str += "</variables>";
+  }
+
+  str +=
+    `<block type="procedures_defnoreturn" id="` +
+    action.id +
+    `" x="138" y="38">`;
+  if (action.parameters.length > 0) {
+    str += "<mutation>";
+    for (const parameter of action.parameters) {
+      str +=
+        "<arg name='" +
+        parameter.name +
+        "_arg' varid='" +
+        action.id +
+        parameter.name +
+        "'></arg>";
+    }
+    str += "</mutation>";
+  }
+  str +=
+    `<field name="NAME">` +
+    action.name +
+    `</field>
+    <comment pinned="false" h="80" w="160">Implementation of action \"` +
+    action.name +
+    `\" that runs on debug mode
+    </comment>
+  </block>
+</xml>`;
+  return str;
 };
 
 const compareTimeSlots = function (a, b) {

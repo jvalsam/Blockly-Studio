@@ -573,11 +573,11 @@ export class SmartObjectVPLEditor extends Editor {
   public clickDebugConfigurationOfAction(
     smartElementId: string,
     action: any,
-    onSuccessFoldRuntime
+    privilege
   ) {
     this.instancesMap[smartElementId].onClickDebugConfigurationOfAction(
       action,
-      onSuccessFoldRuntime
+      privilege
     );
   }
 
