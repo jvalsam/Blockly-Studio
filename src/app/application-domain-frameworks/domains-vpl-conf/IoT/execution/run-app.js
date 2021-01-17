@@ -114,9 +114,9 @@ const Initialize = function (selector, envData) {
         // jump to specific date but with simulatedTimeTable
         while (i < simulatedTimeTable.length) {
           if (specificDate.diff(simulatedTimeTable[i].time) > 0) {
+            clearInterval(simulatedTimeTable[i].intervalFunc);
             simulatedTime = simulatedTimeTable[i].time;
             simulatedTimeTable[i].func();
-            // set a boolean to go next time in simulatedTimeTable
           } else {
             break;
           }
@@ -141,24 +141,10 @@ const whenCondData = [];
 
 const changesData = [];
 
-const StartWhenTimeout = function () {
-  let index = arrayIntervals.length;
-  arrayIntervals.push({ type: "when_cond" });
-  let f = function () {
-    arrayIntervals[index].time = setTimeout(() => {
-      if (whenCondData.length === 0) {
-        clearTimeout(arrayIntervals[index].time);
-        arrayIntervals.slice(index, 1);
-        return;
-      }
-      whenCondData.forEach((cond) => {
-        cond.func();
-      });
-      arrayIntervals[index].func();
-    }, 500);
-  };
-  arrayIntervals[index].func = f;
-  arrayIntervals[index].func();
+const TriggerWhenConditionalsFunctions = function () {
+  whenCondData.forEach((cond) => {
+    cond.func();
+  });
 };
 
 const weekDays = [
@@ -191,6 +177,7 @@ const TakeDifferenceFromSpecificTime = function (
   calendarInfo,
   calendarBlockId,
   func,
+  intervalCheckForTime,
   startTime
 ) {
   let futureTime = dayjs(simulatedTime)
@@ -209,7 +196,12 @@ const TakeDifferenceFromSpecificTime = function (
   }
 
   // Pin in calendar
-  PinEventInCalendar(futureTime, calendarInfo, calendarBlockId);
+  PinEventInCalendar(
+    futureTime,
+    calendarInfo,
+    calendarBlockId,
+    intervalCheckForTime
+  );
 
   AddTimeInSimulatedTable(futureTime, calendarBlockId, func);
 
@@ -221,6 +213,7 @@ const TakeDifferenceFromSpecificDay = function (
   calendarInfo,
   calendarBlockId,
   func,
+  intervalCheckForTime,
   startTime
 ) {
   let intDay = weekDays.indexOf(time.day);
@@ -236,7 +229,12 @@ const TakeDifferenceFromSpecificDay = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
+  AddTimeInSimulatedTable(
+    futureDate,
+    calendarBlockId,
+    func,
+    intervalCheckForTime
+  );
 
   return futureDate;
 };
@@ -246,6 +244,7 @@ const TakeDifferenceFromSpecificMonth = function (
   calendarInfo,
   calendarBlockId,
   func,
+  intervalCheckForTime,
   startTime
 ) {
   let intMonth = months.indexOf(time.month);
@@ -260,7 +259,12 @@ const TakeDifferenceFromSpecificMonth = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
+  AddTimeInSimulatedTable(
+    futureDate,
+    calendarBlockId,
+    func,
+    intervalCheckForTime
+  );
 
   return futureDate;
 };
@@ -270,6 +274,7 @@ const EverySecond = function (
   calendarInfo,
   calendarBlockId,
   func,
+  intervalCheckForTime,
   startTime
 ) {
   let futureDate;
@@ -282,7 +287,12 @@ const EverySecond = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
+  AddTimeInSimulatedTable(
+    futureDate,
+    calendarBlockId,
+    func,
+    intervalCheckForTime
+  );
 
   return futureDate;
 };
@@ -292,6 +302,7 @@ const EveryMinute = function (
   calendarInfo,
   calendarBlockId,
   func,
+  intervalCheckForTime,
   startTime
 ) {
   let futureDate;
@@ -304,7 +315,12 @@ const EveryMinute = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
+  AddTimeInSimulatedTable(
+    futureDate,
+    calendarBlockId,
+    func,
+    intervalCheckForTime
+  );
 
   return futureDate;
 };
@@ -314,6 +330,7 @@ const EveryHour = function (
   calendarInfo,
   calendarBlockId,
   func,
+  intervalCheckForTime,
   startTime
 ) {
   let futureDate;
@@ -323,7 +340,12 @@ const EveryHour = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
+  AddTimeInSimulatedTable(
+    futureDate,
+    calendarBlockId,
+    func,
+    intervalCheckForTime
+  );
 
   return futureDate;
 };
@@ -333,6 +355,7 @@ const EveryDay = function (
   calendarInfo,
   calendarBlockId,
   func,
+  intervalCheckForTime,
   startTime
 ) {
   let futureDate = dayjs(simulatedTime).day(simulatedTime.day() + time.day);
@@ -340,7 +363,12 @@ const EveryDay = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
+  AddTimeInSimulatedTable(
+    futureDate,
+    calendarBlockId,
+    func,
+    intervalCheckForTime
+  );
 
   return futureDate;
 };
@@ -350,6 +378,7 @@ const EveryMonth = function (
   calendarInfo,
   calendarBlockId,
   func,
+  intervalCheckForTime,
   startTime
 ) {
   let futureDate = dayjs(simulatedTime).month(
@@ -359,7 +388,13 @@ const EveryMonth = function (
   // Pin in calendar
   PinEventInCalendar(futureDate, calendarInfo, calendarBlockId);
 
-  AddTimeInSimulatedTable(futureDate, calendarBlockId, func);
+  AddTimeInSimulatedTable(
+    futureDate,
+    calendarBlockId,
+    func,
+    intervalCheckForTime,
+    intervalCheckForTime
+  );
 
   return futureDate;
 };
@@ -584,8 +619,13 @@ const GoToSpecificTime = function () {
   // TODO: update calendar
 };
 
-const AddTimeInSimulatedTable = function (time, id, func) {
-  simulatedTimeTable.push({ time: time, id: id, func: func });
+const AddTimeInSimulatedTable = function (time, id, func, intervalFunc) {
+  simulatedTimeTable.push({
+    time: time,
+    id: id,
+    func: func,
+    intervalFunc: intervalFunc,
+  });
   simulatedTimeTable.sort(compareTimes);
 };
 
@@ -2432,11 +2472,8 @@ export async function StartApplication(runTimeData) {
     // calendar tasks
     RunAutomations(runTimeData.execData.project.CalendarEvents);
 
-    // // conditional tasks
-    // RunAutomations(runTimeData.execData.project.ConditionalEvents);
-
-    // Start whenConditions
-    // StartWhenTimeout();
+    // conditional tasks
+    RunAutomations(runTimeData.execData.project.ConditionalEvents);
   } catch (e) {
     alert(e);
   }

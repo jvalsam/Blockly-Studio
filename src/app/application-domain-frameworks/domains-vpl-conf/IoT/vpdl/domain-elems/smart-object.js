@@ -522,6 +522,7 @@ export const SmartObject = {
         //           block.blockId
         //         )
         //     );
+        //     TriggerWhenConditionalsFunctions();
         //     RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);
         //   }
         // })();
@@ -589,6 +590,7 @@ export const SmartObject = {
           "(elem) => elem.id === " +
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
+        strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += "}";
@@ -778,6 +780,7 @@ export const SmartObject = {
         //     let oldDeviceIndex = devicesOnAutomations.findIndex(
         //       (elem) => elem.id === block.soData.details.iotivityResourceID
         //     );
+        //     TriggerWhenConditionalsFunctions();
         //     RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);
         //   }
         // })();
@@ -823,6 +826,7 @@ export const SmartObject = {
           "(elem) => elem.id === " +
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
+        strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += "}";

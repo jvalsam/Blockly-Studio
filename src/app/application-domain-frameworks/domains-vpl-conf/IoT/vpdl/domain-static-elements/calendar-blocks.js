@@ -163,11 +163,18 @@ export const CalendarStaticBlocks = [
 
       //     return;
       //   };
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
       //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
       //     JSON.parse(value_time),
       //     block.getCommentText(),
       //     id,
-      //     func
+      //     func,
+      //     funcInterval
       //   );
       // })();
 
@@ -226,11 +233,17 @@ export const CalendarStaticBlocks = [
       strBuilder += ").isCompleted = true;";
       strBuilder += "return;";
       strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
       strBuilder +=
         "let realEndTime= timeDispatch[JSON.parse(" + value_time + ").type](";
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
-      strBuilder += JSON.stringify(id) + ", func";
+      strBuilder += JSON.stringify(id) + ", func, funcInterval";
       strBuilder += ");";
       strBuilder += "})();";
 
@@ -394,11 +407,17 @@ export const CalendarStaticBlocks = [
       //     ).isCompleted = true;
       //     return;
       //   };
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
       //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
       //     JSON.parse(value_time),
       //     block.getCommentText(),
       //     id,
-      //     func
+      //     func, funcInterval
       //   );
       // })();
 
@@ -457,11 +476,17 @@ export const CalendarStaticBlocks = [
       strBuilder += ").isCompleted = true;";
       strBuilder += "return;";
       strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
       strBuilder +=
         "let realEndTime= timeDispatch[JSON.parse(" + value_time + ").type](";
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
-      strBuilder += JSON.stringify(id) + ", func";
+      strBuilder += JSON.stringify(id) + ", func, funcInterval";
       strBuilder += ");";
       strBuilder += "})();";
 
@@ -675,23 +700,29 @@ export const CalendarStaticBlocks = [
       //         JSON.parse(value_time),
       //         block.getCommentText(),
       //         id,
-      //         func
+      //         func, funcInterval
       //       );
       //     else
       //       realEndTime = timeDispatch[JSON.parse(value_time).type](
       //         JSON.parse(value_time),
       //         block.getCommentText(),
       //         id,
-      //         func,
+      //         func, funcInterval,
       //         nextStartTime
       //       );
       //   };
       //   let timeStep = CalculateMillisecondsForNextTime(JSON.parse(value_time));
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
       //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
       //     JSON.parse(value_time),
       //     block.getCommentText(),
       //     id,
-      //     func
+      //     func, funcInterval
       //   );
       // })();
 
@@ -756,7 +787,7 @@ export const CalendarStaticBlocks = [
         value_time +
         "), " +
         JSON.stringify(block.getCommentText()) +
-        ", id, func);";
+        ", id, func, funcInterval);";
       strBuilder += "else ";
       strBuilder += "realEndTime = timeDispatch[";
       strBuilder += "JSON.parse(" + value_time + ").type";
@@ -764,15 +795,21 @@ export const CalendarStaticBlocks = [
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
       strBuilder += "id,";
-      strBuilder += "func,";
+      strBuilder += "func, funcInterval,";
       strBuilder += "nextStartTime";
       strBuilder += ");";
       strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
       strBuilder +=
         "let realEndTime = timeDispatch[JSON.parse(" + value_time + ").type](";
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
-      strBuilder += "id, func";
+      strBuilder += "id, func, funcInterval";
       strBuilder += ");";
       strBuilder +=
         "let timeStep = CalculateMillisecondsForNextTime(JSON.parse(" +
@@ -984,23 +1021,29 @@ export const CalendarStaticBlocks = [
       //         JSON.parse(value_time),
       //         block.getCommentText(),
       //         id,
-      //         func
+      //         func, funcInterval
       //       );
       //     else
       //       realEndTime = timeDispatch[JSON.parse(value_time).type](
       //         JSON.parse(value_time),
       //         block.getCommentText(),
       //         id,
-      //         func,
+      //         func, funcInterval,
       //         nextStartTime
       //       );
       //   };
       //   let timeStep = CalculateMillisecondsForNextTime(JSON.parse(value_time));
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
       //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
       //     JSON.parse(value_time),
       //     block.getCommentText(),
       //     id,
-      //     func
+      //     func, funcInterval
       //   );
       // })();
 
@@ -1065,7 +1108,7 @@ export const CalendarStaticBlocks = [
         value_time +
         "), " +
         JSON.stringify(block.getCommentText()) +
-        ", id, func);";
+        ", id, func, funcInterval);";
       strBuilder += "else ";
       strBuilder += "realEndTime = timeDispatch[";
       strBuilder += "JSON.parse(" + value_time + ").type";
@@ -1073,15 +1116,21 @@ export const CalendarStaticBlocks = [
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
       strBuilder += "id,";
-      strBuilder += "func,";
+      strBuilder += "func, funcInterval,";
       strBuilder += "nextStartTime";
       strBuilder += ");";
       strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
       strBuilder +=
         "let realEndTime = timeDispatch[JSON.parse(" + value_time + ").type](";
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
-      strBuilder += "id, func";
+      strBuilder += "id, func, funcInterval";
       strBuilder += ");";
       strBuilder +=
         "let timeStep = CalculateMillisecondsForNextTime(JSON.parse(" +
@@ -1342,11 +1391,17 @@ export const CalendarStaticBlocks = [
       //     ).isCompleted = true;
       //     return;
       //   };
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
       //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
       //     JSON.parse(value_time),
       //     block.getCommentText(),
       //     id,
-      //     func
+      //     func, funcInterval
       //   );
       // })();
 
@@ -1408,11 +1463,17 @@ export const CalendarStaticBlocks = [
       strBuilder += ").isCompleted = true;";
       strBuilder += "return;";
       strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
       strBuilder +=
         "let realEndTime = timeDispatch[JSON.parse(" + value_time + ").type](";
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
-      strBuilder += JSON.stringify(id) + ",func";
+      strBuilder += JSON.stringify(id) + ",func, funcInterval";
       strBuilder += ");";
       strBuilder += "})();";
 
@@ -1585,11 +1646,17 @@ export const CalendarStaticBlocks = [
       //     ).isCompleted = true;
       //     return;
       //   };
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
       //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
       //     JSON.parse(value_time),
       //     block.getCommentText(),
       //     id,
-      //     func
+      //     func, funcInterval
       //   );
       // })();
 
@@ -1651,11 +1718,17 @@ export const CalendarStaticBlocks = [
       strBuilder += ").isCompleted = true;";
       strBuilder += "return;";
       strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
       strBuilder +=
         "let realEndTime = timeDispatch[JSON.parse(" + value_time + ").type](";
       strBuilder += "JSON.parse(" + value_time + "),";
       strBuilder += JSON.stringify(block.getCommentText()) + ",";
-      strBuilder += JSON.stringify(id) + ",func";
+      strBuilder += JSON.stringify(id) + ",func, funcInterval";
       strBuilder += ");";
       strBuilder += "})();";
 
