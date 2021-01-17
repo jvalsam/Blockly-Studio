@@ -1515,10 +1515,17 @@ const RenderPropertyChangeForCreatingTest = function (
 ) {
   let propertyOuter = document.createElement("div");
   propertyOuter.style.display = "flex";
+  propertyOuter.style.setProperty("margin-top", ".5rem");
+  propertyOuter.style.setProperty("border-radius", "6px");
+  propertyOuter.style.setProperty("border", "1px solid rgba(0, 0, 0, 0.17)");
+  propertyOuter.style.setProperty("width", "90%");
+  propertyOuter.style.setProperty("padding-top", "0.4rem");
+  propertyOuter.style.setProperty("padding-bottom", "0.4rem");
+  propertyOuter.style.setProperty("align-items", "center");
   domSelector.appendChild(propertyOuter);
 
   let spanPropertyView = document.createElement("span");
-  spanPropertyView.style.setProperty("width", "76%");
+  spanPropertyView.style.setProperty("width", "85%");
   spanPropertyView.style.setProperty("margin-left", "2rem");
   propertyOuter.appendChild(spanPropertyView);
 
@@ -1556,11 +1563,20 @@ const RenderActionChangeForCreatingTest = function (
 ) {
   let actionOuter = document.createElement("div");
   actionOuter.style.display = "flex";
+  actionOuter.style.setProperty("align-items", "center");
+  actionOuter.style.setProperty("border", "1px solid #0000002b");
+  actionOuter.style.setProperty("width", "90%");
+  actionOuter.style.setProperty("padding-top", ".4rem");
+  actionOuter.style.setProperty("padding-bottom", ".4rem");
+  actionOuter.style.setProperty("padding-right", "1rem");
+  actionOuter.style.setProperty("border-radius", "6px");
+  actionOuter.style.setProperty("position", "relative");
+  actionOuter.style.setProperty("margin-top", ".5rem");
   domSelector.appendChild(actionOuter);
 
   let spanActionView = document.createElement("span");
-  spanActionView.style.setProperty("width", "76%");
-  spanActionView.style.setProperty("margin-left", "2rem");
+  spanActionView.style.setProperty("width", "100%");
+  spanActionView.style.setProperty("margin-left", "1rem");
   actionOuter.appendChild(spanActionView);
 
   Automatic_IoT_UI_Generator.RenderActionForCreatingTest(
@@ -1589,11 +1605,13 @@ const RenderActionChangeForCreatingTest = function (
       },
     },
     actionID,
-    "col-6"
+    devicesOnAutomations.find((x) => x.id === deviceId).properties
   );
 
   let spanDeleteAction = document.createElement("span");
-  spanDeleteAction.style.setProperty("margin-left", "1rem");
+  spanDeleteAction.style.setProperty("top", "7px");
+  spanDeleteAction.style.setProperty("right", "12px");
+  spanDeleteAction.style.setProperty("position", "absolute");
   actionOuter.appendChild(spanDeleteAction);
 
   let deleteAction = document.createElement("button");
