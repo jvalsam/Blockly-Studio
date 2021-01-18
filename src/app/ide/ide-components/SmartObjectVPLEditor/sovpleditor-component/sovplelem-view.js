@@ -875,8 +875,9 @@ function RenderSelectGroupsModal(
 /* Start functions for debug configuring action */
 export let RenderDebugConfigurationOfAction = function (
   parent,
+  pitem,
   action,
-  blocklySrc,
+  blocklyEditorId,
   props,
   resourceId,
   onSave,
@@ -954,7 +955,7 @@ export let RenderDebugConfigurationOfAction = function (
         blocklyWorkspaceDiv.id
       );
 
-      onSave(blocklyInstanceSrc);
+      onSave(blocklyInstanceSrc, blocklyWorkspaceDiv.id);
 
       $("#" + prefix + "-modal").modal("toggle");
     };
@@ -971,16 +972,31 @@ export let RenderDebugConfigurationOfAction = function (
   });
 
   $("#" + prefix + "-modal").on("shown.bs.modal", function (e) {
-    parent.requestBlocklyInstance(
-      {
-        src: blocklySrc,
+    let blocklyEditorData = pitem._editorsData.items[blocklyWorkspaceDiv.id];
+    if (!blocklyEditorData) {
+      blocklyEditorData = {
+        src: DefineFunctionForDebugImplementation(action),
         editorId: blocklyWorkspaceDiv.id,
-      },
+        systemID: pitem.systemId,
+        projectID: pitem.project.dbID,
+        title: "",
+        img: "",
+        colour: "",
+        tmplSel: "ec-action-implementation-debug",
+        confName: "ec-action-implementation-debug",
+        editorName: "BlocklyVPL",
+        editor: "BlocklyVPL",
+        noRenderOnPitemLoading: true,
+      };
+    }
+
+    parent.requestBlocklyInstance(
+      blocklyEditorData,
+      pitem,
       "ec-action-implementation-debug",
       blocklyWorkspaceDiv.id,
       privilege,
-      99999999,
-      DefineFunctionForDebugImplementation(action)
+      99999999
     );
 
     $(document).off("focusin.modal");
@@ -1269,7 +1285,8 @@ let RenderSmartObjectRegistered = function (
   selector,
   soData,
   projectComponentsData,
-  callbacksMap
+  callbacksMap,
+  pitem
 ) {
   let cardDiv = soUIGenerator.RenderCard({
     selector: selector,
@@ -1338,11 +1355,21 @@ let RenderSmartObjectRegistered = function (
   let actionsContainer = BuildActionsArea(cardBodyDiv, soData);
 
   for (const action of soData.editorData.details.actions) {
+    let src;
+    if (!soData.editorData.details.blocklyEditorId[action.name]) {
+      src = "";
+    } else {
+      src =
+        pitem._editorsData.items[
+          soData.editorData.details.blocklyEditorId[action.name]
+        ].src;
+    }
+
     RenderSmartObjectAction(
       actionsContainer,
       soData.editorData.editorId,
       action,
-      soData.editorData.details.blocklySrc[action.name],
+      src,
       {
         onClickDebugConfigurationOfAction:
           callbacksMap.onClickDebugConfigurationOfAction,
@@ -1409,7 +1436,8 @@ let RenderSmartObjectUnregistered = function (
   selector,
   soData,
   projectComponentsData,
-  callbacksMap
+  callbacksMap,
+  pitem
 ) {
   let scanContainer = document.createElement("div");
   scanContainer.classList.add("container");
@@ -1458,7 +1486,8 @@ let RenderSmartObjectUnregistered = function (
             selector,
             soData,
             projectComponentsData,
-            callbacksMap
+            callbacksMap,
+            pitem
           );
         },
         false
@@ -1492,7 +1521,8 @@ let RenderSmartObjectInvalid = function (
   selector,
   soData,
   projectComponentsData,
-  callbacksMap
+  callbacksMap,
+  pitem
 ) {
   // render message for invalid smart object
   // filtered scan
@@ -1509,7 +1539,8 @@ export function RenderSmartObject(
   selector,
   soData,
   projectComponentsData,
-  callbacksMap
+  callbacksMap,
+  pitem
 ) {
   // Check if there are events to remove them
   CheckAndDeleteEventsOnRender(selector);
@@ -1518,7 +1549,8 @@ export function RenderSmartObject(
     selector,
     soData,
     projectComponentsData,
-    callbacksMap
+    callbacksMap,
+    pitem
   );
 }
 /* End functions for smart objects */

@@ -21,7 +21,8 @@ const InitDevice = function (smartDevice) {
     },
     properties: smartDevice.editorsData[0].generated.details.properties,
     actions: smartDevice.editorsData[0].generated.details.actions,
-    blocklySrc: smartDevice.editorsData[0].generated.details.blocklySrc,
+    blocklyEditorId:
+      smartDevice.editorsData[0].generated.details.blocklyEditorId,
   };
 };
 
@@ -868,6 +869,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
   // actionContainer.style.setProperty("padding-top", "1rem");
   // actionContainer.style.setProperty("margin-top", "1rem");
   actionContainer.style.setProperty("max-height", "26rem");
+  ("");
   container.appendChild(actionContainer);
 
   let testsTimeSlots = [];
@@ -1520,7 +1522,6 @@ const RenderChangesForCreatingTest = function (
           action,
           device,
           timeSlot.time + "-" + device + "-actions-" + index + "-value",
-          deviceData.blocklySrc[action.name],
           () => {
             /* remove property */
             timeSlot.devices[device].actions.splice(index, 1);
@@ -1589,7 +1590,6 @@ const RenderActionChangeForCreatingTest = function (
   action,
   deviceId,
   actionID,
-  configuration,
   onDeleteAction,
   envData
 ) {
@@ -1615,7 +1615,6 @@ const RenderActionChangeForCreatingTest = function (
     spanActionView,
     deviceId,
     action,
-    configuration,
     {
       onClickDebugConfigurationOfAction: (action, privilege) => {
         // hide running automations
@@ -2378,12 +2377,77 @@ const InitializeSimulatedHistory = function (envData) {
   loggerBody.id = "simulated-actions-body";
   loggerContainer.appendChild(loggerBody);
 
+  let ulTabs = document.createElement("ul");
+  ulTabs.classList.add("nav", "nav-tabs");
+  ulTabs.id = "simulator-history-tabs";
+  ulTabs.setAttribute("role", "tablist");
+  loggerBody.appendChild(ulTabs);
+
+  let liTests = document.createElement("li");
+  liTests.classList.add("nav-item");
+  liTests.style.setProperty("width", "50%");
+  liTests.style.setProperty("text-align", "center");
+  ulTabs.appendChild(liTests);
+
+  let aTests = document.createElement("a");
+  aTests.classList.add("nav-link");
+  aTests.id = "tests-tab";
+  aTests.dataset.toggle = "tab";
+  aTests.href = "#tests";
+  aTests.setAttribute("role", "tab");
+  aTests.setAttribute("aria-controls", "tests");
+  aTests.setAttribute("aria-selected", "true");
+  aTests.innerHTML = "Tests";
+  liTests.appendChild(aTests);
+
+  let liChanges = document.createElement("li");
+  liChanges.classList.add("nav-item");
+  liChanges.style.setProperty("width", "50%");
+  liChanges.style.setProperty("text-align", "center");
+  ulTabs.appendChild(liChanges);
+
+  let aChanges = document.createElement("a");
+  aChanges.classList.add("nav-link");
+  aChanges.id = "changes-tab";
+  aChanges.dataset.toggle = "tab";
+  aChanges.href = "#changes";
+  aChanges.setAttribute("role", "tab");
+  aChanges.setAttribute("aria-controls", "changes");
+  aChanges.setAttribute("aria-selected", "true");
+  aChanges.innerHTML = "Changes";
+  liChanges.appendChild(aChanges);
+
+  let divContent = document.createElement("div");
+  divContent.classList.add("tab-content");
+  divContent.id = "simulator-history-content";
+  loggerBody.appendChild(divContent);
+
+  let divTests = document.createElement("div");
+  divTests.classList.add("tab-pane", "fade", "show", "active");
+  divTests.id = "tests";
+  divTests.setAttribute("role", "tabpanel");
+  divTests.setAttribute("aria-labelledby", "tests-tab");
+  divContent.appendChild(divTests);
+
+  let divEvents = document.createElement("div");
+  divEvents.classList.add("tab-pane", "fade");
+  divEvents.id = "changes";
+  divEvents.setAttribute("role", "tabpanel");
+  divEvents.setAttribute("aria-labelledby", "changes-tab");
+  divContent.appendChild(divEvents);
+
+  //   <div class="tab-content" id="myTabContent">
+  //   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+  //   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+  //   <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+  // </div>
+
   let addTestButton = document.createElement("div");
   addTestButton.id = "add-test-button";
   addTestButton.onclick = () => {
     CreateAndRenderCreateTestModal("create-test", envData);
   };
-  loggerOuterDiv.appendChild(addTestButton);
+  divTests.appendChild(addTestButton);
 
   let addTestIcon = document.createElement("i");
   addTestIcon.classList.add("fas", "fa-plus-circle", "fa-2x");

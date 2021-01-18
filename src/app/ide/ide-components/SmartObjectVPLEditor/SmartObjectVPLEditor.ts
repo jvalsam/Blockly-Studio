@@ -585,18 +585,29 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedFunction
   requestBlocklyInstance(
     editorsData: any,
+    pitem: PItemView,
     confName: string,
     selector: string,
     privileges: string,
-    zIndex: number,
-    srcWs: string
+    zIndex: number
   ) {
     ComponentsCommunication.functionRequest(
       this.name,
       "BlocklyVPL",
       "openInDialogue",
-      [editorsData, confName, selector, privileges, zIndex, srcWs]
+      [editorsData, pitem, confName, selector, privileges, zIndex]
     );
+  }
+
+  @RequiredFunction("BlocklyVPL", "saveEditorData")
+  @ExportedFunction
+  saveEditorDataForBlocklyInstance(editorId: string) {
+    return ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "saveEditorData",
+      [editorId]
+    ).value;
   }
 
   @RequiredFunction("BlocklyVPL", "getEditorSrc")

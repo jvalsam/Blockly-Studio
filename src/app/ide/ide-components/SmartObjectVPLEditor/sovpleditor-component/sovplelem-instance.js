@@ -169,14 +169,14 @@ export class SOVPLElemInstance {
     this.elemData.editorData.details.state = SmartObjectState.REGISTERED;
     this.elemData.editorData.details.properties = props;
     this.elemData.editorData.details.actions = [];
-    this.elemData.editorData.details.blocklySrc = {};
+    this.elemData.editorData.details.blocklyEditorId = {};
     this.elemData.editorData.details.methods = [];
     for (const method of methods) {
       this.elemData.editorData.details.methods.push(method);
     }
     for (const action of actions) {
       this.elemData.editorData.details.actions.push(action);
-      this.elemData.editorData.details.blocklySrc[action.name] = "";
+      this.elemData.editorData.details.blocklyEditorId[action.name] = "";
     }
     this.elemData.editorData.details.iotivityResourceID = iotivityResourceID;
 
@@ -208,12 +208,18 @@ export class SOVPLElemInstance {
   onClickDebugConfigurationOfAction(action, privilege) {
     RenderDebugConfigurationOfAction(
       this.parent,
+      this.pitem,
       action,
-      this.elemData.editorData.details.blocklySrc[action.name],
+      this.elemData.editorData.details.blocklyEditorId[action.name],
       this.elemData.editorData.details.properties,
       this.elemData.editorData.details.iotivityResourceID,
-      (workspaceSrc) => {
-        this.elemData.editorData.details.blocklySrc[action.name] = workspaceSrc;
+      (workspaceSrc, editorId) => {
+        this.elemData.editorData.details.blocklyEditorId[
+          action.name
+        ] = editorId;
+
+        this.parent.saveEditorDataForBlocklyInstance(editorId);
+        // this.pitem._editorsData.items[editorId] = ;
         this.parent.saveElement(this);
         this.render();
       },
@@ -376,25 +382,31 @@ export class SOVPLElemInstance {
     );
     switch (this.elemData.editorData.type) {
       case VPLElemNames.SMART_OBJECT:
-        RenderSmartObject(domSel, this.elemData, componentData, {
-          onRegister: (props, actions, methods, iotivityResourceID) =>
-            this.onSORegister(props, actions, methods, iotivityResourceID),
-          onClickDebugConfigurationOfAction: (action, privilege) =>
-            this.onClickDebugConfigurationOfAction(action, privilege),
-          onEditPropertyProgrammingActive: (prop) =>
-            this.onSOEditPropProgrammingActive(prop),
-          onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
-          onClickSmartGroup: (groupID) => this.onSOClickSmartGroup(groupID),
-          onDeleteSmartGroup: (groupID) => this.onSODeleteSmartGroup(groupID),
-          options: {
-            Edit: () => {
-              alert("not connected yet.");
-            },
-            Delete: () => {
-              alert("not connected yet.");
+        RenderSmartObject(
+          domSel,
+          this.elemData,
+          componentData,
+          {
+            onRegister: (props, actions, methods, iotivityResourceID) =>
+              this.onSORegister(props, actions, methods, iotivityResourceID),
+            onClickDebugConfigurationOfAction: (action, privilege) =>
+              this.onClickDebugConfigurationOfAction(action, privilege),
+            onEditPropertyProgrammingActive: (prop) =>
+              this.onSOEditPropProgrammingActive(prop),
+            onCreateSmartGroup: (group) => this.onSOCreateSmartGroup(group),
+            onClickSmartGroup: (groupID) => this.onSOClickSmartGroup(groupID),
+            onDeleteSmartGroup: (groupID) => this.onSODeleteSmartGroup(groupID),
+            options: {
+              Edit: () => {
+                alert("not connected yet.");
+              },
+              Delete: () => {
+                alert("not connected yet.");
+              },
             },
           },
-        });
+          this.pitem
+        );
         break;
       case VPLElemNames.SMART_GROUP:
         RenderSmartGroup(domSel, this.elemData, componentData, {

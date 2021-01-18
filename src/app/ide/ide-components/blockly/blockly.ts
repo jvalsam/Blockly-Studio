@@ -169,32 +169,42 @@ export class BlocklyVPL extends Editor {
   @ExportedFunction
   public openInDialogue(
     editorData: any,
+    pitem: ProjectItem,
     config: string,
     selector: string,
     privileges: string, // "READ_ONLY" or "EDITING"
-    zIndex: number,
-    srcWs: string
+    zIndex: number
   ): void {
-    if (this.instancesMap[editorData.editorId])
-      this.instancesMap[editorData.editorId].destroy();
-    
-    this.instancesMap[editorData.editorId] = new BlocklyInstance(
-      this,
-      null,
-      editorData.editorId,
-      selector, // selector has to be unique (injected in DOM, not in pitem template)
-      config,
-      this.configsMap[config],
-      (config) => this.getToolbox(config), // have to do work...
-      (event) => {
-        /* nope */
-      },
-      editorData.src || srcWs,
-      privileges,
-      zIndex
-    );
-      
+    if (!this.instancesMap[editorData.editorId])
+      this.instancesMap[editorData.editorId] = new BlocklyInstance(
+        this,
+        pitem,
+        editorData.editorId,
+        selector, // selector has to be unique (injected in DOM, not in pitem template)
+        config,
+        this.configsMap[config],
+        (config) => this.getToolbox(config), // have to do work...
+        (event) => { /* */ },
+        editorData.src,
+        privileges,
+        zIndex
+      );
+    this.instancesMap[editorData.editorId]["__editorData"] = editorData;
+
     this.instancesMap[editorData.editorId].open();
+  }
+
+  @ExportedFunction
+  public saveEditorData(editorId: string) {
+    this.save(
+      editorId,
+      this.instancesMap[editorId].pitem,
+      () => {
+        let ed = this.instancesMap[editorId]["__editorData"];
+        ed.src = this.getEditorSrc(editorId);
+        return ed;
+      }
+    );
   }
 
   fixBlocksTrackerInit(projectId: string, elemName: string) {
@@ -300,6 +310,7 @@ export class BlocklyVPL extends Editor {
     let id = data.editorId;
     let event = data.event;
 
+    // crashes in case of sync wsp...
     this.instancesMap[id].syncWSP(event);
 
     if (!focus) {

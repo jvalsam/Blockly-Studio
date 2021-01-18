@@ -1200,14 +1200,14 @@ export const SmartObject = {
         strBuilder += "args.push(inputsToCode[i]);\n";
         strBuilder += "}\n";
         strBuilder += "}\n";
-        strBuilder +=
-          "if (" +
-          JSON.stringify(
-            block.soData.details.blocklySrc[dropdown_actions] != ""
-          ) +
-          ") {";
-        strBuilder +=
-          "eval(" + block.soData.details.blocklySrc[dropdown_actions] + ");";
+        // strBuilder +=
+        //   "if (" +
+        //   JSON.stringify(
+        //     block.soData.details.blocklySrc[dropdown_actions] != ""
+        //   ) +
+        //   ") {";
+        // strBuilder +=
+        //   "eval(" + block.soData.details.blocklySrc[dropdown_actions] + ");";
         strBuilder += 'let argsStr = "";';
         strBuilder += "args.forEach((arg, idx, array) => {";
         strBuilder += "argsStr += JSON.stringify(arg);";
