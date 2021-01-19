@@ -173,7 +173,6 @@ export class BlocklyVPL extends Editor {
     config: string,
     selector: string,
     privileges: string, // "READ_ONLY" or "EDITING"
-    zIndex: number
   ): void {
     if (!this.instancesMap[editorData.editorId])
       this.instancesMap[editorData.editorId] = new BlocklyInstance(
@@ -187,7 +186,7 @@ export class BlocklyVPL extends Editor {
         (event) => { /* */ },
         editorData.src,
         privileges,
-        zIndex
+        editorData.zIndex
       );
     this.instancesMap[editorData.editorId]["__editorData"] = editorData;
 

@@ -588,14 +588,13 @@ export class SmartObjectVPLEditor extends Editor {
     pitem: PItemView,
     confName: string,
     selector: string,
-    privileges: string,
-    zIndex: number
+    privileges: string
   ) {
     ComponentsCommunication.functionRequest(
       this.name,
       "BlocklyVPL",
       "openInDialogue",
-      [editorsData, pitem, confName, selector, privileges, zIndex]
+      [editorsData, pitem, confName, selector, privileges]
     );
   }
 

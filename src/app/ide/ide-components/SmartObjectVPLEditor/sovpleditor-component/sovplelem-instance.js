@@ -170,6 +170,7 @@ export class SOVPLElemInstance {
     this.elemData.editorData.details.properties = props;
     this.elemData.editorData.details.actions = [];
     this.elemData.editorData.details.blocklyEditorId = {};
+    this.elemData.editorData.details.blocklyEditorDataIndex = {};
     this.elemData.editorData.details.methods = [];
     for (const method of methods) {
       this.elemData.editorData.details.methods.push(method);
@@ -177,6 +178,9 @@ export class SOVPLElemInstance {
     for (const action of actions) {
       this.elemData.editorData.details.actions.push(action);
       this.elemData.editorData.details.blocklyEditorId[action.name] = "";
+      this.elemData.editorData.details.blocklyEditorDataIndex[
+        action.name
+      ] = undefined;
     }
     this.elemData.editorData.details.iotivityResourceID = iotivityResourceID;
 
@@ -219,7 +223,11 @@ export class SOVPLElemInstance {
         ] = editorId;
 
         this.parent.saveEditorDataForBlocklyInstance(editorId);
-        // this.pitem._editorsData.items[editorId] = ;
+
+        this.elemData.editorData.details.blocklyEditorDataIndex[
+          action.name
+        ] = Object.keys(this.pitem._editorsData.items).indexOf(editorId);
+
         this.parent.saveElement(this);
         this.render();
       },

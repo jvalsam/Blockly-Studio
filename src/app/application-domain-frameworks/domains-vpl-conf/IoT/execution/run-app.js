@@ -23,6 +23,8 @@ const InitDevice = function (smartDevice) {
     actions: smartDevice.editorsData[0].generated.details.actions,
     blocklyEditorId:
       smartDevice.editorsData[0].generated.details.blocklyEditorId,
+    blocklyEditorDataIndex:
+      smartDevice.editorsData[0].generated.details.blocklyEditorDataIndex,
   };
 };
 

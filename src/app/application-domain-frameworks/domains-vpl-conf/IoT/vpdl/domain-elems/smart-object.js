@@ -1,4 +1,5 @@
 import * as Blockly from "blockly";
+import { title } from "process";
 
 var definedOnce = false;
 
@@ -1145,17 +1146,21 @@ export const SmartObject = {
         //       args.push(inputsToCode[i]);
         //     }
         //   }
-        // if (block.soData.details.blocklySrc[dropdown_actions]) {
-        //   eval(block.soData.details.blocklySrc[dropdown_actions]);
-        //   let argsStr = "";
-        //   args.forEach((arg, idx, array) => {
-        //     argsStr += arg;
-        //     if (idx !== array.length - 1) {
-        //       argsStr += ", ";
-        //     }
-        //   });
-        //   eval(dropdown_actions + "(" + argsStr + ")");
-        // }
+        //   let editorId = devicesOnAutomations.find(
+        //     (x) => x.id === block.soData.details.iotivityResourceID
+        //   ).blocklyEditorId[dropdown_actions];
+        //   let editorDataIndex = devicesOnAutomations.find(
+        //     (x) => x.id === block.soData.details.iotivityResourceID
+        //   ).blocklyEditorDataIndex[dropdown_actions];
+        //   if (editorDataIndex) {
+        //     let funcCode = runTimeData.execData.project.SmartObjects.find(
+        //       (x) =>
+        //         x.id === block.soData.editorId.split("_ec-smart-object")[0]
+        //     ).editorsData[editorDataIndex].generated;
+        //     eval(funcCode);
+        //     eval(dropdown_actions + "(..." + JSON.stringify(args) + ")");
+        //   }
+
         //   let argsStr = "";
         //   if (args.length !== 0) argsStr += "with arguments: ";
         //   args.forEach((arg, idx, array) => {
@@ -1200,23 +1205,30 @@ export const SmartObject = {
         strBuilder += "args.push(inputsToCode[i]);\n";
         strBuilder += "}\n";
         strBuilder += "}\n";
-        // strBuilder +=
-        //   "if (" +
-        //   JSON.stringify(
-        //     block.soData.details.blocklySrc[dropdown_actions] != ""
-        //   ) +
-        //   ") {";
-        // strBuilder +=
-        //   "eval(" + block.soData.details.blocklySrc[dropdown_actions] + ");";
-        strBuilder += 'let argsStr = "";';
-        strBuilder += "args.forEach((arg, idx, array) => {";
-        strBuilder += "argsStr += JSON.stringify(arg);";
-        strBuilder += "if (idx !== array.length - 1) {";
-        strBuilder += ' argsStr += ", ";';
-        strBuilder += "}";
-        strBuilder += "});";
-        // strBuilder +=
-        //   'eval(dropdown_actions + "(" + JSON.stringify(JSON.parse(argsStr)) + ")");';
+        strBuilder += "let editorId = devicesOnAutomations.find(";
+        strBuilder +=
+          "(x) => x.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder +=
+          ").blocklyEditorId[" + JSON.stringify(dropdown_actions) + "];";
+        strBuilder += "let editorDataIndex = devicesOnAutomations.find(";
+        strBuilder +=
+          "(x) => x.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder +=
+          ").blocklyEditorDataIndex[" + JSON.stringify(dropdown_actions) + "];";
+        strBuilder += "if (editorDataIndex) {";
+        strBuilder +=
+          "let funcCode = runTimeData.execData.project.SmartObjects.find(";
+        strBuilder += "(x) =>";
+        strBuilder +=
+          "x.id === " +
+          JSON.stringify(block.soData.editorId.split("_ec-smart-object")[0]);
+        strBuilder += ").editorsData[editorDataIndex].generated;";
+        strBuilder +=
+          "eval(funcCode + ';' + JSON.parse('" +
+          JSON.stringify(dropdown_actions + "(...args);") +
+          "'))";
         strBuilder += "}";
         strBuilder += "let argsStr = '';";
         strBuilder +=

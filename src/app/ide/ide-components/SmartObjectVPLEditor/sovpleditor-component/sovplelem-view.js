@@ -987,6 +987,7 @@ export let RenderDebugConfigurationOfAction = function (
         editorName: "BlocklyVPL",
         editor: "BlocklyVPL",
         noRenderOnPitemLoading: true,
+        zIndex: 99999999,
       };
     }
 
@@ -995,8 +996,7 @@ export let RenderDebugConfigurationOfAction = function (
       pitem,
       "ec-action-implementation-debug",
       blocklyWorkspaceDiv.id,
-      privilege,
-      99999999
+      privilege
     );
 
     $(document).off("focusin.modal");

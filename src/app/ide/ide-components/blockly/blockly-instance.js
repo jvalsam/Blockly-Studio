@@ -245,7 +245,8 @@ export class BlocklyInstance {
         this._blocklyDiv = document.getElementById(blocklySel);
       }
 
-      if(this._zIndex) this._blocklyDiv.style.setProperty("z-index", this._zIndex);
+      if (this.__editorData) this._zIndex = this.__editorData.zIndex;
+      this._blocklyDiv.style.setProperty("z-index", this._zIndex);
 
       this["initWSP_" + this.privilleges]();
 
