@@ -1851,13 +1851,16 @@ const CreateBubbleForTests = function (
   // logBubbleTime.innerHTML = simulatedTime.format("HH:mm:ss, DD/MM");
   // logBubbleInfo.appendChild(logBubbleTime);
 
-  let strBuilder = BuildTextForBubble(testTimeSlots);
+  // let strBuilder = BuildTextForBubble(testTimeSlots);
 
   let logBubbleText = document.createElement("div");
   logBubbleText.classList.add("log-bubble-text-tests");
   logBubbleText.id = bubbleId + "-text";
   // logBubbleText.style.setProperty("color", "rgb(23 162 184)");
-  logBubbleText.innerHTML = strBuilder;
+  // logBubbleText.innerHTML = strBuilder;
+
+  BuildTextForBubble(logBubbleText, testTimeSlots);
+
   logBubble.appendChild(logBubbleText);
 
   // UpdateScroll("logger-body");
@@ -1873,30 +1876,43 @@ const UpdateBubbleForTest = function (bubbleId, envData, debugTest, idPrefix) {
   let bubbleName = document.getElementById(bubbleId + "-title");
   bubbleName.innerHTML = debugTest.title;
 
-  let strBuilder = BuildTextForBubble(debugTest.testsTimeSlots);
+  // let strBuilder = BuildTextForBubble(debugTest.testsTimeSlots);
 
   let bubbleText = document.getElementById(bubbleId + "-text");
-  bubbleText.innerHTML = strBuilder;
+  // bubbleText.innerHTML = strBuilder;
+  bubbleText.innerHTML = "";
+
+  BuildTextForBubble(bubbleText, debugTest.testsTimeSlots);
 };
 
-const BuildTextForBubble = function (testTimeSlots) {
-  let strBuilder = "";
+const BuildTextForBubble = function (domElement, testTimeSlots) {
+  // let strBuilder = "";
+  let ul = document.createElement("ul");
   if (
     testTimeSlots.length === 0 ||
     (testTimeSlots.length === 1 &&
       Object.keys(testTimeSlots[0].devices).length === 0)
   ) {
-    strBuilder += "There are not any changes";
+    ul.innerHTML = "There are not any changes";
+    // strBuilder += "There are not any changes";
   }
   for (const timeSlot of testTimeSlots) {
+    let li = document.createElement("li");
     if (Object.keys(timeSlot.devices).length > 0) {
-      strBuilder +=
-        "<b>-</b>After <b>" + timeSlot.time + " seconds:</b> <br>Changes on";
+      // strBuilder +=
+      //   "<b>-</b>After <b>" + timeSlot.time + " seconds:</b> <br>Changes on";
+
+      li.innerHTML =
+        "After <b>" + timeSlot.time + " seconds:</b> <br>Changes on";
     } else continue;
     // strBuilder += "Time " + timeSlot.time + ":<br>";
     for (const deviceId in timeSlot.devices) {
       let deviceIndex = Object.keys(timeSlot.devices).indexOf(deviceId);
-      strBuilder +=
+      // strBuilder +=
+      //   " <b>" +
+      //   devicesOnAutomations.find((x) => x.id === deviceId).name +
+      //   "</b>";
+      li.innerHTML +=
         " <b>" +
         devicesOnAutomations.find((x) => x.id === deviceId).name +
         "</b>";
@@ -1917,12 +1933,15 @@ const BuildTextForBubble = function (testTimeSlots) {
       //   }
       // }
       if (deviceIndex != Object.keys(timeSlot.devices).length - 1) {
-        strBuilder += ", ";
+        // strBuilder += ", ";
+        li.innerHTML += ", ";
       }
     }
-    strBuilder += "<br>";
+    // strBuilder += "<br>";
+    ul.appendChild(li);
   }
-  return strBuilder;
+  domElement.appendChild(ul);
+  // return strBuilder;
 };
 /* End functions for creating test */
 
@@ -2159,6 +2178,7 @@ const InitializeSimulatorControls = function ({
   let dateTitle = document.createElement("span");
   dateTitle.classList.add("input-group-text");
   dateTitle.id = "date-title";
+  dateTitle.style.setProperty("width", "4rem");
   dateTitle.innerHTML = "Day";
   dateTitleDiv.appendChild(dateTitle);
 
@@ -2184,6 +2204,7 @@ const InitializeSimulatorControls = function ({
   timeTitle.classList.add("input-group-text");
   timeTitle.id = "date-title";
   timeTitle.innerHTML = "Time";
+  timeTitle.style.setProperty("width", "4rem");
   timeTitleDiv.appendChild(timeTitle);
 
   let timeInput = document.createElement("input");
@@ -2217,8 +2238,10 @@ const InitializeSimulatorControls = function ({
   buttonsOuter.appendChild(goButtonOuter);
 
   let goButton = document.createElement("button");
-  goButton.classList.add("btn", "btn-info");
+  goButton.classList.add("btn", "btn-sm", "btn-info");
   goButton.innerHTML = "Go";
+  goButton.style.setProperty("font-size", "0.9rem");
+  goButton.style.setProperty("line-height", " 1.7");
   goButton.onclick = () => {
     onGoToSpecificTime(HideGoToOuter);
   };
@@ -2230,7 +2253,9 @@ const InitializeSimulatorControls = function ({
   buttonsOuter.appendChild(cancelButtonOuter);
 
   let cancelButton = document.createElement("button");
-  cancelButton.classList.add("btn", "btn-secondary");
+  cancelButton.classList.add("btn", "btn-sm", "btn-secondary");
+  cancelButton.style.setProperty("font-size", "0.9rem");
+  cancelButton.style.setProperty("line-height", " 1.7");
   cancelButton.innerHTML = "Cancel";
   cancelButton.onclick = HideGoToOuter;
   cancelButtonOuter.appendChild(cancelButton);
@@ -2387,6 +2412,8 @@ const InitializeCalendar = function (selector) {
   calendarRow.classList.add("rounded");
   calendarRow.classList.add("p-2");
   calendarRow.id = "calendar-outer";
+  calendarRow.style.setProperty("height", "24rem");
+  calendarRow.style.setProperty("margin-top", "1rem");
   selector.appendChild(calendarRow);
 
   let calendarDiv = document.createElement("span");
@@ -2564,7 +2591,7 @@ const UpdateScroll = function (id) {
     element.scrollTop = element.scrollHeight;
 };
 
-const InitializeSimulatedHistory = function (envData) {
+/* const InitializeSimulatedHistory = function (envData) {
   let loggerOuterDiv = document.createElement("span");
   loggerOuterDiv.id = "simulated-actions-outer";
   loggerOuterDiv.style.setProperty("max-height", "22rem");
@@ -2599,7 +2626,7 @@ const InitializeSimulatedHistory = function (envData) {
   ulTabs.appendChild(liTests);
 
   let aTests = document.createElement("a");
-  aTests.classList.add("nav-link");
+  aTests.classList.add("nav-link", "active");
   aTests.id = "tests-tab";
   aTests.dataset.toggle = "tab";
   aTests.href = "#tests";
@@ -2661,6 +2688,40 @@ const InitializeSimulatedHistory = function (envData) {
     CreateAndRenderCreateTestModal("create-test", envData);
   };
   divTests.appendChild(addTestButton);
+
+  let addTestIcon = document.createElement("i");
+  addTestIcon.classList.add("fas", "fa-plus-circle", "fa-2x");
+  addTestButton.appendChild(addTestIcon);
+}; */
+
+const InitializeSimulatedHistory = function (envData) {
+  let loggerOuterDiv = document.createElement("span");
+  loggerOuterDiv.id = "simulated-actions-outer";
+  loggerOuterDiv.style.setProperty("max-height", "22rem");
+  loggerOuterDiv.style.setProperty("margin-left", "1rem");
+  loggerOuterDiv.style.setProperty("width", "22rem");
+  document.getElementById("calendar-outer").appendChild(loggerOuterDiv);
+
+  let loggerContainer = document.createElement("div");
+  loggerContainer.id = "simulated-actions-container";
+  loggerOuterDiv.appendChild(loggerContainer);
+
+  let loggerHeader = document.createElement("div");
+  loggerHeader.id = "simulated-actions-header";
+  loggerHeader.innerHTML = "TESTS CONTROL PANEL";
+  // TODO: at the beginning no tests added
+  loggerContainer.appendChild(loggerHeader);
+
+  let loggerBody = document.createElement("div");
+  loggerBody.id = "simulated-actions-body";
+  loggerContainer.appendChild(loggerBody);
+
+  let addTestButton = document.createElement("div");
+  addTestButton.id = "add-test-button";
+  addTestButton.onclick = () => {
+    CreateAndRenderCreateTestModal("create-test", envData);
+  };
+  loggerContainer.appendChild(addTestButton);
 
   let addTestIcon = document.createElement("i");
   addTestIcon.classList.add("fas", "fa-plus-circle", "fa-2x");

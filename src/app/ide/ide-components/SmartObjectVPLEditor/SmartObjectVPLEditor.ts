@@ -526,7 +526,11 @@ export class SmartObjectVPLEditor extends Editor {
   public generateCodeDataForExecution(data: any) {
     // if (RuntimeManager.getMode() === "RELEASE") {
     // alert("Not implemented generateCodeDataForExecution in " + this.name);
-    return data;
+    let envData = JSON.parse(JSON.stringify(data));
+    // if (RuntimeManager.getMode() === "DEBUG") {
+    envData.debugTests = this.getDebugTests(data);
+    // }
+    return envData;
     // } else {
     //   return this.instancesMap[data.domainElementId];
     // }
@@ -579,9 +583,9 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @ExportedFunction
-  public loadDebugTests(data: any) {
+  public getDebugTests(data: any) {
     let compData = this.getProjectComponentData(data.projectID);
-    data.debugTests = compData.debugTests;
+    return compData.debugTests;
   }
 
   @ExportedFunction
