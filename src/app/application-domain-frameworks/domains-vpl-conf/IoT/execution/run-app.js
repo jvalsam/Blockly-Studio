@@ -52,6 +52,16 @@ const Initialize = function (selector, envData) {
   InitializeCalendar(selector);
   InitializeOrganizerForCalendar();
   InitializeActionsLog();
+  // envData.RuntimeEnvironmentRelease.functionRequest(
+  //   "SmartObjectVPLEditor",
+  //   "loadDebugTests",
+  //   [
+  //     {
+  //       projectID: envData.execData.projectId,
+  //       debugTests: debugTests,
+  //     },
+  //   ]
+  // );
   InitializeSimulatedHistory(envData);
   InitializeClocks(document.getElementById("calendar-outer"), () => {
     // hack to live update the completed events:
@@ -543,7 +553,8 @@ const timeSpeedInSpeedUp = 300;
 let simulatedTime,
   nowTimeSpeed = timeSpeed,
   timeSpeedMultiplier = 1,
-  timeFunc;
+  timeFunc,
+  debugTests;
 
 const simulatedTimeTable = [];
 
@@ -699,6 +710,17 @@ const CreateModal = function (idPrefix) {
   modalFooter.classList.add("modal-footer");
   modalContent.appendChild(modalFooter);
 
+  let deleteButton = document.createElement("button");
+  deleteButton.classList.add("btn", "btn-danger");
+  deleteButton.id = idPrefix + "-modal-delete-button";
+  deleteButton.innerHTML = "Delete";
+  deleteButton.setAttribute("type", "button");
+  deleteButton.setAttribute("data-dismiss", "modal");
+  deleteButton.style.setProperty("left", "12px");
+  deleteButton.style.setProperty("position", "absolute");
+  deleteButton.style.setProperty("display", "none");
+  modalFooter.appendChild(deleteButton);
+
   let cancelButton = document.createElement("button");
   cancelButton.classList.add("btn", "btn-secondary");
   cancelButton.id = idPrefix + "-modal-cancel-button";
@@ -732,7 +754,16 @@ const DestroyModal = function (idPrefix) {
   document.getElementById(idPrefix + "-modal").remove();
 };
 
-const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
+/* End of functions for simulating time */
+
+/* Start functions for creating test */
+const CreateAndRenderCreateTestModal = function (
+  idPrefix,
+  envData,
+  givenDebugTest,
+  editFlag,
+  onDeleteTest
+) {
   CreateModal(idPrefix);
 
   let title = document.getElementById(idPrefix + "-modal-title");
@@ -741,8 +772,18 @@ const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
     idPrefix + "-modal-confirm-button"
   );
 
-  title.innerHTML = "New test";
-  // body.style.setProperty("max-height", "42rem");
+  if (editFlag) {
+    title.innerHTML = "Edit test: " + givenDebugTest.title;
+    let deleteButton = document.getElementById(
+      idPrefix + "-modal-delete-button"
+    );
+    deleteButton.style.setProperty("display", "inline-block");
+    deleteButton.innerHTML = "Delete test";
+    deleteButton.onclick = () => {
+      onDeleteTest();
+      $("#" + idPrefix + "-modal").modal("hide");
+    };
+  } else title.innerHTML = "New test";
 
   let container = document.createElement("div");
   body.appendChild(container);
@@ -759,7 +800,7 @@ const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
 
   let inputGroupTextTitle = document.createElement("span");
   inputGroupTextTitle.classList.add("input-group-text");
-  inputGroupTextTitle.id = "test-title";
+  inputGroupTextTitle.id = "test-title-span";
   inputGroupTextTitle.innerHTML = "Title";
   inputGroupTextTitle.style.setProperty("width", "4rem");
   inputGroupPrependTitle.appendChild(inputGroupTextTitle);
@@ -767,11 +808,11 @@ const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
   let inputTitle = document.createElement("input");
   inputTitle.type = "text";
   inputTitle.classList.add("form-control");
-  // inputTitle.placeholder = "Test " + testsCounter;
-  inputTitle.value = "Test " + IncreaseTestCounter();
-
+  if (editFlag) inputTitle.value = givenDebugTest.title;
+  else inputTitle.value = "Test " + IncreaseTestCounter();
+  inputTitle.id = "test-title";
   inputTitle.setAttribute("aria-label", "title");
-  inputTitle.setAttribute("aria-describedby", "test-title");
+  inputTitle.setAttribute("aria-describedby", "test-title-span");
   inputGroupTitle.appendChild(inputTitle);
 
   /* Input Color */
@@ -788,62 +829,20 @@ const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
 
   let inputGroupTextColor = document.createElement("span");
   inputGroupTextColor.classList.add("input-group-text");
-  inputGroupTextColor.id = "test-color";
+  inputGroupTextColor.id = "test-color-span";
   inputGroupTextColor.innerHTML = "Color";
   inputGroupTextColor.style.setProperty("width", "4rem");
   inputGroupPrependColor.appendChild(inputGroupTextColor);
 
   let inputColor = document.createElement("input");
   inputColor.type = "color";
+  inputColor.id = "test-color";
   inputColor.classList.add("form-control");
-  inputColor.value = "#cfcece";
+  if (editFlag) inputColor.value = givenDebugTest.color;
+  else inputColor.value = "#D0D8DF";
   inputColor.setAttribute("aria-label", "color");
-  inputColor.setAttribute("aria-describedby", "test-color");
+  inputColor.setAttribute("aria-describedby", "test-color-span");
   inputGroupColor.appendChild(inputColor);
-
-  /* Input Type */
-  // let inputGroupType = document.createElement("div");
-  // inputGroupType.classList.add("input-group");
-  // inputGroupType.style.setProperty("width", "50%");
-  // inputGroupType.style.setProperty("margin-top", "1rem");
-  // container.appendChild(inputGroupType);
-
-  // let inputGroupPrependType = document.createElement("div");
-  // inputGroupPrependType.classList.add("input-group-prepend");
-  // inputGroupType.appendChild(inputGroupPrependType);
-
-  // let inputGroupTextType = document.createElement("span");
-  // inputGroupTextType.classList.add("input-group-text");
-  // inputGroupTextType.id = "test-type";
-  // inputGroupTextType.innerHTML = "Type";
-  // inputGroupTextType.style.setProperty("width", "4rem");
-  // inputGroupPrependType.appendChild(inputGroupTextType);
-
-  // let selectType = document.createElement("select");
-  // selectType.classList.add("form-select");
-  // selectType.setAttribute("aria-label", "type");
-  // selectType.setAttribute("aria-describedby", "test-type");
-  // selectType.style.setProperty("width", "83%");
-  // selectType.style.setProperty("border", "1px solid #ced4da");
-  // selectType.style.setProperty("border-radius", ".25rem");
-  // selectType.style.setProperty(
-  //   "transition",
-  //   "border-color .15s ease-in-out,box-shadow .15s ease-in-out"
-  // );
-  // inputGroupType.appendChild(selectType);
-
-  // let optionDeviceAction = document.createElement("option");
-  // optionDeviceAction.selected = true;
-  // optionDeviceAction.textContent = "<<Device action>>";
-  // selectType.appendChild(optionDeviceAction);
-
-  // let optionDateAction = document.createElement("option");
-  // optionDateAction.textContent = "<<Date action>>";
-  // selectType.appendChild(optionDateAction);
-
-  // let optionCompositeAction = document.createElement("option");
-  // optionCompositeAction.textContent = "<<Composite action>>";
-  // selectType.appendChild(optionCompositeAction);
 
   /* Headers */
   let titlesRow = document.createElement("div");
@@ -868,17 +867,18 @@ const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
   actionContainer.id = "test-action-container";
   actionContainer.style.setProperty("overflow-y", "auto");
   actionContainer.style.setProperty("overflow-x", "hidden");
-  // actionContainer.style.setProperty("padding-top", "1rem");
-  // actionContainer.style.setProperty("margin-top", "1rem");
   actionContainer.style.setProperty("max-height", "26rem");
   ("");
   container.appendChild(actionContainer);
 
   let testsTimeSlots = [];
 
-  /* add time 0 if no time slot exists */
-  let timeSlot = CreateTimeSlot(0, "Default Description", {});
-  testsTimeSlots.push(timeSlot);
+  if (editFlag) testsTimeSlots = givenDebugTest.testsTimeSlots;
+  else {
+    /* add time 0 if no time slot exists */
+    let timeSlot = CreateTimeSlot(0, "Default Description", {});
+    testsTimeSlots.push(timeSlot);
+  }
 
   let timelinesOuter = document.createElement("div");
   timelinesOuter.id = "timelines-container";
@@ -898,28 +898,103 @@ const CreateAndRenderCreateTestModal = function (idPrefix, envData) {
   document.getElementById(idPrefix + "-modal-dialog").classList.add("modal-xl");
 
   confirmButton.onclick = () => {
+    let title = document.getElementById("test-title").value;
+    let color = document.getElementById("test-color").value;
+
+    let debugTest = {
+      id: "create-test-" + testsCounter,
+      title: title,
+      color: color,
+      testsTimeSlots: testsTimeSlots,
+    };
+
+    CollectAllChangesForSave(testsTimeSlots);
+
     envData.RuntimeEnvironmentRelease.functionRequest(
       "SmartObjectVPLEditor",
       "saveDebugTests",
       [
         {
           projectID: envData.execData.projectId,
-          debugTests: testsTimeSlots,
+          debugTest: debugTest,
         },
       ]
     );
-  };
 
-  // };
+    if (editFlag)
+      UpdateBubbleForTest(
+        "test-bubble-" + givenDebugTest.id,
+        envData,
+        debugTest,
+        idPrefix
+      );
+    else
+      CreateBubbleForTests(
+        title,
+        "test-bubble-" + debugTest.id,
+        color,
+        testsTimeSlots,
+        () => {
+          CreateAndRenderCreateTestModal(
+            idPrefix,
+            envData,
+            debugTest,
+            true,
+            () => {
+              envData.RuntimeEnvironmentRelease.functionRequest(
+                "SmartObjectVPLEditor",
+                "deleteDebugTest",
+                [
+                  {
+                    projectID: envData.execData.projectId,
+                    debugTestId: debugTest.id,
+                  },
+                ]
+              );
+            }
+          );
+        }
+      );
+
+    $("#" + idPrefix + "-modal").modal("hide");
+  };
 
   $("#" + idPrefix + "-modal").modal({ backdrop: "static" });
 
   RenderModal(idPrefix);
 };
 
-/* End of functions for simulating time */
+const CollectAllChangesForSave = function (testTimeSlots) {
+  for (const [timeSlotIndex, timeSlot] of testTimeSlots.entries()) {
+    for (const deviceId in timeSlot.devices) {
+      // let deviceIndex = Object.keys(timeSlot.devices).indexOf(deviceId);
+      for (let [propIndex, property] of timeSlot.devices[
+        deviceId
+      ].properties.entries()) {
+        property.value = document.getElementById(
+          timeSlot.time + "-" + deviceId + "-properties-" + propIndex + "-value"
+        ).value;
+      }
+      for (let [actionIndex, action] of timeSlot.devices[
+        deviceId
+      ].actions.entries()) {
+        for (let [parameterIndex, parameter] of action.parameters.entries()) {
+          parameter.value = document.getElementById(
+            timeSlot.time +
+              "-" +
+              deviceId +
+              "-actions-" +
+              actionIndex +
+              "-value" +
+              "-parameter-" +
+              parameter.name
+          ).value;
+        }
+      }
+    }
+  }
+};
 
-/* Start functions for creating test */
 const CreateTimeSlot = function (time, description, devices, editMode = true) {
   return {
     time: time,
@@ -1055,7 +1130,7 @@ const RenderTimeSlot = function (
 
   let timeSeconds = document.createElement("div");
   timeSeconds.id = "_time-" + timeSlot.time + "-time";
-  timeSeconds.innerHTML = timeSlot.time + " seconds";
+  timeSeconds.innerHTML = timeSlot.time;
   timeSeconds.style.setProperty("font-style", "italic");
   timeSeconds.style.setProperty("font-size", "large");
   timeSecondsCol.appendChild(timeSeconds);
@@ -1244,11 +1319,19 @@ const RenderTimeSlot = function (
 
         if (typeOfChange === "property") {
           timeSlot.devices[deviceId].properties.push(
-            devicesOnAutomations[deviceIndex].properties[changeIndex]
+            JSON.parse(
+              JSON.stringify(
+                devicesOnAutomations[deviceIndex].properties[changeIndex]
+              )
+            )
           );
         } else if (typeOfChange === "action") {
           timeSlot.devices[deviceId].actions.push(
-            devicesOnAutomations[deviceIndex].actions[changeIndex]
+            JSON.parse(
+              JSON.stringify(
+                devicesOnAutomations[deviceIndex].actions[changeIndex]
+              )
+            )
           );
         }
 
@@ -1491,7 +1574,6 @@ const RenderChangesForCreatingTest = function (
 
       let deviceChangesContainer = document.createElement("div");
       deviceChangesContainer.classList.add("card-body");
-      deviceChangesContainer.style.setProperty("margin-top", "1rem");
       deviceContainer.appendChild(deviceChangesContainer);
 
       for (const [index, property] of timeSlot.devices[
@@ -1505,6 +1587,11 @@ const RenderChangesForCreatingTest = function (
           () => {
             /* remove property */
             timeSlot.devices[device].properties.splice(index, 1);
+            if (timeSlot.devices[device].properties.length === 0) {
+              delete timeSlot.devices[device].properties;
+              if (timeSlot.devices[device].actions.length === 0)
+                delete timeSlot.devices[device];
+            }
 
             /* clear container of properties */
             domContainer.innerHTML = "";
@@ -1527,6 +1614,11 @@ const RenderChangesForCreatingTest = function (
           () => {
             /* remove property */
             timeSlot.devices[device].actions.splice(index, 1);
+            if (timeSlot.devices[device].actions.length === 0) {
+              delete timeSlot.devices[device].actions;
+              if (timeSlot.devices[device].properties.length === 0)
+                delete timeSlot.devices[device];
+            }
 
             /* clear container of properties */
             domContainer.innerHTML = "";
@@ -1716,6 +1808,121 @@ const compareTimeSlots = function (a, b) {
     comparison = -1;
   }
   return comparison;
+};
+
+const CreateBubbleForTests = function (
+  title,
+  bubbleId,
+  backgroundColor,
+  testTimeSlots,
+  onClick
+) {
+  let logBubble = document.createElement("div");
+  logBubble.classList.add("log-bubble");
+  logBubble.id = bubbleId;
+  logBubble.style.backgroundColor = backgroundColor;
+  logBubble.onclick = onClick;
+  document.getElementById("tests").appendChild(logBubble);
+
+  let logBubbleInfo = document.createElement("div");
+  logBubbleInfo.classList.add("log-bubble-info");
+  logBubbleInfo.style.setProperty("width", "100%");
+  logBubbleInfo.style.setProperty("height", "1rem");
+  logBubble.appendChild(logBubbleInfo);
+
+  let logBubbleIconSpan = document.createElement("span");
+  logBubbleIconSpan.style.cssFloat = "left";
+  logBubbleInfo.appendChild(logBubbleIconSpan);
+
+  let logBubbleIcon = document.createElement("i");
+  logBubbleIcon.classList.add("log-bubble-icon", "fas", "fa-file");
+  // logBubbleIcon.style.setProperty("color", "rgb(23 162 184)");
+  logBubbleIconSpan.appendChild(logBubbleIcon);
+
+  let logBubbleName = document.createElement("span");
+  logBubbleName.classList.add("log-bubble-name");
+  logBubbleName.id = bubbleId + "-title";
+  // logBubbleName.style.setProperty("color", "rgb(23 162 184)");
+  logBubbleName.innerHTML = title;
+  logBubbleInfo.appendChild(logBubbleName);
+
+  // let logBubbleTime = document.createElement("span");
+  // logBubbleTime.classList.add("log-bubble-time");
+  // logBubbleTime.innerHTML = simulatedTime.format("HH:mm:ss, DD/MM");
+  // logBubbleInfo.appendChild(logBubbleTime);
+
+  let strBuilder = BuildTextForBubble(testTimeSlots);
+
+  let logBubbleText = document.createElement("div");
+  logBubbleText.classList.add("log-bubble-text-tests");
+  logBubbleText.id = bubbleId + "-text";
+  // logBubbleText.style.setProperty("color", "rgb(23 162 184)");
+  logBubbleText.innerHTML = strBuilder;
+  logBubble.appendChild(logBubbleText);
+
+  // UpdateScroll("logger-body");
+};
+
+const UpdateBubbleForTest = function (bubbleId, envData, debugTest, idPrefix) {
+  let bubble = document.getElementById(bubbleId);
+  bubble.style.backgroundColor = debugTest.color;
+  bubble.onclick = () => {
+    CreateAndRenderCreateTestModal(idPrefix, envData, debugTest, true);
+  };
+
+  let bubbleName = document.getElementById(bubbleId + "-title");
+  bubbleName.innerHTML = debugTest.title;
+
+  let strBuilder = BuildTextForBubble(debugTest.testsTimeSlots);
+
+  let bubbleText = document.getElementById(bubbleId + "-text");
+  bubbleText.innerHTML = strBuilder;
+};
+
+const BuildTextForBubble = function (testTimeSlots) {
+  let strBuilder = "";
+  if (
+    testTimeSlots.length === 0 ||
+    (testTimeSlots.length === 1 &&
+      Object.keys(testTimeSlots[0].devices).length === 0)
+  ) {
+    strBuilder += "There are not any changes";
+  }
+  for (const timeSlot of testTimeSlots) {
+    if (Object.keys(timeSlot.devices).length > 0) {
+      strBuilder +=
+        "<b>-</b>After <b>" + timeSlot.time + " seconds:</b> <br>Changes on";
+    } else continue;
+    // strBuilder += "Time " + timeSlot.time + ":<br>";
+    for (const deviceId in timeSlot.devices) {
+      let deviceIndex = Object.keys(timeSlot.devices).indexOf(deviceId);
+      strBuilder +=
+        " <b>" +
+        devicesOnAutomations.find((x) => x.id === deviceId).name +
+        "</b>";
+      // for (const [index, property] of timeSlot.devices[
+      //   deviceId
+      // ].properties.entries()) {
+      //   strBuilder += " Changes value of <b>" + property.name + "</b>";
+      //   if (index != timeSlot.devices[deviceId].properties.length - 1) {
+      //     strBuilder += ", ";
+      //   }
+      // }
+      // for (const [index, action] of timeSlot.devices[
+      //   deviceId
+      // ].actions.entries()) {
+      //   strBuilder += " Triggers <b>" + action.name + "</b>";
+      //   if (index != timeSlot.devices[deviceId].actions.length - 1) {
+      //     strBuilder += ", ";
+      //   }
+      // }
+      if (deviceIndex != Object.keys(timeSlot.devices).length - 1) {
+        strBuilder += ", ";
+      }
+    }
+    strBuilder += "<br>";
+  }
+  return strBuilder;
 };
 /* End functions for creating test */
 
@@ -2427,6 +2634,8 @@ const InitializeSimulatedHistory = function (envData) {
   let divTests = document.createElement("div");
   divTests.classList.add("tab-pane", "fade", "show", "active");
   divTests.id = "tests";
+  divTests.style.setProperty("overflow-y", "auto");
+  divTests.style.setProperty("max-height", "17rem");
   divTests.setAttribute("role", "tabpanel");
   divTests.setAttribute("aria-labelledby", "tests-tab");
   divContent.appendChild(divTests);
@@ -2434,6 +2643,8 @@ const InitializeSimulatedHistory = function (envData) {
   let divEvents = document.createElement("div");
   divEvents.classList.add("tab-pane", "fade");
   divEvents.id = "changes";
+  divEvents.style.setProperty("overflow-y", "auto");
+  divEvents.style.setProperty("max-height", "17rem");
   divEvents.setAttribute("role", "tabpanel");
   divEvents.setAttribute("aria-labelledby", "changes-tab");
   divContent.appendChild(divEvents);

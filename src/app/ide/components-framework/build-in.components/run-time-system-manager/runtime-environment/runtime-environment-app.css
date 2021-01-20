@@ -113,7 +113,7 @@ body {
   display: block;
   height: 91%;
   font-size: small;
-  overflow-y: auto;
+  overflow-y: hidden;
   font-size: 15px;
   max-height: 20rem;
 }
@@ -138,7 +138,7 @@ body {
 
 .log-bubble-name {
   float: left;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
   font-weight: 600;
 }
 
@@ -465,10 +465,14 @@ body {
 #add-test-button {
   color: #17a2b8;
   font-size: 1.3rem;
-  opacity: 53%;
+  opacity: 77%;
   position: absolute;
-  right: 17rem;
+  right: 17.8rem;
   top: 18.8rem;
+  z-index: 100;
+  background-color: #f6f6f6;
+  border-radius: 98px;
+  line-height: 0;
 }
 
 #add-test-button:hover {
@@ -493,4 +497,11 @@ body {
 
 .create-test-changes-container label {
   margin-bottom: 0rem;
+}
+
+.log-bubble-text-tests {
+  padding: 0.4rem 0rem 0.4rem 0rem;
+  /* max-height: 7rem;
+  overflow-y: auto; */
+  width: 100%;
 }

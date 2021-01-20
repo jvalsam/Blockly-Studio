@@ -555,13 +555,33 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedFunction
   public saveDebugTests(data: any) {
     let compData = this.getProjectComponentData(data.projectID);
-    compData.debugTests = data.debugTests;
+    if (!compData.debugTests) compData.debugTests = [];
+    let test = compData.debugTests.find((x) => x.id === data.debugTest.id);
+    if (!test) compData.debugTests.push(data.debugTest);
+    else {
+      let testIndex = compData.debugTests.indexOf(test);
+      compData.debugTests[testIndex] = data.debugTest;
+    }
+    // test = data.debugTest;
     this.saveProjectComponentData(data.projectID, compData);
   }
 
   @ExportedFunction
-  public getDebugTests(projectID) {
-    return this.getProjectComponentData(projectID).debugTests;
+  public deleteDebugTest(data: any) {
+    let compData = this.getProjectComponentData(data.projectID);
+    let indexDebugTest = compData.debugTests.findIndex(
+      (x) => x.id === data.debugTestId
+    );
+    if (indexDebugTest > -1) {
+      compData.debugTests.splice(indexDebugTest, 1);
+    }
+    this.saveProjectComponentData(data.projectID, compData);
+  }
+
+  @ExportedFunction
+  public loadDebugTests(data: any) {
+    let compData = this.getProjectComponentData(data.projectID);
+    data.debugTests = compData.debugTests;
   }
 
   @ExportedFunction
