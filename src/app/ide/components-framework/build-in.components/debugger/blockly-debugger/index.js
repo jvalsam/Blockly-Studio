@@ -43,12 +43,16 @@ export function BlocklyDebugger(plugin) {
             'icon': false
         },
         {
-            'name': 'Automations for scheduled Tasks 4',
-            'parent': 'Automations for scheduled Tasks',
+            'name': 'Scheduled Task 4',
+            'parent': 'Automations for Scheduled Tasks',
             'icon': false
         }];
-
-        this.toolbar_ui = new Toolbar(selector, data, () => {
+        let data2 = {
+            'name': 'Scheduled Task 1',
+            'parent': 'Automations for Scheduled Tasks',
+            'icon': false
+        }
+        this.toolbar_ui = new Toolbar(selector, () => {
             $('#debugger-close').click(function () {
                 $('#debugger-toolbar').toggle();
                 $('#debugger-toggle').show();
@@ -74,9 +78,15 @@ export function BlocklyDebugger(plugin) {
             Debuggee_Worker.RegisterStepOutDebuggerAction("StepOutButton");
             Debuggee_Worker.RegisterStepOverDebuggerAction("StepOverButton");
             Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
-            onReady();
+            //onReady();
         });
 
+        this.toolbar_ui.init(data).then((response) => {
+            if(response){
+                this.toolbar_ui.addVariable(data2);
+            }
+        });
+        
         //let ex = new Toolbar_API_Examples(this.toolbar_ui);
     };
 
