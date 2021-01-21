@@ -47,11 +47,15 @@ export function BlocklyDebugger(plugin) {
             'parent': 'Automations for Scheduled Tasks',
             'icon': false
         }];
-        let data2 = {
+        let data2 =[{
             'name': 'Scheduled Task 1',
             'parent': 'Automations for Scheduled Tasks',
             'icon': false
-        }
+        },{
+            'name': 'Scheduled Task 2',
+            'parent': 'Automations for Scheduled Tasks',
+            'icon': false
+        }]; 
         this.toolbar_ui = new Toolbar(selector, () => {
             $('#debugger-close').click(function () {
                 $('#debugger-toolbar').toggle();
@@ -81,10 +85,10 @@ export function BlocklyDebugger(plugin) {
             //onReady();
         });
 
-        this.toolbar_ui.init(data).then((response) => {
-            if(response){
-                this.toolbar_ui.addVariable(data2);
-            }
+        this.toolbar_ui.init(data);
+        data2.forEach( (item,index) => { 
+            console.log(item); 
+            this.toolbar_ui.addVariable(item);
         });
         
         //let ex = new Toolbar_API_Examples(this.toolbar_ui);

@@ -221,13 +221,13 @@ export class Toolbar {
      * Callback function can use this object.
      * @param {Function} callback 
      */
-    async init(data){
+    init(data){
         //callback.bind(this)();
-        return await Promise.resolve(this._initTrees(data));
+        this._initTrees(data);
     }
 
     /**
-     * Adds variable to variables tree
+     * Adds a single variable to variables tree
      * @param {Object} variable Should contain name, icon and parent
      * @param {Function} callback
      */
