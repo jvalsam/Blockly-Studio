@@ -39,7 +39,7 @@ const CollectRegisteredDevices = function (smartDevices) {
   return returnArray;
 };
 
-const Initialize = function (selector, envData) {
+const Initialize = function (selector, runTimeData) {
   // install utc plugin for dayjs
   dayjs.extend(window.dayjs_plugin_utc);
   dayjs.extend(window.dayjs_plugin_customParseFormat);
@@ -52,17 +52,7 @@ const Initialize = function (selector, envData) {
   InitializeCalendar(selector);
   InitializeOrganizerForCalendar();
   InitializeActionsLog();
-  // envData.RuntimeEnvironmentRelease.functionRequest(
-  //   "SmartObjectVPLEditor",
-  //   "loadDebugTests",
-  //   [
-  //     {
-  //       projectID: envData.execData.projectId,
-  //       debugTests: debugTests,
-  //     },
-  //   ]
-  // );
-  InitializeSimulatedHistory(envData);
+  InitializeSimulatedHistory(runTimeData);
   InitializeClocks(document.getElementById("calendar-outer"), () => {
     // hack to live update the completed events:
     // bind an observer to seconds of utility clock
@@ -757,6 +747,167 @@ const DestroyModal = function (idPrefix) {
 /* End of functions for simulating time */
 
 /* Start functions for creating test */
+
+const CreateAndRenderTestsModal = function (projectTitle) {
+  let idPrefix = "simulator-tests";
+  CreateModal(idPrefix);
+
+  // get title, body and confirm button of modal
+  let title = document.getElementById(idPrefix + "-modal-title");
+  let body = document.getElementById(idPrefix + "-modal-body");
+  let confirmButton = document.getElementById(
+    idPrefix + "-modal-confirm-button"
+  );
+  let cancelButton = document.getElementById(idPrefix + "-modal-cancel-button");
+
+  //change title
+  title.innerHTML = "Tests for " + projectTitle;
+
+  // hide confirm button
+  confirmButton.style.setProperty("display", "none");
+
+  // change cancel button
+  cancelButton.innerHTML = "Close";
+
+  let testsContainer = document.createElement("div");
+  body.appendChild(testsContainer);
+
+  let simulateBehaviorTestsOuter = document.createElement("div");
+  testsContainer.appendChild(simulateBehaviorTestsOuter);
+
+  let simulateBehaviorTestsHeader = document.createElement("div");
+  simulateBehaviorTestsHeader.innerHTML = "Simulate Behavior Tests";
+  simulateBehaviorTestsHeader.style.setProperty("font-size", "large");
+  simulateBehaviorTestsHeader.style.setProperty("font-weight", "500");
+  simulateBehaviorTestsOuter.appendChild(simulateBehaviorTestsHeader);
+
+  let addSimulateBehaviorTestButton = document.createElement("button");
+  addSimulateBehaviorTestButton.classList.add("btn", "btn-sm", "custom-btn");
+  addSimulateBehaviorTestButton.style.setProperty("border-radius", "15px");
+  addSimulateBehaviorTestButton.style.setProperty("margin-left", ".5rem");
+  simulateBehaviorTestsHeader.appendChild(addSimulateBehaviorTestButton);
+
+  let addSimulateBehaviorTestIcon = document.createElement("i");
+  addSimulateBehaviorTestIcon.classList.add("fas", "fa-plus");
+  addSimulateBehaviorTestButton.appendChild(addSimulateBehaviorTestIcon);
+
+  let simulateBehaviorTests = document.createElement("div");
+  simulateBehaviorTests.style.setProperty("margin-top", ".3rem");
+  simulateBehaviorTests.style.setProperty("border", "1px ridge #00000061");
+  simulateBehaviorTests.style.setProperty("padding", "1rem");
+  simulateBehaviorTests.style.setProperty("min-height", "14rem");
+  simulateBehaviorTests.style.setProperty("border-radius", "15px");
+  simulateBehaviorTestsOuter.appendChild(simulateBehaviorTests);
+
+  const RenderTest = function (domSelector, test) {
+    let a = document.createElement("a");
+    a.href = "javascript:void(0)";
+    a.classList.add(
+      "list-group-item",
+      "list-group-item-action",
+      "flex-column",
+      "align-items-start"
+    );
+    domSelector.appendChild(a);
+
+    let div = document.createElement("div");
+    div.classList.add("d-flex", "w-100", "justify-content-between");
+    a.appendChild("div");
+
+    let h5 = document.createElement("h5");
+    h5.classList.add("mb-1");
+    h5.innerHTML = test.title;
+    div.appendChild(h5);
+
+    let small = document.createElement("small");
+    small.classList.add("text-muted");
+    small.innerHTML = test.time;
+    div.appendChild(small);
+  };
+
+  if (debugTests.behaviorSimulationTests.length === 0) {
+    let noTest = document.createElement("span");
+    noTest.innerHTML = "No tests have been created yet.";
+    noTest.style.setProperty("font-style", "italic");
+    simulateBehaviorTests.appendChild(noTest);
+  } else {
+    for (const [
+      index,
+      simulateBehaviorTest,
+    ] of debugTests.behaviorSimulationTests) {
+      RenderTest(simulateBehaviorTests, simulateBehaviorTest);
+    }
+  }
+
+  let checkingExpectedValuesTestsOuter = document.createElement("div");
+  checkingExpectedValuesTestsOuter.style.setProperty("margin-top", "1rem");
+  testsContainer.appendChild(checkingExpectedValuesTestsOuter);
+
+  let checkingExpectedValuesTestsHeader = document.createElement("div");
+  checkingExpectedValuesTestsHeader.innerHTML =
+    "Expected Values Checking Tests";
+  checkingExpectedValuesTestsHeader.style.setProperty("font-size", "large");
+  checkingExpectedValuesTestsHeader.style.setProperty("font-weight", "500");
+  checkingExpectedValuesTestsOuter.appendChild(
+    checkingExpectedValuesTestsHeader
+  );
+
+  let addCheckingExpectedValuesTestButton = document.createElement("button");
+  addCheckingExpectedValuesTestButton.classList.add(
+    "btn",
+    "btn-sm",
+    "custom-btn"
+  );
+  addCheckingExpectedValuesTestButton.style.setProperty(
+    "border-radius",
+    "15px"
+  );
+  addCheckingExpectedValuesTestButton.style.setProperty("margin-left", ".5rem");
+  checkingExpectedValuesTestsHeader.appendChild(
+    addCheckingExpectedValuesTestButton
+  );
+
+  let addCheckingExpectedValuesTestIcon = document.createElement("i");
+  addCheckingExpectedValuesTestIcon.classList.add("fas", "fa-plus");
+  addCheckingExpectedValuesTestButton.appendChild(
+    addCheckingExpectedValuesTestIcon
+  );
+
+  let checkingExpectedValuesTests = document.createElement("div");
+  checkingExpectedValuesTests.style.setProperty("margin-top", ".3rem");
+  checkingExpectedValuesTests.style.setProperty(
+    "border",
+    "1px ridge #00000061"
+  );
+  checkingExpectedValuesTests.style.setProperty("padding", "1rem");
+  checkingExpectedValuesTests.style.setProperty("min-height", "14rem");
+  checkingExpectedValuesTests.style.setProperty("border-radius", "15px");
+  checkingExpectedValuesTestsOuter.appendChild(checkingExpectedValuesTests);
+
+  if (debugTests.expectedValuesCheckingTests.length === 0) {
+    let noTest = document.createElement("span");
+    noTest.innerHTML = "No tests have been created yet.";
+    noTest.style.setProperty("font-style", "italic");
+    checkingExpectedValuesTests.appendChild(noTest);
+  } else {
+    for (const [
+      index,
+      expectedValueCheckingTest,
+    ] of debugTests.expectedValuesCheckingTests) {
+      RenderTest(checkingExpectedValuesTests, expectedValueCheckingTest);
+    }
+  }
+
+  // Destroy Modal
+  $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
+    DestroyModal(idPrefix);
+  });
+
+  // render modal
+  $("#" + idPrefix + "-modal").modal({ backdrop: "static" });
+  RenderModal(idPrefix);
+};
+
 const CreateAndRenderCreateTestModal = function (
   idPrefix,
   envData,
@@ -910,16 +1061,16 @@ const CreateAndRenderCreateTestModal = function (
 
     CollectAllChangesForSave(testsTimeSlots);
 
-    envData.RuntimeEnvironmentRelease.functionRequest(
-      "SmartObjectVPLEditor",
-      "saveDebugTests",
-      [
-        {
-          projectID: envData.execData.projectId,
-          debugTest: debugTest,
-        },
-      ]
-    );
+    // envData.RuntimeEnvironmentRelease.functionRequest(
+    //   "SmartObjectVPLEditor",
+    //   "saveDebugTests",
+    //   [
+    //     {
+    //       projectID: envData.execData.projectId,
+    //       debugTest: debugTest,
+    //     },
+    //   ]
+    // );
 
     if (editFlag)
       UpdateBubbleForTest(
@@ -2104,7 +2255,7 @@ const InitializeSimulatorControls = function ({
   controlsOuter.appendChild(goToButtonSpan);
 
   let playButton = document.createElement("button");
-  playButton.classList.add("btn", "btn", "btn-info");
+  playButton.classList.add("btn", "btn", "custom-btn");
   playButton.innerHTML = "<i class='fas fa-play'></i>";
   playButton.onclick = onNormalSpeed;
   playButton.setAttribute("data-toggle", "tooltip");
@@ -2113,7 +2264,7 @@ const InitializeSimulatorControls = function ({
   playButtonSpan.appendChild(playButton);
 
   let slowerButton = document.createElement("button");
-  slowerButton.classList.add("btn", "btn-sm", "btn-info");
+  slowerButton.classList.add("btn", "btn-sm", "custom-btn");
   slowerButton.innerHTML =
     "<img src='./images/turtle.png' width='20' height='20'></img>";
   slowerButton.onclick = onBackward;
@@ -2123,7 +2274,7 @@ const InitializeSimulatorControls = function ({
   slowerButtonSpan.appendChild(slowerButton);
 
   let pauseButton = document.createElement("button");
-  pauseButton.classList.add("btn", "btn-sm", "btn-info");
+  pauseButton.classList.add("btn", "btn-sm", "custom-btn");
   pauseButton.innerHTML =
     "<img src='./images/pause-time.png' width='20' height='20'></img>";
   pauseButton.onclick = onPauseTime;
@@ -2133,7 +2284,7 @@ const InitializeSimulatorControls = function ({
   pauseButtonSpan.appendChild(pauseButton);
 
   let fasterButton = document.createElement("button");
-  fasterButton.classList.add("btn", "btn-sm", "btn-info");
+  fasterButton.classList.add("btn", "btn-sm", "custom-btn");
   fasterButton.innerHTML =
     "<img src='./images/rabbit.png' width='20' height='20'></img>";
   fasterButton.onclick = onSpeedUpTime;
@@ -2143,7 +2294,7 @@ const InitializeSimulatorControls = function ({
   fasterButtonSpan.appendChild(fasterButton);
 
   let goToButton = document.createElement("button");
-  goToButton.classList.add("btn", "btn-sm", "btn-info");
+  goToButton.classList.add("btn", "btn-sm", "custom-btn");
   goToButton.innerHTML =
     "<img src='./images/skip-time.png' width='20' height='20'></img>";
   goToButton.onclick = () => {
@@ -2591,7 +2742,7 @@ const UpdateScroll = function (id) {
     element.scrollTop = element.scrollHeight;
 };
 
-/* const InitializeSimulatedHistory = function (envData) {
+const InitializeSimulatedHistory = function (runTimeData) {
   let loggerOuterDiv = document.createElement("span");
   loggerOuterDiv.id = "simulated-actions-outer";
   loggerOuterDiv.style.setProperty("max-height", "22rem");
@@ -2613,119 +2764,17 @@ const UpdateScroll = function (id) {
   loggerBody.id = "simulated-actions-body";
   loggerContainer.appendChild(loggerBody);
 
-  let ulTabs = document.createElement("ul");
-  ulTabs.classList.add("nav", "nav-tabs");
-  ulTabs.id = "simulator-history-tabs";
-  ulTabs.setAttribute("role", "tablist");
-  loggerBody.appendChild(ulTabs);
-
-  let liTests = document.createElement("li");
-  liTests.classList.add("nav-item");
-  liTests.style.setProperty("width", "50%");
-  liTests.style.setProperty("text-align", "center");
-  ulTabs.appendChild(liTests);
-
-  let aTests = document.createElement("a");
-  aTests.classList.add("nav-link", "active");
-  aTests.id = "tests-tab";
-  aTests.dataset.toggle = "tab";
-  aTests.href = "#tests";
-  aTests.setAttribute("role", "tab");
-  aTests.setAttribute("aria-controls", "tests");
-  aTests.setAttribute("aria-selected", "true");
-  aTests.innerHTML = "Tests";
-  liTests.appendChild(aTests);
-
-  let liChanges = document.createElement("li");
-  liChanges.classList.add("nav-item");
-  liChanges.style.setProperty("width", "50%");
-  liChanges.style.setProperty("text-align", "center");
-  ulTabs.appendChild(liChanges);
-
-  let aChanges = document.createElement("a");
-  aChanges.classList.add("nav-link");
-  aChanges.id = "changes-tab";
-  aChanges.dataset.toggle = "tab";
-  aChanges.href = "#changes";
-  aChanges.setAttribute("role", "tab");
-  aChanges.setAttribute("aria-controls", "changes");
-  aChanges.setAttribute("aria-selected", "true");
-  aChanges.innerHTML = "Changes";
-  liChanges.appendChild(aChanges);
-
-  let divContent = document.createElement("div");
-  divContent.classList.add("tab-content");
-  divContent.id = "simulator-history-content";
-  loggerBody.appendChild(divContent);
-
-  let divTests = document.createElement("div");
-  divTests.classList.add("tab-pane", "fade", "show", "active");
-  divTests.id = "tests";
-  divTests.style.setProperty("overflow-y", "auto");
-  divTests.style.setProperty("max-height", "17rem");
-  divTests.setAttribute("role", "tabpanel");
-  divTests.setAttribute("aria-labelledby", "tests-tab");
-  divContent.appendChild(divTests);
-
-  let divEvents = document.createElement("div");
-  divEvents.classList.add("tab-pane", "fade");
-  divEvents.id = "changes";
-  divEvents.style.setProperty("overflow-y", "auto");
-  divEvents.style.setProperty("max-height", "17rem");
-  divEvents.setAttribute("role", "tabpanel");
-  divEvents.setAttribute("aria-labelledby", "changes-tab");
-  divContent.appendChild(divEvents);
-
-  //   <div class="tab-content" id="myTabContent">
-  //   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
-  //   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-  //   <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
-  // </div>
-
-  let addTestButton = document.createElement("div");
-  addTestButton.id = "add-test-button";
-  addTestButton.onclick = () => {
-    CreateAndRenderCreateTestModal("create-test", envData);
+  let folderTestButton = document.createElement("div");
+  folderTestButton.id = "folder-test-button";
+  folderTestButton.onclick = () => {
+    // CreateAndRenderCreateTestModal("create-test", envData);
+    CreateAndRenderTestsModal(runTimeData.execData.title);
   };
-  divTests.appendChild(addTestButton);
+  loggerContainer.appendChild(folderTestButton);
 
-  let addTestIcon = document.createElement("i");
-  addTestIcon.classList.add("fas", "fa-plus-circle", "fa-2x");
-  addTestButton.appendChild(addTestIcon);
-}; */
-
-const InitializeSimulatedHistory = function (envData) {
-  let loggerOuterDiv = document.createElement("span");
-  loggerOuterDiv.id = "simulated-actions-outer";
-  loggerOuterDiv.style.setProperty("max-height", "22rem");
-  loggerOuterDiv.style.setProperty("margin-left", "1rem");
-  loggerOuterDiv.style.setProperty("width", "22rem");
-  document.getElementById("calendar-outer").appendChild(loggerOuterDiv);
-
-  let loggerContainer = document.createElement("div");
-  loggerContainer.id = "simulated-actions-container";
-  loggerOuterDiv.appendChild(loggerContainer);
-
-  let loggerHeader = document.createElement("div");
-  loggerHeader.id = "simulated-actions-header";
-  loggerHeader.innerHTML = "TESTS CONTROL PANEL";
-  // TODO: at the beginning no tests added
-  loggerContainer.appendChild(loggerHeader);
-
-  let loggerBody = document.createElement("div");
-  loggerBody.id = "simulated-actions-body";
-  loggerContainer.appendChild(loggerBody);
-
-  let addTestButton = document.createElement("div");
-  addTestButton.id = "add-test-button";
-  addTestButton.onclick = () => {
-    CreateAndRenderCreateTestModal("create-test", envData);
-  };
-  loggerContainer.appendChild(addTestButton);
-
-  let addTestIcon = document.createElement("i");
-  addTestIcon.classList.add("fas", "fa-plus-circle", "fa-2x");
-  addTestButton.appendChild(addTestIcon);
+  let folderTestIcon = document.createElement("i");
+  folderTestIcon.classList.add("fas", "fa-folder", "fa-lg");
+  folderTestButton.appendChild(folderTestIcon);
 };
 
 const InitializeSmartDevicesContainer = function (selector) {
@@ -2782,6 +2831,10 @@ export async function StartApplication(runTimeData) {
     devicesOnAutomations = CollectRegisteredDevices(
       runTimeData.execData.project.SmartObjects
     );
+
+    debugTests =
+      runTimeData.execData.project.SmartObjects[0].editorsData[0].generated
+        .debugTests;
 
     // console.log(runTimeData);
     Initialize(runTimeData.UISelector, runTimeData);

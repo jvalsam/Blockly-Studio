@@ -559,13 +559,7 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedFunction
   public saveDebugTests(data: any) {
     let compData = this.getProjectComponentData(data.projectID);
-    if (!compData.debugTests) compData.debugTests = [];
-    let test = compData.debugTests.find((x) => x.id === data.debugTest.id);
-    if (!test) compData.debugTests.push(data.debugTest);
-    else {
-      let testIndex = compData.debugTests.indexOf(test);
-      compData.debugTests[testIndex] = data.debugTest;
-    }
+    compData.debugTests = data.debugTests;
     // test = data.debugTest;
     this.saveProjectComponentData(data.projectID, compData);
   }
@@ -585,7 +579,8 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedFunction
   public getDebugTests(data: any) {
     let compData = this.getProjectComponentData(data.projectID);
-    return compData.debugTests;
+    if (compData) compData.debugTests;
+    return { behaviorSimulationTests: [], expectedValuesCheckingTests: [] };
   }
 
   @ExportedFunction

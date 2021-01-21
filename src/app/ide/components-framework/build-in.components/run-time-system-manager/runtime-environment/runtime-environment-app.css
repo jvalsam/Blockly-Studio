@@ -461,21 +461,27 @@ body {
   border: 2px solid black;
 }
 
+.custom-btn {
+  color: #fff !important;
+  background-color: #4a81b1 !important;
+  border-color: #4a81b1 !important;
+}
+
 /* Tests container */
-#add-test-button {
-  color: #17a2b8;
-  font-size: 1.3rem;
+#folder-test-button {
+  color: #ffee97;
   opacity: 77%;
   position: absolute;
   right: 17.8rem;
-  top: 18.8rem;
+  top: 19.5rem;
   z-index: 100;
-  background-color: #f6f6f6;
+  background-color: #4a81b1;
   border-radius: 98px;
   line-height: 0;
+  padding: 0.5rem;
 }
 
-#add-test-button:hover {
+#folder-test-button:hover {
   cursor: pointer;
   opacity: 100%;
 }

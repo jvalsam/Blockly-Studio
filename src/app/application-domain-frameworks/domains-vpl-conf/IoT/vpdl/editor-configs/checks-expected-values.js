@@ -1,4 +1,4 @@
-export const ActionImplementationDebug = {
+export const ChecksExpectedValues = {
   name: "ec-checks-expected-values",
   items: [
     {
@@ -14,21 +14,14 @@ export const ActionImplementationDebug = {
       gap: "200",
     },
     {
-      name: "Conditional",
+      name: "Expected Values Checking",
       type: "DomainStatic",
       colour: "75",
-      elements: [
-        "conditional_when",
-        "conditional_when_top_bottom",
-        "when_times",
-        "when_times_top_bottom",
-        "when_after",
-        "when_after_top_bottom",
-        "break_continue_when",
-        "logical_operators",
-        "relational_operators",
-        "changes",
-      ],
+      elements: ["warns_checks", "pause_checks"],
+    },
+    {
+      type: "Separator",
+      gap: "200",
     },
     {
       name: "Scheduler",
@@ -42,6 +35,21 @@ export const ActionImplementationDebug = {
         "break_continue_every",
         "calendar_wait_then",
         "calendar_wait_then_top_bottom",
+      ],
+    },
+    {
+      name: "Conditional",
+      type: "DomainStatic",
+      colour: "75",
+      elements: [
+        "conditional_when_top_bottom",
+        "when_times_top_bottom",
+        "when_after_top_bottom",
+        "when_forever_top_bottom",
+        "break_continue_when",
+        "logical_operators",
+        "relational_operators",
+        "changes",
       ],
     },
     {
