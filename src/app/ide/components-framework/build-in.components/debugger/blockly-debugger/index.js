@@ -35,9 +35,20 @@ export function BlocklyDebugger(plugin) {
     generation.getBlocklyWSP = (editorId) => {
         return generation.workspaces[editorId];
     };
-    
+
     this.initiateToolbar = (selector, onReady) => {
-        this.toolbar_ui = new Toolbar(selector, () => {
+        let data = [{
+            'name': 'Conditional Task 1',
+            'parent': 'Automations for Conditional Tasks',
+            'icon': false
+        },
+        {
+            'name': 'Automations for scheduled Tasks 4',
+            'parent': 'Automations for scheduled Tasks',
+            'icon': false
+        }];
+
+        this.toolbar_ui = new Toolbar(selector, data, () => {
             $('#debugger-close').click(function () {
                 $('#debugger-toolbar').toggle();
                 $('#debugger-toggle').show();
@@ -66,7 +77,7 @@ export function BlocklyDebugger(plugin) {
             onReady();
         });
 
-        let ex = new Toolbar_API_Examples(this.toolbar_ui);
+        //let ex = new Toolbar_API_Examples(this.toolbar_ui);
     };
 
     this.onmessage = (msg, callback) => {
