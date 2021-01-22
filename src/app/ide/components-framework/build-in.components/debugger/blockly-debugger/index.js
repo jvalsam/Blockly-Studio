@@ -55,6 +55,15 @@ export function BlocklyDebugger(plugin) {
             'name': 'Scheduled Task 2',
             'parent': 'Automations for Scheduled Tasks',
             'icon': false
+        },{
+            'name': 'Conditional Task 1',
+            'parent': 'Automations for Conditional Tasks',
+            'icon': false
+        },
+        {
+            'name': 'Scheduled Task 4',
+            'parent': 'Automations for Scheduled Tasks',
+            'icon': false
         }]; 
         this.toolbar_ui = new Toolbar(selector, () => {
             $('#debugger-close').click(function () {
@@ -84,14 +93,7 @@ export function BlocklyDebugger(plugin) {
             Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
             //onReady();
         });
-
-        this.toolbar_ui.init(data);
-        data2.forEach( (item,index) => { 
-            console.log(item); 
-            this.toolbar_ui.addVariable(item);
-        });
-        
-        //let ex = new Toolbar_API_Examples(this.toolbar_ui);
+        this.toolbar_ui.createVariables(data2);
     };
 
     this.onmessage = (msg, callback) => {

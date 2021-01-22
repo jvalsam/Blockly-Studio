@@ -1,12 +1,14 @@
 import { post } from "jquery";
 import ToolbarViewTmpl from "./toolbar-view.tmpl";
 
+
 export class Toolbar {
     constructor(container, callback) {
 
         this._variablessArray = [];
+        this._distinctParents = [];
         this._injectHtml(container, callback);
-
+        this._initTrees();
         /* Trees */
         this._DataObjects = $.jstree.reference('#debugger-DataObjects');
         this._personalFilesTree = $.jstree.reference('#personal-files');
@@ -24,7 +26,7 @@ export class Toolbar {
     }
 
     /* private functions */
-    _initTrees(data) {
+    _initTrees() {
             $('#debugger-DataObjects').jstree({
                 "plugins": [
                     "wholerow",
@@ -76,7 +78,7 @@ export class Toolbar {
                 }
             });
 
-            let tree_data = this._ExtractTreeData(data);
+            //let tree_data = this._ExtractTreeData(data);
 
             $('#debugger-variables').jstree({
                 "plugins": [
@@ -93,7 +95,7 @@ export class Toolbar {
                 },
                 'core': {
                     'check_callback': true,
-                    'data': tree_data
+                    'data': []
                 }
             });
 
@@ -141,6 +143,18 @@ export class Toolbar {
                 $('#debugger-watches-tab-ui').removeClass('debugger-tab-active');
                 $('#debugger-explanations-tab-ui').removeClass('debugger-tab-active').addClass('debugger-tab-active');
             });
+
+            $(".collapse").each(function(index){
+                $(this).click(function (){
+                    this.classList.toggle("active"); 
+                    let content = this.nextElementSibling; 
+                    if (content.style.display === "block") { 
+                        content.style.display = "none"; 
+                    } else { 
+                        content.style.display = "block"; 
+                    } 
+                })
+            });   
     }
 
     _injectHtml(container, callback) {
@@ -152,91 +166,55 @@ export class Toolbar {
         callback();
     }
 
-    _ExtractTreeData(input_data) {
-        let treeData = [];
-        let distinctParents = {};
-        $.each(input_data, function (i, data) {
-            let parent_id = data.parent.replace(/ /g,"_"); // replace spaces with underscores to use as id
-            let child_id = data.name.replace(/ /g,"_");
-            if (!distinctParents[data.parent]) {
-                //if name does not exist in the object then create a parent  
-                distinctParents[data.parent] = true; //make name to true in the object  
-                //parent node  
-                treeData.push({
-                    id: parent_id,
-                    parent: "#",
-                    text: data.parent,
-                    type: "folder"
-                });
-                //child node  
-                treeData.push({
-                    id: child_id,
-                    parent: parent_id,
-                    text: data.name,
-                    type: "file"
-                });
-            } else {
-                //child node  
-                treeData.push({
-                    id: child_id,
-                    parent: parent_id,
-                    text: data.name,
-                    type: "file"
-                });
-            }
-        });
-        return treeData;
-    }
-
     // Dynamically adds nodes to the debugger-variables. Position can be 'first' or 'last'.
     _createNode(parent_node, new_node_id, new_node_text, new_node_icon, position) {
-        //let debuggerVariablesTree = $.jstree.reference('#debugger-variables');
-        //let parent = $('#debugger-variables').jstree('get_selected');
-        //$('#debugger-variables').jstree('create_node', $(parent_node), { "text": new_node_text, "id": new_node_id, "icon": new_node_icon }, position, false, false);
-        let new_node = $('#debugger-variables').jstree().create_node($(parent_node),{ "text": new_node_text, "id": new_node_id, "icon": new_node_icon },position);
-        console.log(new_node);
+        if(parent_node === '#'){
+           $('#debugger-variables').jstree().create_node('#',{ "text": new_node_text, "id": new_node_id, "icon": new_node_icon },position);
+        } else {
+           $('#debugger-variables').jstree().create_node($(parent_node),{ "text": new_node_text, "id": new_node_id, "icon": new_node_icon },position);
+        }
     }
     
-    _addVariable(variable, callback = undefined) {
+    _createVariable(variable, callback = undefined) {
         if (variable.parent === undefined) {
-            console.log(variable.parent);
-            //this._createNode('#debugger-variables', this._VARIABLE_PREFIX + variable.name, variable.name, variable.icon, 'last');
+            console.log('parent is undefined in _createVariable');
         } else {
-            let parent = variable.parent.replace(/ /g,"_");
-            this._createNode(`#${parent}`, variable.name, variable.name, variable.icon, 'last');
-            //tree.create_node(this._VARIABLE_PREFIX + variable.parent, node, "last", callback);
-        }
-        // parrent issue 1
-        //let dest = this._debuggerVariablesTree.get_node($("debugger-variables"));
-        /*if (parent !== undefined) {
-            dest = this._debuggerVariablesTree.get_node(this._VARIABLE_PREFIX + parent.name);
-        }*/
-        //this._debuggerVariablesTree.create_node('#', node, "last", callback);
+            let parent_id = variable.parent.replace(/ /g,"_");
+            let variable_id = variable.name.replace(/ /g,"_");
+            if(!this._distinctParents[parent_id]) {
+                //if name does not exist in the object then create a parent  
+                this._distinctParents[parent_id] = true; //make name to true in the object 
+                this._createNode('#', parent_id, variable.parent, variable.icon, 'last');
+            }
+            this._createNode(`#${parent_id}`, variable_id, variable.name, variable.icon, 'last');
+        } 
     }
+
 
     /* API */
 
     /**
-     * Initiates the trees of the toolbar.
-     * Callback function can use this object.
-     * @param {Function} callback 
-     */
-    init(data){
-        //callback.bind(this)();
-        this._initTrees(data);
-    }
-
-    /**
-     * Adds a single variable to variables tree
+     * Creates a single variable to the variables tree
      * @param {Object} variable Should contain name, icon and parent
      * @param {Function} callback
      */
-    addVariable(variable, callback = undefined) {
+    createVariable(variable, callback = undefined) {
         $('#debugger-variables').bind('ready.jstree', () => {
-            this._addVariable(variable, callback);
+            this._createVariable(variable, callback);
         });
     }
-
+    /**
+     * Creates variables from an array to the variables tree
+     * @param {Object} variables 
+     * @param {Function} callback
+     */
+    createVariables(variables,callback = undefined){
+        $('#debugger-variables').bind('ready.jstree', () => {
+            variables.forEach(element => {
+                this._createVariable(element, callback);
+            });
+        });
+    }
     /**
      * Removes variable from Variables tree
      * @param {Object} variable 

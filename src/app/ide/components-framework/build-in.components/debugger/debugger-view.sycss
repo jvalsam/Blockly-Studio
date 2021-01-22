@@ -8,6 +8,35 @@
     //background-image: url("./blockly-debugger/media/compress-icon.png");
 }
 
+.font600 {
+    font-weight: 600;
+}
+
+.arrow-left {
+    background-size: 22px 22px;
+    background-position: center !important;
+    background-repeat: no-repeat;
+    transition: all 0.3s ease;
+}
+
+.collapse { 
+        border: none; 
+        outline: none; 
+        font-size: 1.25rem;
+}
+
+.jstree-node .jstree-icon.jstree-ocl {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Angle_right_font_awesome.svg/512px-Angle_right_font_awesome.svg.png');
+    background-size: 22px 22px;
+    background-position: center !important;
+    background-repeat: no-repeat;
+    transition: all 0.3s ease;
+}
+        
+.jstree-node.jstree-open .jstree-icon.jstree-ocl {
+    transform: rotate(90deg);
+}
+
 .clear {
     clear: both;
 }
@@ -91,7 +120,7 @@
     width: 100%;
     color: #eeeeee;
     height: 45px;
-    background-color: #97b5cf;
+    background-color: #4a81b1;
     margin-bottom: 10px;
 }
 
@@ -105,12 +134,18 @@
 
 #debugger-title{
     font-size: 22px;
-    color: #1a3a3a;
+    color: #f0f8ff;
 }
 
 #debugger-close {
     margin-right: 10px;
-    color: #1a3a3a;
+    float: right;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: black;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
 }
 
 /****************************************************************************
@@ -164,7 +199,6 @@
 #personal-files > .jstree-children {
     font-size: 16px;
     color: rgba(0,0, 0, 0.81);
-    font-weight: normal;
 }
 
 #personal-files > .jstree-children a i {
@@ -206,9 +240,9 @@
 
 
 #debugger-variables > .jstree-children {
-    font-size: 16px;
+    font-size: 1rem;
     color: rgba(0,0, 0, 0.81);
-    font-weight: normal;
+    font-weight: 600;
 }
 
 #debugger-variables > .jstree-children a i {
@@ -267,7 +301,7 @@
     background-color: #e5e5e5;
     font-size: 16px;
     color: rgba(0,0, 0, 0.81);
-    font-weight: normal;
+    font-weight: 600;
     text-align: center;
     box-sizing: border-box;
     border: solid 1px #b1b1b1;
@@ -294,21 +328,9 @@
     box-sizing: border-box;
     border: solid 1px #b1b1b1;
     width: 100%;
-    overflow: auto;
     font-size: 16px;
     color: rgba(0,0, 0, 0.81);
-    font-weight: normal;
-    height: 300px;
-}
-
-
-#debugger-variables-content span {
-    height: 19px !important;
-    margin-right: 10px !important;
-}
-
-#debugger-variables {
-    height: 24px;
+    font-weight: 600;
 }
 
 #debugger-watches {
