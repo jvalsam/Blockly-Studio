@@ -648,7 +648,7 @@ const compareTimes = function (a, b) {
 };
 
 const IncreaseTestCounter = function () {
-  return testsCounter++;
+  testsCounter++;
 };
 
 const CreateModal = function (idPrefix) {
@@ -736,6 +736,41 @@ const ClearModal = function (idPrefix) {
     "Confirm";
 };
 
+const ClearModalAndUpdateIdPrefix = function (idPrefix, idPrefixNew) {
+  // update modal idPrefix
+  document.getElementById(idPrefix + "-modal").id = idPrefixNew + "-modal";
+  document.getElementById(idPrefix + "-modal-dialog").id =
+    idPrefixNew + "-modal-dialog";
+
+  // clear and update title prefix
+  document.getElementById(idPrefix + "-modal-title").innerHTML = "";
+  document.getElementById(idPrefix + "-modal-title").id =
+    idPrefixNew + "-modal-title";
+
+  // clear and update body prefix
+  document.getElementById(idPrefix + "-modal-body").innerHTML = "";
+  document.getElementById(idPrefix + "-modal-body").id =
+    idPrefixNew + "-modal-body";
+
+  // clear and update delete button idPrefix
+  document.getElementById(idPrefix + "-modal-delete-button").innerHTML =
+    "Cancel";
+  document.getElementById(idPrefix + "-modal-delete-button").id =
+    idPrefixNew + "-modal-delete-button";
+
+  // clear and update cancel button prefix
+  document.getElementById(idPrefix + "-modal-cancel-button").innerHTML =
+    "Cancel";
+  document.getElementById(idPrefix + "-modal-cancel-button").id =
+    idPrefixNew + "-modal-cancel-button";
+
+  // clear and update confirm button prefix
+  document.getElementById(idPrefix + "-modal-confirm-button").innerHTML =
+    "Confirm";
+  document.getElementById(idPrefix + "-modal-confirm-button").id =
+    idPrefixNew + "-modal-confirm-button";
+};
+
 const RenderModal = function (idPrefix) {
   $("#" + idPrefix + "-modal").modal("show");
 };
@@ -748,7 +783,7 @@ const DestroyModal = function (idPrefix) {
 
 /* Start functions for creating test */
 
-const CreateAndRenderTestsModal = function (projectTitle) {
+const CreateAndRenderTestsModal = function (projectTitle, envData) {
   let idPrefix = "simulator-tests";
   CreateModal(idPrefix);
 
@@ -779,12 +814,21 @@ const CreateAndRenderTestsModal = function (projectTitle) {
   simulateBehaviorTestsHeader.innerHTML = "Simulate Behavior Tests";
   simulateBehaviorTestsHeader.style.setProperty("font-size", "large");
   simulateBehaviorTestsHeader.style.setProperty("font-weight", "500");
+  simulateBehaviorTestsHeader.style.setProperty("display", "flex");
+  simulateBehaviorTestsHeader.style.setProperty("align-items", "center");
   simulateBehaviorTestsOuter.appendChild(simulateBehaviorTestsHeader);
 
   let addSimulateBehaviorTestButton = document.createElement("button");
   addSimulateBehaviorTestButton.classList.add("btn", "btn-sm", "custom-btn");
   addSimulateBehaviorTestButton.style.setProperty("border-radius", "15px");
   addSimulateBehaviorTestButton.style.setProperty("margin-left", ".5rem");
+  addSimulateBehaviorTestButton.onclick = () => {
+    // Clear Modal
+    // Update Modal with simulated test info
+    let idPrefixNew = "create-simulate-behavior-test";
+    ClearModalAndUpdateIdPrefix(idPrefix, idPrefixNew);
+    CreateAndRenderCreateTestModal(idPrefixNew, envData);
+  };
   simulateBehaviorTestsHeader.appendChild(addSimulateBehaviorTestButton);
 
   let addSimulateBehaviorTestIcon = document.createElement("i");
@@ -812,7 +856,7 @@ const CreateAndRenderTestsModal = function (projectTitle) {
 
     let div = document.createElement("div");
     div.classList.add("d-flex", "w-100", "justify-content-between");
-    a.appendChild("div");
+    a.appendChild(div);
 
     let h5 = document.createElement("h5");
     h5.classList.add("mb-1");
@@ -825,7 +869,10 @@ const CreateAndRenderTestsModal = function (projectTitle) {
     div.appendChild(small);
   };
 
-  if (debugTests.behaviorSimulationTests.length === 0) {
+  if (
+    !debugTests.simulateBehaviorTests ||
+    debugTests.simulateBehaviorTests.length === 0
+  ) {
     let noTest = document.createElement("span");
     noTest.innerHTML = "No tests have been created yet.";
     noTest.style.setProperty("font-style", "italic");
@@ -834,7 +881,7 @@ const CreateAndRenderTestsModal = function (projectTitle) {
     for (const [
       index,
       simulateBehaviorTest,
-    ] of debugTests.behaviorSimulationTests) {
+    ] of debugTests.simulateBehaviorTests.entries()) {
       RenderTest(simulateBehaviorTests, simulateBehaviorTest);
     }
   }
@@ -848,6 +895,8 @@ const CreateAndRenderTestsModal = function (projectTitle) {
     "Expected Values Checking Tests";
   checkingExpectedValuesTestsHeader.style.setProperty("font-size", "large");
   checkingExpectedValuesTestsHeader.style.setProperty("font-weight", "500");
+  checkingExpectedValuesTestsHeader.style.setProperty("display", "flex");
+  checkingExpectedValuesTestsHeader.style.setProperty("align-items", "center");
   checkingExpectedValuesTestsOuter.appendChild(
     checkingExpectedValuesTestsHeader
   );
@@ -863,6 +912,7 @@ const CreateAndRenderTestsModal = function (projectTitle) {
     "15px"
   );
   addCheckingExpectedValuesTestButton.style.setProperty("margin-left", ".5rem");
+  addCheckingExpectedValuesTestButton.onclick = () => {};
   checkingExpectedValuesTestsHeader.appendChild(
     addCheckingExpectedValuesTestButton
   );
@@ -884,7 +934,10 @@ const CreateAndRenderTestsModal = function (projectTitle) {
   checkingExpectedValuesTests.style.setProperty("border-radius", "15px");
   checkingExpectedValuesTestsOuter.appendChild(checkingExpectedValuesTests);
 
-  if (debugTests.expectedValuesCheckingTests.length === 0) {
+  if (
+    !debugTests.expectedValuesCheckingTests ||
+    debugTests.expectedValuesCheckingTests.length === 0
+  ) {
     let noTest = document.createElement("span");
     noTest.innerHTML = "No tests have been created yet.";
     noTest.style.setProperty("font-style", "italic");
@@ -893,14 +946,14 @@ const CreateAndRenderTestsModal = function (projectTitle) {
     for (const [
       index,
       expectedValueCheckingTest,
-    ] of debugTests.expectedValuesCheckingTests) {
+    ] of debugTests.expectedValuesCheckingTests.entries()) {
       RenderTest(checkingExpectedValuesTests, expectedValueCheckingTest);
     }
   }
 
   // Destroy Modal
   $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
-    DestroyModal(idPrefix);
+    if (document.getElementById(idPrefix + "-modal")) DestroyModal(idPrefix);
   });
 
   // render modal
@@ -915,7 +968,7 @@ const CreateAndRenderCreateTestModal = function (
   editFlag,
   onDeleteTest
 ) {
-  CreateModal(idPrefix);
+  // CreateModal(idPrefix);
 
   let title = document.getElementById(idPrefix + "-modal-title");
   let body = document.getElementById(idPrefix + "-modal-body");
@@ -934,7 +987,7 @@ const CreateAndRenderCreateTestModal = function (
       onDeleteTest();
       $("#" + idPrefix + "-modal").modal("hide");
     };
-  } else title.innerHTML = "New test";
+  } else title.innerHTML = "New Simulate Behavior Test";
 
   let container = document.createElement("div");
   body.appendChild(container);
@@ -960,7 +1013,7 @@ const CreateAndRenderCreateTestModal = function (
   inputTitle.type = "text";
   inputTitle.classList.add("form-control");
   if (editFlag) inputTitle.value = givenDebugTest.title;
-  else inputTitle.value = "Test " + IncreaseTestCounter();
+  else inputTitle.value = "Test " + testsCounter;
   inputTitle.id = "test-title";
   inputTitle.setAttribute("aria-label", "title");
   inputTitle.setAttribute("aria-describedby", "test-title-span");
@@ -1061,54 +1114,57 @@ const CreateAndRenderCreateTestModal = function (
 
     CollectAllChangesForSave(testsTimeSlots);
 
-    // envData.RuntimeEnvironmentRelease.functionRequest(
-    //   "SmartObjectVPLEditor",
-    //   "saveDebugTests",
-    //   [
-    //     {
-    //       projectID: envData.execData.projectId,
-    //       debugTest: debugTest,
-    //     },
-    //   ]
-    // );
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
+      "saveSimulateBehaviorTest",
+      [
+        {
+          projectID: envData.execData.projectId,
+          debugTest: debugTest,
+          time: simulatedTime.format("DD/MM/YYYY - HH:mm:ss"),
+        },
+      ]
+    );
 
-    if (editFlag)
-      UpdateBubbleForTest(
-        "test-bubble-" + givenDebugTest.id,
-        envData,
-        debugTest,
-        idPrefix
-      );
-    else
-      CreateBubbleForTests(
-        title,
-        "test-bubble-" + debugTest.id,
-        color,
-        testsTimeSlots,
-        () => {
-          CreateAndRenderCreateTestModal(
-            idPrefix,
-            envData,
-            debugTest,
-            true,
-            () => {
-              envData.RuntimeEnvironmentRelease.functionRequest(
-                "SmartObjectVPLEditor",
-                "deleteDebugTest",
-                [
-                  {
-                    projectID: envData.execData.projectId,
-                    debugTestId: debugTest.id,
-                  },
-                ]
-              );
-            }
-          );
-        }
-      );
+    // if (editFlag)
+    //   UpdateBubbleForTest(
+    //     "test-bubble-" + givenDebugTest.id,
+    //     envData,
+    //     debugTest,
+    //     idPrefix
+    //   );
+    // else
+    //   CreateBubbleForTests(
+    //     title,
+    //     "test-bubble-" + debugTest.id,
+    //     color,
+    //     testsTimeSlots,
+    //     () => {
+    //       CreateAndRenderCreateTestModal(
+    //         idPrefix,
+    //         envData,
+    //         debugTest,
+    //         true,
+    //         () => {
+    //           envData.RuntimeEnvironmentRelease.functionRequest(
+    //             "SmartObjectVPLEditor",
+    //             "deleteDebugTest",
+    //             [
+    //               {
+    //                 projectID: envData.execData.projectId,
+    //                 debugTestId: debugTest.id,
+    //               },
+    //             ]
+    //           );
+    //         }
+    //       );
+    //     }
+    //   );
 
+    IncreaseTestCounter();
     $("#" + idPrefix + "-modal").modal("hide");
   };
+  confirmButton.style.setProperty("display", "inline-block");
 
   $("#" + idPrefix + "-modal").modal({ backdrop: "static" });
 
@@ -2768,7 +2824,7 @@ const InitializeSimulatedHistory = function (runTimeData) {
   folderTestButton.id = "folder-test-button";
   folderTestButton.onclick = () => {
     // CreateAndRenderCreateTestModal("create-test", envData);
-    CreateAndRenderTestsModal(runTimeData.execData.title);
+    CreateAndRenderTestsModal(runTimeData.execData.title, runTimeData);
   };
   loggerContainer.appendChild(folderTestButton);
 
