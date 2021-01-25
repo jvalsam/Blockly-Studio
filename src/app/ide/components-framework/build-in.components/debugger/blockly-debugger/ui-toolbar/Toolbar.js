@@ -238,6 +238,50 @@ export class Toolbar {
     addBreakpoint(block_id,event_name,color,icon) {
 
     }
+    /**
+     * Adds a breakpoint to the toolbar
+     * @param {block_id}
+     */
+    removeBreakpoint(block_id) {
+
+    }
+    /**
+     * Adds a watch to the toolbar from an element
+     * @param {element_name}
+     * @param {data}
+     * @param {color}
+     * @param {icon}
+     */
+    addWatch(block_id,event_name,color,icon) {
+
+    }
+    /**
+     * Updates watch of element_name
+     * @param {element_name}
+     * @param {data}
+     */
+
+    updateWatch(element_name,data) {
+
+    }
+
+    /**
+     * Removes watch with element_name
+     * @param {element_name}
+     * @param {data}
+     */
+    removeWatch(element_name){
+
+    }
+
+    /**
+     * returns true if an element is watched based on its name otherwise returns false
+     * @param {element_name}
+     * @param {data}
+     */
+    isWatched(element_name){
+
+    }
 
 }
 
