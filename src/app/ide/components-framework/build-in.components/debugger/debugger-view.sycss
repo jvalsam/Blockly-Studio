@@ -19,10 +19,33 @@
     transition: all 0.3s ease;
 }
 
-.collapse { 
-        border: none; 
-        outline: none; 
-        font-size: 1.25rem;
+.collapsible {
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    padding: 8px;
+    padding-left: 8%;
+    margin-top: 2%;
+    width: 100%;
+    border: 0;
+    text-align: left;
+    outline: 0;
+    font-size: 17px;
+    font-weight: 610;
+}
+
+.collapsible:active, .collapsible:focus {
+    border: 0;
+    outline: 0;
+}
+
+.collapsible:hover {
+    background-color: #e3e3e3;
+}
+
+.collapsible-content {
+    display: inline-block;
+    transition: 0.2s ease-out;
 }
 
 .jstree-node .jstree-icon.jstree-ocl {
@@ -154,8 +177,9 @@
 
 #debugger-control{
     margin-top: 4%;
-    padding-left: 13%;
-    height: 8%;
+    padding-left: 15%;
+    margin-bottom: 4%;
+    display: inline-block;
 }
 
 #debugger-control button {
@@ -171,8 +195,8 @@
     padding-left:6px;
     cursor: pointer;
     float: left;
-    width: 3em;
-    height: 3em;
+    width: 40px;
+    height: 40px;
     margin-right: 4px;
 }
 

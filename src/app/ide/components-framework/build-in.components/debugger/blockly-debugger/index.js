@@ -65,6 +65,7 @@ export function BlocklyDebugger(plugin) {
             'parent': 'Automations for Scheduled Tasks',
             'icon': false
         }]; 
+        
         this.toolbar_ui = new Toolbar(selector, () => {
             $('#debugger-close').click(function () {
                 $('#debugger-toolbar').toggle();

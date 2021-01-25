@@ -7,6 +7,8 @@ export class Toolbar {
 
         this._variablessArray = [];
         this._distinctParents = [];
+        this._watches = [];
+        this._breakpoints = [];
         this._injectHtml(container, callback);
         this._initTrees();
         /* Trees */
@@ -144,17 +146,17 @@ export class Toolbar {
                 $('#debugger-explanations-tab-ui').removeClass('debugger-tab-active').addClass('debugger-tab-active');
             });
 
-            $(".collapse").each(function(index){
+            $(".collapsible").each(function(index){
                 $(this).click(function (){
                     this.classList.toggle("active"); 
                     let content = this.nextElementSibling; 
-                    if (content.style.display === "block") { 
-                        content.style.display = "none"; 
+                    if (content.style.display === "inline-block") { 
+                        content.style.display = "none";
                     } else { 
-                        content.style.display = "block"; 
+                        content.style.display = "inline-block";
                     } 
                 })
-            });   
+            });
     }
 
     _injectHtml(container, callback) {
@@ -195,12 +197,15 @@ export class Toolbar {
 
     /**
      * Creates a single variable to the variables tree
-     * @param {Object} variable Should contain name, icon and parent
+     * @param {String} parent Parent name of the variable
+     * @param {String} name Name of the variable
+     * @param {String} icon Icon of the variable
+     * @param {String} color Color of the variable
      * @param {Function} callback
      */
-    createVariable(variable, callback = undefined) {
+    createVariable(parent,name,icon,color, callback = undefined) {
         $('#debugger-variables').bind('ready.jstree', () => {
-            this._createVariable(variable, callback);
+            this._createVariable(parent,name,icon,color, callback);
         });
     }
     /**
@@ -211,7 +216,7 @@ export class Toolbar {
     createVariables(variables,callback = undefined){
         $('#debugger-variables').bind('ready.jstree', () => {
             variables.forEach(element => {
-                this._createVariable(element, callback);
+                this._createVariable(element.parent,element.name,element.icon,element.color, callback);
             });
         });
     }
@@ -221,6 +226,17 @@ export class Toolbar {
      */
     removeVariable(variable) {
         this._debuggerVariablesTree.delete_node(this._VARIABLE_PREFIX + variable.name);
+    }
+
+    /**
+     * Adds a breakpoint to the toolbar
+     * @param {block_id}
+     * @param {event_name}
+     * @param {color}
+     * @param {icon}
+     */
+    addBreakpoint(block_id,event_name,color,icon) {
+
     }
 
 }

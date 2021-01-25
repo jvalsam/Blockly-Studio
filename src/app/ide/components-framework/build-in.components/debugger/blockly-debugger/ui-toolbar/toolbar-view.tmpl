@@ -9,16 +9,18 @@
         <div class = "clear"></div>
     </div>
     <div id="debugger-content">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Angle_right_font_awesome.svg/512px-Angle_right_font_awesome.svg.png" class = "arrow-left size22x22">
-        <button type="button" class="collapse">Debugger Control</button>
-        <div id = "debugger-control">
+        
+        
+        <button type="button" class="collapsible">Debugger Control</button>
+        <div id = "debugger-control" class="collapsible-content">
             <button id="ContinueButton" title="Continue"></button>
             <button id="StepInButton" title="Step In"><img src="https://img.icons8.com/ios/50/000000/step-into.png" class= "center size30x30"/></button>
             <button id="StepOverButton" title="Step Over"><img src="https://img.icons8.com/ios/100/000000/step-over.png" class= "center size30x30"/></button>
             <button id="StepParentButton" title="Step Parent">Par</button>
             <button id="StepOutButton" title="Step Out"><img src="https://img.icons8.com/ios/100/000000/step-out.png" class= "center size30x30"/></button>
         </div>
-        <div id = "debug-tabs">
+        <button type="button" class="collapsible">Debugger data</button>
+        <div id = "debug-tabs" class="collapsible-content">
             <div id="debugger-variables-tab-ui" class="center debugger-tab-ui debugger-tab-active"> Variables </div>
             <div id="debugger-watches-tab-ui" class="center debugger-tab-ui"> Watches </div>
             <div id="debugger-explanations-tab-ui" class="center debugger-tab-ui"> Explanations </div>
@@ -28,6 +30,8 @@
                 <div id="debugger-explanations"></div>
             </div>
         </div>
+        <button type="button" class="collapsible">Breakpoints</button>
+        <button type="button" class="collapsible">Conditional Breakpoints</button>
         <div id="personal-files"></div>
         <div id="debugger-shared-files-ui">
     </div>
