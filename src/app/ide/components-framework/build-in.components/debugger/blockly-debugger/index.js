@@ -37,16 +37,6 @@ export function BlocklyDebugger(plugin) {
     };
 
     this.initiateToolbar = (selector, onReady) => {
-        let data = [{
-            'name': 'Conditional Task 1',
-            'parent': 'Automations for Conditional Tasks',
-            'icon': false
-        },
-        {
-            'name': 'Scheduled Task 4',
-            'parent': 'Automations for Scheduled Tasks',
-            'icon': false
-        }];
         let data2 =[{
             'name': 'Scheduled Task 1',
             'parent': 'Automations for Scheduled Tasks',

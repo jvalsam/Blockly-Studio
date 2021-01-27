@@ -11,11 +11,7 @@ export class Toolbar {
         this._breakpoints = [];
         this._injectHtml(container, callback);
         this._initTrees();
-        /* Trees */
-        this._DataObjects = $.jstree.reference('#debugger-DataObjects');
-        this._personalFilesTree = $.jstree.reference('#personal-files');
         this._debuggerVariablesTree = $.jstree.reference('#debugger-variables');
-        //this._debugWatches = $.jstree.reference('#debugger-watches');
 
         /* HTML IDs */
         //tree root ids
@@ -28,135 +24,85 @@ export class Toolbar {
     }
 
     /* private functions */
-    _initTrees() {
-            $('#debugger-DataObjects').jstree({
-                "plugins": [
-                    "wholerow",
-                    "colorv",
-                    "sort",
-                    "contextmenu",
-                    "unique",
-                    "types"
-                ],
-                'types': {
-                    'smart_object': {},
-                    'other': {}
-                },
-                'core': {
-                    'check_callback': true,
-                    'data': []
-                }
-            });
-
-            //let DataObjects = $.jstree.reference('#debugger-DataObjects');
-
-            $('#personal-files').jstree({
-                "plugins": [
-                    "colorv",
-                    "sort",
-                    "wholerow",
-                    "contextmenu",
-                    "unique",
-                    "types"
-                ],
-                'types': {
-                    'smart_object': {},
-                    'other': {}
-                },
-                'core': {
-                    'check_callback': true,
-                    'data': [
-                        {
-                            'id': 'personal-files',
-                            'parent': '#',
-                            'type': 'other',
-                            'text': 'Personal Files',
-                            'icon': false,
-                            'state': {
-                                'opened': true,
-                            }
-                        },
-                    ]
-                }
-            });
-
-            //let tree_data = this._ExtractTreeData(data);
-
-            $('#debugger-variables').jstree({
-                "plugins": [
-                    "colorv",
-                    "sort",
-                    "wholerow",
-                    "contextmenu",
-                    "unique",
-                    "types"
-                ],
-                'types': {
-                    'smart_object': {},
-                    'other': {}
-                },
-                'core': {
-                    'check_callback': true,
-                    'data': []
-                }
-            });
-
-            $.jstree.defaults.core.animation = false;
-
-
-            function TabSwitcher(tab1, tab2, tab3) {
-                let focused = tab1;
-                this.focusTab = function (tab) {
-                    if (tab != focused) {
-                        if (tab == tab1) {
-                            $('#' + tab1).show();
-                            $('#' + tab2).hide();
-                            $('#' + tab3).hide();
-                        } else if (tab == tab2) {
-                            $('#' + tab1).hide();
-                            $('#' + tab2).show();
-                            $('#' + tab3).hide();
-                        } else {
-                            $('#' + tab1).hide();
-                            $('#' + tab2).hide();
-                            $('#' + tab3).show();
-                        }
-                        focused = tab;
-                    }
-                };
+    _createTree(selector){
+        $(selector).jstree({
+            "plugins": [
+                "colorv",
+                "sort",
+                "wholerow",
+                "contextmenu",
+                "unique",
+                "types"
+            ],
+            'types': {
+                'smart_object': {},
+                'other': {}
+            },
+            'core': {
+                'check_callback': true,
+                'data': []
             }
+        });
 
-            let tabSwitcher = new TabSwitcher('debugger-variables', 'debugger-watches', 'debugger-explanations');
-            $('#debugger-variables-tab-ui').click(function () {
-                tabSwitcher.focusTab('debugger-variables');
-                $('#debugger-watches-tab-ui').removeClass('debugger-tab-active');
-                $('#debugger-explanations-tab-ui').removeClass('debugger-tab-active');
-                $('#debugger-variables-tab-ui').removeClass('debugger-tab-active').addClass('debugger-tab-active');
-            });
-            $('#debugger-watches-tab-ui').click(function () {
-                tabSwitcher.focusTab('debugger-watches');
-                $('#debugger-variables-tab-ui').removeClass('debugger-tab-active');
-                $('#debugger-explanations-tab-ui').removeClass('debugger-tab-active');
-                $('#debugger-watches-tab-ui').removeClass('debugger-tab-active').addClass('debugger-tab-active');
-            });
-            $('#debugger-explanations-tab-ui').click(function () {
-                tabSwitcher.focusTab('debugger-explanations');
-                $('#debugger-variables-tab-ui').removeClass('debugger-tab-active');
-                $('#debugger-watches-tab-ui').removeClass('debugger-tab-active');
-                $('#debugger-explanations-tab-ui').removeClass('debugger-tab-active').addClass('debugger-tab-active');
-            });
+        $.jstree.defaults.core.animation = false;
+    }
 
-            $(".collapsible").each(function(index){
-                $(this).click(function (){
-                    this.classList.toggle("active"); 
-                    let content = this.nextElementSibling; 
-                    if (content.style.display === "inline-block") { 
-                        content.style.display = "none";
-                    } else { 
-                        content.style.display = "inline-block";
-                    } 
-                })
+    _initTabSwitcher(tab1,tab2,tab3) {
+        function TabSwitcher(tab1, tab2, tab3) {
+            let focused = tab1;
+            this.focusTab = function (tab) {
+                if (tab != focused) {
+                    if (tab == tab1) {
+                        console.log(tab1 + " " + tab2 + " " + tab3);
+                        $('#' + tab1).show();
+                        $('#' + tab2).hide();
+                        $('#' + tab3).hide();
+                    } else if (tab == tab2) {
+                        console.log(tab2 + " " + tab);
+                        $('#' + tab1).hide();
+                        $('#' + tab2).show();
+                        $('#' + tab3).hide();
+                    } else {
+                        console.log(tab1 + " " + tab2 + " " + tab3 + " <->" + tab);
+                        $('#' + tab1).hide();
+                        $('#' + tab2).hide();
+                        $('#' + tab3).show();
+                    }
+                    focused = tab;
+                }
+            };
+        }
+        return new TabSwitcher(tab1,tab2,tab3);
+    }
+
+    _initTabSwitcherEvents(tabSwitcher,focusContent,tab1,tab2,tab3,activeClass){
+        $('#'+ tab1).click(function () {
+            tabSwitcher.focusTab(focusContent);
+            $('#'+ tab2).removeClass(activeClass);
+            $('#'+ tab3).removeClass(activeClass);
+            $('#'+ tab1).removeClass(activeClass).addClass(activeClass);
+        });
+    }
+
+    _initTrees() {
+        this._createTree("#debugger-variables");
+
+        const tabSwitcher = this._initTabSwitcher('debugger-variables', 'debugger-watches', 'debugger-explanations');
+        this._initTabSwitcherEvents(tabSwitcher,'debugger-variables','debugger-variables-tab-ui','debugger-explanations-tab-ui','debugger-watches-tab-ui','debugger-tab-active');
+        this._initTabSwitcherEvents(tabSwitcher,'debugger-explanations','debugger-explanations-tab-ui','debugger-variables-tab-ui','debugger-watches-tab-ui','debugger-tab-active');
+        this._initTabSwitcherEvents(tabSwitcher,'debugger-watches','debugger-watches-tab-ui','debugger-variables-tab-ui','debugger-explanations-tab-ui','debugger-tab-active');
+
+        $(".collapsible").each(function(index){
+            $(this).click(function (){
+                this.classList.toggle("active"); 
+                let content = this.nextElementSibling; 
+                if (content.style.display   != "none") { 
+                    content.style.display = "none";
+                } else { 
+                    content.style.display = "inline-block";
+                }
             });
+        });
     }
 
     _injectHtml(container, callback) {
@@ -169,26 +115,32 @@ export class Toolbar {
     }
 
     // Dynamically adds nodes to the debugger-variables. Position can be 'first' or 'last'.
-    _createNode(parent_node, new_node_id, new_node_text, new_node_icon, position) {
+    _createNode(parent_node, new_node_id, new_node_text, new_node_icon,new_node_color, position) {
+        let new_node = { 
+            "text": new_node_text,
+            "id": new_node_id,
+            "icon": new_node_icon,
+            "color":new_node_color 
+        };
         if(parent_node === '#'){
-           $('#debugger-variables').jstree().create_node('#',{ "text": new_node_text, "id": new_node_id, "icon": new_node_icon },position);
+           $('#debugger-variables').jstree().create_node('#' ,new_node ,position);
         } else {
-           $('#debugger-variables').jstree().create_node($(parent_node),{ "text": new_node_text, "id": new_node_id, "icon": new_node_icon },position);
+           $('#debugger-variables').jstree().create_node($(parent_node) ,new_node ,position);
         }
     }
     
-    _createVariable(variable, callback = undefined) {
-        if (variable.parent === undefined) {
+    _createVariable(parent,name,icon,color,callback = undefined) {
+        if (parent === undefined) {
             console.log('parent is undefined in _createVariable');
         } else {
-            let parent_id = variable.parent.replace(/ /g,"_");
-            let variable_id = variable.name.replace(/ /g,"_");
+            let parent_id = parent.replace(/ /g,"_"); // replace spaces with _
+            let variable_id = name.replace(/ /g,"_");
             if(!this._distinctParents[parent_id]) {
                 //if name does not exist in the object then create a parent  
                 this._distinctParents[parent_id] = true; //make name to true in the object 
-                this._createNode('#', parent_id, variable.parent, variable.icon, 'last');
+                this._createNode('#', parent_id, parent, icon, color, 'last');
             }
-            this._createNode(`#${parent_id}`, variable_id, variable.name, variable.icon, 'last');
+            this._createNode(`#${parent_id}`, variable_id, name, icon, color, 'last');
         } 
     }
 
@@ -208,6 +160,7 @@ export class Toolbar {
             this._createVariable(parent,name,icon,color, callback);
         });
     }
+    
     /**
      * Creates variables from an array to the variables tree
      * @param {Object} variables 
@@ -220,6 +173,7 @@ export class Toolbar {
             });
         });
     }
+
     /**
      * Removes variable from Variables tree
      * @param {Object} variable 
@@ -236,15 +190,17 @@ export class Toolbar {
      * @param {icon}
      */
     addBreakpoint(block_id,event_name,color,icon) {
-
+        this._addBreakpoint(block_id,name,color,icon);
     }
+
     /**
      * Adds a breakpoint to the toolbar
      * @param {block_id}
      */
     removeBreakpoint(block_id) {
-
+        this._removeBreakpoint(block_id);
     }
+
     /**
      * Adds a watch to the toolbar from an element
      * @param {element_name}
@@ -253,16 +209,16 @@ export class Toolbar {
      * @param {icon}
      */
     addWatch(block_id,event_name,color,icon) {
-
+        this._addWatch(block_id,event_name,color,icon);
     }
+
     /**
      * Updates watch of element_name
      * @param {element_name}
      * @param {data}
      */
-
     updateWatch(element_name,data) {
-
+        this._updateWatch(element_name.data);
     }
 
     /**
@@ -271,7 +227,7 @@ export class Toolbar {
      * @param {data}
      */
     removeWatch(element_name){
-
+        this._removeWatch(element_name);
     }
 
     /**
@@ -280,30 +236,8 @@ export class Toolbar {
      * @param {data}
      */
     isWatched(element_name){
-
+        this._isWatched(element_name);
     }
 
 }
 
-/* Examples */
-
-export function Toolbar_API_Examples(ui) {
-
-    function makeDummyVars() {
-        data = [{
-            'name': 'Conditional Task 1',
-            'parent': 'Automations for Conditional Tasks',
-            'icon': false
-        },
-        {
-            'name': 'Automations for scheduled Tasks 4',
-            'parent': 'Automations for scheduled Tasks',
-            'icon': false
-        }]
-
-
-
-        makeDummyVars();
-    }
-
-}
