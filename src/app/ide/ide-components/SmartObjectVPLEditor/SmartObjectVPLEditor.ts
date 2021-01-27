@@ -557,30 +557,37 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @ExportedFunction
-  public saveSimulateBehaviorTest(data: any) {
+  public saveDebugTests(data: any) {
     let compData = this.getProjectComponentData(data.projectID);
-    if (!compData.debugTests) compData.debugTests = {};
-    if (!compData.debugTests.simulateBehaviorTests)
-      compData.debugTests.simulateBehaviorTests = [];
-    compData.debugTests.simulateBehaviorTests.push(data);
-    // test = data.debugTest;
+    compData.debugTests = data.debugTests;
     this.saveProjectComponentData(data.projectID, compData);
   }
 
-  @ExportedFunction
-  public saveExpectedValuesCheckingTest(data: any) {
-    let compData = this.getProjectComponentData(data.projectID);
-    if (!compData.debugTests) compData.debugTests = {};
-    if (!compData.debugTests.expectedValuesCheckingTests)
-      compData.debugTests.expectedValuesCheckingTests = [];
-    compData.debugTests.expectedValuesCheckingTests.push({
-      time: data.time,
-      projectId: data.projectId,
-      test: data.debugTest,
-    });
-    // test = data.debugTest;
-    this.saveProjectComponentData(data.projectID, compData);
-  }
+  // @ExportedFunction
+  // public saveSimulateBehaviorTest(data: any) {
+  //   let compData = this.getProjectComponentData(data.projectID);
+  //   if (!compData.debugTests) compData.debugTests = {};
+  //   if (!compData.debugTests.simulateBehaviorTests)
+  //     compData.debugTests.simulateBehaviorTests = [];
+  //   compData.debugTests.simulateBehaviorTests.push(data);
+  //   // test = data.debugTest;
+  //   this.saveProjectComponentData(data.projectID, compData);
+  // }
+
+  // @ExportedFunction
+  // public saveExpectedValuesCheckingTest(data: any) {
+  //   let compData = this.getProjectComponentData(data.projectID);
+  //   if (!compData.debugTests) compData.debugTests = {};
+  //   if (!compData.debugTests.expectedValuesCheckingTests)
+  //     compData.debugTests.expectedValuesCheckingTests = [];
+  //   compData.debugTests.expectedValuesCheckingTests.push({
+  //     time: data.time,
+  //     projectId: data.projectId,
+  //     test: data.debugTest,
+  //   });
+  //   // test = data.debugTest;
+  //   this.saveProjectComponentData(data.projectID, compData);
+  // }
 
   @ExportedFunction
   public deleteDebugTest(data: any) {

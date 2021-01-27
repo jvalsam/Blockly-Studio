@@ -795,6 +795,12 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
   );
   let cancelButton = document.getElementById(idPrefix + "-modal-cancel-button");
 
+  // change modal size to xl
+  document
+    .getElementById(idPrefix + "-modal-dialog")
+    .classList.remove("modal-lg");
+  document.getElementById(idPrefix + "-modal-dialog").classList.add("modal-xl");
+
   //change title
   title.innerHTML = "Tests for " + projectTitle;
 
@@ -837,13 +843,15 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
 
   let simulateBehaviorTests = document.createElement("div");
   simulateBehaviorTests.style.setProperty("margin-top", ".3rem");
-  simulateBehaviorTests.style.setProperty("border", "1px ridge #00000061");
   simulateBehaviorTests.style.setProperty("padding", "1rem");
-  simulateBehaviorTests.style.setProperty("min-height", "14rem");
-  simulateBehaviorTests.style.setProperty("border-radius", "15px");
+  simulateBehaviorTests.style.setProperty("height", "14rem");
+  // simulateBehaviorTests.style.setProperty("display", "flex");
+  simulateBehaviorTests.style.setProperty("background", "#f1f1f1");
+  simulateBehaviorTests.style.setProperty("overflow-y", "auto");
+  simulateBehaviorTests.style.setProperty("border-radius", "10px");
   simulateBehaviorTestsOuter.appendChild(simulateBehaviorTests);
 
-  const RenderTest = function (domSelector, test) {
+  const RenderTest = function (domSelector, test, testType) {
     let a = document.createElement("a");
     a.href = "javascript:void(0)";
     a.classList.add(
@@ -852,6 +860,53 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
       "flex-column",
       "align-items-start"
     );
+    a.style.setProperty("width", "16rem");
+    a.style.setProperty("height", "5rem");
+    a.style.setProperty("margin-top", ".5rem");
+    // a.style.setProperty("margin-right", ".3rem");
+    a.style.setProperty("margin-left", ".5rem");
+    a.style.setProperty("float", "left");
+    a.style.setProperty("background", "#4a81b1e0");
+    a.style.setProperty("border", "none");
+    a.style.setProperty("border-radius", "10px");
+    a.onmouseover = () => {
+      a.style.setProperty("background", "#4a81b1");
+    };
+    a.onmouseout = () => {
+      a.style.setProperty("background", "#4a81b1e0");
+    };
+    a.onclick = () => {
+      // 0 is simulateBehaviorTests, 1 is expectedValueCheckingTest
+      if (testType === 0) {
+        let idPrefixNew = "create-simulate-behavior-test";
+        ClearModalAndUpdateIdPrefix(idPrefix, idPrefixNew);
+        CreateAndRenderCreateTestModal(
+          idPrefixNew,
+          envData,
+          test.debugTest,
+          true,
+          () => {
+            let indexDebugTest = debugTests.simulateBehaviorTests.findIndex(
+              (x) => x.debugTest.id === test.debugTest.id
+            );
+            if (indexDebugTest > -1) {
+              debugTests.simulateBehaviorTests.splice(indexDebugTest, 1);
+            }
+
+            envData.RuntimeEnvironmentRelease.functionRequest(
+              "SmartObjectVPLEditor",
+              "saveDebugTests",
+              [
+                {
+                  debugTests: debugTests,
+                  projectID: envData.execData.projectId,
+                },
+              ]
+            );
+          }
+        );
+      }
+    };
     domSelector.appendChild(a);
 
     let div = document.createElement("div");
@@ -859,13 +914,17 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
     a.appendChild(div);
 
     let h5 = document.createElement("h5");
-    h5.classList.add("mb-1");
-    h5.innerHTML = test.title;
+    h5.classList.add("mb-1", "text-truncate");
+    h5.innerHTML = test.debugTest.title;
+    h5.style.setProperty("padding-right", "2rem");
+    h5.style.setProperty("padding-bottom", "1rem");
+    h5.style.setProperty("color", "rgb(241 241 241)");
     div.appendChild(h5);
 
     let small = document.createElement("small");
     small.classList.add("text-muted");
     small.innerHTML = test.time;
+    small.style.setProperty("color", "rgb(226 226 226)", "important");
     div.appendChild(small);
   };
 
@@ -882,7 +941,7 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
       index,
       simulateBehaviorTest,
     ] of debugTests.simulateBehaviorTests.entries()) {
-      RenderTest(simulateBehaviorTests, simulateBehaviorTest);
+      RenderTest(simulateBehaviorTests, simulateBehaviorTest, 0);
     }
   }
 
@@ -925,13 +984,12 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
 
   let checkingExpectedValuesTests = document.createElement("div");
   checkingExpectedValuesTests.style.setProperty("margin-top", ".3rem");
-  checkingExpectedValuesTests.style.setProperty(
-    "border",
-    "1px ridge #00000061"
-  );
   checkingExpectedValuesTests.style.setProperty("padding", "1rem");
-  checkingExpectedValuesTests.style.setProperty("min-height", "14rem");
-  checkingExpectedValuesTests.style.setProperty("border-radius", "15px");
+  checkingExpectedValuesTests.style.setProperty("height", "14rem");
+  // simulateBehaviorTests.style.setProperty("display", "flex");
+  checkingExpectedValuesTests.style.setProperty("background", "#f1f1f1");
+  checkingExpectedValuesTests.style.setProperty("overflow-y", "auto");
+  checkingExpectedValuesTests.style.setProperty("border-radius", "10px");
   checkingExpectedValuesTestsOuter.appendChild(checkingExpectedValuesTests);
 
   if (
@@ -947,7 +1005,7 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
       index,
       expectedValueCheckingTest,
     ] of debugTests.expectedValuesCheckingTests.entries()) {
-      RenderTest(checkingExpectedValuesTests, expectedValueCheckingTest);
+      RenderTest(checkingExpectedValuesTests, expectedValueCheckingTest, 1);
     }
   }
 
@@ -1013,7 +1071,12 @@ const CreateAndRenderCreateTestModal = function (
   inputTitle.type = "text";
   inputTitle.classList.add("form-control");
   if (editFlag) inputTitle.value = givenDebugTest.title;
-  else inputTitle.value = "Test " + testsCounter;
+  else {
+    if (debugTests.simulateBehaviorTests)
+      inputTitle.value =
+        "Test " + (parseInt(debugTests.simulateBehaviorTests.length) + 1);
+    else inputTitle.value = "Test " + 1;
+  }
   inputTitle.id = "test-title";
   inputTitle.setAttribute("aria-label", "title");
   inputTitle.setAttribute("aria-describedby", "test-title-span");
@@ -1114,14 +1177,21 @@ const CreateAndRenderCreateTestModal = function (
 
     CollectAllChangesForSave(testsTimeSlots);
 
+    if (!debugTests) debugTests = {};
+    if (!debugTests.simulateBehaviorTests)
+      debugTests.simulateBehaviorTests = [];
+    debugTests.simulateBehaviorTests.push({
+      time: simulatedTime.format("HH:mm"),
+      debugTest: debugTest,
+    });
+
     envData.RuntimeEnvironmentRelease.functionRequest(
       "SmartObjectVPLEditor",
-      "saveSimulateBehaviorTest",
+      "saveDebugTests",
       [
         {
+          debugTests: debugTests,
           projectID: envData.execData.projectId,
-          debugTest: debugTest,
-          time: simulatedTime.format("DD/MM/YYYY - HH:mm:ss"),
         },
       ]
     );
@@ -1161,7 +1231,6 @@ const CreateAndRenderCreateTestModal = function (
     //     }
     //   );
 
-    IncreaseTestCounter();
     $("#" + idPrefix + "-modal").modal("hide");
   };
   confirmButton.style.setProperty("display", "inline-block");
@@ -1499,8 +1568,8 @@ const RenderTimeSlot = function (
 
   let changesContainer = document.createElement("div");
   changesContainer.classList.add("create-test-changes-container");
-  changesContainer.style.setProperty("max-height", "23rem");
-  changesContainer.style.setProperty("overflow-y", "auto");
+  // changesContainer.style.setProperty("max-height", "23rem");
+  // changesContainer.style.setProperty("overflow-y", "auto");
   changesContainer.style.setProperty("padding-bottom", "2.5rem");
   changesCol.appendChild(changesContainer);
 
@@ -1731,7 +1800,7 @@ const RenderChangesForCreatingTest = function (
       deviceContainer.classList.add("card");
       deviceContainer.id = device + "create-test-container";
       if (i != 0) deviceContainer.style.setProperty("margin-top", "1rem");
-      deviceContainer.style.setProperty("width", "98%");
+      deviceContainer.style.setProperty("width", "42rem");
       domContainer.appendChild(deviceContainer);
 
       let deviceTitleHeader = document.createElement("div");
@@ -1783,58 +1852,111 @@ const RenderChangesForCreatingTest = function (
       deviceChangesContainer.classList.add("card-body");
       deviceContainer.appendChild(deviceChangesContainer);
 
-      for (const [index, property] of timeSlot.devices[
-        device
-      ].properties.entries()) {
-        RenderPropertyChangeForCreatingTest(
-          deviceChangesContainer,
-          property,
-          device,
-          timeSlot.time + "-" + device + "-properties-" + index + "-value",
-          () => {
-            /* remove property */
-            timeSlot.devices[device].properties.splice(index, 1);
-            if (timeSlot.devices[device].properties.length === 0) {
-              delete timeSlot.devices[device].properties;
-              if (timeSlot.devices[device].actions.length === 0)
-                delete timeSlot.devices[device];
-            }
+      if (timeSlot.devices[device].properties.length > 0) {
+        let propertiesHeaderOuter = document.createElement("div");
+        deviceChangesContainer.appendChild(propertiesHeaderOuter);
 
-            /* clear container of properties */
-            domContainer.innerHTML = "";
+        let propertiesHeader = document.createElement("span");
+        propertiesHeader.classList.add("font-weight-bold");
+        propertiesHeader.style.setProperty("font-size", "large");
+        propertiesHeader.innerHTML = "Properties";
+        propertiesHeaderOuter.appendChild(propertiesHeader);
 
-            /* render again properties */
-            RenderChangesForCreatingTest(domContainer, timeSlot, envData);
-          },
-          envData
+        let propertiesContainer = document.createElement("div");
+        propertiesContainer.style.setProperty("margin-bottom", "1rem");
+        propertiesContainer.style.setProperty("padding-right", "2rem");
+        propertiesContainer.style.setProperty(
+          "background-color",
+          "rgb(247, 247, 247)"
         );
+        // propertiesContainer.style.setProperty("width", "80%");
+        deviceChangesContainer.appendChild(propertiesContainer);
+
+        for (const [index, property] of timeSlot.devices[
+          device
+        ].properties.entries()) {
+          RenderPropertyChangeForCreatingTest(
+            propertiesContainer,
+            property,
+            device,
+            timeSlot.time + "-" + device + "-properties-" + index + "-value",
+            () => {
+              /* remove property */
+              timeSlot.devices[device].properties.splice(index, 1);
+              if (timeSlot.devices[device].properties.length === 0) {
+                delete timeSlot.devices[device].properties;
+                if (timeSlot.devices[device].actions.length === 0)
+                  delete timeSlot.devices[device];
+              }
+
+              /* clear container of properties */
+              domContainer.innerHTML = "";
+
+              /* render again properties */
+              RenderChangesForCreatingTest(domContainer, timeSlot, envData);
+            },
+            envData
+          );
+          if (index != timeSlot.devices[device].properties.length - 1) {
+            let hr = document.createElement("hr");
+            hr.style.setProperty("width", "105%");
+            propertiesContainer.appendChild(hr);
+          }
+        }
       }
-      for (const [index, action] of timeSlot.devices[
-        device
-      ].actions.entries()) {
-        let actionCof;
-        RenderActionChangeForCreatingTest(
-          deviceChangesContainer,
-          action,
-          device,
-          timeSlot.time + "-" + device + "-actions-" + index + "-value",
-          () => {
-            /* remove property */
-            timeSlot.devices[device].actions.splice(index, 1);
-            if (timeSlot.devices[device].actions.length === 0) {
-              delete timeSlot.devices[device].actions;
-              if (timeSlot.devices[device].properties.length === 0)
-                delete timeSlot.devices[device];
-            }
 
-            /* clear container of properties */
-            domContainer.innerHTML = "";
+      if (timeSlot.devices[device].actions.length > 0) {
+        let actionsHeaderOuter = document.createElement("div");
+        deviceChangesContainer.appendChild(actionsHeaderOuter);
 
-            /* render again properties */
-            RenderChangesForCreatingTest(domContainer, timeSlot, envData);
-          },
-          envData
+        let actionsHeader = document.createElement("span");
+        actionsHeader.classList.add("font-weight-bold");
+        actionsHeader.style.setProperty("font-size", "large");
+        actionsHeader.innerHTML = "Actions";
+        actionsHeaderOuter.appendChild(actionsHeader);
+
+        let actionsContainer = document.createElement("div");
+        // actionsContainer.style.setProperty("padding-bottom", "1rem");
+        actionsContainer.style.setProperty("padding-right", "2rem");
+        actionsContainer.style.setProperty(
+          "background-color",
+          "rgb(247, 247, 247)"
         );
+        // actionsContainer.style.setProperty("width", "80%");
+        deviceChangesContainer.appendChild(actionsContainer);
+
+        for (const [index, action] of timeSlot.devices[
+          device
+        ].actions.entries()) {
+          // let actionCof;
+          RenderActionChangeForCreatingTest(
+            actionsContainer,
+            action,
+            device,
+            timeSlot.time + "-" + device + "-actions-" + index + "-value",
+            () => {
+              /* remove property */
+              timeSlot.devices[device].actions.splice(index, 1);
+              if (timeSlot.devices[device].actions.length === 0) {
+                delete timeSlot.devices[device].actions;
+                if (timeSlot.devices[device].properties.length === 0)
+                  delete timeSlot.devices[device];
+              }
+
+              /* clear container of properties */
+              domContainer.innerHTML = "";
+
+              /* render again properties */
+              RenderChangesForCreatingTest(domContainer, timeSlot, envData);
+            },
+            envData
+          );
+          if (index != timeSlot.devices[device].actions.length - 1) {
+            let hr = document.createElement("hr");
+            hr.style.setProperty("width", "105%");
+            actionsContainer.appendChild(hr);
+          }
+        }
       }
     }
     i = i + 1;
@@ -1852,8 +1974,8 @@ const RenderPropertyChangeForCreatingTest = function (
   propertyOuter.style.display = "flex";
   propertyOuter.style.setProperty("margin-top", ".5rem");
   propertyOuter.style.setProperty("border-radius", "6px");
-  propertyOuter.style.setProperty("border", "1px solid rgba(0, 0, 0, 0.17)");
-  propertyOuter.style.setProperty("width", "90%");
+  // propertyOuter.style.setProperty("border", "1px solid rgba(0, 0, 0, 0.17)");
+  // propertyOuter.style.setProperty("width", "90%");
   propertyOuter.style.setProperty("padding-top", "0.4rem");
   propertyOuter.style.setProperty("padding-bottom", "0.4rem");
   propertyOuter.style.setProperty("align-items", "center");
@@ -1861,7 +1983,8 @@ const RenderPropertyChangeForCreatingTest = function (
 
   let spanPropertyView = document.createElement("span");
   spanPropertyView.style.setProperty("width", "85%");
-  spanPropertyView.style.setProperty("margin-left", "2rem");
+  spanPropertyView.style.setProperty("margin-left", "1.5rem");
+  spanPropertyView.style.setProperty("align-items", "center");
   propertyOuter.appendChild(spanPropertyView);
 
   Automatic_IoT_UI_Generator.RenderPropertyForCreatingTest(
@@ -1869,11 +1992,11 @@ const RenderPropertyChangeForCreatingTest = function (
     deviceId,
     property,
     propertyInputID,
-    "col-4"
+    "16.6rem"
   );
 
   let spanDeleteProperty = document.createElement("span");
-  spanDeleteProperty.style.setProperty("margin-left", "1rem");
+  spanDeleteProperty.style.setProperty("margin-left", "1.2rem");
   propertyOuter.appendChild(spanDeleteProperty);
 
   let deleteProperty = document.createElement("button");
@@ -1897,8 +2020,8 @@ const RenderActionChangeForCreatingTest = function (
   let actionOuter = document.createElement("div");
   actionOuter.style.display = "flex";
   actionOuter.style.setProperty("align-items", "center");
-  actionOuter.style.setProperty("border", "1px solid #0000002b");
-  actionOuter.style.setProperty("width", "90%");
+  // actionOuter.style.setProperty("border", "1px solid #0000002b");
+  // actionOuter.style.setProperty("width", "90%");
   actionOuter.style.setProperty("padding-top", ".4rem");
   actionOuter.style.setProperty("padding-bottom", ".4rem");
   actionOuter.style.setProperty("padding-right", "1rem");
@@ -1916,33 +2039,45 @@ const RenderActionChangeForCreatingTest = function (
     spanActionView,
     deviceId,
     action,
-    {
-      onClickDebugConfigurationOfAction: (action, privilege) => {
-        // hide running automations
-        envData.RuntimeEnvironmentRelease.functionRequest(
-          "SmartObjectVPLEditor",
-          "foldRunTimeModal",
-          []
-        );
-
-        // render modal for action configuration
-        let deviceEditorId = devicesOnAutomations.find((x) => x.id === deviceId)
-          .editorId;
-
-        envData.RuntimeEnvironmentRelease.functionRequest(
-          "SmartObjectVPLEditor",
-          "clickDebugConfigurationOfAction",
-          [deviceEditorId, action, privilege]
-        );
-      },
-    },
     actionID,
     devicesOnAutomations.find((x) => x.id === deviceId).properties
   );
 
+  let codePreviewSpan = document.createElement("span");
+  codePreviewSpan.style.setProperty("top", "7px");
+  codePreviewSpan.style.setProperty("right", "4rem");
+  codePreviewSpan.style.setProperty("position", "absolute");
+  actionOuter.appendChild(codePreviewSpan);
+
+  let codePreviewButton = document.createElement("button");
+  codePreviewButton.classList.add("btn", "btn-info", "btn-sm");
+  codePreviewButton.onclick = () => {
+    // hide running automations
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
+      "foldRunTimeModal",
+      []
+    );
+
+    // render modal for action configuration
+    let deviceEditorId = devicesOnAutomations.find((x) => x.id === deviceId)
+      .editorId;
+
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
+      "clickDebugConfigurationOfAction",
+      [deviceEditorId, action, "READ_ONLY"]
+    );
+  };
+  codePreviewSpan.appendChild(codePreviewButton);
+
+  let codePreviewIcon = document.createElement("i");
+  codePreviewIcon.classList.add("fas", "fa-eye");
+  codePreviewButton.appendChild(codePreviewIcon);
+
   let spanDeleteAction = document.createElement("span");
   spanDeleteAction.style.setProperty("top", "7px");
-  spanDeleteAction.style.setProperty("right", "12px");
+  spanDeleteAction.style.setProperty("right", "1rem");
   spanDeleteAction.style.setProperty("position", "absolute");
   actionOuter.appendChild(spanDeleteAction);
 
