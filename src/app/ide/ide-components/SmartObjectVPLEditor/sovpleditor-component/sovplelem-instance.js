@@ -178,9 +178,7 @@ export class SOVPLElemInstance {
     for (const action of actions) {
       this.elemData.editorData.details.actions.push(action);
       this.elemData.editorData.details.blocklyEditorId[action.name] = "";
-      this.elemData.editorData.details.blocklyEditorDataIndex[
-        action.name
-      ] = undefined;
+      this.elemData.editorData.details.blocklyEditorDataIndex[action.name] = -1;
     }
     this.elemData.editorData.details.iotivityResourceID = iotivityResourceID;
 

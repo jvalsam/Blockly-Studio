@@ -1154,8 +1154,7 @@ export const SmartObject = {
         //   ).blocklyEditorDataIndex[dropdown_actions];
         //   if (editorDataIndex) {
         //     let funcCode = runTimeData.execData.project.SmartObjects.find(
-        //       (x) =>
-        //         x.id === block.soData.editorId.split("_ec-smart-object")[0]
+        //       (x) => x.id === block.soData.editorId.split("_ec-smart-object")[0]
         //     ).editorsData[editorDataIndex].generated;
         //     eval(funcCode);
         //     eval(dropdown_actions + "(..." + JSON.stringify(args) + ")");
@@ -1217,7 +1216,7 @@ export const SmartObject = {
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder +=
           ").blocklyEditorDataIndex[" + JSON.stringify(dropdown_actions) + "];";
-        strBuilder += "if (editorDataIndex) {";
+        strBuilder += "if (editorDataIndex !== -1) {";
         strBuilder +=
           "let funcCode = runTimeData.execData.project.SmartObjects.find(";
         strBuilder += "(x) =>";

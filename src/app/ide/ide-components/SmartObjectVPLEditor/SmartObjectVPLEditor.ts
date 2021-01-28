@@ -529,6 +529,7 @@ export class SmartObjectVPLEditor extends Editor {
     let envData = JSON.parse(JSON.stringify(data));
     // if (RuntimeManager.getMode() === "DEBUG") {
     envData.debugTests = this.getDebugTests(data);
+    envData.testsCounter = this.getTestsCounter(data);
     // }
     return envData;
     // } else {
@@ -560,6 +561,7 @@ export class SmartObjectVPLEditor extends Editor {
   public saveDebugTests(data: any) {
     let compData = this.getProjectComponentData(data.projectID);
     compData.debugTests = data.debugTests;
+    compData.debugTests.testsCounter = data.testsCounter;
     this.saveProjectComponentData(data.projectID, compData);
   }
 
@@ -606,6 +608,16 @@ export class SmartObjectVPLEditor extends Editor {
     let compData = this.getProjectComponentData(data.projectID);
     if (compData.debugTests) return compData.debugTests;
     return {};
+  }
+
+  @ExportedFunction
+  public getTestsCounter(data: any) {
+    let compData = this.getProjectComponentData(data.projectID);
+    if (compData.debugTests) {
+      if (compData.debugTests.testsCounter)
+        return compData.debugTests.testsCounter;
+    }
+    return 1;
   }
 
   @ExportedFunction

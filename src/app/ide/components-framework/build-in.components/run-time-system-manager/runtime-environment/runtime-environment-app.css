@@ -144,12 +144,12 @@ body {
 
 .log-bubble-time {
   float: right;
+  font-size: 12px;
 }
 
 .log-bubble-text {
   padding: 0.4rem 0rem 0.4rem 0rem;
-  margin-left: 2.6rem;
-  margin-top: 1.1rem;
+  margin-top: 1.6rem;
 }
 
 /* Smart Devices Preview */

@@ -2,7 +2,7 @@ let calendar,
   organizer,
   calendarData = {},
   devicesOnAutomations,
-  testsCounter = 1;
+  testsCounter;
 
 const ID = function () {
   // Math.random should be unique because of its seeding algorithm.
@@ -132,6 +132,7 @@ const Initialize = function (selector, runTimeData) {
     },
   });
   InitializeSmartDevicesContainer(selector);
+  CreateBubblesForSimulateBehaviorTests(runTimeData);
 };
 
 /* Start data and functions for calendar - conditional blocks */
@@ -833,7 +834,7 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
     // Update Modal with simulated test info
     let idPrefixNew = "create-simulate-behavior-test";
     ClearModalAndUpdateIdPrefix(idPrefix, idPrefixNew);
-    CreateAndRenderCreateTestModal(idPrefixNew, envData);
+    RenderSimulateBehaviorModal(idPrefixNew, envData);
   };
   simulateBehaviorTestsHeader.appendChild(addSimulateBehaviorTestButton);
 
@@ -880,7 +881,7 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
       if (testType === 0) {
         let idPrefixNew = "create-simulate-behavior-test";
         ClearModalAndUpdateIdPrefix(idPrefix, idPrefixNew);
-        CreateAndRenderCreateTestModal(
+        RenderSimulateBehaviorModal(
           idPrefixNew,
           envData,
           test.debugTest,
@@ -900,6 +901,7 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
                 {
                   debugTests: debugTests,
                   projectID: envData.execData.projectId,
+                  testsCounter: testsCounter,
                 },
               ]
             );
@@ -925,6 +927,7 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
     small.classList.add("text-muted");
     small.innerHTML = test.time;
     small.style.setProperty("color", "rgb(226 226 226)", "important");
+    small.style.setProperty("font-size", "11px");
     div.appendChild(small);
   };
 
@@ -1019,14 +1022,14 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
   RenderModal(idPrefix);
 };
 
-const CreateAndRenderCreateTestModal = function (
+const RenderSimulateBehaviorModal = function (
   idPrefix,
   envData,
   givenDebugTest,
   editFlag,
   onDeleteTest
 ) {
-  // CreateModal(idPrefix);
+  if (!document.getElementById(idPrefix + "-modal")) CreateModal(idPrefix);
 
   let title = document.getElementById(idPrefix + "-modal-title");
   let body = document.getElementById(idPrefix + "-modal-body");
@@ -1071,12 +1074,8 @@ const CreateAndRenderCreateTestModal = function (
   inputTitle.type = "text";
   inputTitle.classList.add("form-control");
   if (editFlag) inputTitle.value = givenDebugTest.title;
-  else {
-    if (debugTests.simulateBehaviorTests)
-      inputTitle.value =
-        "Test " + (parseInt(debugTests.simulateBehaviorTests.length) + 1);
-    else inputTitle.value = "Test " + 1;
-  }
+  else inputTitle.value = "Test " + testsCounter;
+
   inputTitle.id = "test-title";
   inputTitle.setAttribute("aria-label", "title");
   inputTitle.setAttribute("aria-describedby", "test-title-span");
@@ -1168,22 +1167,28 @@ const CreateAndRenderCreateTestModal = function (
     let title = document.getElementById("test-title").value;
     let color = document.getElementById("test-color").value;
 
-    let debugTest = {
-      id: "create-test-" + testsCounter,
-      title: title,
-      color: color,
-      testsTimeSlots: testsTimeSlots,
-    };
+    CollectAllChangesForSimulateBehaviorTest(testsTimeSlots);
 
-    CollectAllChangesForSave(testsTimeSlots);
+    let debugTest;
+    if (!editFlag) {
+      debugTest = {
+        id: ID(),
+        title: title,
+        color: color,
+        testsTimeSlots: testsTimeSlots,
+      };
 
-    if (!debugTests) debugTests = {};
-    if (!debugTests.simulateBehaviorTests)
-      debugTests.simulateBehaviorTests = [];
-    debugTests.simulateBehaviorTests.push({
-      time: simulatedTime.format("HH:mm"),
-      debugTest: debugTest,
-    });
+      if (!debugTests) debugTests = {};
+      if (!debugTests.simulateBehaviorTests)
+        debugTests.simulateBehaviorTests = [];
+
+      debugTests.simulateBehaviorTests.push({
+        time: simulatedTime.format("HH:mm:ss, DD/MM"),
+        debugTest: debugTest,
+      });
+    }
+
+    IncreaseTestCounter();
 
     envData.RuntimeEnvironmentRelease.functionRequest(
       "SmartObjectVPLEditor",
@@ -1192,9 +1197,14 @@ const CreateAndRenderCreateTestModal = function (
         {
           debugTests: debugTests,
           projectID: envData.execData.projectId,
+          testsCounter: testsCounter,
         },
       ]
     );
+
+    // clear tests control panel
+    document.getElementById("simulated-actions-body").innerHTML = "";
+    CreateBubblesForSimulateBehaviorTests(envData);
 
     // if (editFlag)
     //   UpdateBubbleForTest(
@@ -1210,7 +1220,7 @@ const CreateAndRenderCreateTestModal = function (
     //     color,
     //     testsTimeSlots,
     //     () => {
-    //       CreateAndRenderCreateTestModal(
+    //       RenderSimulateBehaviorModal(
     //         idPrefix,
     //         envData,
     //         debugTest,
@@ -1231,6 +1241,13 @@ const CreateAndRenderCreateTestModal = function (
     //     }
     //   );
 
+    // Clear arrayIntervals of that test
+    if (editFlag) {
+      ClearIntervalFuncsForATest(givenDebugTest.id);
+      ExecuteSimulateBehaviorTest(givenDebugTest, envData, true);
+    } else {
+      ExecuteSimulateBehaviorTest(debugTest, envData, false);
+    }
     $("#" + idPrefix + "-modal").modal("hide");
   };
   confirmButton.style.setProperty("display", "inline-block");
@@ -1240,7 +1257,7 @@ const CreateAndRenderCreateTestModal = function (
   RenderModal(idPrefix);
 };
 
-const CollectAllChangesForSave = function (testTimeSlots) {
+const CollectAllChangesForSimulateBehaviorTest = function (testTimeSlots) {
   for (const [timeSlotIndex, timeSlot] of testTimeSlots.entries()) {
     for (const deviceId in timeSlot.devices) {
       // let deviceIndex = Object.keys(timeSlot.devices).indexOf(deviceId);
@@ -1250,6 +1267,7 @@ const CollectAllChangesForSave = function (testTimeSlots) {
         property.value = document.getElementById(
           timeSlot.time + "-" + deviceId + "-properties-" + propIndex + "-value"
         ).value;
+        property.isExecuted = false;
       }
       for (let [actionIndex, action] of timeSlot.devices[
         deviceId
@@ -1266,6 +1284,7 @@ const CollectAllChangesForSave = function (testTimeSlots) {
               parameter.name
           ).value;
         }
+        action.isExecuted = false;
       }
     }
   }
@@ -1574,6 +1593,8 @@ const RenderTimeSlot = function (
   changesCol.appendChild(changesContainer);
 
   let addChangeOuterDiv = document.createElement("div");
+  addChangeOuterDiv.style.setProperty("position", "absolute");
+  addChangeOuterDiv.style.setProperty("bottom", "0");
   changesCol.appendChild(addChangeOuterDiv);
 
   let addChange = document.createElement("a");
@@ -1589,6 +1610,10 @@ const RenderTimeSlot = function (
 
         addChangeOuterDiv.style.removeProperty("width");
         // addChangeOuterDiv.style.setProperty("position", "absolute");
+        if (!timeSlot.devices) {
+          timeSlot.devices = {};
+        }
+
         if (!timeSlot.devices[deviceId]) {
           timeSlot.devices[deviceId] = { properties: [], actions: [] };
         }
@@ -1619,7 +1644,17 @@ const RenderTimeSlot = function (
   addChange.style.setProperty("width", "fit-content");
   addChangeOuterDiv.appendChild(addChange);
 
-  if (Object.entries(timeSlot.devices).length === 0) {
+  let isEmpty = true;
+  for (const device in timeSlot.devices) {
+    if (
+      timeSlot.devices[device].properties.length != 0 ||
+      timeSlot.devices[device].actions.length != 0
+    ) {
+      isEmpty = false;
+    }
+  }
+
+  if (isEmpty) {
     let message = document.createElement("div");
     message.style.setProperty("font-size", "large");
     message.style.setProperty("font-style", "italic");
@@ -1883,11 +1918,11 @@ const RenderChangesForCreatingTest = function (
             () => {
               /* remove property */
               timeSlot.devices[device].properties.splice(index, 1);
-              if (timeSlot.devices[device].properties.length === 0) {
-                delete timeSlot.devices[device].properties;
-                if (timeSlot.devices[device].actions.length === 0)
-                  delete timeSlot.devices[device];
-              }
+              // if (timeSlot.devices[device].properties.length === 0) {
+              //   delete timeSlot.devices[device].properties;
+              //   if (timeSlot.devices[device].actions.length === 0)
+              //     delete timeSlot.devices[device];
+              // }
 
               /* clear container of properties */
               domContainer.innerHTML = "";
@@ -1937,11 +1972,11 @@ const RenderChangesForCreatingTest = function (
             () => {
               /* remove property */
               timeSlot.devices[device].actions.splice(index, 1);
-              if (timeSlot.devices[device].actions.length === 0) {
-                delete timeSlot.devices[device].actions;
-                if (timeSlot.devices[device].properties.length === 0)
-                  delete timeSlot.devices[device];
-              }
+              // if (timeSlot.devices[device].actions.length === 0) {
+              //   delete timeSlot.devices[device].actions;
+              //   if (timeSlot.devices[device].properties.length === 0)
+              //     delete timeSlot.devices[device];
+              // }
 
               /* clear container of properties */
               domContainer.innerHTML = "";
@@ -2208,82 +2243,729 @@ const CreateBubbleForTests = function (
   // UpdateScroll("logger-body");
 };
 
-const UpdateBubbleForTest = function (bubbleId, envData, debugTest, idPrefix) {
-  let bubble = document.getElementById(bubbleId);
-  bubble.style.backgroundColor = debugTest.color;
-  bubble.onclick = () => {
-    CreateAndRenderCreateTestModal(idPrefix, envData, debugTest, true);
+const RenderPropertiesChangesOnTestsControlPanel = function (
+  simulateBehaviorTest,
+  property,
+  propertyIndex,
+  testTimeSlot,
+  deviceName,
+  envData,
+  onDeleteTest
+) {
+  let logBubble = document.createElement("div");
+  logBubble.classList.add("log-bubble");
+  logBubble.id =
+    "simulate-test-" +
+    simulateBehaviorTest.debugTest.id +
+    "-" +
+    testTimeSlot.time +
+    "-property-" +
+    propertyIndex;
+  logBubble.style.backgroundColor = simulateBehaviorTest.debugTest.color;
+  logBubble.onclick = () => {
+    RenderSimulateBehaviorModal(
+      "create-simulate-behavior-test",
+      envData,
+      simulateBehaviorTest.debugTest,
+      true,
+      onDeleteTest
+    );
   };
+  document.getElementById("simulated-actions-body").appendChild(logBubble);
 
-  let bubbleName = document.getElementById(bubbleId + "-title");
-  bubbleName.innerHTML = debugTest.title;
+  let logBubbleInfo = document.createElement("div");
+  logBubbleInfo.classList.add("log-bubble-info");
+  logBubbleInfo.style.setProperty("width", "100%");
+  logBubbleInfo.style.setProperty("height", "1rem");
+  logBubble.appendChild(logBubbleInfo);
 
-  // let strBuilder = BuildTextForBubble(debugTest.testsTimeSlots);
+  let logBubbleIconSpan = document.createElement("span");
+  logBubbleIconSpan.style.setProperty("float", "left");
+  logBubbleIconSpan.style.setProperty("color", "#565656");
+  logBubbleIconSpan.style.setProperty("font-size", "19px");
+  logBubbleInfo.appendChild(logBubbleIconSpan);
 
-  let bubbleText = document.getElementById(bubbleId + "-text");
-  // bubbleText.innerHTML = strBuilder;
-  bubbleText.innerHTML = "";
+  let logBubbleIcon = document.createElement("i");
+  logBubbleIcon.classList.add("log-bubble-icon", "fas", "fa-file");
+  // logBubbleIcon.style.setProperty("color", "rgb(23 162 184)");
+  logBubbleIconSpan.appendChild(logBubbleIcon);
 
-  BuildTextForBubble(bubbleText, debugTest.testsTimeSlots);
+  let logBubbleName = document.createElement("span");
+  logBubbleName.classList.add("log-bubble-name");
+  logBubbleName.innerHTML = simulateBehaviorTest.debugTest.title;
+  logBubbleInfo.appendChild(logBubbleName);
+
+  let logBubbleTime = document.createElement("span");
+  logBubbleTime.id =
+    "simulate-test-" +
+    simulateBehaviorTest.debugTest.id +
+    "-" +
+    testTimeSlot.time +
+    "-property-" +
+    propertyIndex +
+    "-time";
+  logBubbleTime.classList.add("log-bubble-time");
+  if (property.isExecuted) {
+    logBubbleTime.innerHTML = property.startTime + " - " + property.endTime;
+
+    let icon = document.createElement("img");
+    icon.width = 20;
+    icon.height = 20;
+    icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+    icon.style.setProperty("float", "right");
+    icon.style.setProperty("margin-left", ".3rem");
+    logBubbleTime.appendChild(icon);
+  }
+  logBubbleInfo.appendChild(logBubbleTime);
+
+  let text =
+    "Change <b>" +
+    property.name +
+    "</b> value of <b>" +
+    deviceName +
+    "</b> after " +
+    testTimeSlot.time +
+    " seconds" +
+    ", new value = <b>" +
+    property.value +
+    "</b>";
+
+  let logBubbleText = document.createElement("div");
+  logBubbleText.id =
+    "simulate-test-" +
+    simulateBehaviorTest.debugTest.id +
+    "-" +
+    testTimeSlot.time +
+    "-property-" +
+    propertyIndex +
+    "-text";
+  logBubbleText.classList.add("log-bubble-text-tests");
+  logBubbleText.style.setProperty("margin-top", ".5rem");
+  logBubbleText.innerHTML = text;
+  logBubble.appendChild(logBubbleText);
 };
 
-const BuildTextForBubble = function (domElement, testTimeSlots) {
-  // let strBuilder = "";
-  let ul = document.createElement("ul");
-  if (
-    testTimeSlots.length === 0 ||
-    (testTimeSlots.length === 1 &&
-      Object.keys(testTimeSlots[0].devices).length === 0)
-  ) {
-    ul.innerHTML = "There are not any changes";
-    // strBuilder += "There are not any changes";
-  }
-  for (const timeSlot of testTimeSlots) {
-    let li = document.createElement("li");
-    if (Object.keys(timeSlot.devices).length > 0) {
-      // strBuilder +=
-      //   "<b>-</b>After <b>" + timeSlot.time + " seconds:</b> <br>Changes on";
+const RenderActionsChangesOnTestsControlPanel = function (
+  simulateBehaviorTest,
+  action,
+  actionIndex,
+  testTimeSlot,
+  deviceName,
+  envData,
+  onDeleteTest
+) {
+  let logBubble = document.createElement("div");
+  logBubble.classList.add("log-bubble");
+  logBubble.id =
+    "simulate-test-" +
+    simulateBehaviorTest.debugTest.id +
+    "-" +
+    testTimeSlot.time +
+    "-action-" +
+    actionIndex;
+  logBubble.style.backgroundColor = simulateBehaviorTest.debugTest.color;
+  logBubble.onclick = () => {
+    RenderSimulateBehaviorModal(
+      "create-simulate-behavior-test",
+      envData,
+      simulateBehaviorTest.debugTest,
+      true,
+      onDeleteTest
+    );
+  };
+  document.getElementById("simulated-actions-body").appendChild(logBubble);
 
-      li.innerHTML =
-        "After <b>" + timeSlot.time + " seconds:</b> <br>Changes on";
-    } else continue;
-    // strBuilder += "Time " + timeSlot.time + ":<br>";
-    for (const deviceId in timeSlot.devices) {
-      let deviceIndex = Object.keys(timeSlot.devices).indexOf(deviceId);
-      // strBuilder +=
-      //   " <b>" +
-      //   devicesOnAutomations.find((x) => x.id === deviceId).name +
-      //   "</b>";
-      li.innerHTML +=
-        " <b>" +
-        devicesOnAutomations.find((x) => x.id === deviceId).name +
-        "</b>";
-      // for (const [index, property] of timeSlot.devices[
-      //   deviceId
-      // ].properties.entries()) {
-      //   strBuilder += " Changes value of <b>" + property.name + "</b>";
-      //   if (index != timeSlot.devices[deviceId].properties.length - 1) {
-      //     strBuilder += ", ";
-      //   }
-      // }
-      // for (const [index, action] of timeSlot.devices[
-      //   deviceId
-      // ].actions.entries()) {
-      //   strBuilder += " Triggers <b>" + action.name + "</b>";
-      //   if (index != timeSlot.devices[deviceId].actions.length - 1) {
-      //     strBuilder += ", ";
-      //   }
-      // }
-      if (deviceIndex != Object.keys(timeSlot.devices).length - 1) {
-        // strBuilder += ", ";
-        li.innerHTML += ", ";
+  let logBubbleInfo = document.createElement("div");
+  logBubbleInfo.classList.add("log-bubble-info");
+  logBubbleInfo.style.setProperty("width", "100%");
+  logBubbleInfo.style.setProperty("height", "1rem");
+  logBubble.appendChild(logBubbleInfo);
+
+  let logBubbleIconSpan = document.createElement("span");
+  logBubbleIconSpan.style.setProperty("float", "left");
+  logBubbleIconSpan.style.setProperty("color", "#565656");
+  logBubbleIconSpan.style.setProperty("font-size", "19px");
+  logBubbleInfo.appendChild(logBubbleIconSpan);
+
+  let logBubbleIcon = document.createElement("i");
+  logBubbleIcon.classList.add("log-bubble-icon", "fas", "fa-file");
+  logBubbleIconSpan.appendChild(logBubbleIcon);
+
+  let logBubbleName = document.createElement("span");
+  logBubbleName.classList.add("log-bubble-name");
+
+  logBubbleName.innerHTML = simulateBehaviorTest.debugTest.title;
+  logBubbleInfo.appendChild(logBubbleName);
+
+  let logBubbleTime = document.createElement("span");
+  logBubbleTime.classList.add("log-bubble-time");
+  logBubbleTime.id =
+    "simulate-test-" +
+    simulateBehaviorTest.debugTest.id +
+    "-" +
+    testTimeSlot.time +
+    "-action-" +
+    actionIndex +
+    "-time";
+  if (action.isExecuted) {
+    logBubbleTime.innerHTML = action.startTime + " - " + action.endTime;
+
+    let icon = document.createElement("img");
+    icon.width = 20;
+    icon.height = 20;
+    icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+    icon.style.setProperty("float", "right");
+    icon.style.setProperty("margin-left", ".3rem");
+    logBubbleTime.appendChild(icon);
+  }
+  logBubbleInfo.appendChild(logBubbleTime);
+
+  let text =
+    "Execute <b>" +
+    action.name +
+    "</b> of <b>" +
+    deviceName +
+    "</b> after " +
+    testTimeSlot.time +
+    " seconds";
+
+  if (action.parameters.length > 0) {
+    text += " with parameters: ";
+    for (const [index, parameter] of action.parameters.entries()) {
+      text += parameter.name + " = <b>" + parameter.value + "</b>";
+      if (index !== action.parameters.length - 1) {
+        text += ", ";
       }
     }
-    // strBuilder += "<br>";
-    ul.appendChild(li);
   }
-  domElement.appendChild(ul);
-  // return strBuilder;
+
+  let logBubbleText = document.createElement("div");
+  logBubbleText.classList.add("log-bubble-text-tests");
+  logBubbleText.style.setProperty("margin-top", ".5rem");
+  logBubbleText.id =
+    "simulate-test-" +
+    simulateBehaviorTest.debugTest.id +
+    "-" +
+    testTimeSlot.time +
+    "-action-" +
+    actionIndex +
+    "-text";
+  logBubbleText.innerHTML = text;
+  logBubble.appendChild(logBubbleText);
+};
+
+const CreateBubblesForSimulateBehaviorTests = function (runTimeData) {
+  if (debugTests.simulateBehaviorTests)
+    for (const simulateBehaviorTest of debugTests.simulateBehaviorTests) {
+      for (const testTimeSlot of simulateBehaviorTest.debugTest
+        .testsTimeSlots) {
+        for (const device in testTimeSlot.devices) {
+          let deviceName = devicesOnAutomations.find((x) => x.id === device)
+            .name;
+          // properties
+          for (const [propertyIndex, property] of testTimeSlot.devices[
+            device
+          ].properties.entries()) {
+            RenderPropertiesChangesOnTestsControlPanel(
+              simulateBehaviorTest,
+              property,
+              propertyIndex,
+              testTimeSlot,
+              deviceName,
+              runTimeData,
+              () => {
+                let indexDebugTest = debugTests.simulateBehaviorTests.findIndex(
+                  (x) => x.debugTest.id === simulateBehaviorTest.debugTest.id
+                );
+
+                if (indexDebugTest > -1) {
+                  debugTests.simulateBehaviorTests.splice(indexDebugTest, 1);
+                }
+
+                runTimeData.RuntimeEnvironmentRelease.functionRequest(
+                  "SmartObjectVPLEditor",
+                  "saveDebugTests",
+                  [
+                    {
+                      debugTests: debugTests,
+                      projectID: runTimeData.execData.projectId,
+                      testsCounter: testsCounter,
+                    },
+                  ]
+                );
+                document.getElementById("simulated-actions-body").innerHTML =
+                  "";
+                CreateBubblesForSimulateBehaviorTests(runTimeData);
+              }
+            );
+          }
+
+          // actions
+          for (const [actionIndex, action] of testTimeSlot.devices[
+            device
+          ].actions.entries()) {
+            RenderActionsChangesOnTestsControlPanel(
+              simulateBehaviorTest,
+              action,
+              actionIndex,
+              testTimeSlot,
+              deviceName,
+              runTimeData,
+              () => {
+                let indexDebugTest = debugTests.simulateBehaviorTests.findIndex(
+                  (x) => x.debugTest.id === simulateBehaviorTest.debugTest.id
+                );
+
+                if (indexDebugTest > -1) {
+                  debugTests.simulateBehaviorTests.splice(indexDebugTest, 1);
+                }
+
+                runTimeData.RuntimeEnvironmentRelease.functionRequest(
+                  "SmartObjectVPLEditor",
+                  "saveDebugTests",
+                  [
+                    {
+                      debugTests: debugTests,
+                      projectID: runTimeData.execData.projectId,
+                      testsCounter: testsCounter,
+                    },
+                  ]
+                );
+                document.getElementById("simulated-actions-body").innerHTML =
+                  "";
+                CreateBubblesForSimulateBehaviorTests(runTimeData);
+              }
+            );
+          }
+        }
+      }
+    }
+};
+
+let simulateBehaviorTestsArrayForIntervalFunc = [];
+
+const ClearIntervalFuncsForATest = function (testId) {
+  let test = simulateBehaviorTestsArrayForIntervalFunc.find(
+    (x) => x.testId === testId
+  );
+  for (const intervalFunc of test.intervalFuncs) {
+    clearInterval(intervalFunc);
+  }
+  test.intervalFuncs = [];
+};
+
+const ExecuteSimulateBehaviorTests = function (runTimeData) {
+  if (debugTests.simulateBehaviorTests)
+    for (const simulateBehaviorTest of debugTests.simulateBehaviorTests) {
+      let testIndex =
+        simulateBehaviorTestsArrayForIntervalFunc.push({
+          testId: simulateBehaviorTest.debugTest.id,
+          intervalFuncs: [],
+        }) - 1;
+      for (const testTimeSlot of simulateBehaviorTest.debugTest
+        .testsTimeSlots) {
+        for (const device in testTimeSlot.devices) {
+          let futureDate = dayjs(simulatedTime).second(
+            simulatedTime.second() + parseInt(testTimeSlot.time)
+          );
+          for (let [propertyIndex, property] of testTimeSlot.devices[
+            device
+          ].properties.entries()) {
+            let bubbleTime = document.getElementById(
+              "simulate-test-" +
+                simulateBehaviorTest.debugTest.id +
+                "-" +
+                testTimeSlot.time +
+                "-property-" +
+                propertyIndex +
+                "-time"
+            );
+
+            property.startTime = simulatedTime.format("HH:mm:ss");
+            bubbleTime.innerHTML = property.startTime;
+
+            let intervalFuncIndex =
+              simulateBehaviorTestsArrayForIntervalFunc[
+                testIndex
+              ].intervalFuncs.push(
+                setInterval(() => {
+                  if (simulatedTime.diff(futureDate) > 0) {
+                    ChangeValueOfProperty(device, property);
+
+                    property.endTime = simulatedTime.format("HH:mm:ss");
+                    bubbleTime.innerHTML += " - " + property.endTime;
+
+                    let icon = document.createElement("img");
+                    icon.width = 20;
+                    icon.height = 20;
+                    icon.src =
+                      "https://img.icons8.com/flat_round/2x/checkmark.png";
+                    icon.style.setProperty("float", "right");
+                    icon.style.setProperty("margin-left", ".3rem");
+                    bubbleTime.appendChild(icon);
+
+                    clearInterval(
+                      simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                        .intervalFuncs[intervalFuncIndex]
+                    );
+                  }
+                }, 100)
+              ) - 1;
+
+            AddTimeInSimulatedTable(
+              futureDate,
+              simulateBehaviorTest.debugTest.id +
+                "-" +
+                testTimeSlot.time +
+                "-" +
+                propertyIndex,
+              () => {
+                ChangeValueOfProperty(device, property);
+
+                property.endTime = simulatedTime.format("HH:mm:ss");
+                bubbleTime.innerHTML += " - " + property.endTime;
+
+                let icon = document.createElement("img");
+                icon.width = 20;
+                icon.height = 20;
+                icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+                icon.style.setProperty("float", "right");
+                icon.style.setProperty("margin-left", ".3rem");
+                bubbleTime.appendChild(icon);
+
+                clearInterval(
+                  simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                    .intervalFuncs[intervalFuncIndex]
+                );
+              },
+              simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                .intervalFuncs[intervalFuncIndex]
+            );
+          }
+
+          // actions
+          for (let [actionIndex, action] of testTimeSlot.devices[
+            device
+          ].actions.entries()) {
+            let bubbleTime = document.getElementById(
+              "simulate-test-" +
+                simulateBehaviorTest.debugTest.id +
+                "-" +
+                testTimeSlot.time +
+                "-action-" +
+                actionIndex +
+                "-time"
+            );
+
+            action.startTime = simulatedTime.format("HH:mm:ss");
+            bubbleTime.innerHTML = action.startTime;
+
+            let intervalFuncIndex =
+              simulateBehaviorTestsArrayForIntervalFunc[
+                testIndex
+              ].intervalFuncs.push(
+                setInterval(() => {
+                  if (simulatedTime.diff(futureDate) > 0) {
+                    ExecuteActionForTest(device, action, runTimeData);
+
+                    action.endTime = simulatedTime.format("HH:mm:ss");
+                    bubbleTime.innerHTML += " - " + action.endTime;
+
+                    let icon = document.createElement("img");
+                    icon.width = 20;
+                    icon.height = 20;
+                    icon.src =
+                      "https://img.icons8.com/flat_round/2x/checkmark.png";
+                    icon.style.setProperty("float", "right");
+                    icon.style.setProperty("margin-left", ".3rem");
+                    bubbleTime.appendChild(icon);
+
+                    clearInterval(
+                      simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                        .intervalFuncs[intervalFuncIndex]
+                    );
+                  }
+                }, 100)
+              ) - 1;
+
+            AddTimeInSimulatedTable(
+              futureDate,
+              simulateBehaviorTest.debugTest.id +
+                "-" +
+                testTimeSlot.time +
+                "-" +
+                actionIndex,
+              () => {
+                ExecuteActionForTest(device, action, runTimeData);
+
+                action.endTime = simulatedTime.format("HH:mm:ss");
+                bubbleTime.innerHTML += " - " + action.endTime;
+
+                let icon = document.createElement("img");
+                icon.width = 20;
+                icon.height = 20;
+                icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+                icon.style.setProperty("float", "right");
+                icon.style.setProperty("margin-left", ".3rem");
+                bubbleTime.appendChild(icon);
+
+                clearInterval(
+                  simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                    .intervalFuncs[intervalFuncIndex]
+                );
+              },
+              simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                .intervalFuncs[intervalFuncIndex]
+            );
+          }
+        }
+      }
+    }
+};
+
+const ExecuteSimulateBehaviorTest = function (
+  simulateBehaviorTest,
+  runTimeData,
+  isEdit
+) {
+  let testIndex;
+  if (isEdit)
+    testIndex = simulateBehaviorTestsArrayForIntervalFunc.findIndex(
+      (x) => x.testId === simulateBehaviorTest.id
+    );
+  else
+    testIndex =
+      simulateBehaviorTestsArrayForIntervalFunc.push({
+        testId: simulateBehaviorTest.id,
+        intervalFuncs: [],
+      }) - 1;
+  for (const testTimeSlot of simulateBehaviorTest.testsTimeSlots) {
+    for (const device in testTimeSlot.devices) {
+      let futureDate = dayjs(simulatedTime).second(
+        simulatedTime.second() + parseInt(testTimeSlot.time)
+      );
+      for (let [propertyIndex, property] of testTimeSlot.devices[
+        device
+      ].properties.entries()) {
+        let bubbleTime = document.getElementById(
+          "simulate-test-" +
+            simulateBehaviorTest.id +
+            "-" +
+            testTimeSlot.time +
+            "-property-" +
+            propertyIndex +
+            "-time"
+        );
+
+        property.startTime = simulatedTime.format("HH:mm:ss");
+        bubbleTime.innerHTML = property.startTime;
+
+        let intervalFuncIndex =
+          simulateBehaviorTestsArrayForIntervalFunc[
+            testIndex
+          ].intervalFuncs.push(
+            setInterval(() => {
+              if (simulatedTime.diff(futureDate) > 0) {
+                ChangeValueOfProperty(device, property);
+
+                property.endTime = simulatedTime.format("HH:mm:ss");
+                bubbleTime.innerHTML += " - " + property.endTime;
+
+                let icon = document.createElement("img");
+                icon.width = 20;
+                icon.height = 20;
+                icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+                icon.style.setProperty("float", "right");
+                icon.style.setProperty("margin-left", ".3rem");
+                bubbleTime.appendChild(icon);
+
+                clearInterval(
+                  simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                    .intervalFuncs[intervalFuncIndex]
+                );
+              }
+            }, 100)
+          ) - 1;
+
+        AddTimeInSimulatedTable(
+          futureDate,
+          simulateBehaviorTest.id +
+            "-" +
+            testTimeSlot.time +
+            "-" +
+            propertyIndex,
+          () => {
+            ChangeValueOfProperty(device, property);
+
+            property.endTime = simulatedTime.format("HH:mm:ss");
+            bubbleTime.innerHTML += " - " + property.endTime;
+
+            let icon = document.createElement("img");
+            icon.width = 20;
+            icon.height = 20;
+            icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+            icon.style.setProperty("float", "right");
+            icon.style.setProperty("margin-left", ".3rem");
+            bubbleTime.appendChild(icon);
+
+            clearInterval(
+              simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                .intervalFuncs[intervalFuncIndex]
+            );
+          },
+          simulateBehaviorTestsArrayForIntervalFunc[testIndex].intervalFuncs[
+            intervalFuncIndex
+          ]
+        );
+      }
+
+      // actions
+      for (let [actionIndex, action] of testTimeSlot.devices[
+        device
+      ].actions.entries()) {
+        let bubbleTime = document.getElementById(
+          "simulate-test-" +
+            simulateBehaviorTest.id +
+            "-" +
+            testTimeSlot.time +
+            "-action-" +
+            actionIndex +
+            "-time"
+        );
+
+        action.startTime = simulatedTime.format("HH:mm:ss");
+        bubbleTime.innerHTML = action.startTime;
+
+        let intervalFuncIndex =
+          simulateBehaviorTestsArrayForIntervalFunc[
+            testIndex
+          ].intervalFuncs.push(
+            setInterval(() => {
+              if (simulatedTime.diff(futureDate) > 0) {
+                ExecuteActionForTest(device, action, runTimeData);
+
+                action.endTime = simulatedTime.format("HH:mm:ss");
+                bubbleTime.innerHTML += " - " + action.endTime;
+
+                let icon = document.createElement("img");
+                icon.width = 20;
+                icon.height = 20;
+                icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+                icon.style.setProperty("float", "right");
+                icon.style.setProperty("margin-left", ".3rem");
+                bubbleTime.appendChild(icon);
+
+                clearInterval(
+                  simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                    .intervalFuncs[intervalFuncIndex]
+                );
+              }
+            }, 100)
+          ) - 1;
+
+        AddTimeInSimulatedTable(
+          futureDate,
+          simulateBehaviorTest.id + "-" + testTimeSlot.time + "-" + actionIndex,
+          () => {
+            ExecuteActionForTest(device, action, runTimeData);
+
+            action.endTime = simulatedTime.format("HH:mm:ss");
+            bubbleTime.innerHTML += " - " + action.endTime;
+
+            let icon = document.createElement("img");
+            icon.width = 20;
+            icon.height = 20;
+            icon.src = "https://img.icons8.com/flat_round/2x/checkmark.png";
+            icon.style.setProperty("float", "right");
+            icon.style.setProperty("margin-left", ".3rem");
+            bubbleTime.appendChild(icon);
+
+            clearInterval(
+              simulateBehaviorTestsArrayForIntervalFunc[testIndex]
+                .intervalFuncs[intervalFuncIndex]
+            );
+          },
+          simulateBehaviorTestsArrayForIntervalFunc[testIndex].intervalFuncs[
+            intervalFuncIndex
+          ]
+        );
+      }
+    }
+  }
+};
+
+const ChangeValueOfProperty = function (deviceId, changeProperty) {
+  let newValue;
+  if (changeProperty.type === "intRange") {
+    let number = parseInt(changeProperty.value);
+    // check for minimum and maximum values
+    if (
+      changeProperty.options.minimum_value &&
+      number < changeProperty.options.minimum_value
+    ) {
+      newValue = changeProperty.options.minimum_value;
+    } else if (
+      changeProperty.options.maximum_value &&
+      number > changeProperty.options.maximum_value
+    ) {
+      newValue = changeProperty.options.maximum_value;
+    } else {
+      newValue = number;
+    }
+  } else if (changeProperty.type === "number") {
+    newValue = parseFloat(changeProperty.value);
+  } else if (changeProperty.type === "boolean") {
+    newValue = changeProperty.value === "true" ? true : false;
+  } else if (
+    changeProperty.type === "string" ||
+    changeProperty.type === "enumerated"
+  ) {
+    newValue = changeProperty.value;
+  }
+
+  let device = devicesOnAutomations.find((x) => x.id === deviceId);
+
+  let deviceProperty = device.properties.find(
+    (y) => y.name === changeProperty.name
+  );
+
+  if (deviceProperty.value !== newValue) {
+    deviceProperty.value = newValue;
+
+    TriggerWhenConditionalsFunctions();
+    RerenderDevice(device, [deviceProperty]);
+  }
+  changeProperty.isExecuted = true;
+};
+
+const ExecuteActionForTest = function (deviceId, action, runTimeData) {
+  let args = [];
+  for (const [parameterIndex, parameter] of action.parameters.entries()) {
+    let newValue;
+    if (parameter.type === "intRange") {
+      newValue = parseInt(parameter.value);
+      // check for minimum and maximum values
+    } else if (parameter.type === "number") {
+      newValue = parseFloat(parameter.value);
+    } else if (parameter.type === "boolean") {
+      newValue = parameter.value === "true" ? true : false;
+    } else if (parameter.type === "string" || parameter.type === "enumerated") {
+      newValue = parameter.value;
+    }
+    args.push(newValue);
+  }
+
+  let device = devicesOnAutomations.find((x) => x.id === deviceId);
+
+  let editorId = device.blocklyEditorId[action.name];
+  let editorDataIndex = device.blocklyEditorDataIndex[action.name];
+  if (editorDataIndex !== -1) {
+    let funcCode = runTimeData.execData.project.SmartObjects.find(
+      (x) => x.id === device.editorId.split("_ec-smart-object")[0]
+    ).editorsData[editorDataIndex].generated;
+    eval(funcCode + ";" + action.name + "(...args);");
+    action.isExecuted = true;
+  }
 };
 /* End functions for creating test */
 
@@ -2612,7 +3294,7 @@ const InitializeSimulatorControls = function ({
   // simulateTestButton.classList.add("btn", "btn-outline-info");
   // simulateTestButton.innerHTML = "Create test";
   // simulateTestButton.onclick = () => {
-  //   CreateAndRenderCreateTestModal("create-test");
+  //   RenderSimulateBehaviorModal("create-test");
   // };
   // simulateTestOuter.appendChild(simulateTestButton);
 };
@@ -2953,12 +3635,13 @@ const InitializeSimulatedHistory = function (runTimeData) {
 
   let loggerBody = document.createElement("div");
   loggerBody.id = "simulated-actions-body";
+  loggerBody.style.setProperty("overflow-y", "auto");
   loggerContainer.appendChild(loggerBody);
 
   let folderTestButton = document.createElement("div");
   folderTestButton.id = "folder-test-button";
   folderTestButton.onclick = () => {
-    // CreateAndRenderCreateTestModal("create-test", envData);
+    // RenderSimulateBehaviorModal("create-test", envData);
     CreateAndRenderTestsModal(runTimeData.execData.title, runTimeData);
   };
   loggerContainer.appendChild(folderTestButton);
@@ -3027,6 +3710,10 @@ export async function StartApplication(runTimeData) {
       runTimeData.execData.project.SmartObjects[0].editorsData[0].generated
         .debugTests;
 
+    testsCounter =
+      runTimeData.execData.project.SmartObjects[0].editorsData[0].generated
+        .testsCounter;
+
     // console.log(runTimeData);
     Initialize(runTimeData.UISelector, runTimeData);
 
@@ -3056,6 +3743,8 @@ export async function StartApplication(runTimeData) {
 
     // conditional tasks
     RunAutomations(runTimeData.execData.project.ConditionalEvents);
+
+    ExecuteSimulateBehaviorTests(runTimeData);
   } catch (e) {
     alert(e);
   }
