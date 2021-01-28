@@ -987,7 +987,7 @@ export let RenderDebugConfigurationOfAction = function (
         editorName: "BlocklyVPL",
         editor: "BlocklyVPL",
         noRenderOnPitemLoading: true,
-        zIndex: 99999999,
+        zIndex: 1060,
       };
     }
 

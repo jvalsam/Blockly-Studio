@@ -137,3 +137,7 @@
 .action-configure-properties-contatainer label {
   margin-bottom: 0rem;
 }
+
+.blocklyDropDownDiv {
+  z-index: 1070;
+}
