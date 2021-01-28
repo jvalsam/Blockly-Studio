@@ -828,23 +828,6 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
   simulateBehaviorTestsHeader.style.setProperty("align-items", "center");
   simulateBehaviorTestsOuter.appendChild(simulateBehaviorTestsHeader);
 
-  let addSimulateBehaviorTestButton = document.createElement("button");
-  addSimulateBehaviorTestButton.classList.add("btn", "btn-sm", "custom-btn");
-  addSimulateBehaviorTestButton.style.setProperty("border-radius", "15px");
-  addSimulateBehaviorTestButton.style.setProperty("margin-left", ".5rem");
-  addSimulateBehaviorTestButton.onclick = () => {
-    // Clear Modal
-    // Update Modal with simulated test info
-    let idPrefixNew = "create-simulate-behavior-test";
-    ClearModalAndUpdateIdPrefix(idPrefix, idPrefixNew);
-    RenderSimulateBehaviorModal(idPrefixNew, envData);
-  };
-  simulateBehaviorTestsHeader.appendChild(addSimulateBehaviorTestButton);
-
-  let addSimulateBehaviorTestIcon = document.createElement("i");
-  addSimulateBehaviorTestIcon.classList.add("fas", "fa-plus");
-  addSimulateBehaviorTestButton.appendChild(addSimulateBehaviorTestIcon);
-
   let simulateBehaviorTests = document.createElement("div");
   simulateBehaviorTests.style.setProperty("margin-top", ".3rem");
   simulateBehaviorTests.style.setProperty("padding", "1rem");
@@ -853,7 +836,38 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
   simulateBehaviorTests.style.setProperty("background", "#f1f1f1");
   simulateBehaviorTests.style.setProperty("overflow-y", "auto");
   simulateBehaviorTests.style.setProperty("border-radius", "10px");
+  simulateBehaviorTests.style.setProperty("position", "relative");
   simulateBehaviorTestsOuter.appendChild(simulateBehaviorTests);
+
+  let addSimulateBehaviorTestButton = document.createElement("button");
+  addSimulateBehaviorTestButton.classList.add("btn", "btn-lg", "custom-btn");
+  addSimulateBehaviorTestButton.style.setProperty("border-radius", "26px");
+  addSimulateBehaviorTestButton.style.setProperty("position", "absolute");
+  addSimulateBehaviorTestButton.style.setProperty("bottom", "21px");
+  addSimulateBehaviorTestButton.style.setProperty("right", "30px");
+  addSimulateBehaviorTestButton.style.setProperty("opacity", "80%");
+  addSimulateBehaviorTestButton.style.setProperty(
+    "box-shadow",
+    "2px 3px #bdafaf"
+  );
+  addSimulateBehaviorTestButton.onmouseover = () => {
+    addSimulateBehaviorTestButton.style.setProperty("opacity", "100%");
+  };
+  addSimulateBehaviorTestButton.onmouseout = () => {
+    addSimulateBehaviorTestButton.style.setProperty("opacity", "80%");
+  };
+  addSimulateBehaviorTestButton.onclick = () => {
+    // Clear Modal
+    // Update Modal with simulated test info
+    let idPrefixNew = "create-simulate-behavior-test";
+    ClearModalAndUpdateIdPrefix(idPrefix, idPrefixNew);
+    RenderSimulateBehaviorModal(idPrefixNew, envData);
+  };
+  simulateBehaviorTests.appendChild(addSimulateBehaviorTestButton);
+
+  let addSimulateBehaviorTestIcon = document.createElement("i");
+  addSimulateBehaviorTestIcon.classList.add("fas", "fa-plus");
+  addSimulateBehaviorTestButton.appendChild(addSimulateBehaviorTestIcon);
 
   const RenderTest = function (domSelector, test, testType) {
     let a = document.createElement("a");
@@ -966,28 +980,6 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
     checkingExpectedValuesTestsHeader
   );
 
-  let addCheckingExpectedValuesTestButton = document.createElement("button");
-  addCheckingExpectedValuesTestButton.classList.add(
-    "btn",
-    "btn-sm",
-    "custom-btn"
-  );
-  addCheckingExpectedValuesTestButton.style.setProperty(
-    "border-radius",
-    "15px"
-  );
-  addCheckingExpectedValuesTestButton.style.setProperty("margin-left", ".5rem");
-  addCheckingExpectedValuesTestButton.onclick = () => {};
-  checkingExpectedValuesTestsHeader.appendChild(
-    addCheckingExpectedValuesTestButton
-  );
-
-  let addCheckingExpectedValuesTestIcon = document.createElement("i");
-  addCheckingExpectedValuesTestIcon.classList.add("fas", "fa-plus");
-  addCheckingExpectedValuesTestButton.appendChild(
-    addCheckingExpectedValuesTestIcon
-  );
-
   let checkingExpectedValuesTests = document.createElement("div");
   checkingExpectedValuesTests.style.setProperty("margin-top", ".3rem");
   checkingExpectedValuesTests.style.setProperty("padding", "1rem");
@@ -996,7 +988,41 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
   checkingExpectedValuesTests.style.setProperty("background", "#f1f1f1");
   checkingExpectedValuesTests.style.setProperty("overflow-y", "auto");
   checkingExpectedValuesTests.style.setProperty("border-radius", "10px");
+  checkingExpectedValuesTests.style.setProperty("position", "relative");
   checkingExpectedValuesTestsOuter.appendChild(checkingExpectedValuesTests);
+
+  let addCheckingExpectedValuesTestButton = document.createElement("button");
+  addCheckingExpectedValuesTestButton.classList.add(
+    "btn",
+    "btn-lg",
+    "custom-btn"
+  );
+  addCheckingExpectedValuesTestButton.style.setProperty(
+    "border-radius",
+    "26px"
+  );
+  addCheckingExpectedValuesTestButton.style.setProperty("position", "absolute");
+  addCheckingExpectedValuesTestButton.style.setProperty("bottom", "21px");
+  addCheckingExpectedValuesTestButton.style.setProperty("right", "30px");
+  addCheckingExpectedValuesTestButton.style.setProperty("opacity", "80%");
+  addCheckingExpectedValuesTestButton.style.setProperty(
+    "box-shadow",
+    "2px 3px #bdafaf"
+  );
+  addCheckingExpectedValuesTestButton.onmouseover = () => {
+    addCheckingExpectedValuesTestButton.style.setProperty("opacity", "100%");
+  };
+  addCheckingExpectedValuesTestButton.onmouseout = () => {
+    addCheckingExpectedValuesTestButton.style.setProperty("opacity", "80%");
+  };
+  addCheckingExpectedValuesTestButton.onclick = () => {};
+  checkingExpectedValuesTests.appendChild(addCheckingExpectedValuesTestButton);
+
+  let addCheckingExpectedValuesTestIcon = document.createElement("i");
+  addCheckingExpectedValuesTestIcon.classList.add("fas", "fa-plus");
+  addCheckingExpectedValuesTestButton.appendChild(
+    addCheckingExpectedValuesTestIcon
+  );
 
   if (
     !debugTests.expectedValuesCheckingTests ||
@@ -1025,7 +1051,7 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
   RenderModal(idPrefix);
 };
 
-const RenderSimulateBehaviorModal = function (
+const RenderExpectedValueCheckingModal = function (
   idPrefix,
   envData,
   givenDebugTest,
@@ -1138,6 +1164,249 @@ const RenderSimulateBehaviorModal = function (
   actionContainer.style.setProperty("overflow-x", "hidden");
   actionContainer.style.setProperty("max-height", "26rem");
   ("");
+  container.appendChild(actionContainer);
+
+  let testsTimeSlots = [];
+
+  if (editFlag) testsTimeSlots = givenDebugTest.testsTimeSlots;
+  else {
+    /* add time 0 if no time slot exists */
+    let timeSlot = CreateTimeSlot(0, "Default Description", {});
+    testsTimeSlots.push(timeSlot);
+  }
+
+  let timelinesOuter = document.createElement("div");
+  timelinesOuter.id = "timelines-container";
+  timelinesOuter.style.setProperty("margin-top", "1rem");
+  actionContainer.appendChild(timelinesOuter);
+
+  RenderTimeLine(timelinesOuter, testsTimeSlots, envData);
+
+  $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
+    DestroyModal(idPrefix);
+  });
+
+  /* change modal size */
+  document
+    .getElementById(idPrefix + "-modal-dialog")
+    .classList.remove("modal-lg");
+  document.getElementById(idPrefix + "-modal-dialog").classList.add("modal-xl");
+
+  confirmButton.onclick = () => {
+    let title = document.getElementById("test-title").value;
+    let color = document.getElementById("test-color").value;
+
+    CollectAllChangesForSimulateBehaviorTest(testsTimeSlots);
+
+    let debugTest;
+    if (!editFlag) {
+      debugTest = {
+        id: ID(),
+        title: title,
+        color: color,
+        testsTimeSlots: testsTimeSlots,
+      };
+
+      if (!debugTests) debugTests = {};
+      if (!debugTests.simulateBehaviorTests)
+        debugTests.simulateBehaviorTests = [];
+
+      debugTests.simulateBehaviorTests.push({
+        time: simulatedTime.format("HH:mm:ss, DD/MM"),
+        debugTest: debugTest,
+      });
+    }
+
+    IncreaseTestCounter();
+
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
+      "saveDebugTests",
+      [
+        {
+          debugTests: debugTests,
+          projectID: envData.execData.projectId,
+          testsCounter: testsCounter,
+        },
+      ]
+    );
+
+    // clear tests control panel
+    document.getElementById("simulated-actions-body").innerHTML = "";
+    CreateBubblesForSimulateBehaviorTests(envData);
+
+    // if (editFlag)
+    //   UpdateBubbleForTest(
+    //     "test-bubble-" + givenDebugTest.id,
+    //     envData,
+    //     debugTest,
+    //     idPrefix
+    //   );
+    // else
+    //   CreateBubbleForTests(
+    //     title,
+    //     "test-bubble-" + debugTest.id,
+    //     color,
+    //     testsTimeSlots,
+    //     () => {
+    //       RenderSimulateBehaviorModal(
+    //         idPrefix,
+    //         envData,
+    //         debugTest,
+    //         true,
+    //         () => {
+    //           envData.RuntimeEnvironmentRelease.functionRequest(
+    //             "SmartObjectVPLEditor",
+    //             "deleteDebugTest",
+    //             [
+    //               {
+    //                 projectID: envData.execData.projectId,
+    //                 debugTestId: debugTest.id,
+    //               },
+    //             ]
+    //           );
+    //         }
+    //       );
+    //     }
+    //   );
+
+    // Clear arrayIntervals of that test
+    if (editFlag) {
+      ClearIntervalFuncsForATest(givenDebugTest.id);
+      ExecuteSimulateBehaviorTest(givenDebugTest, envData, true);
+    } else {
+      ExecuteSimulateBehaviorTest(debugTest, envData, false);
+    }
+    $("#" + idPrefix + "-modal").modal("hide");
+  };
+  confirmButton.style.setProperty("display", "inline-block");
+
+  $("#" + idPrefix + "-modal").modal({ backdrop: "static" });
+
+  RenderModal(idPrefix);
+};
+
+const RenderSimulateBehaviorModal = function (
+  idPrefix,
+  envData,
+  givenDebugTest,
+  editFlag,
+  onDeleteTest
+) {
+  if (!document.getElementById(idPrefix + "-modal")) CreateModal(idPrefix);
+
+  let title = document.getElementById(idPrefix + "-modal-title");
+  let body = document.getElementById(idPrefix + "-modal-body");
+  let confirmButton = document.getElementById(
+    idPrefix + "-modal-confirm-button"
+  );
+
+  if (editFlag) {
+    title.innerHTML = "Edit test: " + givenDebugTest.title;
+    let deleteButton = document.getElementById(
+      idPrefix + "-modal-delete-button"
+    );
+    deleteButton.style.setProperty("display", "inline-block");
+    deleteButton.innerHTML = "Delete test";
+    deleteButton.onclick = () => {
+      onDeleteTest();
+      $("#" + idPrefix + "-modal").modal("hide");
+    };
+  } else title.innerHTML = "New Simulate Behavior Test";
+
+  let container = document.createElement("div");
+  container.style.setProperty("margin-top", ".5rem");
+  body.appendChild(container);
+
+  let titleColorOuter = document.createElement("div");
+  titleColorOuter.style.setProperty("display", "flex");
+  titleColorOuter.style.setProperty("padding-bottom", "1.5rem");
+  titleColorOuter.style.setProperty("padding-left", "2rem");
+  container.appendChild(titleColorOuter);
+
+  /* Input Title */
+  let inputGroupTitle = document.createElement("span");
+  inputGroupTitle.classList.add("input-group");
+  inputGroupTitle.style.setProperty("width", "36rem");
+  titleColorOuter.appendChild(inputGroupTitle);
+
+  let inputGroupPrependTitle = document.createElement("div");
+  inputGroupPrependTitle.classList.add("input-group-prepend");
+  inputGroupTitle.appendChild(inputGroupPrependTitle);
+
+  let inputGroupTextTitle = document.createElement("span");
+  inputGroupTextTitle.classList.add("input-group-text");
+  inputGroupTextTitle.id = "test-title-span";
+  inputGroupTextTitle.innerHTML = "Title";
+  inputGroupTextTitle.style.setProperty("width", "4rem");
+  inputGroupPrependTitle.appendChild(inputGroupTextTitle);
+
+  let inputTitle = document.createElement("input");
+  inputTitle.type = "text";
+  inputTitle.classList.add("form-control");
+  if (editFlag) inputTitle.value = givenDebugTest.title;
+  else inputTitle.value = "Test " + testsCounter;
+
+  inputTitle.id = "test-title";
+  inputTitle.setAttribute("aria-label", "title");
+  inputTitle.setAttribute("aria-describedby", "test-title-span");
+  inputGroupTitle.appendChild(inputTitle);
+
+  /* Input Color */
+  let inputGroupColor = document.createElement("span");
+  inputGroupColor.classList.add("input-group");
+  inputGroupColor.style.setProperty("width", "8rem");
+  inputGroupColor.style.setProperty("margin-left", "2rem");
+  titleColorOuter.appendChild(inputGroupColor);
+
+  let inputGroupPrependColor = document.createElement("div");
+  inputGroupPrependColor.classList.add("input-group-prepend");
+  inputGroupColor.appendChild(inputGroupPrependColor);
+
+  let inputGroupTextColor = document.createElement("span");
+  inputGroupTextColor.classList.add("input-group-text");
+  inputGroupTextColor.id = "test-color-span";
+  inputGroupTextColor.innerHTML = "Color";
+  inputGroupTextColor.style.setProperty("width", "4rem");
+  inputGroupPrependColor.appendChild(inputGroupTextColor);
+
+  let inputColor = document.createElement("input");
+  inputColor.type = "color";
+  inputColor.id = "test-color";
+  inputColor.classList.add("form-control");
+  if (editFlag) inputColor.value = givenDebugTest.color;
+  else inputColor.value = "#D0D8DF";
+  inputColor.setAttribute("aria-label", "color");
+  inputColor.setAttribute("aria-describedby", "test-color-span");
+  inputGroupColor.appendChild(inputColor);
+
+  /* Headers */
+  let titlesRow = document.createElement("div");
+  titlesRow.classList.add("row");
+  titlesRow.style.setProperty("font-size", "large");
+  titlesRow.style.setProperty("font-weight", "600");
+  titlesRow.style.setProperty("padding-bottom", "0.2rem");
+  titlesRow.style.setProperty("border-bottom", "1px solid #27252545");
+  titlesRow.style.setProperty("margin-left", "1.5rem");
+  titlesRow.style.setProperty("margin-right", "2rem");
+  container.appendChild(titlesRow);
+
+  let timeSlotsHeader = document.createElement("div");
+  timeSlotsHeader.classList.add("col-4");
+  timeSlotsHeader.innerHTML = "Time Slots";
+  titlesRow.appendChild(timeSlotsHeader);
+
+  let propertiesChangesHeader = document.createElement("div");
+  propertiesChangesHeader.classList.add("col");
+  propertiesChangesHeader.innerHTML = "Changes";
+  titlesRow.appendChild(propertiesChangesHeader);
+
+  let actionContainer = document.createElement("div");
+  actionContainer.id = "test-action-container";
+  actionContainer.style.setProperty("overflow-y", "auto");
+  actionContainer.style.setProperty("overflow-x", "hidden");
+  actionContainer.style.setProperty("max-height", "26rem");
+  actionContainer.style.setProperty("padding-left", "2rem");
   container.appendChild(actionContainer);
 
   let testsTimeSlots = [];
@@ -1392,7 +1661,176 @@ const RenderTimeSlot = function (
 ) {
   let timelineRow = document.createElement("div");
   timelineRow.classList.add("row");
+  // timelineRow.style.setProperty("width", "66rem");
   domSelector.appendChild(timelineRow);
+
+  let toolBarForTimeSlot = document.createElement("div");
+  toolBarForTimeSlot.style.setProperty("width", "100%");
+  toolBarForTimeSlot.style.setProperty("margin-left", ".5rem");
+  timelineRow.appendChild(toolBarForTimeSlot);
+
+  /* Functionality in timeslot */
+  let timelineFunctionalityOuter = document.createElement("span");
+  timelineFunctionalityOuter.style.setProperty("display", "flex");
+  timelineFunctionalityOuter.style.setProperty("width", "96%");
+  timelineFunctionalityOuter.style.setProperty("padding-top", ".2rem");
+  timelineFunctionalityOuter.style.setProperty("padding-bottom", ".2rem");
+  timelineFunctionalityOuter.style.setProperty("padding-left", "1rem");
+  timelineFunctionalityOuter.style.setProperty("align-items", "center");
+  timelineFunctionalityOuter.style.setProperty("background-color", "#ececec");
+  toolBarForTimeSlot.appendChild(timelineFunctionalityOuter);
+
+  /* Add time slot */
+  let addTimeLineOuter = document.createElement("div");
+  // addTimeLineOuter.style.setProperty("padding-top", "1rem");
+  // addTimeLineOuter.style.setProperty("position", "absolute");
+  // addTimeLineOuter.style.setProperty("bottom", "0px");
+  timelineFunctionalityOuter.appendChild(addTimeLineOuter);
+
+  let addTimeLineLink = document.createElement("a");
+  addTimeLineLink.style.setProperty("width", "fit-content");
+  addTimeLineLink.href = "javascript:void(0);";
+  addTimeLineLink.innerHTML = "Add time slot";
+  addTimeLineLink.onclick = () => {
+    let newTime = timeSlot.time + 1;
+    while (unvalidTimes.includes(newTime)) {
+      newTime = newTime + 1;
+    }
+    let newTimeSlot = CreateTimeSlot(newTime, "Default desctiption", {});
+
+    onAddTimeSlot(newTimeSlot);
+  };
+  addTimeLineOuter.appendChild(addTimeLineLink);
+
+  /* Apply button for editing */
+  let applyButton = document.createElement("button");
+  applyButton.classList.add("btn", "btn-sm", "btn-success");
+  applyButton.id = "_time-" + timeSlot.time + "apply-button";
+  applyButton.innerHTML = "Apply";
+  applyButton.onclick = () => {
+    let newTime = parseFloat(
+      document.getElementById("_time-" + timeSlot.time + "-time-vlaue").value
+    );
+
+    if (unvalidTimes.includes(newTime)) {
+      /* unvalid time slot */
+    } else {
+      let newDescription = document.getElementById(
+        "_time-" + timeSlot.time + "-description-value"
+      ).value;
+      /* Set new values */
+      timeSlot.time = newTime;
+      timeSlot.description = newDescription;
+
+      timeSlot.editMode = false;
+
+      /* Chnage view on functionality */
+      onSuccessEdit();
+    }
+  };
+  timelineFunctionalityOuter.appendChild(applyButton);
+
+  if (!timeSlot.editMode) {
+    applyButton.style.setProperty("display", "none");
+  } else {
+    timelineEditSpan.style.setProperty("display", "none");
+    timelineDeleteSpan.style.setProperty("display", "none");
+    addTimeLineOuter.style.setProperty("display", "none");
+  }
+
+  let editDeleteOuter = document.createElement("span");
+  editDeleteOuter.style.setProperty("margin-left", "10rem");
+  timelineFunctionalityOuter.appendChild(editDeleteOuter);
+
+  let timelineEditSpan = document.createElement("span");
+  timelineEditSpan.id = "_time-" + timeSlot.time + "edit-button";
+  editDeleteOuter.appendChild(timelineEditSpan);
+
+  let timelineEditButton = document.createElement("button");
+  timelineEditButton.classList.add("btn", "btn-sm", "btn-info");
+  timelineEditButton.innerHTML = "<i class='fas fa-edit'></i>";
+  timelineEditButton.onclick = () => {
+    /* Change view of buttons in time slot */
+    timelineEditSpan.style.setProperty("display", "none");
+    timelineDeleteSpan.style.setProperty("display", "none");
+    addTimeLineOuter.style.setProperty("display", "none");
+    applyButton.style.setProperty("display", "block");
+
+    timeSeconds.style.setProperty("display", "none");
+    timeDescription.style.setProperty("display", "none");
+
+    timeSecondsInput.style.setProperty("display", "block");
+    timeDescriptionInput.style.setProperty("display", "block");
+
+    timeSlot.editMode = true;
+  };
+  timelineEditSpan.appendChild(timelineEditButton);
+
+  let timelineDeleteSpan = document.createElement("span");
+  timelineDeleteSpan.style.setProperty("margin-left", "0.7rem");
+  timelineDeleteSpan.id = "_time-" + timeSlot.time + "delete-button";
+  editDeleteOuter.appendChild(timelineDeleteSpan);
+
+  let timelineDeleteButton = document.createElement("button");
+  timelineDeleteButton.classList.add("btn", "btn-sm", "btn-danger");
+  timelineDeleteButton.onclick = () => {
+    onDeleteTimeSlot(timeSlot.time);
+  };
+  timelineDeleteButton.innerHTML = "<i class='far fa-trash-alt'></i>";
+  timelineDeleteSpan.appendChild(timelineDeleteButton);
+
+  let addChangeOuterDiv = document.createElement("span");
+  addChangeOuterDiv.style.setProperty("margin-left", "2rem");
+  // addChangeOuterDiv.style.setProperty("position", "absolute");
+  // addChangeOuterDiv.style.setProperty("bottom", "0");
+  timelineFunctionalityOuter.appendChild(addChangeOuterDiv);
+
+  let addChange = document.createElement("a");
+  addChange.href = "javascript:void(0);";
+  addChange.onclick = () => {
+    addChange.style.setProperty("display", "none");
+    AddDeviceActionOrPropertyChange(
+      addChangeOuterDiv,
+      (deviceId, deviceIndex, typeOfChange, changeIndex) => {
+        addChange.style.display = "block";
+
+        changesContainer.innerHTML = "";
+
+        addChangeOuterDiv.style.removeProperty("width");
+        // addChangeOuterDiv.style.setProperty("position", "absolute");
+        if (!timeSlot.devices) {
+          timeSlot.devices = {};
+        }
+
+        if (!timeSlot.devices[deviceId]) {
+          timeSlot.devices[deviceId] = { properties: [], actions: [] };
+        }
+
+        if (typeOfChange === "property") {
+          timeSlot.devices[deviceId].properties.push(
+            JSON.parse(
+              JSON.stringify(
+                devicesOnAutomations[deviceIndex].properties[changeIndex]
+              )
+            )
+          );
+        } else if (typeOfChange === "action") {
+          timeSlot.devices[deviceId].actions.push(
+            JSON.parse(
+              JSON.stringify(
+                devicesOnAutomations[deviceIndex].actions[changeIndex]
+              )
+            )
+          );
+        }
+
+        RenderChangesForCreatingTest(changesContainer, timeSlot, envData);
+      }
+    );
+  };
+  addChange.innerHTML = "Add device's action or property change";
+  addChange.style.setProperty("width", "fit-content");
+  addChangeOuterDiv.appendChild(addChange);
 
   /* Column for the timeslot */
   let timeCol = document.createElement("div");
@@ -1400,7 +1838,8 @@ const RenderTimeSlot = function (
   timeCol.style.setProperty("border-right", "1px solid rgb(35 30 30 / 45%)");
   timeCol.style.setProperty("position", "relative");
   timeCol.style.setProperty("display", "flex");
-  timeCol.style.setProperty("align-items", "center");
+  timeCol.style.setProperty("margin-top", ".7rem");
+  // timeCol.style.setProperty("align-items", "center");
   timelineRow.appendChild(timeCol);
 
   let timelineInfo = document.createElement("div");
@@ -1480,112 +1919,11 @@ const RenderTimeSlot = function (
     timeDescription.style.setProperty("display", "none");
   }
 
-  /* Functionality in timeslot */
-  let timelineFunctionalityOuter = document.createElement("div");
-  timelineFunctionalityOuter.style.setProperty("position", "absolute");
-  timelineFunctionalityOuter.style.setProperty("bottom", "0px");
-  timelineFunctionalityOuter.style.setProperty("right", "11px");
-  timeCol.appendChild(timelineFunctionalityOuter);
-
-  let timelineEditSpan = document.createElement("span");
-  timelineEditSpan.id = "_time-" + timeSlot.time + "edit-button";
-  timelineFunctionalityOuter.appendChild(timelineEditSpan);
-
-  let timelineEditButton = document.createElement("button");
-  timelineEditButton.classList.add("btn", "btn-sm", "btn-info");
-  timelineEditButton.innerHTML = "<i class='fas fa-edit'></i>";
-  timelineEditButton.onclick = () => {
-    /* Change view of buttons in time slot */
-    timelineEditSpan.style.setProperty("display", "none");
-    timelineDeleteSpan.style.setProperty("display", "none");
-    addTimeLineOuter.style.setProperty("display", "none");
-    applyButton.style.setProperty("display", "block");
-
-    timeSeconds.style.setProperty("display", "none");
-    timeDescription.style.setProperty("display", "none");
-
-    timeSecondsInput.style.setProperty("display", "block");
-    timeDescriptionInput.style.setProperty("display", "block");
-
-    timeSlot.editMode = true;
-  };
-  timelineEditSpan.appendChild(timelineEditButton);
-
-  let timelineDeleteSpan = document.createElement("span");
-  timelineDeleteSpan.style.setProperty("margin-left", "0.7rem");
-  timelineDeleteSpan.id = "_time-" + timeSlot.time + "delete-button";
-  timelineFunctionalityOuter.appendChild(timelineDeleteSpan);
-
-  let timelineDeleteButton = document.createElement("button");
-  timelineDeleteButton.classList.add("btn", "btn-sm", "btn-danger");
-  timelineDeleteButton.onclick = () => {
-    onDeleteTimeSlot(timeSlot.time);
-  };
-  timelineDeleteButton.innerHTML = "<i class='far fa-trash-alt'></i>";
-  timelineDeleteSpan.appendChild(timelineDeleteButton);
-
-  /* Add time slot */
-  let addTimeLineOuter = document.createElement("div");
-  // addTimeLineOuter.style.setProperty("padding-top", "1rem");
-  addTimeLineOuter.style.setProperty("position", "absolute");
-  addTimeLineOuter.style.setProperty("bottom", "0px");
-  timeCol.appendChild(addTimeLineOuter);
-
-  let addTimeLineLink = document.createElement("a");
-  addTimeLineLink.style.setProperty("width", "fit-content");
-  addTimeLineLink.href = "javascript:void(0);";
-  addTimeLineLink.innerHTML = "Add time slot";
-  addTimeLineLink.onclick = () => {
-    let newTime = timeSlot.time + 1;
-    while (unvalidTimes.includes(newTime)) {
-      newTime = newTime + 1;
-    }
-    let newTimeSlot = CreateTimeSlot(newTime, "Default desctiption", {});
-
-    onAddTimeSlot(newTimeSlot);
-  };
-  addTimeLineOuter.appendChild(addTimeLineLink);
-
-  /* Apply button for editing */
-  let applyButton = document.createElement("button");
-  applyButton.classList.add("btn", "btn-sm", "btn-success");
-  timelineDeleteButton.id = "_time-" + timeSlot.time + "apply-button";
-  applyButton.innerHTML = "Apply";
-  applyButton.onclick = () => {
-    let newTime = parseFloat(
-      document.getElementById("_time-" + timeSlot.time + "-time-vlaue").value
-    );
-
-    if (unvalidTimes.includes(newTime)) {
-      /* unvalid time slot */
-    } else {
-      let newDescription = document.getElementById(
-        "_time-" + timeSlot.time + "-description-value"
-      ).value;
-      /* Set new values */
-      timeSlot.time = newTime;
-      timeSlot.description = newDescription;
-
-      timeSlot.editMode = false;
-
-      /* Chnage view on functionality */
-      onSuccessEdit();
-    }
-  };
-  timelineFunctionalityOuter.appendChild(applyButton);
-
-  if (!timeSlot.editMode) {
-    applyButton.style.setProperty("display", "none");
-  } else {
-    timelineEditSpan.style.setProperty("display", "none");
-    timelineDeleteSpan.style.setProperty("display", "none");
-    addTimeLineOuter.style.setProperty("display", "none");
-  }
-
   /* Changes Column */
   let changesCol = document.createElement("div");
   changesCol.classList.add("col");
   changesCol.style.setProperty("position", "relative");
+  changesCol.style.setProperty("margin-top", ".7rem");
   timelineRow.appendChild(changesCol);
 
   let changesContainer = document.createElement("div");
@@ -1594,58 +1932,6 @@ const RenderTimeSlot = function (
   // changesContainer.style.setProperty("overflow-y", "auto");
   changesContainer.style.setProperty("padding-bottom", "2.5rem");
   changesCol.appendChild(changesContainer);
-
-  let addChangeOuterDiv = document.createElement("div");
-  addChangeOuterDiv.style.setProperty("position", "absolute");
-  addChangeOuterDiv.style.setProperty("bottom", "0");
-  changesCol.appendChild(addChangeOuterDiv);
-
-  let addChange = document.createElement("a");
-  addChange.href = "javascript:void(0);";
-  addChange.onclick = () => {
-    addChange.style.setProperty("display", "none");
-    AddDeviceActionOrPropertyChange(
-      addChangeOuterDiv,
-      (deviceId, deviceIndex, typeOfChange, changeIndex) => {
-        addChange.style.display = "block";
-
-        changesContainer.innerHTML = "";
-
-        addChangeOuterDiv.style.removeProperty("width");
-        // addChangeOuterDiv.style.setProperty("position", "absolute");
-        if (!timeSlot.devices) {
-          timeSlot.devices = {};
-        }
-
-        if (!timeSlot.devices[deviceId]) {
-          timeSlot.devices[deviceId] = { properties: [], actions: [] };
-        }
-
-        if (typeOfChange === "property") {
-          timeSlot.devices[deviceId].properties.push(
-            JSON.parse(
-              JSON.stringify(
-                devicesOnAutomations[deviceIndex].properties[changeIndex]
-              )
-            )
-          );
-        } else if (typeOfChange === "action") {
-          timeSlot.devices[deviceId].actions.push(
-            JSON.parse(
-              JSON.stringify(
-                devicesOnAutomations[deviceIndex].actions[changeIndex]
-              )
-            )
-          );
-        }
-
-        RenderChangesForCreatingTest(changesContainer, timeSlot, envData);
-      }
-    );
-  };
-  addChange.innerHTML = "Add device's action or property change";
-  addChange.style.setProperty("width", "fit-content");
-  addChangeOuterDiv.appendChild(addChange);
 
   let isEmpty = true;
   for (const device in timeSlot.devices) {
