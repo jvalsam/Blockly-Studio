@@ -650,7 +650,7 @@ export class SmartObjectVPLEditor extends Editor {
       this.name,
       "BlocklyVPL",
       "openInDialogue",
-      [editorsData, pitem, confName, selector, privileges]
+      [editorsData, pitem, confName, selector, privileges, "BlocklyStudioIDE"]
     );
   }
 

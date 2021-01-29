@@ -156,7 +156,10 @@ export class BlocklyVPL extends Editor {
         (config) => this.getToolbox(config),
         (event) =>
           this.handleInstanceChange(editorData.editorId, pitem.pi, event),
-        text
+        text,
+        undefined,
+        undefined,
+        "BlocklyStudioIDE"
       );
     }
     // lazy update for the text of the existing wsp
@@ -173,6 +176,7 @@ export class BlocklyVPL extends Editor {
     config: string,
     selector: string,
     privileges: string, // "READ_ONLY" or "EDITING"
+    windowsId: string
   ): void {
     if (!this.instancesMap[editorData.editorId])
       this.instancesMap[editorData.editorId] = new BlocklyInstance(
@@ -186,7 +190,8 @@ export class BlocklyVPL extends Editor {
         (event) => { /* */ },
         editorData.src,
         privileges,
-        editorData.zIndex
+        editorData.zIndex,
+        windowsId
       );
     this.instancesMap[editorData.editorId]["__editorData"] = editorData;
 
@@ -609,7 +614,10 @@ export class BlocklyVPL extends Editor {
       this.configsMap[editorData.confName],
       (config) => this.getToolbox(config),
       (event) => this.handleInstanceChange(editorData.editorId, pitem, event),
-      text
+      text,
+      undefined,
+      undefined,
+      "BlocklyStudioIDE"
     );
     this.instancesMap[editorData.editorId].load();
   }
@@ -626,7 +634,10 @@ export class BlocklyVPL extends Editor {
       this.configsMap[editorData.confName],
       (config) => this.getToolbox(config),
       (event) => {},
-      editorData.src || '<xml id="startBlocks" style="display: none"></xml>'
+      editorData.src || '<xml id="startBlocks" style="display: none"></xml>',
+      undefined,
+      undefined,
+      "BlocklyStudioIDE"
     );
     this.instancesMap[editorData.editorId].load();
   }

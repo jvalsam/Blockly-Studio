@@ -1173,9 +1173,11 @@ const RenderExpectedValueCheckingModal = function (
   // create blockly workspace container
   let blocklyWorkspaceDiv = document.createElement("div");
   blocklyWorkspaceDiv.id = testID + "-blockly-container";
-  blocklyWorkspaceDiv.style.setProperty("position", "absolute");
   blocklyWorkspaceDiv.style.setProperty("width", "97%");
   blocklyWorkspaceDiv.style.setProperty("height", "31rem");
+  blocklyWorkspaceDiv.style.setProperty("position", "relative");
+  blocklyWorkspaceDiv.setAttribute("data-xOffset", "160");
+  blocklyWorkspaceDiv.setAttribute("data-yOffset", "90");
   body.appendChild(blocklyWorkspaceDiv);
 
   $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
@@ -1211,6 +1213,7 @@ const RenderExpectedValueCheckingModal = function (
         "ec-checks-expected-values",
         blocklyWorkspaceDiv.id,
         "EDITING",
+        "BlocklyStudioIDE_MainRuntimeEnvironment",
       ]
     );
 
