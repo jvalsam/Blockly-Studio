@@ -1017,7 +1017,14 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
   addCheckingExpectedValuesTestButton.onmouseout = () => {
     addCheckingExpectedValuesTestButton.style.setProperty("opacity", "80%");
   };
-  addCheckingExpectedValuesTestButton.onclick = () => {};
+  addCheckingExpectedValuesTestButton.onclick = () => {
+    // Clear Modal
+    // Update Modal with simulated test info
+    let idPrefixNew = "create-expected-value-checking-test";
+    // ClearModalAndUpdateIdPrefix(idPrefix, idPrefixNew);
+    $("#" + idPrefix + "-modal").modal("hide");
+    RenderExpectedValueCheckingModal(idPrefixNew, envData);
+  };
   checkingExpectedValuesTestsOuter.appendChild(
     addCheckingExpectedValuesTestButton
   );
@@ -1062,7 +1069,7 @@ const RenderExpectedValueCheckingModal = function (
   editFlag,
   onDeleteTest
 ) {
-  if (!document.getElementById(idPrefix + "-modal")) CreateModal(idPrefix);
+  CreateModal(idPrefix);
 
   let title = document.getElementById(idPrefix + "-modal-title");
   let body = document.getElementById(idPrefix + "-modal-body");
@@ -1071,7 +1078,8 @@ const RenderExpectedValueCheckingModal = function (
   );
 
   if (editFlag) {
-    title.innerHTML = "Edit test: " + givenDebugTest.title;
+    title.innerHTML =
+      "Edit Expected Value Checking Test: " + givenDebugTest.title;
     let deleteButton = document.getElementById(
       idPrefix + "-modal-delete-button"
     );
@@ -1081,16 +1089,23 @@ const RenderExpectedValueCheckingModal = function (
       onDeleteTest();
       $("#" + idPrefix + "-modal").modal("hide");
     };
-  } else title.innerHTML = "New Simulate Behavior Test";
+  } else title.innerHTML = "New Expected Value Checking Test";
 
   let container = document.createElement("div");
+  container.style.setProperty("margin-top", ".5rem");
   body.appendChild(container);
 
+  let titleColorOuter = document.createElement("div");
+  titleColorOuter.style.setProperty("display", "flex");
+  titleColorOuter.style.setProperty("padding-bottom", "1.5rem");
+  titleColorOuter.style.setProperty("padding-left", "2rem");
+  container.appendChild(titleColorOuter);
+
   /* Input Title */
-  let inputGroupTitle = document.createElement("div");
+  let inputGroupTitle = document.createElement("span");
   inputGroupTitle.classList.add("input-group");
-  inputGroupTitle.style.setProperty("width", "18rem");
-  container.appendChild(inputGroupTitle);
+  inputGroupTitle.style.setProperty("width", "36rem");
+  titleColorOuter.appendChild(inputGroupTitle);
 
   let inputGroupPrependTitle = document.createElement("div");
   inputGroupPrependTitle.classList.add("input-group-prepend");
@@ -1115,12 +1130,11 @@ const RenderExpectedValueCheckingModal = function (
   inputGroupTitle.appendChild(inputTitle);
 
   /* Input Color */
-  let inputGroupColor = document.createElement("div");
+  let inputGroupColor = document.createElement("span");
   inputGroupColor.classList.add("input-group");
-  inputGroupColor.style.setProperty("width", "18rem");
-  inputGroupColor.style.setProperty("margin-top", "1rem");
-  inputGroupColor.style.setProperty("padding-bottom", "1rem");
-  container.appendChild(inputGroupColor);
+  inputGroupColor.style.setProperty("width", "8rem");
+  inputGroupColor.style.setProperty("margin-left", "2rem");
+  titleColorOuter.appendChild(inputGroupColor);
 
   let inputGroupPrependColor = document.createElement("div");
   inputGroupPrependColor.classList.add("input-group-prepend");
@@ -1143,144 +1157,119 @@ const RenderExpectedValueCheckingModal = function (
   inputColor.setAttribute("aria-describedby", "test-color-span");
   inputGroupColor.appendChild(inputColor);
 
-  /* Headers */
-  let titlesRow = document.createElement("div");
-  titlesRow.classList.add("row");
-  titlesRow.style.setProperty("font-size", "large");
-  titlesRow.style.setProperty("font-weight", "600");
-  titlesRow.style.setProperty("padding-bottom", "0.2rem");
-  titlesRow.style.setProperty("border-bottom", "1px solid #27252545");
-  container.appendChild(titlesRow);
-
-  let timeSlotsHeader = document.createElement("div");
-  timeSlotsHeader.classList.add("col-4");
-  timeSlotsHeader.innerHTML = "Time Slots";
-  titlesRow.appendChild(timeSlotsHeader);
-
-  let propertiesChangesHeader = document.createElement("div");
-  propertiesChangesHeader.classList.add("col");
-  propertiesChangesHeader.innerHTML = "Changes";
-  titlesRow.appendChild(propertiesChangesHeader);
-
-  let actionContainer = document.createElement("div");
-  actionContainer.id = "test-action-container";
-  actionContainer.style.setProperty("overflow-y", "auto");
-  actionContainer.style.setProperty("overflow-x", "hidden");
-  actionContainer.style.setProperty("max-height", "26rem");
-  ("");
-  container.appendChild(actionContainer);
-
-  let testsTimeSlots = [];
-
-  if (editFlag) testsTimeSlots = givenDebugTest.testsTimeSlots;
-  else {
-    /* add time 0 if no time slot exists */
-    let timeSlot = CreateTimeSlot(0, "Default Description", {});
-    testsTimeSlots.push(timeSlot);
-  }
-
-  let timelinesOuter = document.createElement("div");
-  timelinesOuter.id = "timelines-container";
-  timelinesOuter.style.setProperty("margin-top", "1rem");
-  actionContainer.appendChild(timelinesOuter);
-
-  RenderTimeLine(timelinesOuter, testsTimeSlots, envData);
-
-  $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
-    DestroyModal(idPrefix);
-  });
-
   /* change modal size */
   document
     .getElementById(idPrefix + "-modal-dialog")
     .classList.remove("modal-lg");
   document.getElementById(idPrefix + "-modal-dialog").classList.add("modal-xl");
 
+  let testID = givenDebugTest ? givenDebugTest.id : ID();
+
+  body.style.setProperty("position", "relative");
+
+  body.style.setProperty("width", "100%");
+  body.style.setProperty("height", "37rem");
+
+  // create blockly workspace container
+  let blocklyWorkspaceDiv = document.createElement("div");
+  blocklyWorkspaceDiv.id = testID + "-blockly-container";
+  blocklyWorkspaceDiv.style.setProperty("position", "absolute");
+  blocklyWorkspaceDiv.style.setProperty("width", "97%");
+  blocklyWorkspaceDiv.style.setProperty("height", "31rem");
+  body.appendChild(blocklyWorkspaceDiv);
+
+  $("#" + idPrefix + "-modal").on("hidden.bs.modal", function (e) {
+    DestroyModal(idPrefix);
+  });
+
+  $("#" + idPrefix + "-modal").on("shown.bs.modal", function (e) {
+    // let blocklyEditorData = pitem._editorsData.items[blocklyWorkspaceDiv.id];
+    // if (!blocklyEditorData) {
+    let blocklyEditorData = {
+      src: '<xml id="startBlocks" style="display: none"></xml>',
+      editorId: blocklyWorkspaceDiv.id,
+      systemID: null,
+      projectID: envData.execData.projectId,
+      title: "",
+      img: "",
+      colour: "",
+      tmplSel: "ec-checks-expected-values",
+      confName: "ec-checks-expected-values",
+      editorName: "BlocklyVPL",
+      editor: "BlocklyVPL",
+      noRenderOnPitemLoading: true,
+      zIndex: 1060,
+    };
+    // }
+
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "BlocklyVPL",
+      "openInDialogue",
+      [
+        blocklyEditorData,
+        null,
+        "ec-checks-expected-values",
+        blocklyWorkspaceDiv.id,
+        "EDITING",
+      ]
+    );
+
+    $(document).off("focusin.modal");
+  });
+
   confirmButton.onclick = () => {
     let title = document.getElementById("test-title").value;
     let color = document.getElementById("test-color").value;
 
-    CollectAllChangesForSimulateBehaviorTest(testsTimeSlots);
-
-    let debugTest;
-    if (!editFlag) {
-      debugTest = {
-        id: ID(),
-        title: title,
-        color: color,
-        testsTimeSlots: testsTimeSlots,
-      };
-
-      if (!debugTests) debugTests = {};
-      if (!debugTests.simulateBehaviorTests)
-        debugTests.simulateBehaviorTests = [];
-
-      debugTests.simulateBehaviorTests.push({
-        time: simulatedTime.format("HH:mm:ss, DD/MM"),
-        debugTest: debugTest,
-      });
-    }
-
-    IncreaseTestCounter();
-
-    envData.RuntimeEnvironmentRelease.functionRequest(
-      "SmartObjectVPLEditor",
-      "saveDebugTests",
-      [
-        {
-          debugTests: debugTests,
-          projectID: envData.execData.projectId,
-          testsCounter: testsCounter,
-        },
-      ]
+    let blocklyInstanceSrc = envData.RuntimeEnvironmentRelease.functionRequest(
+      "BlocklyVPL",
+      "getEditorSrc",
+      [blocklyWorkspaceDiv.id]
     );
 
+    // CollectAllChangesForSimulateBehaviorTest(testsTimeSlots);
+
+    // let debugTest;
+    // if (!editFlag) {
+    //   debugTest = {
+    //     id: testID,
+    //     title: title,
+    //     color: color,
+    //     // testsTimeSlots: testsTimeSlots,
+    //   };
+
+    //   if (!debugTests) debugTests = {};
+    //   if (!debugTests.simulateBehaviorTests)
+    //     debugTests.simulateBehaviorTests = [];
+
+    //   debugTests.simulateBehaviorTests.push({
+    //     time: simulatedTime.format("HH:mm:ss, DD/MM"),
+    //     debugTest: debugTest,
+    //   });
+    // } else {
+    //   givenDebugTest.title = title;
+    //   givenDebugTest.color = color;
+    // }
+
+    // IncreaseTestCounter();
+
+    // envData.RuntimeEnvironmentRelease.functionRequest(
+    //   "SmartObjectVPLEditor",
+    //   "saveDebugTests",
+    //   [
+    //     {
+    //       debugTests: debugTests,
+    //       projectID: envData.execData.projectId,
+    //       testsCounter: testsCounter,
+    //     },
+    //   ]
+    // );
+
     // clear tests control panel
-    document.getElementById("simulated-actions-body").innerHTML = "";
-    CreateBubblesForSimulateBehaviorTests(envData);
+    // document.getElementById("simulated-actions-body").innerHTML = "";
+    // CreateBubblesForSimulateBehaviorTests(envData);
 
-    // if (editFlag)
-    //   UpdateBubbleForTest(
-    //     "test-bubble-" + givenDebugTest.id,
-    //     envData,
-    //     debugTest,
-    //     idPrefix
-    //   );
-    // else
-    //   CreateBubbleForTests(
-    //     title,
-    //     "test-bubble-" + debugTest.id,
-    //     color,
-    //     testsTimeSlots,
-    //     () => {
-    //       RenderSimulateBehaviorModal(
-    //         idPrefix,
-    //         envData,
-    //         debugTest,
-    //         true,
-    //         () => {
-    //           envData.RuntimeEnvironmentRelease.functionRequest(
-    //             "SmartObjectVPLEditor",
-    //             "deleteDebugTest",
-    //             [
-    //               {
-    //                 projectID: envData.execData.projectId,
-    //                 debugTestId: debugTest.id,
-    //               },
-    //             ]
-    //           );
-    //         }
-    //       );
-    //     }
-    //   );
-
-    // Clear arrayIntervals of that test
-    if (editFlag) {
-      ClearIntervalFuncsForATest(givenDebugTest.id);
-      ExecuteSimulateBehaviorTest(givenDebugTest, envData, true);
-    } else {
-      ExecuteSimulateBehaviorTest(debugTest, envData, false);
-    }
+    // hide modals
     $("#" + idPrefix + "-modal").modal("hide");
   };
   confirmButton.style.setProperty("display", "inline-block");
