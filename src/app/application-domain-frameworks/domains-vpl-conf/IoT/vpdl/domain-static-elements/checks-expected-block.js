@@ -6,17 +6,20 @@ export const ChecksExpectedValuesBlocks = [
     blockDef: () => ({
       init: function () {
         this.appendValueInput("CONDITION")
-          .setCheck(null)
-          .appendField("Warns me if");
+          .setCheck([
+            "relational_operators",
+            "logical_operators",
+            "changes",
+            "Boolean",
+          ])
+          .appendField("Warn me in case of");
         this.appendDummyInput()
-          .appendField(",warning message:")
+          .appendField("warning message:")
           .appendField(
             new Blockly.FieldTextInput("default"),
             "WARNING_MESSAGE"
           );
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
+        this.setInputsInline(false);
         this.setColour(345);
         this.setTooltip("");
         this.setHelpUrl("");
@@ -40,9 +43,29 @@ export const ChecksExpectedValuesBlocks = [
         Blockly.JavaScript.ORDER_ATOMIC
       );
       var text_warning_message = block.getFieldValue("WARNING_MESSAGE");
-      // TODO: Assemble JavaScript into code variable.
-      var code = "...;\n";
-      return code;
+
+      // (function () {
+      //   if (value_condition) {
+      //     RenderWarningForExpectedValueCheck(
+      //       titleForExpectedValueTest,
+      //       idForExpectedValueTest,
+      //       text_warning_message
+      //     );
+      //   }
+      // })();
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + value_condition + ") {";
+      strBuilder += "RenderWarningForExpectedValueCheck(";
+      strBuilder += "titleForExpectedValueTest,";
+      strBuilder += "idForExpectedValueTest,";
+      strBuilder += JSON.stringify(text_warning_message);
+      strBuilder += ");";
+      strBuilder += "}";
+      strBuilder += "})();";
+
+      return strBuilder;
     },
   },
   {
@@ -50,11 +73,14 @@ export const ChecksExpectedValuesBlocks = [
     blockDef: () => ({
       init: function () {
         this.appendValueInput("CONDITION")
-          .setCheck(null)
-          .appendField("Pause running automations if");
+          .setCheck([
+            "relational_operators",
+            "logical_operators",
+            "changes",
+            "Boolean",
+          ])
+          .appendField("Pause running automations in case of");
         this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
         this.setColour(345);
         this.setTooltip("");
         this.setHelpUrl("");
@@ -66,9 +92,13 @@ export const ChecksExpectedValuesBlocks = [
         "CONDITION",
         Blockly.JavaScript.ORDER_ATOMIC
       );
-      // TODO: Assemble JavaScript into code variable.
-      var code = "...;\n";
-      return code;
+
+      // return value_condition
+
+      let strBuilder = "";
+      strBuilder += value_condition;
+
+      return strBuilder;
     },
     debugGen: (block) => {
       var value_condition = Blockly.JavaScript.valueToCode(

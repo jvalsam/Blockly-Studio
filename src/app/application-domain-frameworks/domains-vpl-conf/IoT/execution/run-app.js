@@ -49,6 +49,10 @@ const Initialize = function (selector, runTimeData) {
   modalContainer.id = "modal-container";
   selector.appendChild(modalContainer);
 
+  let toastsContainer = document.createElement("div");
+  toastsContainer.id = "toasts-container";
+  selector.appendChild(toastsContainer);
+
   InitializeCalendar(selector);
   InitializeOrganizerForCalendar();
   InitializeActionsLog();
@@ -786,6 +790,62 @@ const DestroyModal = function (idPrefix) {
 /* End of functions for simulating time */
 
 /* Start functions for creating test */
+let titleForExpectedValueTest = "";
+let idForExpectedValueTest = "";
+const RenderWarningForExpectedValueCheck = function (
+  title,
+  toastId,
+  warningMessage
+) {
+  let toast = document.createElement("div");
+  toast.classList.add("toast");
+  toast.id = toastId;
+  toast.setAttribute("role", "alert");
+  toast.setAttribute("aria-live", "assertive");
+  toast.setAttribute("aria-atomic", "true");
+  toast.setAttribute("data-autohide", "false");
+  document.getElementById("toasts-container").appendChild(toast);
+
+  let toastHeader = document.createElement("div");
+  toast.appendChild(toastHeader);
+
+  let titleStrong = document.createElement("strong");
+  titleStrong.classList.add("mr-auto");
+  titleStrong.innerHTML = title;
+  toastHeader.appendChild(titleStrong);
+
+  let closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.classList.add("ml-2", "mb-1", " close");
+  closeButton.setAttribute("data-dismiss", "toast");
+  closeButton.setAttribute("aria-label", "Close");
+  toastHeader.appendChild(closeButton);
+
+  let spanClose = document.createElement("span");
+  spanClose.setAttribute("aria-hidden", "true");
+  spanClose.innerHTML = "&times;";
+  closeButton.appendChild(spanClose);
+
+  let toastBody = document.createElement("div");
+  toastBody.innerHTML = warningMessage;
+  toast.appendChild(toastBody);
+
+  $("#" + idForExpectedValueTest).on("hidden.bs.toast", function () {
+    toast.remove();
+  });
+
+  $("#" + idForExpectedValueTest).toast({ autohide: false });
+  $("#" + idForExpectedValueTest).toast("show");
+};
+
+const ExecuteValueCheckingTests = function (runTimeData) {
+  for (const test of debugTests.expectedValueCheckingTests) {
+    let titleForExpectedValueTest = test.debugTest.title;
+    let idForExpectedValueTest = test.debugTest.id + "-toast";
+    // eval js
+    eval(test.debugTest.js);
+  }
+};
 
 const CreateAndRenderTestsModal = function (projectTitle, envData) {
   let idPrefix = "simulator-tests";
@@ -920,7 +980,35 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
                 {
                   debugTests: debugTests,
                   projectID: envData.execData.projectId,
-                  testsCounter: testsCounter,
+                },
+              ]
+            );
+          }
+        );
+      } else if (testType === 1) {
+        let idPrefixNew = "create-expected-value-checking-test";
+        // ClearModalAndUpdateIdPrefix(idPrefix, idPrefixNew);
+        $("#" + idPrefix + "-modal").modal("hide");
+        RenderExpectedValueCheckingModal(
+          idPrefixNew,
+          envData,
+          test,
+          true,
+          () => {
+            let indexDebugTest = debugTests.expectedValueCheckingTests.findIndex(
+              (x) => x.debugTest.id === test.debugTest.id
+            );
+            if (indexDebugTest > -1) {
+              debugTests.expectedValueCheckingTests.splice(indexDebugTest, 1);
+            }
+
+            envData.RuntimeEnvironmentRelease.functionRequest(
+              "SmartObjectVPLEditor",
+              "saveDebugTests",
+              [
+                {
+                  debugTests: debugTests,
+                  projectID: envData.execData.projectId,
                 },
               ]
             );
@@ -1036,8 +1124,8 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
   );
 
   if (
-    !debugTests.expectedValuesCheckingTests ||
-    debugTests.expectedValuesCheckingTests.length === 0
+    !debugTests.expectedValueCheckingTests ||
+    debugTests.expectedValueCheckingTests.length === 0
   ) {
     let noTest = document.createElement("span");
     noTest.innerHTML = "No tests have been created yet.";
@@ -1047,7 +1135,7 @@ const CreateAndRenderTestsModal = function (projectTitle, envData) {
     for (const [
       index,
       expectedValueCheckingTest,
-    ] of debugTests.expectedValuesCheckingTests.entries()) {
+    ] of debugTests.expectedValueCheckingTests.entries()) {
       RenderTest(checkingExpectedValuesTests, expectedValueCheckingTest, 1);
     }
   }
@@ -1079,7 +1167,7 @@ const RenderExpectedValueCheckingModal = function (
 
   if (editFlag) {
     title.innerHTML =
-      "Edit Expected Value Checking Test: " + givenDebugTest.title;
+      "Edit Expected Value Checking Test: " + givenDebugTest.debugTest.title;
     let deleteButton = document.getElementById(
       idPrefix + "-modal-delete-button"
     );
@@ -1121,7 +1209,7 @@ const RenderExpectedValueCheckingModal = function (
   let inputTitle = document.createElement("input");
   inputTitle.type = "text";
   inputTitle.classList.add("form-control");
-  if (editFlag) inputTitle.value = givenDebugTest.title;
+  if (editFlag) inputTitle.value = givenDebugTest.debugTest.title;
   else inputTitle.value = "Test " + testsCounter;
 
   inputTitle.id = "test-title";
@@ -1151,7 +1239,7 @@ const RenderExpectedValueCheckingModal = function (
   inputColor.type = "color";
   inputColor.id = "test-color";
   inputColor.classList.add("form-control");
-  if (editFlag) inputColor.value = givenDebugTest.color;
+  if (editFlag) inputColor.value = givenDebugTest.debugTest.color;
   else inputColor.value = "#D0D8DF";
   inputColor.setAttribute("aria-label", "color");
   inputColor.setAttribute("aria-describedby", "test-color-span");
@@ -1163,7 +1251,7 @@ const RenderExpectedValueCheckingModal = function (
     .classList.remove("modal-lg");
   document.getElementById(idPrefix + "-modal-dialog").classList.add("modal-xl");
 
-  let testID = givenDebugTest ? givenDebugTest.id : ID();
+  let testID = givenDebugTest ? givenDebugTest.debugTest.id : ID();
 
   body.style.setProperty("position", "relative");
 
@@ -1184,11 +1272,24 @@ const RenderExpectedValueCheckingModal = function (
     DestroyModal(idPrefix);
   });
 
+  $("#" + idPrefix + "-modal").on("hide.bs.modal", function (e) {
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
+      "closeSrcForBlocklyInstance",
+      [blocklyWorkspaceDiv.id]
+    );
+  });
+
   $("#" + idPrefix + "-modal").on("shown.bs.modal", function (e) {
-    // let blocklyEditorData = pitem._editorsData.items[blocklyWorkspaceDiv.id];
-    // if (!blocklyEditorData) {
+    let srcWsp;
+    if (editFlag) {
+      srcWsp = givenDebugTest.debugTest.xml;
+    } else {
+      srcWsp = '<xml id="startBlocks" style="display: none"></xml>';
+    }
+
     let blocklyEditorData = {
-      src: '<xml id="startBlocks" style="display: none"></xml>',
+      src: srcWsp,
       editorId: blocklyWorkspaceDiv.id,
       systemID: null,
       projectID: envData.execData.projectId,
@@ -1202,7 +1303,6 @@ const RenderExpectedValueCheckingModal = function (
       noRenderOnPitemLoading: true,
       zIndex: 1060,
     };
-    // }
 
     envData.RuntimeEnvironmentRelease.functionRequest(
       "BlocklyVPL",
@@ -1224,53 +1324,48 @@ const RenderExpectedValueCheckingModal = function (
     let title = document.getElementById("test-title").value;
     let color = document.getElementById("test-color").value;
 
-    let blocklyInstanceSrc = envData.RuntimeEnvironmentRelease.functionRequest(
-      "BlocklyVPL",
-      "getEditorSrc",
-      [blocklyWorkspaceDiv.id]
+    let debugTest;
+    if (!editFlag) {
+      debugTest = {
+        id: testID,
+        title: title,
+        color: color,
+      };
+
+      if (!debugTests) debugTests = {};
+      if (!debugTests.expectedValueCheckingTests)
+        debugTests.expectedValueCheckingTests = [];
+
+      debugTests.expectedValueCheckingTests.push({
+        time: simulatedTime.format("HH:mm:ss, DD/MM"),
+        debugTest: debugTest,
+      });
+    } else {
+      givenDebugTest.debugTest.title = title;
+      givenDebugTest.debugTest.color = color;
+      debugTest = givenDebugTest.debugTest;
+    }
+
+    IncreaseTestCounter();
+
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
+      "saveTestsCounter",
+      [envData.execData.projectId, testsCounter]
     );
 
-    // CollectAllChangesForSimulateBehaviorTest(testsTimeSlots);
-
-    // let debugTest;
-    // if (!editFlag) {
-    //   debugTest = {
-    //     id: testID,
-    //     title: title,
-    //     color: color,
-    //     // testsTimeSlots: testsTimeSlots,
-    //   };
-
-    //   if (!debugTests) debugTests = {};
-    //   if (!debugTests.simulateBehaviorTests)
-    //     debugTests.simulateBehaviorTests = [];
-
-    //   debugTests.simulateBehaviorTests.push({
-    //     time: simulatedTime.format("HH:mm:ss, DD/MM"),
-    //     debugTest: debugTest,
-    //   });
-    // } else {
-    //   givenDebugTest.title = title;
-    //   givenDebugTest.color = color;
-    // }
-
-    // IncreaseTestCounter();
-
-    // envData.RuntimeEnvironmentRelease.functionRequest(
-    //   "SmartObjectVPLEditor",
-    //   "saveDebugTests",
-    //   [
-    //     {
-    //       debugTests: debugTests,
-    //       projectID: envData.execData.projectId,
-    //       testsCounter: testsCounter,
-    //     },
-    //   ]
-    // );
-
-    // clear tests control panel
-    // document.getElementById("simulated-actions-body").innerHTML = "";
-    // CreateBubblesForSimulateBehaviorTests(envData);
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
+      "saveDebugTests",
+      [
+        {
+          debugTests: debugTests,
+          projectID: envData.execData.projectId,
+          editDebugId: debugTest.id,
+          editorId: blocklyWorkspaceDiv.id,
+        },
+      ]
+    );
 
     // hide modals
     $("#" + idPrefix + "-modal").modal("hide");
@@ -1464,12 +1559,17 @@ const RenderSimulateBehaviorModal = function (
 
     envData.RuntimeEnvironmentRelease.functionRequest(
       "SmartObjectVPLEditor",
+      "saveTestsCounter",
+      [envData.execData.projectId, testsCounter]
+    );
+
+    envData.RuntimeEnvironmentRelease.functionRequest(
+      "SmartObjectVPLEditor",
       "saveDebugTests",
       [
         {
           debugTests: debugTests,
           projectID: envData.execData.projectId,
-          testsCounter: testsCounter,
         },
       ]
     );
@@ -2770,7 +2870,6 @@ const CreateBubblesForSimulateBehaviorTests = function (runTimeData) {
                     {
                       debugTests: debugTests,
                       projectID: runTimeData.execData.projectId,
-                      testsCounter: testsCounter,
                     },
                   ]
                 );
@@ -2808,7 +2907,6 @@ const CreateBubblesForSimulateBehaviorTests = function (runTimeData) {
                     {
                       debugTests: debugTests,
                       projectID: runTimeData.execData.projectId,
-                      testsCounter: testsCounter,
                     },
                   ]
                 );
@@ -2871,7 +2969,7 @@ const ExecuteSimulateBehaviorTests = function (runTimeData) {
               ].intervalFuncs.push(
                 setInterval(() => {
                   if (simulatedTime.diff(futureDate) > 0) {
-                    ChangeValueOfProperty(device, property);
+                    ChangeValueOfProperty(device, property, runTimeData);
 
                     property.endTime = simulatedTime.format("HH:mm:ss");
                     bubbleTime.innerHTML += " - " + property.endTime;
@@ -2901,7 +2999,7 @@ const ExecuteSimulateBehaviorTests = function (runTimeData) {
                 "-" +
                 propertyIndex,
               () => {
-                ChangeValueOfProperty(device, property);
+                ChangeValueOfProperty(device, property, runTimeData);
 
                 property.endTime = simulatedTime.format("HH:mm:ss");
                 bubbleTime.innerHTML += " - " + property.endTime;
@@ -3047,7 +3145,7 @@ const ExecuteSimulateBehaviorTest = function (
           ].intervalFuncs.push(
             setInterval(() => {
               if (simulatedTime.diff(futureDate) > 0) {
-                ChangeValueOfProperty(device, property);
+                ChangeValueOfProperty(device, property, runTimeData);
 
                 property.endTime = simulatedTime.format("HH:mm:ss");
                 bubbleTime.innerHTML += " - " + property.endTime;
@@ -3076,7 +3174,7 @@ const ExecuteSimulateBehaviorTest = function (
             "-" +
             propertyIndex,
           () => {
-            ChangeValueOfProperty(device, property);
+            ChangeValueOfProperty(device, property, runTimeData);
 
             property.endTime = simulatedTime.format("HH:mm:ss");
             bubbleTime.innerHTML += " - " + property.endTime;
@@ -3175,7 +3273,7 @@ const ExecuteSimulateBehaviorTest = function (
   }
 };
 
-const ChangeValueOfProperty = function (deviceId, changeProperty) {
+const ChangeValueOfProperty = function (deviceId, changeProperty, runTimeData) {
   let newValue;
   if (changeProperty.type === "intRange") {
     let number = parseInt(changeProperty.value);
@@ -3214,6 +3312,7 @@ const ChangeValueOfProperty = function (deviceId, changeProperty) {
     deviceProperty.value = newValue;
 
     TriggerWhenConditionalsFunctions();
+    ExecuteValueCheckingTests(runTimeData);
     RerenderDevice(device, [deviceProperty]);
   }
   changeProperty.isExecuted = true;

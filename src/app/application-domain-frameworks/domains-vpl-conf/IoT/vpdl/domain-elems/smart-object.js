@@ -524,6 +524,7 @@ export const SmartObject = {
         //         )
         //     );
         //     TriggerWhenConditionalsFunctions();
+        //     ExecuteValueCheckingTests();
         //     RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);
         //   }
         // })();
@@ -592,6 +593,7 @@ export const SmartObject = {
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
         strBuilder += "TriggerWhenConditionalsFunctions();";
+        strBuilder += "ExecuteValueCheckingTests();";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += "}";
@@ -782,6 +784,7 @@ export const SmartObject = {
         //       (elem) => elem.id === block.soData.details.iotivityResourceID
         //     );
         //     TriggerWhenConditionalsFunctions();
+        //     ExecuteValueCheckingTests()
         //     RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);
         //   }
         // })();
@@ -828,6 +831,7 @@ export const SmartObject = {
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
         strBuilder += "TriggerWhenConditionalsFunctions();";
+        strBuilder += "ExecuteValueCheckingTests();";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += "}";

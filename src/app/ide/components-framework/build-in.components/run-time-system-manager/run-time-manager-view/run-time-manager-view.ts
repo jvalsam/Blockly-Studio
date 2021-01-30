@@ -162,6 +162,10 @@ export class RuntimeManagerView extends ComponentView {
       $("#runtime-modal-dialog").draggable({ disabled: false });
     };
 
+    $("#runtime-modal").on("shown.bs.modal", function (e) {
+      $(document).off("focusin.modal");
+    });
+
     $("#runtime-modal")["modal"]({
       backdrop: false,
       show: true,

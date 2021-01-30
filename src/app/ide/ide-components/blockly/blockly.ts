@@ -2,34 +2,26 @@
   BlocklyInstance,
   InitiateBlocklyGenerator,
   BlocklyConfig,
-  DomainBlockTracker
+  DomainBlockTracker,
 } from "./blockly-instance";
-import {
-  ResponseValue
-} from "./../../components-framework/component/response-value";
-import {
-  ComponentsCommunication
-} from "../../components-framework/component/components-communication";
+import { ResponseValue } from "./../../components-framework/component/response-value";
+import { ComponentsCommunication } from "../../components-framework/component/components-communication";
 import {
   Editor,
-  IDomainElementData
+  IDomainElementData,
 } from "../../components-framework/build-in.components/editor-manager/editor";
 import {
   ExportedSignal,
   ExportedFunction,
   RequiredFunction,
   ListensSignal,
-  PlatformEditorMetadata
+  PlatformEditorMetadata,
 } from "../../components-framework/component/component-loader";
 
 import { DomainElementsHolder } from "../../domain-manager/domains-holder";
 import { assert } from "../../shared/ide-error/ide-error";
-import {
-  PItemView
-} from "../../components-framework/build-in.components/editor-manager/project-item/pitem-view";
-import {
-  ITool
-} from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
+import { PItemView } from "../../components-framework/build-in.components/editor-manager/project-item/pitem-view";
+import { ITool } from "../../components-framework/build-in.components/editor-manager/editor-manager-toolbar-view/editor-manager-toolbar-view";
 import { domain } from "process";
 import { ProjectItem } from "../../components-framework/build-in.components/project-manager/project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-item";
 
@@ -187,7 +179,9 @@ export class BlocklyVPL extends Editor {
         config,
         this.configsMap[config],
         (config) => this.getToolbox(config), // have to do work...
-        (event) => { /* */ },
+        (event) => {
+          /* */
+        },
         editorData.src,
         privileges,
         editorData.zIndex,
@@ -200,15 +194,11 @@ export class BlocklyVPL extends Editor {
 
   @ExportedFunction
   public saveEditorData(editorId: string) {
-    this.save(
-      editorId,
-      this.instancesMap[editorId].pitem,
-      () => {
-        let ed = this.instancesMap[editorId]["__editorData"];
-        ed.src = this.getEditorSrc(editorId);
-        return ed;
-      }
-    );
+    this.save(editorId, this.instancesMap[editorId].pitem, () => {
+      let ed = this.instancesMap[editorId]["__editorData"];
+      ed.src = this.getEditorSrc(editorId);
+      return ed;
+    });
   }
 
   fixBlocksTrackerInit(projectId: string, elemName: string) {

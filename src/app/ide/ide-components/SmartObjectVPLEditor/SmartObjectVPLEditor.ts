@@ -561,8 +561,75 @@ export class SmartObjectVPLEditor extends Editor {
   public saveDebugTests(data: any) {
     let compData = this.getProjectComponentData(data.projectID);
     compData.debugTests = data.debugTests;
-    compData.debugTests.testsCounter = data.testsCounter;
+    if (data.editDebugId) {
+      let xml = ComponentsCommunication.functionRequest(
+        this.name,
+        "BlocklyVPL",
+        "getEditorSrc",
+        [data.editorId]
+      ).value;
+
+      let js = ComponentsCommunication.functionRequest(
+        this.name,
+        "BlocklyVPL",
+        "generateCodeDataForExecution",
+        [{ editorId: data.editorId }]
+      ).value;
+
+      let test = compData.debugTests.expectedValueCheckingTests.find(
+        (x) => x.debugTest.id === data.editDebugId
+      );
+
+      test.debugTest.js = js;
+      test.debugTest.xml = xml;
+    }
     this.saveProjectComponentData(data.projectID, compData);
+  }
+
+  @ExportedFunction
+  saveTestsCounter(projectId: string, testsCounter: number) {
+    let compData = this.getProjectComponentData(projectId);
+    compData.testsCounter = testsCounter;
+    this.saveProjectComponentData(projectId, compData);
+  }
+
+  @RequiredFunction("BlocklyVPL", "getEditorSrc")
+  @RequiredFunction("BlocklyVPL", "generateCodeDataForExecution")
+  @ExportedFunction
+  saveExpectedValueTest(projectId: string, editorId: string, test: any) {
+    let xml = ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "getEditorSrc",
+      [editorId]
+    ).value;
+
+    let js = ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "generateCodeDataForExecution",
+      [{ editorId }]
+    ).value;
+
+    let compData = this.getProjectComponentData(projectId);
+
+    if (!compData.debugTests) compData.debugTests = {};
+    if (!compData.debugTests.expectedValueChecking)
+      compData.debugTests.expectedValueChecking = [];
+
+    let testInComp = compData.debugTests.expectedValueChecking.find(
+      (x) => x.debugTest.id === test.debugTest.id
+    );
+
+    if (testInComp) {
+      testInComp.debugTest.js = js;
+      testInComp.debugTest.xml = xml;
+    } else {
+      test.debugTest.js = js;
+      test.debugTest.xml = xml;
+      compData.debugTests.expectedValueChecking.push(test);
+    }
+    this.saveProjectComponentData(projectId, compData);
   }
 
   // @ExportedFunction
@@ -613,10 +680,7 @@ export class SmartObjectVPLEditor extends Editor {
   @ExportedFunction
   public getTestsCounter(data: any) {
     let compData = this.getProjectComponentData(data.projectID);
-    if (compData.debugTests) {
-      if (compData.debugTests.testsCounter)
-        return compData.debugTests.testsCounter;
-    }
+    if (compData.testsCounter) return compData.testsCounter;
     return 1;
   }
 
