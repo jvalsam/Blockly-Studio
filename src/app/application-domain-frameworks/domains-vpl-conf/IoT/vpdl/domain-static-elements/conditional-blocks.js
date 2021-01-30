@@ -2334,6 +2334,7 @@ export const ConditionalStaticBlocks = [
       else code += value_right_value;
 
       code += "})()";
+      code += "";
 
       // var code = value_left_value + dropdown_operators + value_right_value;
 

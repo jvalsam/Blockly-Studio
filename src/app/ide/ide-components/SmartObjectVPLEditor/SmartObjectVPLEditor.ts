@@ -576,6 +576,9 @@ export class SmartObjectVPLEditor extends Editor {
         [{ editorId: data.editorId }]
       ).value;
 
+      // add line for debugging eval
+      // js += "//# sourceURL=eval-debug-test.js";
+
       let test = compData.debugTests.expectedValueCheckingTests.find(
         (x) => x.debugTest.id === data.editDebugId
       );
@@ -584,6 +587,7 @@ export class SmartObjectVPLEditor extends Editor {
       test.debugTest.xml = xml;
     }
     this.saveProjectComponentData(data.projectID, compData);
+    return compData.debugTests;
   }
 
   @ExportedFunction

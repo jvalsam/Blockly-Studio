@@ -592,8 +592,8 @@ export const SmartObject = {
           "(elem) => elem.id === " +
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
-        strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder += "ExecuteValueCheckingTests();";
+        strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += "}";
@@ -830,8 +830,8 @@ export const SmartObject = {
           "(elem) => elem.id === " +
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
-        strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder += "ExecuteValueCheckingTests();";
+        strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += "}";

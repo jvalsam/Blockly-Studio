@@ -140,12 +140,13 @@ export class RuntimeEnvironmentRelease {
             ]);
     }
 
-    functionRequest(compDest, funcName, args) {
+    functionRequest(compDest, funcName, args, callback) {
         return this._runtimeEnv.functionRequest(
             RuntimeEnvironmentRelease.name,
             compDest,
             funcName,
-            args
+            args,
+            callback
         );
     }
 

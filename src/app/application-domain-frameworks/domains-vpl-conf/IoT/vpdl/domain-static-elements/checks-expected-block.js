@@ -19,6 +19,8 @@ export const ChecksExpectedValuesBlocks = [
             new Blockly.FieldTextInput("default"),
             "WARNING_MESSAGE"
           );
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
         this.setInputsInline(false);
         this.setColour(345);
         this.setTooltip("");
@@ -56,11 +58,14 @@ export const ChecksExpectedValuesBlocks = [
 
       let strBuilder = "";
       strBuilder += "(function () {";
-      strBuilder += "if (" + value_condition + ") {";
+      strBuilder += "if (" + value_condition + " === true) {";
       strBuilder += "RenderWarningForExpectedValueCheck(";
       strBuilder += "titleForExpectedValueTest,";
+      strBuilder += "timeForExpectedValueTest,";
+      strBuilder += "colorForExpectedValueTest,";
       strBuilder += "idForExpectedValueTest,";
       strBuilder += JSON.stringify(text_warning_message);
+      strBuilder += ", onClickTest";
       strBuilder += ");";
       strBuilder += "}";
       strBuilder += "})();";
@@ -80,7 +85,15 @@ export const ChecksExpectedValuesBlocks = [
             "Boolean",
           ])
           .appendField("Pause running automations in case of");
-        this.setInputsInline(true);
+        this.appendDummyInput()
+          .appendField("warning message:")
+          .appendField(
+            new Blockly.FieldTextInput("default"),
+            "WARNING_MESSAGE"
+          );
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setInputsInline(false);
         this.setColour(345);
         this.setTooltip("");
         this.setHelpUrl("");
@@ -106,9 +119,35 @@ export const ChecksExpectedValuesBlocks = [
         "CONDITION",
         Blockly.JavaScript.ORDER_ATOMIC
       );
-      // TODO: Assemble JavaScript into code variable.
-      var code = "...;\n";
-      return code;
+      var text_warning_message = block.getFieldValue("WARNING_MESSAGE");
+
+      // (function () {
+      //   if (value_condition) {
+      //     PauseSimulatedTime();
+      //     RenderWarningForExpectedValueCheck(
+      //       titleForExpectedValueTest,
+      //       idForExpectedValueTest,
+      //       text_warning_message
+      //     );
+      //   }
+      // })();
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + value_condition + " === true) {";
+      strBuilder += "PauseSimulatedTime();";
+      strBuilder += "RenderWarningForExpectedValueCheck(";
+      strBuilder += "titleForExpectedValueTest,";
+      strBuilder += "timeForExpectedValueTest,";
+      strBuilder += "colorForExpectedValueTest,";
+      strBuilder += "idForExpectedValueTest,";
+      strBuilder += JSON.stringify(text_warning_message);
+      strBuilder += ", onClickTest";
+      strBuilder += ");";
+      strBuilder += "}";
+      strBuilder += "})();";
+
+      return strBuilder;
     },
   },
 ];

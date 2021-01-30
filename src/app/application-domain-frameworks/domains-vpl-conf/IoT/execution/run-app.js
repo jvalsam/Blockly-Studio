@@ -790,12 +790,13 @@ const DestroyModal = function (idPrefix) {
 /* End of functions for simulating time */
 
 /* Start functions for creating test */
-let titleForExpectedValueTest = "";
-let idForExpectedValueTest = "";
 const RenderWarningForExpectedValueCheck = function (
   title,
+  time,
+  color,
   toastId,
-  warningMessage
+  warningMessage,
+  onClick
 ) {
   let toast = document.createElement("div");
   toast.classList.add("toast");
@@ -804,19 +805,36 @@ const RenderWarningForExpectedValueCheck = function (
   toast.setAttribute("aria-live", "assertive");
   toast.setAttribute("aria-atomic", "true");
   toast.setAttribute("data-autohide", "false");
+  toast.style.setProperty("position", "absolute");
+  toast.style.setProperty("z-index", "2000");
+  toast.style.setProperty("width", "22rem");
+  toast.style.setProperty("left", "42rem");
+  toast.style.setProperty("top", "0rem");
+  toast.style.setProperty("height", "8rem");
+  toast.style.setProperty("box-shadow", "rgb(136 136 136 / 21%) 2px 3px");
   document.getElementById("toasts-container").appendChild(toast);
 
   let toastHeader = document.createElement("div");
+  toastHeader.classList.add("toast-header");
+  toastHeader.style.setProperty("background-color", "#fff3cd");
   toast.appendChild(toastHeader);
 
+  let colorTitle = document.createElement("span");
+  colorTitle.style.setProperty("width", ".5rem");
+  toastHeader.appendChild(colorTitle);
+
   let titleStrong = document.createElement("strong");
-  titleStrong.classList.add("mr-auto");
-  titleStrong.innerHTML = title;
+  titleStrong.classList.add("mr-auto", "text-truncate");
+  titleStrong.innerHTML = "Warning: " + title;
   toastHeader.appendChild(titleStrong);
+
+  let timeSmall = document.createElement("small");
+  timeSmall.innerHTML = time;
+  toastHeader.appendChild(timeSmall);
 
   let closeButton = document.createElement("button");
   closeButton.type = "button";
-  closeButton.classList.add("ml-2", "mb-1", " close");
+  closeButton.classList.add("ml-2", "mb-1", "close");
   closeButton.setAttribute("data-dismiss", "toast");
   closeButton.setAttribute("aria-label", "Close");
   toastHeader.appendChild(closeButton);
@@ -827,21 +845,64 @@ const RenderWarningForExpectedValueCheck = function (
   closeButton.appendChild(spanClose);
 
   let toastBody = document.createElement("div");
+  toastBody.classList.add("toast-body", "alert", "alert-warning");
   toastBody.innerHTML = warningMessage;
+  toastBody.style.setProperty("height", "100%");
+  toastBody.onmouseover = () => {
+    toastBody.style.setProperty("cursor", "pointer");
+  };
+  toastBody.onmouseout = () => {
+    toastBody.style.setProperty("cursor", "initial");
+  };
+  toastBody.onclick = () => {
+    onClick();
+    $("#" + toastId).toast("hide");
+  };
   toast.appendChild(toastBody);
 
-  $("#" + idForExpectedValueTest).on("hidden.bs.toast", function () {
+  $("#" + toastId).on("hidden.bs.toast", function () {
     toast.remove();
   });
 
-  $("#" + idForExpectedValueTest).toast({ autohide: false });
-  $("#" + idForExpectedValueTest).toast("show");
+  $("#" + toastId).toast({ autohide: false });
+  $("#" + toastId).toast("show");
 };
 
 const ExecuteValueCheckingTests = function (runTimeData) {
+  let idPrefixNew = "create-expected-value-checking-test";
+  if (!debugTests || !debugTests.expectedValueCheckingTests) return;
   for (const test of debugTests.expectedValueCheckingTests) {
     let titleForExpectedValueTest = test.debugTest.title;
     let idForExpectedValueTest = test.debugTest.id + "-toast";
+    let timeForExpectedValueTest = test.time;
+    let colorForExpectedValueTest = test.debugTest.color;
+    let onClickTest = () => {
+      RenderExpectedValueCheckingModal(
+        idPrefixNew,
+        runTimeData,
+        test,
+        true,
+        () => {
+          let indexDebugTest = debugTests.expectedValueCheckingTests.findIndex(
+            (x) => x.debugTest.id === test.debugTest.id
+          );
+          if (indexDebugTest > -1) {
+            debugTests.expectedValueCheckingTests.splice(indexDebugTest, 1);
+          }
+
+          envData.RuntimeEnvironmentRelease.functionRequest(
+            "SmartObjectVPLEditor",
+            "saveDebugTests",
+            [
+              {
+                debugTests: debugTests,
+                projectID: envData.execData.projectId,
+              },
+            ]
+          );
+        }
+      );
+    };
     // eval js
     eval(test.debugTest.js);
   }
@@ -1364,7 +1425,14 @@ const RenderExpectedValueCheckingModal = function (
           editDebugId: debugTest.id,
           editorId: blocklyWorkspaceDiv.id,
         },
-      ]
+      ],
+      {
+        func: (data) => {
+          debugTests = data;
+          ExecuteValueCheckingTests(envData);
+        },
+        type: "sync",
+      }
     );
 
     // hide modals
@@ -1606,6 +1674,13 @@ const CollectAllChangesForSimulateBehaviorTest = function (testTimeSlots) {
         property.value = document.getElementById(
           timeSlot.time + "-" + deviceId + "-properties-" + propIndex + "-value"
         ).value;
+        let dom = document.getElementById(
+          timeSlot.time + "-" + deviceId + "-properties-" + propIndex + "-value"
+        );
+        // A trick for boolean properties
+        if (dom.type === "checkbox") {
+          property.value = (dom.checked === true) + "";
+        }
         property.isExecuted = false;
       }
       for (let [actionIndex, action] of timeSlot.devices[
@@ -3311,8 +3386,8 @@ const ChangeValueOfProperty = function (deviceId, changeProperty, runTimeData) {
   if (deviceProperty.value !== newValue) {
     deviceProperty.value = newValue;
 
-    TriggerWhenConditionalsFunctions();
     ExecuteValueCheckingTests(runTimeData);
+    TriggerWhenConditionalsFunctions();
     RerenderDevice(device, [deviceProperty]);
   }
   changeProperty.isExecuted = true;
@@ -4102,6 +4177,9 @@ export async function StartApplication(runTimeData) {
 
     // Render Smart Devices
     RenderSmartDevices(devicesOnAutomations);
+
+    ExecuteValueCheckingTests(runTimeData);
+    TriggerWhenConditionalsFunctions();
 
     const RunAutomations = async function (automations) {
       automations.forEach((events) => {
