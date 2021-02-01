@@ -113,8 +113,8 @@ body {
   display: block;
   height: 91%;
   font-size: small;
-  overflow-y: hidden;
   font-size: 15px;
+  overflow-y: auto;
   max-height: 20rem;
 }
 
