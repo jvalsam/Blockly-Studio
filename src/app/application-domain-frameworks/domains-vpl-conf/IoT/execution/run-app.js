@@ -623,6 +623,7 @@ const InitializeOrganizerForCalendar = function () {
   ) {
     mutations.forEach(function (mutationRecord) {
       let day = document.getElementById("organizer-container-date").innerHTML;
+      day = day.replace("Feburary", "February");
 
       // parse the date and take which event is marked as fired
       if (activeDateOnCalendar[day]) {
