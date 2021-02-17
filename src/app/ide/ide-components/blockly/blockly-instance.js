@@ -239,7 +239,7 @@ export class BlocklyInstance {
       let blocklySel = "blockly_" + this.id;
       // create new div with absolute position in the IDE
       if (this.wsp) {
-        this.text = this.getText();
+        // this.text = this.getText();
         this.wsp.dispose();
         // this.wsp = null;
         $("#" + blocklySel).empty();
