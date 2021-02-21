@@ -77,7 +77,7 @@ export function BlocklyDebugger(plugin) {
             );*/
             //Debuggee_Worker.RegisterVariablesDebuggerAction("variables");
             //Debuggee_Worker.RegisterWatchDebuggerAction("watches");
-            //Debuggee_Worker.RegisterStopDebuggerAction("StopButton");
+            Debuggee_Worker.RegisterStopDebuggerAction("StopButton");
             Debuggee_Worker.RegisterStepInDebuggerAction("StepInButton");
             Debuggee_Worker.RegisterStepOutDebuggerAction("StepOutButton");
             Debuggee_Worker.RegisterStepOverDebuggerAction("StepOverButton");

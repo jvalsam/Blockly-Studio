@@ -5,7 +5,7 @@
     background-repeat: no-repeat;
     background-size: contain;
     background-color: #ffffff;
-    //background-image: url("./blockly-debugger/media/compress-icon.png");
+    background-image: url("./blockly-debugger/media/compress-icon.png");
 }
 
 .font600 {
@@ -20,17 +20,17 @@
 }
 
 .collapsible {
-    background-color: white;
+    background-color: rgba(245, 245, 245, 0.904);
     color: black;
     cursor: pointer;
-    padding: 8px;
+    padding: 5px;
     padding-left: 8%;
-    margin-top: 2%;
+    margin-top: 1%;
     width: 100%;
     border: 0;
     text-align: left;
     outline: 0;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 610;
 }
 
@@ -115,13 +115,13 @@
 
 /*****************************************************************************/
 
-#debugger-toolbar{
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";;
+#debugger-toolbar {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
     width: 350px;
     height: 87vh;
     position: absolute;
     top: 38px;
-    right: 10px;
+    right: 1px;
     background-clip: border-box;
     border: 1px solid rgba(0,0,0,.125);
     border-radius: .25rem;
@@ -144,7 +144,7 @@
     color: #eeeeee;
     height: 45px;
     background-color: #4a81b1;
-    margin-bottom: 10px;
+    margin-bottom: 1px;
 }
 
 #debugger-icon {
@@ -177,9 +177,15 @@
 
 #debugger-control{
     margin-top: 4%;
-    padding-left: 15%;
-    margin-bottom: 4%;
+    padding-left: 5%;
+    margin-bottom: 1.5%;
     display: inline-block;
+    background-color: #eeeeee;
+    
+    margin-left: 20px;
+    border-radius: 10px;
+    height: 35px;
+    width: 240px;
 }
 
 #debugger-control button {
@@ -201,7 +207,54 @@
 }
 
 #ContinueButton {
-    background-image: url("https://img.icons8.com/officel/80/000000/next.png");
+    color: #28a745;
+    display: inline-block;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+#PauseButton {
+    color: orange;
+    display: inline-block;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+#StopButton {
+    color: #d42929;
+    display: inline-block;
+    margin-top: 5px;
+    margin-left: 8px;
+}
+
+#StepInButton {
+    margin-left: 12px;
+}
+
+#StepInButton img {
+    height: 24px;
+    width: 24px;
+}
+
+#StepOverButton img {
+    height: 24px;
+    width: 24px;
+}
+
+#StepParentButton img {
+    height: 24px;
+    width: 24px;
+}
+
+#StepOutButton img {
+    height: 24px;
+    width: 24px;
+}
+
+.no-breakpoints {
+    margin-left: 8%;
+    margin-top: 4%;
+    margin-bottom: 5%;
 }
 
 
@@ -355,6 +408,7 @@
     font-size: 16px;
     color: rgba(0,0, 0, 0.81);
     font-weight: 600;
+    margin-bottom: 8px;
 }
 
 #debugger-watches {
