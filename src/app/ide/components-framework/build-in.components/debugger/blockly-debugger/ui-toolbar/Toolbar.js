@@ -4,7 +4,6 @@ import ToolbarViewTmpl from "./toolbar-view.tmpl";
 
 export class Toolbar {
     constructor(container, callback) {
-
         this._variablessArray = [];
         this._distinctParents = [];
         this._watches = [];

@@ -1,0 +1,29 @@
+
+.red-breakpoint-circle {
+    float: left;
+    width: 8px;
+    height: 8px;
+    margin: 7px;
+    shape-outside: circle();
+    clip-path: circle();
+    background: #dc3545;
+}
+
+.project-element-square {
+    border-right-width: 6px;
+    height: 1em;
+    width: 6px;
+    margin-left: 2px;
+    padding-left: 2px;
+}
+
+.project-element-img {
+    background-position: center center;
+    background-size: contain;
+}
+
+.trash-button {
+    display: inline-block;
+    color: grey;
+}
+
