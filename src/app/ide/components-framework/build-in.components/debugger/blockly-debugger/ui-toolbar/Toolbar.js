@@ -1,5 +1,5 @@
 import { post } from "jquery";
-import ToolbarViewTmpl from "./toolbar-view.tmpl";
+import ToolbarViewTmpl from "./debugger-toolbar-view.tmpl";
 
 
 export class Toolbar {
