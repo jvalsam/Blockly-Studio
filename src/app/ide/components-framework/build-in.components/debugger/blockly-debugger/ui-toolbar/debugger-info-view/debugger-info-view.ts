@@ -1,7 +1,7 @@
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
-import DebuggerInfoViewTmpl from "./-view.tmpl";
-import DebuggerInfoViewSYCSS from "./breakpoints-view.sycss";
+import DebuggerInfoViewTmpl from "./debugger-info-view.tmpl";
+import DebuggerInfoViewSYCSS from "./debugger-info-view.sycss";
 import { View, ViewMetadata, ModalView, IViewUserStyleData } from "../../../../../component/view";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import * as _ from "lodash";
