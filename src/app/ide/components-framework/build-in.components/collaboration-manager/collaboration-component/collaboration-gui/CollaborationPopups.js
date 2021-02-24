@@ -230,7 +230,7 @@ class PassFloorPopup extends CollaborationPopup {
 
         let container = $('<div class="vcenter" style="margin-bottom: 5px; cursor: pointer;"> </div>');
         let icon = $(`<div class="member-icon" style="float:left; background-image = ${member.icon};"> </div>`);
-        let name = $(`<div style="float:left;"> ${member.name} </div>`);
+        let name = $(`<div style="float:left;">${member.name}</div>`);
         let tick = $(`<div class="collaboration-popup-tick-icon size18x18"></div>`);
         
         tick.hide();

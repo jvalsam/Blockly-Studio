@@ -136,6 +136,11 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @ExportedFunction
+  public update_privileges(editorData: any, privilege: string): void {
+
+  }
+
+  @ExportedFunction
   public update_src(data: any, pitem: any, focus: boolean = false): void {
     let id = data.editorId;
     assert(

@@ -281,8 +281,15 @@ export class CollaborationManager extends IDEUIComponent {
                     let passFloorPopup = new PassFloorPopup(container);
                     passFloorPopup.setMembers(collabInfo.connected_users);
                     passFloorPopup.setOnPassFloorCb((newOwner)=>{
-                        console.log(newOwner);
                         collabData.privileges.owner = newOwner;
+                        if(newOwner !== collabInfo.myInfo.name){
+                            collabData.privileges.shared.readOnly = true;
+                            pitem.privileges = "READ_ONLY";
+                        }else{
+                            collabData.privileges.shared.readOnly = false;
+                            pitem.privileges = "EDITING";
+                        }
+                        this.onPItemUpdate(pitem.id, PItemEditType.OWNERSHIP, newOwner);
                         this.pitemUpdated(pitem.id, PItemEditType.OWNERSHIP, newOwner);
                     });
                     // console.log('Give floor');

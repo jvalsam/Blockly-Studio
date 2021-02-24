@@ -90,6 +90,11 @@ export class ViSmaOE extends Editor {
 
     }
 
+    @ExportedFunction
+    public update_privileges(editorData: any, privilege: string): void {
+
+    }
+
     public update_src(data: any, pitem: any, focus: boolean): void {
 
     }

@@ -26,7 +26,7 @@ export function sendPItemUpdated(pItemId,updateType,info,conn){
         type: "updatePItem",
         updateType: updateType,
         pItemId: pItemId,
-        info: JSON.stringify(info)
+        info: info
     };
     if(!conn)sendToAll(arg);
     else conn.send(arg);
