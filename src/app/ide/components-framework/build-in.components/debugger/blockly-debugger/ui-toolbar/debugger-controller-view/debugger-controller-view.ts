@@ -1,7 +1,7 @@
 
 /// <reference path="../../../../../../../../../node.d.ts"/>
-import DebuggerToolbarViewTmpl from "./debugger-toolbar-view.tmpl";
-import DebuggerToolbarViewSYCSS from "./debugger-toolbar-view.sycss";
+import DebuggerToolbarViewTmpl from "./debugger-controller-view.tmpl";
+import DebuggerToolbarViewSYCSS from "./debugger-controller-view.sycss";
 import { View, ViewMetadata, ModalView, IViewUserStyleData } from "../../../../../component/view";
 import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { ActionsView } from "../../../../../common-views/actions-view/actions-view";
