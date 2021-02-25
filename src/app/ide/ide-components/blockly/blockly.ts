@@ -279,7 +279,7 @@ export class BlocklyVPL extends Editor {
 
   @ExportedFunction
   public update_privileges(editorData: any, privilege: string): void {
-    
+    this.instancesMap[editorData.editorId].update_privileges();
   }
 
   @ExportedFunction

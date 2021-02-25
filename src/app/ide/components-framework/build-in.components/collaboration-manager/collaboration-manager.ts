@@ -244,6 +244,7 @@ export class CollaborationManager extends IDEUIComponent {
             icon: "../../../../../../images/collaboration/name.png",
             action: () => alert(pitem["renderParts"][1].value.text)
         });
+        let allData = this.getProjectComponentData(this.shProject._id);
         let settings = this.getProjectComponentData(this.shProject._id).projectInfo;
         let collabData = pitem.componentsData.collaborationData;
         if(settings.createPItem){ // Add Logic if "Allow members to create project item" was enabled
@@ -279,7 +280,7 @@ export class CollaborationManager extends IDEUIComponent {
                     let container = $("<div></div>");
                     $("body").append(container);
                     let passFloorPopup = new PassFloorPopup(container);
-                    passFloorPopup.setMembers(collabInfo.connected_users);
+                    passFloorPopup.setMembers(allData.members);
                     passFloorPopup.setOnPassFloorCb((newOwner)=>{
                         collabData.privileges.owner = newOwner;
                         if(newOwner !== collabInfo.myInfo.name){
@@ -289,6 +290,7 @@ export class CollaborationManager extends IDEUIComponent {
                             collabData.privileges.shared.readOnly = false;
                             pitem.privileges = "EDITING";
                         }
+                        console.log(pitem);
                         this.onPItemUpdate(pitem.id, PItemEditType.OWNERSHIP, newOwner);
                         this.pitemUpdated(pitem.id, PItemEditType.OWNERSHIP, newOwner);
                     });

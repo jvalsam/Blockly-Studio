@@ -158,6 +158,10 @@ export class BlocklyInstance {
     return this.pitem.getPrivileges();
   }
 
+  update_privileges() {
+    this.state = InstStateEnum.INIT;
+  }
+
   static update_src(data, pitem) {
     if (
       !this._syncNotFocusedEditorId ||
@@ -226,7 +230,7 @@ export class BlocklyInstance {
       return;
     }
 
-    if (this.state === InstStateEnum.INIT) {
+    if (this.state === InstStateEnum.INIT || this.state === InstStateEnum.CLOSE) {
       let blocklySel = "blockly_" + this.id;
       // create new div with absolute position in the IDE
       if (this.wsp) {
@@ -253,11 +257,13 @@ export class BlocklyInstance {
       this._blocklyDiv.style.visibility = "visible";
       this.calcPItemBlocklyArea();
       this.onResize();
-    } else {
-      this._blocklyDiv.style.visibility = "visible";
-      this.calcPItemBlocklyArea();
-      this.onResize();
     }
+    //TODO: TO FIX!
+    // else {
+    //   this._blocklyDiv.style.visibility = "visible";
+    //   this.calcPItemBlocklyArea();
+    //   this.onResize();
+    // }
 
     this.state = InstStateEnum.OPEN;
   }
