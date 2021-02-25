@@ -32,4 +32,3 @@ export class DebuggerInfoView extends View {
         //TODO: create new elements for the tabs view
     }
 }
-
