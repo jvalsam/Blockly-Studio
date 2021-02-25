@@ -1431,7 +1431,6 @@ export class ProjectManager extends IDEUIComponent {
     private editElementOwnership(pitemID, data, callback) {
         let pitem = this.retrievePitem(pitemID);
         //
-
         ComponentsCommunication.functionRequest(
             this.name,
             "EditorManager",

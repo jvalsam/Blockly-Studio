@@ -114,6 +114,8 @@ export abstract class Editor extends IDEUIComponent {
         return json;
     }
 
+    public abstract update_privileges(editorData: any, privilege: string): void;
+
     public abstract updatePItemData(editorId: string, pitem: ProjectItem);
 
     public abstract getDomainElementData(projectId: string, domainElemId: string): IDomainElementData;

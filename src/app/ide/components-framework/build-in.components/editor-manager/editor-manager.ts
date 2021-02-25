@@ -529,9 +529,33 @@ export class EditorManager extends IDEUIComponent {
         }
     }
 
+    private updatePrivileges(pitem: any): void {
+        let pitemData = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [pitem.jstreeNode.type]
+        ).value;
+
+        let _items = pitem.editorsData.items;
+        for (const key in _items) {
+            let item = _items[key];
+
+            let econfig = pitemData.editorConfigs[item.confName][0];
+
+            ComponentsCommunication.functionRequest(
+                this.name,
+                econfig.name,
+                "update_privileges",
+                [item, pitem.privileges]
+            );
+        }
+    }
+
     @ExportedFunction
     public refreshPItem(pitem) {
         if (this.projectItemsMap[pitem.systemID]) {
+            this.updatePrivileges(pitem);
             this.open(pitem, this.areaOfPItem(pitem.systemID));
         }
     }

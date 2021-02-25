@@ -85,7 +85,7 @@ export function receivePItemUpdated(data,conn){
     //     return;
     // }
 
-	let info = JSON.parse(data.info);
+	let info = data.info;
 	let updateType = data.updateType;
     let pItemId = data.pItemId;
     
@@ -146,7 +146,7 @@ function acceptUser(conn,infom){
 
 var pItemUpdateHandler = {
     "rename" : pItemRename,
-	"passOwnership": pItemPassOwnership,
+	"ownership": pItemPassOwnership,
 	"changeSharedStatus": pItemChangeSharedStatus,
 	"changeRenderParts": pItemChangeRenderParts
 }
@@ -158,8 +158,16 @@ function pItemRename(pItem,info){
 }
 
 function pItemPassOwnership(pItem,info){
-    
-	pItem.privileges.owner = info;
+    let collabData = pItem.componentsData.collaborationData;
+    collabData.privileges.owner = info;
+    if(info !== collabInfo.myInfo.name){
+        collabData.privileges.shared.readOnly = true;
+        pItem.privileges = "READ_ONLY";
+    }else{
+        collabData.privileges.shared.readOnly = false;
+        pItem.privileges = "EDITING";
+    }
+    collabInfo.plugin.onPItemUpdate(pItem.systemID,"ownership",info,()=>{});
 }
 
 function pItemChangeSharedStatus(pItem,info){
