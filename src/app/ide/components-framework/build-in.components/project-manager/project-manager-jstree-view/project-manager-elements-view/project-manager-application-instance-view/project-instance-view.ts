@@ -712,6 +712,21 @@ export class ProjectInstanceView extends View {
         return category.validChildren;
     }
 
+    public getCategoryInformation(categoryId: string): any {
+        let category = this.data.meta.categories.find(x => x.id === categoryId);
+
+        let infoC: Array<any> = category.renderParts;
+        let text = infoC.find(x => x.type === "title");
+        let icon = infoC.find(x => x.type === "img");
+        let color = infoC.find(x => x.type === "colour");
+        
+        return {
+            text: this.getValue(text),
+            icon: this.getValue(icon),
+            color: this.getValue(color)
+        };
+    }
+
     public trigger(evt: string, elem :ProjectElement): void {
         $("#"+elem.jstreeNode.id)["jstree"]().deselect_all(true);
         this.treeview/*.jstree()*/.select_node(elem.jstreeNode.id);
