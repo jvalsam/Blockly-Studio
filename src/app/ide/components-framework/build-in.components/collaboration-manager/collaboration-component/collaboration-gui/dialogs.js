@@ -1,3 +1,4 @@
+import { collabInfo } from '../collaboration-core/utilities';
 import {
         SharePopup,
         JoinPopup
@@ -18,12 +19,22 @@ export function openStartSessionDialogue(
     onFailure   // cb
     ) {
         let collaborationUI = {};
-        let boundOnSuccess = function(name){
+        let boundOnSuccess = function(member){
             collabPlugin.resizeToolbar($toolbarContainer, 350, function (){
                 $(".project-manager-runtime-console-area").hide(); //fixme
                 collaborationUI["ui"] = (new CollaborationUI($toolbarContainer));
+                collaborationUI["ui"].setOnToolbarMenuOpen( () => {
+                    return {
+                        member: {
+                            name: collabInfo.myInfo.name,   //todo Katsa Need function for this
+                            icon: collabInfo.myInfo.icon,   //todo Katsa Need function for this
+                        },
+                        link: collabPlugin.getInvitationCode(),
+                        projectName: collabPlugin.shProject.description
+                    }
+                });
             });
-            onSuccess(name, {});
+            onSuccess(member, {});
         }
 
         let sharePopup = new SharePopup($popupContainer);
