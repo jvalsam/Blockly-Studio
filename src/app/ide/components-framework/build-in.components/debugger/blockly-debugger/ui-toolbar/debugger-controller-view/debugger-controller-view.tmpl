@@ -8,7 +8,7 @@
     <a href="#" id="StopButton">
         <i title="Stop" class="fas fa-lg fa-stop"></i>
     </a>
-
+    <span style="margin-right: 6px; border-right: solid 1px grey;"></span>
     <a href="#" id="StepInButton">
         <img title="Step Into" src="/images/step-into.png"></i>
     </a>
@@ -21,4 +21,9 @@
     <a href="#" id="StepOutButton">
         <img title="Step Out" src="/images/step-out.png"></i>
     </a>
+    <% if (collaborative) { %>
+        <a href="#" id="ControlMasterButton">
+            <img title="Step Out" src="/images/control-master.png"></i>
+        </a>
+    <% } %>
 </div>

@@ -5,6 +5,7 @@ import {
 } from "../../component/component-loader";
 import { ComponentsCommunication } from "../../component/components-communication";
 import { IDEUIComponent } from "../../component/ide-ui-component";
+import { ViewRegistry } from "../../component/registry";
 import { BlocklyDebugger } from "./blockly-debugger/index";
 
 
@@ -55,10 +56,19 @@ export class Debugger extends IDEUIComponent {
         alert("start debugging process...");
         this.environmentData = environmentData;
         
+        let toolbar = ViewRegistry.getEntry("DebuggerToolbarView")
+            .create(
+                this,
+                ".debugger-toolbar-container",
+                environmentData
+            );
+        toolbar.render();
+
         this.blocklyDebugger.initiateToolbar(
-            ".debugger-toolbar-container",
-            () => {onSuccess("complete view of the debugger toolbar")},
-        );
+            this.environmentData,
+            () => {
+                onSuccess("complete view of the debugger toolbar")
+            });
     }
 
     @RequiredFunction("BlocklyVPL", "getAllBlocklyWSPs")
