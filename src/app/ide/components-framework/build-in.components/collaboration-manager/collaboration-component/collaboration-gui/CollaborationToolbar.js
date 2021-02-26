@@ -436,6 +436,14 @@ export class CollaborationUI {
     }
 
     _toggleToolbarMenu(){
+        if ($('.collaboration-toolbar-menu').is(":hidden")){
+            let info = this.getToolbarInfo();
+            $(".toolbar-menu-member-icon").css("background-image", info.member.icon);
+            $(".toolbar-menu-member-name").text(info.member.name);
+            $('.toolbar-menu-project-name').text(info.projectName);
+            $('.toolbar-menu-link-text').val(info.link);
+        }
+
         $('.collaboration-toolbar-opacity').toggle();
         $('.collaboration-toolbar-menu').toggle();
     }
@@ -562,9 +570,12 @@ export class CollaborationUI {
 
     /* API */
 
-    setToolbarMenuMember(member){
-        $(".toolbar-menu-member-icon").css("background-image", member.icon);
-        $(".toolbar-menu-member-name").text(member.name);
+    /**
+     * 
+     * @param {function} getToolbarInfo returns an object with fiels member, projectName, link
+     */
+    setOnToolbarMenuOpen(getToolbarInfo){
+        this.getToolbarInfo = getToolbarInfo;
     }
 
     setToolbarMenuProjectInfo(projectName, link){
