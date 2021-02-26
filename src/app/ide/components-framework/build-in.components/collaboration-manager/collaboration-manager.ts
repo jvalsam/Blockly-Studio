@@ -210,6 +210,10 @@ export class CollaborationManager extends IDEUIComponent {
         )
     }
 
+    public getInvitationCode() {
+        return collabInfo.invitationCode;
+    }
+
     private reservedOptions = {
         jstree_BlocklyTasks: [
             {
@@ -263,12 +267,38 @@ export class CollaborationManager extends IDEUIComponent {
                 action: () => alert('Make a note on the current project item')
             })
         }
+        opts.push({
+            tooltip: "print code",
+            icon: "../../../../../../images/collaboration/send.png",
+            action: () => alert(this.getInvitationCode())
+        })
         if(settings.reqOwnership && collabData.privileges.owner !== collabInfo.myInfo.name){ // Add Logic if "Allow members request for ownership" was enabled
             opts.push(
                 {
                 tooltip: "Request Ownership of Project Item",
                 icon: "../../../../../../images/collaboration/send.png",
                 action: () => alert('Request ownership for the current project item')
+            })
+        }
+        if(collabData.privileges.owner !== collabInfo.myInfo.name && collabData.privileges.author === collabInfo.myInfo.name){ // Add Logic if "Allow members request for ownership" was enabled
+            opts.push(
+                {
+                tooltip: "Retrieve floor on project item",
+                icon: "../../../../../../images/collaboration/send.png",
+                action: () => {
+                    let newOwner = collabInfo.myInfo.name;
+                    collabData.privileges.owner = newOwner;
+                    if(newOwner !== collabInfo.myInfo.name){
+                        collabData.privileges.shared.readOnly = true;
+                        pitem.privileges = "READ_ONLY";
+                    }else{
+                        collabData.privileges.shared.readOnly = false;
+                        pitem.privileges = "EDITING";
+                    }
+                    console.log(pitem);
+                    this.onPItemUpdate(pitem.id, PItemEditType.OWNERSHIP, newOwner);
+                    this.pitemUpdated(pitem.id, PItemEditType.OWNERSHIP, newOwner);
+                }
             })
         }
         if(collabData.privileges.owner === collabInfo.myInfo.name){
@@ -280,7 +310,7 @@ export class CollaborationManager extends IDEUIComponent {
                     let container = $("<div></div>");
                     $("body").append(container);
                     let passFloorPopup = new PassFloorPopup(container);
-                    passFloorPopup.setMembers(allData.members);
+                    passFloorPopup.setMembers(allData.members.filter((member)=>member.name !== collabInfo.myInfo.name));
                     passFloorPopup.setOnPassFloorCb((newOwner)=>{
                         collabData.privileges.owner = newOwner;
                         if(newOwner !== collabInfo.myInfo.name){
