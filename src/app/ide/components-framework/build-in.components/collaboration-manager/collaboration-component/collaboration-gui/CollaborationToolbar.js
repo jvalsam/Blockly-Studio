@@ -1,61 +1,67 @@
-export class CollaborationUI{
+export class CollaborationUI {
     
+    
+
+
     constructor(container){
+
         this._membersA = {
-            'style' :   "                               \
-                            display: flex;              \
-                            align-items: center;        \
-                            flex-wrap: wrap;            \
-                            height : 33px;              \
-                            margin-bottom: 4px;         \
-                            margin-top: 4px;            \
-                        "
+            style :
+            "                               \
+                display: flex;              \
+                align-items: center;        \
+                flex-wrap: wrap;            \
+                height : 33px;              \
+                margin-bottom: 4px;         \
+                margin-top: 4px;            \
+            "
         };
-
         this._fileA = {
-            'style' :   "                               \
-                            display: flex;              \
-                            align-items: center;        \
-                            flex-wrap: wrap;            \
-                            height : 19px;              \
-                            margin-bottom: 5px;         \
-                            font-size: 16px;            \
-                        "
+            'style' :   
+            "                               \
+                display: flex;              \
+                align-items: center;        \
+                flex-wrap: wrap;            \
+                height : 19px;              \
+                margin-bottom: 5px;         \
+                font-size: 16px;            \
+            "
         };
-
         this._memberRequests = {};
-        this._injectHtml(container);
-        this._initTrees();
-
-        /*
-            Trees
-        */
-        this._members = $.jstree.reference('#collaboration-members');
-        this._personalFiles = $.jstree.reference('#selected-member-files');
-        this._sharedPersonalFilesFromMe = $.jstree.reference('#collaboration-shared-from-me');
-        this._sharedPersonalFilesToMe = $.jstree.reference('#collaboration-shared-to-me');
+        this._onClickPersonalFile = (node) => {console.log(node)};
+           
+        /* Trees */
+        this._members;
+        this._personalFiles;
+        this._sharedPersonalFilesFromMe;
+        this._sharedPersonalFilesToMe;
         
-        /*
-            HTML IDS
-        */
-
-        //tree root ids
+        /* Html tree root ids */
+    
         this._COLLABORATORS = 'members-collaborators';
         this._PERSONAL_FILES = 'personal-files';
         this._COLLABORATOR_ME = 'members-me'
-
-        //prefixes for adding new nodes
+        
+        /* Prefixes for adding new nodes */
+        
         this._MEMBER_PREFIX = 'collaborators-';
         this._MEMBER_ME_PREFIX = 'collaborators-me-';
         this._ANNOTATION_FILE_PREFIX = '-file-';
         this._PERSONAL_FILE_PREFIX = 'personal-file-';
         this._SHARED_FROM_ME_FILE_PREFIX = 'shared-from-me-';
         this._SHARED_TO_ME_FILE_PREFIX = 'shared-to-me-';
+
+        this._injectHtml(container);
+        this._initTrees();
+
+        /* Trees */
+        this._members = $.jstree.reference('#collaboration-members');
+        this._personalFiles = $.jstree.reference('#selected-member-files');
+        this._sharedPersonalFilesFromMe = $.jstree.reference('#collaboration-shared-from-me');
+        this._sharedPersonalFilesToMe = $.jstree.reference('#collaboration-shared-to-me');
     }
 
-    /*
-        PRIVATE FUNCTIONS
-    */
+    /* PRIVATE FUNCTIONS */
 
     _initTrees(){
         $('#collaboration-members').jstree({
@@ -86,7 +92,8 @@ export class CollaborationUI{
                 "wholerow",
                 "contextmenu",
                 "unique",
-                "types"
+                "types",
+                "conditionalselect"
             ],
             'types': {
                 'smart_object': {},
@@ -107,6 +114,16 @@ export class CollaborationUI{
                         'a_attr': this._membersA
                     },
                 ]
+            },
+            "conditionalselect" : (node, event) => {
+                let file = {
+                    id: node.id,
+                    name: node.text,
+                    color: node.color,
+                    icon: node.icon,
+                };
+                this._onClickPersonalFile(file);
+                return true;
             }
         });
     
@@ -345,6 +362,32 @@ export class CollaborationUI{
     _injectHtml(container) {
         let html =
         '<div id = "collaboration-toolbar"> \
+            <div class = "collaboration-toolbar-opacity"></div>\
+            <div class = "collaboration-toolbar-menu">\
+                <div class = "collaboraiton-toolbar-top">\
+                    <div class = "toolbar-menu-member">\
+                        <div class = "toolbar-menu-member-icon"></div>\
+                        <div class = "toolbar-menu-member-name"> </div>\
+                    </div>\
+                    <div class = "toolbar-menu-minimize"></div>\
+                </div>\
+                <hr>\
+                <div class="toolbar-menu-section">\
+                    <div class="toolbar-menu-section-title"> Live Share </div>\
+                    <div class="toolbar-menu-project-and-link">\
+                        <div class="toolbar-menu-project-name"> </div>\
+                        <div class="toolbar-menu-link">\
+                            <input readonly type="text" class="toolbar-menu-link-text">\
+                            <div class="toolbar-menu-copy-link"></div>\
+                        </div>\
+                    </div>\
+                </div>\
+                <div class="toolbar-menu-section">\
+                    <div class="toolbar-menu-section-title"> Settings </div>\
+                    <div class="toolbar-menu-settings">\
+                    </div>\
+                </div>\
+            </div>\
             <div id = "collaboration-header-container" class = "vcenter"> \
                 <div id = "collaboration-icon" class = "size30x30"> </div> \
                 <div id = "collaboration-title"> Collaboration </div> \
@@ -382,6 +425,41 @@ export class CollaborationUI{
             $("#" + container).append(html);
         else
             container.append(html);
+
+        $('.toolbar-menu-copy-link').click(() => {
+            $('.toolbar-menu-link-text').select();
+            document.execCommand("copy");
+        });
+        $('#collaboration-burger').click(() => this._toggleToolbarMenu());
+        $('.toolbar-menu-minimize').click(() => this._toggleToolbarMenu());
+        this._toggleToolbarMenu();
+    }
+
+    _toggleToolbarMenu(){
+        $('.collaboration-toolbar-opacity').toggle();
+        $('.collaboration-toolbar-menu').toggle();
+    }
+
+    _createPersonalFileNodes(parentId, node, calculateId){
+        let id = calculateId(parentId, node);
+
+        node.id = this._personalFiles.create_node(
+            parentId,
+            {
+                id: id,
+                text: node.name,
+                icon: node.icon,
+                color: node.color,
+                state : { opened : true },
+                a_attr: this._fileA
+            },
+            0,
+            () => {
+                if (node.children)
+                    for (let child of node.children)
+                        this._createPersonalFileNodes(id, child, calculateId)
+            },
+        );
     }
 
     _addMemberFileAnotation(memberName, fileName, fileIcon, fileColor, fileBubbleColor, cb = undefined){
@@ -409,12 +487,12 @@ export class CollaborationUI{
      */
     _addAction(member, file, actionColor, type, time, add){
         let html = `                                                                                                \
-            <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                                                             \
+            <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                 \
                 <div class = "recent-action-row vcenter font-size16px">                                             \
                     <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
                     <div> ${member.name} </div>                                                                     \
                     <div class = "middle-right vcenter">                                                            \
-                        <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \                                                  \
+                        <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \
                         ${file.name}                                                                                \
                     </div>                                                                                          \
                 </div>                                                                                              \
@@ -484,6 +562,42 @@ export class CollaborationUI{
 
     /* API */
 
+    setToolbarMenuMember(member){
+        $(".toolbar-menu-member-icon").css("background-image", member.icon);
+        $(".toolbar-menu-member-name").text(member.name);
+    }
+
+    setToolbarMenuProjectInfo(projectName, link){
+        $('.toolbar-menu-project-name').text(projectName);
+        $('.toolbar-menu-link-text').val(link);
+    }
+
+    /**
+     * 
+     * @param {Array} settings for example [{name: 'settingName', checked: 'true'}, {name: 'settingName2' checked: false}] 
+     */
+    setToolbarMenuSettings(settings){
+        $('.toolbar-menu-settings').empty();
+        for (let setting of settings){
+            let settingJqry = $(`\
+                <div class="collaboration-setting">\
+                    <div class="collaboration-setting-title"> ${setting.name} </div>\
+                    <label class="collaboration-setting-checkbox-container">\
+                        <span class="slider"></span>\
+                    </label>\
+                </div>\
+            `);
+    
+            let checkbox = $(`<input type="checkbox" ${setting.checked ? "checked" : ""}>`)
+            checkbox.click(()=>{
+                setting.checked = checkbox.is(':checked');
+            });
+            
+            settingJqry.children("label").prepend(checkbox);
+            $('.toolbar-menu-settings').append(settingJqry);
+        }
+    }
+
     /**
      * 
      * @param {Object} member Should contain name and icon
@@ -491,6 +605,7 @@ export class CollaborationUI{
      */
     addMemberMe(member, cb = undefined ){
         this._addMember(member, true, cb);
+        this._userName = member.name;
     }
 
     /**
@@ -551,83 +666,62 @@ export class CollaborationUI{
         this._members.delete_node(this._MEMBER_PREFIX + memberName + this._ANNOTATION_FILE_PREFIX + fileName);
     }
 
-    /**
-     * @param {Object} file The file, should contain path, name, icon, color. 
-     *                      Path: is of the form folder1/folder2 and DOES NOT end up with the file's name
-     *                      Name: the name of the file
-     *                      Icon: the path to the icon: e.g. ./Icons/clock.png
-     *                      Color: the color of the file
-     */
-    addPersonalFile(file, cb = undefined){
-        var path = file.path;
-
-        var ids = path.split('/');
-        var currId = '.', prev = this._PERSONAL_FILES;
-        var node;
-
-        // add folders if needed
-        for (var i = 0; i < ids.length; i++){
-            currId += '/' + ids[i];
-            if (!this._personalFiles.get_node(this._PERSONAL_FILE_PREFIX + currId)){
-                this._personalFiles.create_node(prev, {
-                    'id' : this._PERSONAL_FILE_PREFIX + currId,
-                    'text': ids[i],
-                    'icon': false,
-                    'a_attr': this._fileA
-                });
-            }
-            prev = this._PERSONAL_FILE_PREFIX + currId; 
-        }
-
-        //add the file
-        currId += '/' + file.name;
-        if (!this._personalFiles.get_node(this._PERSONAL_FILE_PREFIX + currId)){
-            this._personalFiles.create_node(prev, {
-                'id' : this._PERSONAL_FILE_PREFIX + currId,
-                'text': file.name,
-                'icon': file.icon ? file.icon : './Icons/clock.png',
-                'color': file.color ? file.color : 'red',
-                'a_attr': this._fileA
-            }, 
-            'last', 
-            cb);
-
-            this._personalFiles.get_node(this._PERSONAL_FILE_PREFIX + currId)['color'] = file.color ? file.color : 'red';
-            this._personalFiles.redraw_node(this._PERSONAL_FILE_PREFIX + currId);
-        }
-    }
-
-    /**
-     * 
-     * @param {String} memberName The member's name
-     * @param {Array} files Each file, should contain path, name, icon, color.
-     *                      Path: is of the form folder1/folder2 and DOES NOT end up with the file's name
-     *                      Name: the name of the file
-     *                      Icon: the path to the icon: e.g. ./Icons/clock.png
-     *                      Color: the color of the file
-     * @param {function} cb Callback
-     */
-    clearAndAddMemberPersonalFiles(memberName, files, cb = undefined){
+    clearAndAddPersonalFileSpecificIds(memberName, nodes){
         this._personalFiles.delete_node(this._PERSONAL_FILES);
         this._personalFiles.create_node('#',{
-            'id': 'personal-files',
-            'type': 'other',
-            'text': 'Personal Files - ' + memberName,
-            'icon': false,
-            'state' : {
-                'opened' : true,
-            },
-            'a_attr': this._membersA
+            id: 'personal-files',
+            text: 'Personal Files - ' + memberName,
+            icon: false,
+            state : { opened : true, },
+            a_attr: this._membersA
         },
         'last',
-        function(){
-            if (!files.length) cb();
+        () => {
+            this._createPersonalFileNodes('personal-files', nodes, (parentId, node) => {
+                return node.id;
+            });
         });
-        
-        for (var i = 0; i < files.length - 1; i++)
-            this.addPersonalFile(files[i]);
-        
-        if (files.length) this.addPersonalFile(files[files.length - 1], cb);
+    }
+
+    clearAndAddPersonalFilesAutoIds(memberName, nodes){
+        this._personalFiles.delete_node(this._PERSONAL_FILES);
+        this._personalFiles.create_node(
+            '#',
+            {
+                id: 'personal-files',
+                text: 'Personal Files - ' + memberName,
+                icon: false,
+                state : { opened : true, },
+                a_attr: this._membersA
+            },
+            'last',
+            () => {
+                this._createPersonalFileNodes('personal-files', nodes, (parentId, node) => {
+                    return parentId + '/' + node.name
+                });
+            }
+        );
+    }
+
+    addPersonalFile(parentId, id){
+        if (!parentId)
+            parentId = 'personal-files';
+
+        this._personalFiles.create_node(
+            parentId,
+            {
+                id: id,
+                text: node.name,
+                icon: node.icon,
+                color: node.color,
+                state : { opened : true },
+                a_attr: this._fileA
+            },
+        );
+    }
+
+    setOnClickPersonalFileCb(cb){
+        this._onClickPersonalFile = cb;
     }
 
     pushFrontAction(member, file, actionColor, actionType, actionTime){

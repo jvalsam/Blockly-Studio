@@ -57,6 +57,7 @@
     font-family: "Roboto";
     width: 350px;
     height: 91vh;
+    position: relative;
 }
 
 #collaboration-content{
@@ -103,6 +104,7 @@
     background-color: #eeeeee;
     -webkit-mask-image: url(https://image.flaticon.com/icons/svg/545/545705.svg);
     mask-image: url(https://image.flaticon.com/icons/svg/545/545705.svg);
+    cursor: pointer;
 }
 
 /****************************************************************************
@@ -381,13 +383,158 @@
 }
 
 /****************************************************************************
+---> toolbar menu
+****************************************************************************/
+
+.collaboration-toolbar-opacity{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.33);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.collaboration-toolbar-menu{
+    height: 100%;
+    width: 80%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1vw;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #ffffff;
+    z-index: 1;
+}
+
+.collaboraiton-toolbar-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.toolbar-menu-member{
+    display: flex;
+    flex-direction: column;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 21px;
+    color: rgba(0, 0, 0, 0.81);
+    gap: 10px;
+}
+
+.toolbar-menu-member-icon{
+    background-position: center center !important;
+    background-size: 35px 35px !important;
+    size: 55px 55px !important;
+    width: 55px !important;
+    height: 55px !important;
+    background-repeat: no-repeat !important;
+    background-color: lightblue !important;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: solid 1px #24537E;
+    background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/man0.png);
+}
+
+.toolbar-menu-minimize{
+    width: 30px;
+    height: 30px;
+    background-size: 20px 20px;
+    background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/minimize.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.collaboration-toolbar-menu > hr {
+    width: 100%;
+    background-color: #4A81B1;
+    height: 1px;
+    border: 0;
+    margin: 0;
+}
+
+.toolbar-menu-section-title{
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 18px;
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.toolbar-menu-project-name{
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 16px;
+
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.toolbar-menu-copy-link{
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #4A81B1;
+    -webkit-mask-image: url(https://www.flaticon.com/svg/static/icons/svg/126/126498.svg);
+    -webkit-mask-size: 100% 100%;
+    mask-image: url(https://www.flaticon.com/svg/static/icons/svg/126/126498.svg);
+    mask-size: 100% 100%;
+    cursor: pointer;
+}
+
+.toolbar-menu-link{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toolbar-menu-link > input {
+    border: 0.5px solid #6091BB;
+    box-sizing: border-box;
+    margin: 0;
+    height: 25px;
+    width: 80%;
+
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.50);
+}
+
+.toolbar-menu-section{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toolbar-menu-project-and-link{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.toolbar-menu-settings{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/****************************************************************************
 ---> popups
 ****************************************************************************/
 
 .collaboration-popup {
-    font-family: "Roboto" !important;
+    /* font-family: "Roboto" !important; */
     font-size: 14px !important;
-    width: 350px;
+    min-width: 350px;
+    width: fit-content;
     height: fit-content;
     box-sizing: border-box;
     background-color: #ffffff;
@@ -435,7 +582,6 @@
 }
 
 .collaboration-popup-content-container {
-    border: 1px solid #b1b1b1;
     height: 85%;
     box-sizing: border-box;
     position: relative;
@@ -507,4 +653,424 @@
     background-color: green;
     -webkit-mask-image: url(https://www.flaticon.com/svg/static/icons/svg/2107/2107593.svg);
     mask-image: url(https://www.flaticon.com/svg/static/icons/svg/2107/2107593.svg);
+}
+
+/****************************************************************************
+---> Suggestion Popup
+****************************************************************************/
+
+.collaboration-popup-content-container{
+    padding: 0;
+}
+
+.suggestion-all-content{
+    width: 70vw;
+    display: flex;
+}
+
+.suggestion-text-16{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.suggestion-text-14{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.suggestion-user{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+}
+
+.suggestion-user:hover{
+    background-color: #f1f1f1;
+}
+
+.suggestion-user-active{
+    background-color: #f1f1f1;
+}
+
+.suggestion-user-icon{
+    background-position: center center !important;
+    background-size: 15px 15px !important;
+    size: 24px 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+    background-color: #4A81B1 !important;
+    background-image: url(./../../../components-framework/build-in.components/collaboration-manager/Icons/man0.png);
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: solid 2px #24537E;
+}
+
+.suggestion-editors-area{
+    display: flex;
+    width: 80%;
+    height: 60vh;
+    position: relative;
+}
+
+.suggestion-right-menu{
+    display: flex;
+    justify-content: center;
+    width: 20%;
+    height: 60vh;
+}
+
+.suggestion-right-menu-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 40px;
+    width: 80%;
+    margin-top: 40px;
+}
+
+.suggestion-right-menu-section{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.suggesiton-confirmation-buttons{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    color: #ffffff;
+}
+
+.suggestion-confirmation-button{
+    width: 47.5%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.suggestion-accept{
+    background-color: #4DB151;
+}
+.suggestion-reject{
+    background-color: #F44236;
+}
+
+.suggestion-users-container{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 20vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.suggestion-editor-area{
+    width: 50%;
+    height: 100%;
+    border: 1px solid #B1B1B1;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.suggestion-vpl-editor{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+}
+
+.suggestion-annotation-with-x{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    text-align: left;
+    z-index: 1;
+}
+
+.suggestion-annotation{
+    padding: 10px;
+    text-align: left;
+    z-index: 1;
+}
+
+.suggestion-annotation-x{
+    width: 15px;
+    height: 15px;
+    size: 15px 15px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.45);
+    background-size: cover;
+    -webkit-mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+    -webkit-mask-size: 100% 100%;
+    mask-image: url(https://image.flaticon.com/icons/svg/1828/1828747.svg);
+    mask-size: 100% 100%;
+    cursor: pointer;
+}
+
+.suggestion-annotation-warning{
+    background: #FFE79E;
+}
+.suggestion-annotation-comment{
+    background: #FFF7CB;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.suggestion-arrow{
+    background-image: url(./Icons/arrow.png);
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.suggestion-comment-title{
+    display:flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.suggestion-comment-content{
+    font-style: italic;
+    font-weight: 300;
+    border: 0;
+    background-color: transparent;
+    resize: none;
+    height: 80px;
+}
+
+.suggestion-comment-content:focus{
+    border: 0;
+}
+
+/****************************************************************************
+---> Settings Popup
+****************************************************************************/
+
+.collaboration-all-settings-container{
+    min-width: 32vw;
+    padding: 2vw;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.collaboration-settings-category{
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.collaboration-settings-category-title{
+    font-style: normal;
+    font-weight: bold;
+    font-size: 19px;
+    line-height: 22px;
+
+    color: rgba(0, 0, 0, 0.81);
+}
+
+.collaboration-setting{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.collaboration-setting-title {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 18px;
+
+    color: rgba(0, 0, 0, 0.81);
+}
+
+
+.collaboration-settings-apply-button{
+    width: 200px;
+    height: 35px;
+    background: #4A81B1;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #FFFFFF;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    margin-top: 50px;
+    cursor: pointer;
+}
+
+.collaboration-setting-checkbox-container {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 14px;
+    margin-bottom: 0;
+}
+  
+.collaboration-setting-checkbox-container input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+  
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #C6C5C5;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+  
+.slider:before {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    content: "";
+    height: 20;
+    width: 20;
+
+    border-radius: 50%;
+    background-color: #F1F1F1;
+    -webkit-transition: .4s;
+    transition: .4s;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.24);
+}
+  
+input:checked + .slider {
+    background-color: #80CBC3;
+}
+  
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+  
+input:checked + .slider:before {
+    -webkit-transform: translate(calc(40px - 100%), -50%);
+    -ms-transform: translate(calc(40px - 100%), -50%);
+    transform: translate(calc(40px - 100%), -50%);
+    top: 50%;
+    background-color: #009688;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.24);
+}
+
+/****************************************************************************
+---> Selective Execution
+****************************************************************************/
+
+.selective-execution-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2vw;
+}
+
+.selective-execution-tree-container{
+    display: flex;
+    width: 50vw;
+    height: 50vh;
+    justify-content: left;
+    overflow: scroll;
+}
+
+.selective-execution-tree{
+    text-align: left;
+    margin-right: auto;
+}
+
+.selective-execution-tree > ul > li > a{
+    font-weight: 600 !important;
+    color: #2e2e2e !important;
+    font-size: 18px !important; 
+}
+
+.selective-execution-tree > .jstree-children {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.81);
+    font-weight: normal;
+}
+
+.selective-execution-tree > .jstree-children a i.jstree-themeicon {
+    background-position: center center !important;
+    background-size: 16px 16px !important;
+    size: 16px 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent !important;
+    border-radius: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+    border: 0px;
+}
+
+/*  */
+.selective-execution-tree > ul > li > .jstree-ocl {
+    float: left;
+}
+
+.selective-execution-tree > ul > li > .jstree-children .jstree-ocl {
+    float: left;
+    margin-top: 0;
+}
+
+.selective-execution-tree span {
+    height: 19px !important;
+    margin-right: 10px !important;
+}
+
+.selective-execution-tree .jstree-checkbox{
+    margin-right: 10px;
+}
+
+.selective-execution-button{
+    width: 200px;
+    height: 35px;
+    background: #4A81B1;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #FFFFFF;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    margin-top: 50px;
+    cursor: pointer;
 }
