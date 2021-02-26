@@ -47,9 +47,9 @@ export class DebuggerToolbarView extends View {
             "#debugger-control-area",
             {
                 collaborative: false,
-                state: "RUNNING",
+                state: "PAUSED",
                 available: true
-            } /* state of the debugger, usefull to build it in case of collaborative */
+            }
         );
         this.debuggerInfodata = ViewRegistry.getEntry("DebuggerInfoView").create(
             this.parent,

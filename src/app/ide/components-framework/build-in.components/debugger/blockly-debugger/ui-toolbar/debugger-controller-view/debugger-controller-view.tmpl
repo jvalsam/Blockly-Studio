@@ -1,29 +1,33 @@
 <div id = "debugger-control" class="collapsible-content">
-    <a href="#" id="ContinueButton">
+    <a href="#" id="ContinueButton" class="<%= available && state === 'PAUSED' ? 'enable-fa-btn' : 'not-enable-fa-btn' %>">
         <i class="fa fa-lg fa-play" title="Continue" aria-hidden="true"></i>
     </a>
-    <a href="#" id="PauseButton">
+    <a href="#" id="PauseButton" class="<%= available && state === 'RUNNING' ? 'enable-fa-btn' : 'not-enable-fa-btn' %>">
         <i title="Pause" class="fas fa-lg fa-pause"></i>
     </a>
-    <a href="#" id="StopButton">
+    <a href="#" id="StopButton" class="<%= available && state === 'RUNNING' ? 'enable-fa-btn' : 'not-enable-fa-btn' %>">
         <i title="Stop" class="fas fa-lg fa-stop"></i>
     </a>
+
     <span style="margin-right: 6px; border-right: solid 1px grey;"></span>
-    <a href="#" id="StepInButton">
+
+    <a href="#" id="StepInButton" class="<%= available && state === 'PAUSED' ? 'enable-icon-btn' : 'not-enable-icon-btn' %>">
         <img title="Step Into" src="/images/step-into.png"></i>
     </a>
-    <a href="#" id="StepOverButton">
+    <a href="#" id="StepOverButton" class="<%= available && state === 'PAUSED' ? 'enable-icon-btn' : 'not-enable-icon-btn' %>">
         <img title="Step Over" src="/images/step-over.png"></i>
     </a>
-    <a href="#" id="StepParentButton">
+    <a href="#" id="StepParentButton" class="<%= available && state === 'PAUSED' ? 'enable-icon-btn' : 'not-enable-icon-btn' %>">
         <img title="Step Parent" src="/images/step-parent.png"></i>
     </a>
-    <a href="#" id="StepOutButton">
+    <a href="#" id="StepOutButton" class="<%= available && state === 'PAUSED' ? 'enable-icon-btn' : 'not-enable-icon-btn' %>">
         <img title="Step Out" src="/images/step-out.png"></i>
     </a>
+
     <% if (collaborative) { %>
-        <a href="#" id="ControlMasterButton">
-            <img title="Step Out" src="/images/control-master.png"></i>
+        <span style="margin-left: 10px; border-right: solid 1px grey;"></span>
+        <a href="#" id="ControlMasterButton" class="<%= available && state === 'PAUSED' ? 'enable-icon-btn' : 'not-enable-icon-btn' %>">
+            <img title="Change Owner" src="/images/master-control.png"></i>
         </a>
     <% } %>
 </div>

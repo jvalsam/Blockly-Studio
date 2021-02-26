@@ -35,27 +35,37 @@ export class DebuggerControllerView extends View {
             {
                 eventType: "click",
                 selector: "#ContinueButton",
-                handler: () => {}
+                handler: () => {
+                    alert("continue");
+                }
             },
             {
                 eventType: "click",
                 selector: "#PauseButton",
-                handler: () => {}
+                handler: () => {
+                    alert("pause");
+                }
             },
             {
                 eventType: "click",
                 selector: "#StopButton",
-                handler: () => {}
+                handler: () => {
+                    alert("stop");
+                }
             },
             {
                 eventType: "click",
                 selector: "#StepInButton",
-                handler: () => {}
+                handler: () => {
+                    alert("step in");
+                }
             },
             {
                 eventType: "click",
                 selector: "#StepOverButton",
-                handler: () => {}
+                handler: () => {
+                    
+                }
             },
             {
                 eventType: "click",
@@ -83,5 +93,8 @@ export class DebuggerControllerView extends View {
 
     public render(): void {
         this.renderTmplEl(this.data);
+        if (this.data.collaborative) {
+            $("#debugger-control").css('width', '295px');
+        }
     }
 }
