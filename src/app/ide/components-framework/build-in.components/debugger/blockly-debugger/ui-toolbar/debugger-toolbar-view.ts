@@ -15,7 +15,7 @@ import * as _ from "lodash";
 })
 export class DebuggerToolbarView extends View {
     private controller: View;
-    private debuggerData: View;
+    private debuggerInfodata: View;
     private breakpoints: View;
     private conditionalBreakpoints: View;
 
@@ -41,20 +41,17 @@ export class DebuggerToolbarView extends View {
         }
     ) {
         super(parent, name, templateHTML, style, hookSelector);
-    }
-
-    public registerEvents(): void {}
-
-    public setStyle(): void {}
-
-    public render(): void {
-        this.renderTmplEl();
+        //
         this.controller = ViewRegistry.getEntry("DebuggerControllerView").create(
             this.parent,
             "#debugger-control-area",
-            {} /* state of the debugger, usefull to build it in case of collaborative */
+            {
+                collaborative: false,
+                state: "RUNNING",
+                available: true
+            } /* state of the debugger, usefull to build it in case of collaborative */
         );
-        this.debuggerData = ViewRegistry.getEntry("DebuggerDataView").create(
+        this.debuggerInfodata = ViewRegistry.getEntry("DebuggerInfoView").create(
             this.parent,
             "#debugger-data-area",
             {}
@@ -69,5 +66,17 @@ export class DebuggerToolbarView extends View {
             "#conditional-breakpoints-data-area",
             {}
         );
+    }
+
+    public registerEvents(): void {}
+
+    public setStyle(): void {}
+
+    public render(): void {
+        this.renderTmplEl();
+        this.controller.render();
+        this.debuggerInfodata.render();
+        this.breakpoints.render();
+        this.controller.render();
     }
 }

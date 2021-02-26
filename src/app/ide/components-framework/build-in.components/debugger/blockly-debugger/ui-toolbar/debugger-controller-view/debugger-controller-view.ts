@@ -31,14 +31,57 @@ export class DebuggerControllerView extends View {
     }
 
     public registerEvents(): void {
-        this.attachEvents(
-            // TODO
-        );
+        let events = [
+            {
+                eventType: "click",
+                selector: "#ContinueButton",
+                handler: () => {}
+            },
+            {
+                eventType: "click",
+                selector: "#PauseButton",
+                handler: () => {}
+            },
+            {
+                eventType: "click",
+                selector: "#StopButton",
+                handler: () => {}
+            },
+            {
+                eventType: "click",
+                selector: "#StepInButton",
+                handler: () => {}
+            },
+            {
+                eventType: "click",
+                selector: "#StepOverButton",
+                handler: () => {}
+            },
+            {
+                eventType: "click",
+                selector: "#StepParentButton",
+                handler: () => {}
+            },
+            {
+                eventType: "click",
+                selector: "#StepOutButton",
+                handler: () => {}
+            }
+        ];
+        if (this.data.collaborative) {
+            events.push({
+                eventType: "click",
+                selector: "#ControlMasterButton",
+                handler: () => {}
+            });
+        }
+
+        this.attachEvents(...events);
     }
 
     public setStyle(): void {}
 
     public render(): void {
-        this.renderTmplEl();
+        this.renderTmplEl(this.data);
     }
 }
