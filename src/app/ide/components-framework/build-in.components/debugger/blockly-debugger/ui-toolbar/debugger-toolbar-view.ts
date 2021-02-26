@@ -14,7 +14,7 @@ import * as _ from "lodash";
     style: { system: DebuggerToolbarViewSYCSS }
 })
 export class DebuggerToolbarView extends View {
-    private controller;
+    private controller: View;
     private debuggerData: View;
     private breakpoints: View;
     private conditionalBreakpoints: View;
@@ -26,7 +26,8 @@ export class DebuggerToolbarView extends View {
         style: Array<IViewUserStyleData>,
         hookSelector: string,
         private data: {
-            
+            controller: any,
+            debuggerData: any,
             breakpoints: Array<{
                 pelem: { label: string, icon: string, color: string },
                 vplElem: { id: string, orderNO },

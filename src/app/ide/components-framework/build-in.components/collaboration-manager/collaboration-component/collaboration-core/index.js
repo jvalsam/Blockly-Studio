@@ -43,6 +43,7 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
     collabInfo.UI.addMemberMe(myInfo);
   });
   console.log(collabInfo.plugin);
+  collabInfo.invitationCode = randomId;
   peer.on('connection', (conn) => {
     console.log('connected ' + conn);
 
@@ -65,6 +66,7 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
 
 export function startCommunicationUser(myInfo, externalLink, CollabManager, loadProject, cbUI) {
   function acceptedUser(DB){
+    collabInfo.invitationCode = externalLink;
     collabInfo.connected_users.push(conn);
     console.log(DB.info);
     DB.info.projectItems.forEach(item => filterPItem(item,false));
@@ -79,10 +81,11 @@ export function startCommunicationUser(myInfo, externalLink, CollabManager, load
     });
     
     collabInfo.plugin.shProject.componentsData.CollaborationManager.members.forEach((item)=>{
-      collabInfo.UI.addMember({
-        name: item.name,
-        icon: item.icon
-      });
+      if(item.name !== myInfo.name)
+        collabInfo.UI.addMember({
+          name: item.name,
+          icon: item.icon
+        });
     });
 
   }

@@ -1785,4 +1785,9 @@ export class ProjectManager extends IDEUIComponent {
     public updateMsgNextToPItem(pitemId: string, msg: string): any {
         this.getProjectInstanceView(pitemId).updateMsgNextToItem(pitemId, msg);
     }
+
+    @ExportedFunction
+    public getCategoryInformation(pitemId: string, categoryId: string) {
+        this.getProjectInstanceView(pitemId).getCategoryInformation(categoryId);
+    }
 }

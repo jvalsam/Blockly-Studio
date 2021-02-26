@@ -25,6 +25,4 @@ router.post("/upload", (...args) => {
     res.status(200).send(paths);
 });
 
-
-
 module.exports = router;

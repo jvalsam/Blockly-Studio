@@ -29,7 +29,7 @@ export function openStartSessionDialogue(
         let sharePopup = new SharePopup($popupContainer);
         sharePopup.setOnCloseCb(onFailure);
         sharePopup.setOnShareCb(boundOnSuccess);
-        
+        // collabPlugin.getInvitationCode();
         // onSuccess({
         //     name: sharePopup.getName(),
         //     icon: "myIcon"
