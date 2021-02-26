@@ -656,6 +656,83 @@
 }
 
 /****************************************************************************
+---> Edit Icon for share and join popups
+****************************************************************************/
+
+.collaboration-edit-icon-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+}
+
+.edit-icon-icons {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 2vw;
+}
+.edit-icon-line {
+    width: 1px;
+    align-self: stretch;
+    background-color: #5C5C5C;
+}
+
+.edit-icon-alternate-icons {
+    max-width: 20vh;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+}
+
+.edit-icon-my-icon {
+    margin-top: 15px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: blue;
+}
+
+.edit-icon-alternate-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-size: 45px 45px;
+    background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/man0.png);
+}
+
+.edit-icon-buttons {
+    display: flex;
+    gap: 1vw;
+}
+
+.edit-icon-button {
+    width: 100px;
+    height: 40px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    font-size: 14px;
+    line-height: 16px;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.edit-icon-cancel {
+    background-color: #DB4337;
+}
+
+.edit-icon-confirm {
+    background-color: #009888;
+}
+
+/****************************************************************************
 ---> Suggestion Popup
 ****************************************************************************/
 

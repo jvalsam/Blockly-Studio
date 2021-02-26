@@ -1,3 +1,5 @@
+import { isArguments } from "lodash";
+
 export {
     SharePopup,
     JoinPopup,
@@ -295,7 +297,7 @@ class SharePopup extends CollaborationPopup{
         super(container, "Share Project");
 
         let html = '\
-            <div>\
+            <div style = "padding: 2vw;">\
                 <div class = "collaboration-popup-row center">\
                     <div class = "vcenter" style = "display: inline-flex">\
                         <div class = "collaboration-popup-user-icon"> </div>\
@@ -345,8 +347,8 @@ class SharePopup extends CollaborationPopup{
 class JoinPopup extends CollaborationPopup{
     constructor(container){
         super(container, "Join to a shared project");
-        let html = '\
-            <div>\
+        let $join = $('\
+            <div style = "padding: 2vw;">\
                 <div class="collaboration-popup-row center">\
                     <div class="vcenter" style="display: inline-flex">\
                         <div class="collaboration-popup-user-icon"> </div>\
@@ -363,9 +365,42 @@ class JoinPopup extends CollaborationPopup{
                     <input type="button" id="collaboration-join-button" value="JOIN">\
                 </div>\
             </div>\
-        ';
+        ');
 
-        this._contentContainer.append(html);
+        let images = [];
+        for (let gender of ['man', 'woman']){
+            for (let i = 0; i < 5; i++){
+                images.push(`${gender}${i}.png)`);   
+            }
+        }
+        
+        let $edit = $('\
+        <div style = "padding: 2vw;">\
+            <div class = "collaboration-edit-icon-container">\
+                <div class = "edit-icon-icons">\
+                    <div class = "edit-icon-my-icon"> </div>\
+                    <div class = "edit-icon-line"> </div>\
+                    <div class = "edit-icon-alternate-icons"> </div>\
+                </div>\
+                <div class = "edit-icon-buttons">\
+                    <div class = "edit-icon-button edit-icon-cancel"> Cancel </div>\
+                    <div class = "edit-icon-button edit-icon-confirm"> Confirm </div>\
+                </div>\
+            </div>\
+        </div>\
+        ');
+
+        this._contentContainer.append($join);
+
+        for (let img of images){
+            $('.edit-icon-alternate-icons').append($img);
+            // path needs to be defined here
+        }
+
+        $('.collaboration-popup-edit').click(() => {
+            $join.hide();
+            $edit.show();
+        });
 
         $('#collaboration-join-button').click(() => {
             let name = this.getName();
