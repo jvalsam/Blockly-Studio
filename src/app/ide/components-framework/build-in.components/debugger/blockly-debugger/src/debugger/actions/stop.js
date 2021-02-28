@@ -1,7 +1,7 @@
 import { generation } from "../../generator/blockly/blockly_init";
 import { Debuggee_Worker, Blockly_Debugger} from "../debugger.js";
 
-export function RegisterStopDebuggerAction(selector) {
+export function RegisterStopDebuggerAction() {
     Blockly_Debugger.actions["Stop"] = {};
 
     Blockly_Debugger.actions["Stop"].handler = () => {

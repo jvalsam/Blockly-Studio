@@ -1,7 +1,7 @@
 import {Debuggee_Worker, Blockly_Debugger} from '../debugger.js';
 
 
-export function RegisterStepInDebuggerAction(selector) {
+export function RegisterStepInDebuggerAction() {
     Blockly_Debugger.actions["StepIn"] = {}; 
     Blockly_Debugger.actions["StepIn"].handler = () => {
         if(!Debuggee_Worker.hasInstance()) return; 
@@ -11,7 +11,7 @@ export function RegisterStepInDebuggerAction(selector) {
     return Blockly_Debugger.actions["StepIn"].handler;
 }
 
-export function RegisterStepOverDebuggerAction(selector) {
+export function RegisterStepOverDebuggerAction() {
     Blockly_Debugger.actions["StepOver"] = {};
     Blockly_Debugger.actions["StepOver"].handler = () => {
         if(!Debuggee_Worker.hasInstance()) return; 
@@ -21,7 +21,7 @@ export function RegisterStepOverDebuggerAction(selector) {
     return Blockly_Debugger.actions["StepOver"].handler;
 }
 
-export function RegisterStepParentDebuggerAction(selector) {
+export function RegisterStepParentDebuggerAction() {
     Blockly_Debugger.actions["StepParent"] = {};
     Blockly_Debugger.actions["StepParent"].handler = () => {
         if(!Debuggee_Worker.hasInstance()) return; 
@@ -31,7 +31,7 @@ export function RegisterStepParentDebuggerAction(selector) {
     return Blockly_Debugger.actions["StepParent"].handler;
 }
 
-export function RegisterStepOutDebuggerAction(selector) {
+export function RegisterStepOutDebuggerAction() {
     Blockly_Debugger.actions["StepOut"] = {}; 
     Blockly_Debugger.actions["StepOut"].handler = () => {
         if(!Debuggee_Worker.hasInstance()) return; 
