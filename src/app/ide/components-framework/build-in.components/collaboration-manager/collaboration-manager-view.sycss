@@ -540,11 +540,7 @@
     background-color: #ffffff;
 
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin: auto;
+    transform: translate(calc(50vw - 50%), calc(50vh - 50%));
     z-index: 72; /* toolbox has index 70, popup-opacity 71 */ 
 }
 
@@ -624,14 +620,16 @@
 
 .collaboration-popup-user-icon{
     background-position: center center !important;
-    background-size: 35px 35px !important;
+    background-size: 50px 50px !important;
     size: 55px 55px !important;
     width: 55px !important;
     height: 55px !important;
     background-color: #4A81B1 !important;
+    border-radius: 50%;
+    border: 2px solid #4A81B1;
+    background-color: #8BAFCD !important;
     background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/man0.png);
     background-repeat: no-repeat;
-    border-radius: 50%;
     margin-top: 0px;
     margin-right: 10px;
     box-sizing: border-box;
@@ -695,15 +693,27 @@
     width: 55px;
     height: 55px;
     border-radius: 50%;
-    background-color: blue;
+    background-size: 50px 50px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #8BAFCD;
+    border: 2px solid #4A81B1;
 }
 
 .edit-icon-alternate-icon {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    background-size: 45px 45px;
-    background-image: url(/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/man0.png);
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 2px solid #4A81B1;
+    background-color: #8BAFCD;
+    cursor: pointer;
+}
+
+.edit-icon-selected {
+    border: 2px solid #E2EB98;
 }
 
 .edit-icon-buttons {
