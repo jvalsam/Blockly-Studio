@@ -292,11 +292,121 @@ class PassFloorPopup extends CollaborationPopup {
     }
 }
 
+class ChooseIconComponent {
+    
+    constructor(imgs){
+        this.$view = $('\
+        <div style = "padding: 2vw;">\
+            <div class = "collaboration-edit-icon-container">\
+                <div class = "edit-icon-icons">\
+                    <div class = "edit-icon-my-icon"> </div>\
+                    <div class = "edit-icon-line"> </div>\
+                    <div class = "edit-icon-alternate-icons"> </div>\
+                </div>\
+                <div class = "edit-icon-buttons">\
+                    <div class = "edit-icon-button edit-icon-cancel"> Cancel </div>\
+                    <div class = "edit-icon-button edit-icon-confirm"> Confirm </div>\
+                </div>\
+            </div>\
+        </div>\
+        ');
+
+        this.img2html = {};
+
+        for (let img of imgs){
+            let $img = $(`<div class = "edit-icon-alternate-icon"></div>`);
+            $img.css('background-image', `url(${img})`);
+            $img.click(() => this.selectImg(img));
+            this.$view.find('.edit-icon-alternate-icons').append($img);
+
+            this.img2html[img] = $img;
+        }
+
+        this.onCancel = () => {};
+        this.onConfirm = (selected) => {};
+
+        this.$view.find('.edit-icon-cancel').click( () => this.onCancel() );
+        this.$view.find('.edit-icon-confirm').click( 
+            () => this.onConfirm(this.$selected.css('background-image')) 
+        );
+    
+        this.selectImg(imgs[0]);
+    }
+
+    selectImg(img){
+        let $img = this.img2html[img];
+
+        if (this.$selected)
+            this.$selected.removeClass('edit-icon-selected');
+        $img.addClass('edit-icon-selected');
+        this.$selected = $img;
+        this.$view.find('.edit-icon-my-icon').css('background-image', $img.css('background-image'));
+    }
+
+    setOnConfirmCb(cb){
+        this.onConfirm = cb;
+    }
+
+    setOnCancelCb(cb){
+        this.onCancel = cb;
+    }
+
+    getView(){
+        return this.$view;
+    }
+
+    getSelected(){
+        return this.$selected.css('background-image');
+    }
+
+}
+
+
+/**
+ * Sets up a choose icon component for specialized for share and join popups
+ */
+class SpecializedChooseIconComponent {
+    constructor($other){
+        let path = '/src/app/ide/components-framework/build-in.components/collaboration-manager/Icons/';
+        let images = [];
+        for (let gender of ['man', 'woman']){
+            for (let i = 0; i < 5; i++){
+                images.push(`${path}${gender}${i}.png`);   
+            }
+        }
+
+        this.edit = new ChooseIconComponent(images);
+        let $edit = this.edit.getView();
+        
+        $edit.hide();
+
+        this.edit.setOnCancelCb(() => {
+            $edit.hide();
+            $other.show();
+        });
+
+        this.edit.setOnConfirmCb((selected) => {
+            $edit.hide();
+            $other.show();
+            $('.collaboration-popup-user-icon').css('background-image', selected);
+        });
+
+        $('.collaboration-popup-edit').click(() => {
+            $other.hide();
+            $edit.show();
+        });
+    }
+
+    getView(){
+        return this.edit.getView();
+    }
+}
+
 class SharePopup extends CollaborationPopup{
     constructor(container){
         super(container, "Share Project");
 
-        let html = '\
+        let $share = $('\
             <div style = "padding: 2vw;">\
                 <div class = "collaboration-popup-row center">\
                     <div class = "vcenter" style = "display: inline-flex">\
@@ -312,9 +422,9 @@ class SharePopup extends CollaborationPopup{
                     <input type="button" id="collaboration-share-button" value="SHARE">\
                 </div>\
             </div>\
-        ';
+        ');
 
-        this._contentContainer.append(html);
+        this._contentContainer.append($share);
 
         $("#collaboration-share-button").click(() => {
             let name = this.getName();
@@ -328,6 +438,9 @@ class SharePopup extends CollaborationPopup{
                     icon: icon
                 });
         });
+
+        let edit = new SpecializedChooseIconComponent($share);
+        this._contentContainer.append(edit.getView());
     }
 
     getName(){
@@ -366,42 +479,9 @@ class JoinPopup extends CollaborationPopup{
                 </div>\
             </div>\
         ');
-
-        let images = [];
-        for (let gender of ['man', 'woman']){
-            for (let i = 0; i < 5; i++){
-                images.push(`${gender}${i}.png)`);   
-            }
-        }
         
-        let $edit = $('\
-        <div style = "padding: 2vw;">\
-            <div class = "collaboration-edit-icon-container">\
-                <div class = "edit-icon-icons">\
-                    <div class = "edit-icon-my-icon"> </div>\
-                    <div class = "edit-icon-line"> </div>\
-                    <div class = "edit-icon-alternate-icons"> </div>\
-                </div>\
-                <div class = "edit-icon-buttons">\
-                    <div class = "edit-icon-button edit-icon-cancel"> Cancel </div>\
-                    <div class = "edit-icon-button edit-icon-confirm"> Confirm </div>\
-                </div>\
-            </div>\
-        </div>\
-        ');
-
         this._contentContainer.append($join);
-
-        for (let img of images){
-            $('.edit-icon-alternate-icons').append($img);
-            // path needs to be defined here
-        }
-
-        $('.collaboration-popup-edit').click(() => {
-            $join.hide();
-            $edit.show();
-        });
-
+        
         $('#collaboration-join-button').click(() => {
             let name = this.getName();
             let icon = this.getIcon();
@@ -412,6 +492,9 @@ class JoinPopup extends CollaborationPopup{
             if (this._onJoinCb)
                 this._onJoinCb({name, icon}, link);
         });
+
+        let edit = new SpecializedChooseIconComponent($join);
+        this._contentContainer.append(edit.getView());
     }
 
     getName(){
