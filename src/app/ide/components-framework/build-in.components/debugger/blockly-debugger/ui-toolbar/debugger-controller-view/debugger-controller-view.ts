@@ -14,7 +14,14 @@ import * as _ from "lodash";
     style: { system: DebuggerToolbarViewSYCSS }
 })
 export class DebuggerControllerView extends View {
-
+    private continueDebuggerAction: Function;
+    private pauseDebuggerAction: Function;
+    private stopDebuggerAction: Function;
+    private stepInDebuggerAction: Function;
+    private stepOverDebuggerAction: Function;
+    private stepParentDebuggerAction: Function;
+    private stepOutDebuggerAction: Function;
+    
     constructor(
         parent: IDEUIComponent,
         name: string,
@@ -24,10 +31,21 @@ export class DebuggerControllerView extends View {
         private data: {
             available: boolean,
             collaborative: boolean,
-            state: "RUNNING" | "PAUSED"
+            state: "RUNNING" | "PAUSED",
+            blocklyDebugger: any
         }
     ) {
         super(parent, name, templateHTML, style, hookSelector);
+        let debuggerWorker = this.data.blocklyDebugger.getDebuggeeWorker();
+        //
+        this.continueDebuggerAction = debuggerWorker.RegisterContinueDebuggerAction();
+        // this.pauseDebuggerAction = debuggerWorker.RegisterContinueDebuggerAction();
+        this.stopDebuggerAction = debuggerWorker.RegisterStopDebuggerAction();
+
+        this.stepInDebuggerAction = debuggerWorker.RegisterStepInDebuggerAction();
+        this.stepOverDebuggerAction = debuggerWorker.RegisterStepOverDebuggerAction();
+        this.stepParentDebuggerAction = debuggerWorker.RegisterStepParentDebuggerAction();
+        this.stepOutDebuggerAction = debuggerWorker.RegisterStepOutDebuggerAction();
     }
 
     public registerEvents(): void {
@@ -37,6 +55,7 @@ export class DebuggerControllerView extends View {
                 selector: "#ContinueButton",
                 handler: () => {
                     alert("continue");
+                    this.continueDebuggerAction();
                 }
             },
             {
@@ -44,6 +63,7 @@ export class DebuggerControllerView extends View {
                 selector: "#PauseButton",
                 handler: () => {
                     alert("pause");
+
                 }
             },
             {
@@ -51,6 +71,8 @@ export class DebuggerControllerView extends View {
                 selector: "#StopButton",
                 handler: () => {
                     alert("stop");
+
+                    this.stopDebuggerAction();
                 }
             },
             {
@@ -58,6 +80,8 @@ export class DebuggerControllerView extends View {
                 selector: "#StepInButton",
                 handler: () => {
                     alert("step in");
+
+                    this.stepInDebuggerAction();
                 }
             },
             {
@@ -65,17 +89,24 @@ export class DebuggerControllerView extends View {
                 selector: "#StepOverButton",
                 handler: () => {
                     
+                    this.stepOverDebuggerAction();
                 }
             },
             {
                 eventType: "click",
                 selector: "#StepParentButton",
-                handler: () => {}
+                handler: () => {
+
+                    this.stepParentDebuggerAction();
+                }
             },
             {
                 eventType: "click",
                 selector: "#StepOutButton",
-                handler: () => {}
+                handler: () => {
+
+                    this.stepOutDebuggerAction();
+                }
             }
         ];
         if (this.data.collaborative) {

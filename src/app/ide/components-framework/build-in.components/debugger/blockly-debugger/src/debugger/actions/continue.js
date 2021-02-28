@@ -4,14 +4,12 @@ import {
 } from '../debugger.js';
 
 
-export function RegisterContinueDebuggerAction(selector) {
+export function RegisterContinueDebuggerAction() {
     Blockly_Debugger.actions["Continue"] = {};
 
     Blockly_Debugger.actions["Continue"].handler = () => {
         Debuggee_Worker.Instance().postMessage({"type":"continue"});
     }
-    
-    Blockly_Debugger.addDebuggerAction(
-        selector,
-        Blockly_Debugger.actions["Continue"].handler);    
+
+    return Blockly_Debugger.actions["Continue"].handler;
 }

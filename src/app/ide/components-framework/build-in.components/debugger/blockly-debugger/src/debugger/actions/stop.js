@@ -17,7 +17,6 @@ export function RegisterStopDebuggerAction(selector) {
             generation.workspaces[editorId].highlightBlock("");
         }
     }
-    Blockly_Debugger.addDebuggerAction(
-        selector,
-        Blockly_Debugger.actions["Stop"].handler);
+    
+    return Blockly_Debugger.actions["Stop"].handler;
 }

@@ -35,6 +35,8 @@ export function BlocklyDebugger(plugin) {
         return generation.workspaces[editorId];
     };
 
+    this.getDebuggeeWorker = () => Debuggee_Worker;
+
     this.initiateToolbar = (data, onFinish) => {
         // let data2 =[{
         //     'name': 'Scheduled Task 1',

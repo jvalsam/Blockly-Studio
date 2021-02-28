@@ -7,9 +7,8 @@ export function RegisterStepInDebuggerAction(selector) {
         if(!Debuggee_Worker.hasInstance()) return; 
         Debuggee_Worker.Instance().postMessage({"type":"stepIn"});
     }
-    Blockly_Debugger.addDebuggerAction(
-        selector,
-        Blockly_Debugger.actions["StepIn"].handler);
+
+    return Blockly_Debugger.actions["StepIn"].handler;
 }
 
 export function RegisterStepOverDebuggerAction(selector) {
@@ -18,9 +17,8 @@ export function RegisterStepOverDebuggerAction(selector) {
         if(!Debuggee_Worker.hasInstance()) return; 
         Debuggee_Worker.Instance().postMessage({"type":"stepOver"});
     }
-    Blockly_Debugger.addDebuggerAction(
-        selector,
-        Blockly_Debugger.actions["StepOver"].handler);
+    
+    return Blockly_Debugger.actions["StepOver"].handler;
 }
 
 export function RegisterStepParentDebuggerAction(selector) {
@@ -29,9 +27,8 @@ export function RegisterStepParentDebuggerAction(selector) {
         if(!Debuggee_Worker.hasInstance()) return; 
         Debuggee_Worker.Instance().postMessage({"type":"stepParent"});
     }
-    Blockly_Debugger.addDebuggerAction(
-        selector,
-        Blockly_Debugger.actions["StepParent"].handler);
+    
+    return Blockly_Debugger.actions["StepParent"].handler;
 }
 
 export function RegisterStepOutDebuggerAction(selector) {
@@ -40,7 +37,6 @@ export function RegisterStepOutDebuggerAction(selector) {
         if(!Debuggee_Worker.hasInstance()) return; 
         Debuggee_Worker.Instance().postMessage({"type":"stepOut"});
     }
-    Blockly_Debugger.addDebuggerAction(
-        selector,
-        Blockly_Debugger.actions["StepOut"].handler);
+
+    return Blockly_Debugger.actions["StepOut"].handler;
 }
