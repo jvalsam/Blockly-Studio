@@ -98,15 +98,15 @@ export var InitializeDebuggeeWorker = function (plugin) {
         registerBreakpointsRunToCursorFunctionality: registerBreakpointsRunToCursorFunctionality,
         //
         registerDebuggerActions: registerDebuggerActions,
-        RegisterContinueDebuggerAction : (selector) => RegisterContinueDebuggerAction(selector),
+        RegisterContinueDebuggerAction : () => RegisterContinueDebuggerAction(),
         RegisterStartDebuggerAction : (selector, handler) => RegisterStartDebuggerAction(selector, handler),
         RegisterVariablesDebuggerAction : (selector) => RegisterVariablesDebuggerAction(selector),
         RegisterWatchDebuggerAction : (selector) => RegisterWatchDebuggerAction(selector),
-        RegisterStopDebuggerAction : (selector) => RegisterStopDebuggerAction(selector),
-        RegisterStepInDebuggerAction : (selector) => RegisterStepInDebuggerAction(selector),
-        RegisterStepOutDebuggerAction : (selector) => RegisterStepOutDebuggerAction(selector),
-        RegisterStepOverDebuggerAction : (selector) => RegisterStepOverDebuggerAction(selector),
-        RegisterStepParentDebuggerAction : (selector) => RegisterStepParentDebuggerAction(selector)
+        RegisterStopDebuggerAction : () => RegisterStopDebuggerAction(),
+        RegisterStepInDebuggerAction : () => RegisterStepInDebuggerAction(),
+        RegisterStepOutDebuggerAction : () => RegisterStepOutDebuggerAction(),
+        RegisterStepOverDebuggerAction : () => RegisterStepOverDebuggerAction(),
+        RegisterStepParentDebuggerAction : () => RegisterStepParentDebuggerAction()
     };
 };
 

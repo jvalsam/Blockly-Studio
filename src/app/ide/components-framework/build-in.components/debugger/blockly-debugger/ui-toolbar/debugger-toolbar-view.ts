@@ -25,6 +25,7 @@ export class DebuggerToolbarView extends View {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
+        private environmentData,
         private data: {
             controller: any,
             debuggerData: any,
@@ -38,7 +39,8 @@ export class DebuggerToolbarView extends View {
                 vplElem: { id: string, info: any }, /* info includes the data of conditional breakpoint */
                 id: string
             }>
-        }
+        },
+        private blocklyDebugger
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         //
@@ -48,7 +50,8 @@ export class DebuggerToolbarView extends View {
             {
                 collaborative: false,
                 state: "PAUSED",
-                available: true
+                available: true,
+                blocklyDebugger: this.blocklyDebugger
             }
         );
         this.debuggerInfodata = ViewRegistry.getEntry("DebuggerInfoView").create(

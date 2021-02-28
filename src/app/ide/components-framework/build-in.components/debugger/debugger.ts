@@ -60,15 +60,11 @@ export class Debugger extends IDEUIComponent {
             .create(
                 this,
                 ".debugger-toolbar-container",
-                environmentData
+                environmentData,
+                {},//debuggerData
+                this.blocklyDebugger
             );
         toolbar.render();
-
-        this.blocklyDebugger.initiateToolbar(
-            this.environmentData,
-            () => {
-                onSuccess("complete view of the debugger toolbar")
-            });
     }
 
     @RequiredFunction("BlocklyVPL", "getAllBlocklyWSPs")
