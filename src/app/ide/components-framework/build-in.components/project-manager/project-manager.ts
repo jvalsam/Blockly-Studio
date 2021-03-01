@@ -47,6 +47,7 @@ import {
 } from "../../common-views/sequential-dialogues-modal-view/dialogue-data";
 import { ProjectInstanceView } from "./project-manager-jstree-view/project-manager-elements-view/project-manager-application-instance-view/project-instance-view";
 import { Action } from "blockly";
+import { Debugger } from "../debugger/debugger";
 
 
 // initialize the metadata of the project manager component for registration in the platform
@@ -226,6 +227,12 @@ export class ProjectManager extends IDEUIComponent {
                 [console]);
 
             console.InitConsoleMsg();
+
+            var visualDebugger: Debugger = <Debugger>ComponentRegistry
+                .getEntry("Debugger")
+                .create([".debugger-toolbar-area"]);
+            
+            visualDebugger.initiate();
         }
 
         this.loadProject(project);
@@ -298,56 +305,56 @@ export class ProjectManager extends IDEUIComponent {
         this.mainProject = project._id;
         let projView = (<ProjectManagerJSTreeView>this._view).loadProject(project);
             // load componentsData of the project
-            for (const compName in project.componentsData) {
+        for (const compName in project.componentsData) {
             ComponentsCommunication.functionRequest(
                 this.name,
                 compName,
                 "loadComponentDataOfProject",
                 [project._id, project.componentsData[compName]]
             );
-            }
+        }
 
-            // TODO: remove on completion
-            project.componentsData = project.componentsData || {};
-            if (!("DomainsManager" in project.componentsData)) {
+        // TODO: remove on completion
+        project.componentsData = project.componentsData || {};
+        if (!("DomainsManager" in project.componentsData)) {
             ComponentsCommunication.functionRequest(
                 this.name,
                 "DomainsManager",
                 "initComponentDataOfProject",
                 [project._id]
             );
-            }
+        }
 
-            // set default values if there is no state
-            if (!project.editorsState) {
-                project.editorsState = {
-                    viewState: "normal",
-                    onFocusPItems: [],
-                };
-                if (projView.firstPItemID) {
-                    project.editorsState.onFocusPItems[0] = projView.firstPItemID;
-                }
+        // set default values if there is no state
+        if (!project.editorsState) {
+            project.editorsState = {
+                viewState: "normal",
+                onFocusPItems: [],
+            };
+            if (projView.firstPItemID) {
+                project.editorsState.onFocusPItems[0] = projView.firstPItemID;
             }
+        }
 
-            let editorManager = <EditorManager>(
-            ComponentRegistry.getEntry("EditorManager").create([
+        let editorManager = <EditorManager>(
+        ComponentRegistry.getEntry("EditorManager").create([
                 ".project-manager-visual-editors-area",
                 project.editorsState.viewState,
                 project.editorsState.onFocusPItems,
-            ])
-            );
-            editorManager.loadEditorInstances(
+            ]));
+        
+        editorManager.loadEditorInstances(
             projView["data"].project,
             <Array<ProjectItem>>projView.getProjectElements("ALL")
-            );
-            editorManager.initializeEditorsView(project.projectItems[0]);
+        );
+        editorManager.initializeEditorsView(project.projectItems[0]);
 
-            if (
+        if (
             project.componentsData &&
             project.componentsData.collaborationData
-            ) {
+        ) {
             this.shareProject(project);
-            }
+        }
     }
 
     @ExportedFunction
