@@ -85,8 +85,8 @@ export var InitializeDebuggeeWorker = function (plugin) {
     }
 
     function registerBreakpointsRunToCursorFunctionality () {
-        RegisterDebuggerBreakpointFunctionality();
-        RegisterDebuggerRunToCursorFunctionality();
+        RegisterDebuggerBreakpointFunctionality(plugin);
+        RegisterDebuggerRunToCursorFunctionality(plugin);
     }
 
     Debuggee_Worker = {

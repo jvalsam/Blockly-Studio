@@ -1,21 +1,31 @@
 import { Debuggee_Worker, Blockly_Debugger } from '../debugger.js';
 import { generation } from "../../generator/blockly/blockly_init";
 
-export function RegisterDebuggerBreakpointFunctionality() {
+export function RegisterDebuggerBreakpointFunctionality(visualDebugger) {
     Blockly_Debugger.actions["Breakpoint"] = {};
     // Breakpoints
     Blockly_Debugger.actions["Breakpoint"].breakpoints = [];
 
+    // add breakpoint during the execution
     Blockly_Debugger.actions["Breakpoint"].handler = () => {
         if (!Debuggee_Worker.hasInstance()) return;
         Debuggee_Worker.Instance().postMessage({
             "type": "breakpoint", "data": Blockly_Debugger.actions["Breakpoint"].breakpoints.map((obj) => {
                 return {
                     "block_id": obj.block_id,
+                    "pelem_id": obj.pelem_id,
                     "enable": obj.enable
                 }
             }),
         });
+    }
+
+    Blockly_Debugger.actions["Breakpoint"].onAddBreakpoint = (block) => {
+        visualDebugger.addBreakpoint(block, "EDITOR");
+    }
+
+    Blockly_Debugger.actions["Breakpoint"].onRemoveBreakpoint = (block) => {
+        visualDebugger.removeBreakpoint(block, "EDITOR");
     }
 
     Blockly_Debugger.actions["Breakpoint"].wait_view = (block_id) => {
@@ -25,7 +35,8 @@ export function RegisterDebuggerBreakpointFunctionality() {
             block.setCollapsed(false);
             block = block.parentBlock_;
         }
-        generation.workspaces[currentSystemEditorId].traceOn_ = true; // highlighting, not works in case that is collapsed
+        // highlighting, not works in case that is collapsed
+        generation.workspaces[currentSystemEditorId].traceOn_ = true;
         generation.workspaces[currentSystemEditorId].highlightBlock(block_id);
 
         document.getElementById(block_id).style.stroke = 'red';
@@ -196,7 +207,7 @@ export function RegisterDebuggerBreakpointFunctionality() {
     );
 }
 
-export function RegisterDebuggerRunToCursorFunctionality() {
+export function RegisterDebuggerRunToCursorFunctionality(visualDebugger) {
     Blockly_Debugger.actions["RunToCursor"] = {};
 
     // Run to Cursor

@@ -48,3 +48,8 @@
 
 .bs-modal-content {
 }
+
+.breakpoint_enable {
+  fill: red;
+  stroke: yellow;
+}

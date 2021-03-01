@@ -204,6 +204,11 @@ export class BlocklyInstance {
     this._blocklyArea = document.getElementById(this.id);
   }
 
+  pinInfoInWSP() {
+    this.wsp.editorId = this.id;
+    this.wsp.pitem = this.pitem;
+  }
+
   load() {
     let blocklySel = "blockly_" + this.id;
     $(".blockly-editors-area").append(
@@ -218,6 +223,7 @@ export class BlocklyInstance {
         "../../../../../node_modules/blockly/media/"
       )
     );
+    this.pinInfoInWSP();
 
     if (this.text) {
       var xml = Blockly.Xml.textToDom(this.text);
@@ -302,6 +308,7 @@ export class BlocklyInstance {
         toolboxXml
       )
     );
+    this.pinInfoInWSP();
 
     this.changeWSPCB = (e) => this.onChangeWSP(e);
     this.wsp.addChangeListener(this.changeWSPCB);
@@ -315,6 +322,7 @@ export class BlocklyInstance {
         "../../../../../node_modules/blockly/media/"
       )
     );
+    this.pinInfoInWSP();
   }
 
   refresh() {

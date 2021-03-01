@@ -8,6 +8,16 @@ import { ActionsView } from "../../../../../../common-views/actions-view/actions
 import { ViewRegistry } from '../../../../../../component/registry';
 import * as _ from "lodash";
 
+
+
+export interface Breakpoint {
+
+}
+
+export interface ConditionalBreakpoint {
+    
+}
+
 @ViewMetadata({
     name: "BreakpointViewBox",
     templateHTML: BreakpointViewBoxTmpl,

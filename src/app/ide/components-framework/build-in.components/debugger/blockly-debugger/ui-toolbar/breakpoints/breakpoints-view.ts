@@ -8,6 +8,7 @@ import { ActionsView } from "../../../../../common-views/actions-view/actions-vi
 import { ViewRegistry } from '../../../../../component/registry';
 import * as _ from "lodash";
 
+
 @ViewMetadata({
     name: "BreakpointsView",
     templateHTML: BreakpointsViewTmpl,
@@ -27,6 +28,22 @@ export class BreakpointsView extends View {
             }>
     ) {
         super(parent, name, templateHTML, style, hookSelector);
+    }
+
+    public addBreakpoint(breakpoint: any) {
+
+    }
+
+    public removeBreakpoint(blockId: string) {
+        
+    }
+
+    public enableBreakpoint(blockId: string) {
+
+    }
+
+    public disableBreakpoint(blockId: string) {
+
     }
 
     public registerEvents(): void {}
