@@ -16,6 +16,7 @@ import { BreakpointInfo } from "./breakpoint-item/breakpoint-view-box";
     style: { system: BreakpointsViewSYCSS }
 })
 export class BreakpointsView extends View {
+    private breakpoints: Array<BreakpointInfo>;
     constructor(
         parent: IDEUIComponent,
         name: string,
@@ -23,25 +24,31 @@ export class BreakpointsView extends View {
         style: Array<IViewUserStyleData>,
         hookSelector: string,
         private blocklyDebugger: any,
-        private breakpoints: Array<BreakpointInfo>
+        _breakpoints: Array<BreakpointInfo>
     ) {
         super(parent, name, templateHTML, style, hookSelector);
+        this.breakpoints = JSON.parse(JSON.stringify(_breakpoints));
     }
 
-    public addBreakpoint(breakpoint: any) {
-
+    public addBreakpoint(breakpoint: BreakpointInfo) {
+        this.breakpoints.push(breakpoint);
+        this.render();
     }
 
     public removeBreakpoint(blockId: string) {
-        
+        let index = this.breakpoints.findIndex(breakpoint => breakpoint.elemId === blockId);
+        this.breakpoints.splice(index, 1);
+        this.render();
     }
 
     public enableBreakpoint(blockId: string) {
-
+        this.breakpoints.find(breakpoint => breakpoint.elemId === blockId).isEnabled = true;
+        this.render();
     }
 
     public disableBreakpoint(blockId: string) {
-
+        this.breakpoints.find(breakpoint => breakpoint.elemId === blockId).isEnabled = false;
+        this.render();
     }
 
     public registerEvents(): void {}
@@ -49,13 +56,13 @@ export class BreakpointsView extends View {
     public setStyle(): void {}
 
     public render(): void {
-        this.renderTmplEl();
+        this.renderTmplEl({value: this.id});
         if (this.breakpoints.length > 0) {
             _.forEach(this.breakpoints, (breakpoint) => {
                 const breakpointsViewBox: View = ViewRegistry.getEntry("BreakpointViewBox")
                     .create(
                         this.parent,
-                        "#"+this.id,
+                        "#breakpoints"+this.id,
                         this.blocklyDebugger,
                         breakpoint);
                 breakpointsViewBox.clearSelectorArea = false;
@@ -63,8 +70,8 @@ export class BreakpointsView extends View {
             });
         }
         else {
-            $("#"+this.id).empty();
-            $("#"+this.id).append('<div class="no-breakpoints">There are no breakpoints added.</div>');
+            this.$el.find(".breakpoints-list").empty();
+            this.$el.find(".breakpoints-list").append('<div class="no-breakpoints">There are no breakpoints added.</div>');
         }
     }
 }

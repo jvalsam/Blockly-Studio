@@ -64,13 +64,13 @@ export class DebuggerToolbarView extends View {
             this.parent,
             "#breakpoints-data-area",
             this.blocklyDebugger,
-            this.data.breakpoints
+            this.data.breakpoints || []
         );
         this.conditionalBreakpoints = <BreakpointsView>ViewRegistry.getEntry("BreakpointsView").create(
             this.parent,
             "#conditional-breakpoints-data-area",
             this.blocklyDebugger,
-            this.data.conditionalBreakpoints
+            this.data.conditionalBreakpoints || []
         );
     }
 
@@ -83,6 +83,6 @@ export class DebuggerToolbarView extends View {
         this.controller.render();
         this.debuggerInfodata.render();
         this.breakpoints.render();
-        this.controller.render();
+        this.conditionalBreakpoints.render();
     }
 }

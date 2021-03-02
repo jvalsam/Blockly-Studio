@@ -49,17 +49,29 @@ export class BreakpointViewBox extends View {
         this.attachEvents(
             {
                 eventType: "click",
-                selector: "#DeleteButton-"+this.id,
+                selector: "#projectElement-"+this.breakpoint.id,
+                handler: () => {
+                    this.parent["openPelemBreakpoint"] (this.breakpoint);
+                }
+            },
+            {
+                eventType: "click",
+                selector: ".delete-breakpoint",
                 handler: (evt) => {
-                    alert("delete breakpoint");
+                    this.parent["removeBreakpoint"](this.breakpoint.elemId, "TOOLBAR");
                 }
             },
             {
                 eventType: "change",
-                selector: "#breakpointHandler-"+this.id,
+                selector: ".handle-state-breakpoint",
                 handler: (evt) => {
-                    if ($("#breakpointHandler-"+this.id).prop('checked') ? 'checked' : 'unchecked') {
-
+                    let isEnabled = $("#breakpointHandler-"+this.breakpoint.id).prop('checked');
+                    
+                    if (isEnabled) {
+                        this.parent["enableBreakpoint"](this.breakpoint.elemId, "TOOLBAR");
+                    }
+                    else {
+                        this.parent["disableBreakpoint"](this.breakpoint.elemId, "TOOLBAR");
                     }
                 }
             }

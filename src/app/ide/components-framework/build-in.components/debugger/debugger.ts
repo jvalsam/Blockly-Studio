@@ -57,7 +57,7 @@ export class Debugger extends IDEUIComponent {
         this.blocklyDebugger = new BlocklyDebugger(this);
         
         this.breakpoints = [];
-        this.breakpointNO = 0;
+        this.breakpointNO = 1;
     }
 
     @ExportedFunction
@@ -68,7 +68,7 @@ export class Debugger extends IDEUIComponent {
         this.toolbar = <DebuggerToolbarView>ViewRegistry.getEntry("DebuggerToolbarView")
             .create(
                 this,
-                ".debugger-toolbar-container",
+                ".debugger-toolbar-area",
                 environmentData,
                 {
                     breakpoints: this.breakpoints
@@ -132,7 +132,7 @@ export class Debugger extends IDEUIComponent {
                     breakpoint.elemId,
                     breakpoint.editorId
                 ]
-            );
+            ).value;
             AddBreakpoint(block, true);
         }
         else {
@@ -158,8 +158,13 @@ export class Debugger extends IDEUIComponent {
         this.breakpoints.push(breakpointInfo);
 
         if (this.toolbar) {
-            this.toolbar.breakpoints.addBreakpoint(breakpoint);
+            this.toolbar.breakpoints.addBreakpoint(breakpointInfo);
         }
+    }
+
+    private openPelemBreakpoint(breakpoint: BreakpointInfo) {
+        // TODO: 
+        alert("not implemented yet");
     }
 
     @RequiredFunction("BlocklyVPL", "getBlock")
@@ -177,30 +182,18 @@ export class Debugger extends IDEUIComponent {
                 blockId,
                 breakpoint.editorId
             ]
-        );
+        ).value;
 
         switch (src) {
             case "REMOTE":
                 RemoveBreakpoint(block, true);
-                
-                if (this.toolbar) {
-                    this.toolbar.breakpoints.removeBreakpoint(blockId);
-                }
-
-                this.breakpoints.splice(breakpointIndex, 1);
                 break;
             case "EDITOR":
-                if (this.toolbar) {
-                    this.toolbar.breakpoints.removeBreakpoint(blockId);
-                }
-                this.breakpoints.splice(breakpointIndex, 1);
-
                 // TODO: collaborative debugging message
 
                 break;
             case "TOOLBAR":
                 RemoveBreakpoint(block, true);
-                this.breakpoints.splice(breakpointIndex, 1);
 
                 // TODO: collaborative debugging message
 
@@ -208,6 +201,12 @@ export class Debugger extends IDEUIComponent {
             default:
                 throw new Error("Not supported source requested action in debugger!");
         }
+
+        // common functionality: update toolbar and debugger data
+        if (this.toolbar) {
+            this.toolbar.breakpoints.removeBreakpoint(blockId);
+        }
+        this.breakpoints.splice(breakpointIndex, 1);
     }
 
     @ExportedFunction
@@ -215,19 +214,9 @@ export class Debugger extends IDEUIComponent {
         let breakpoint = this.breakpoints.find(breakpoint => breakpoint.elemId === blockId);
         breakpoint.isEnabled = true;
 
-        let block = ComponentsCommunication.functionRequest(
-            this.name,
-            "BlocklyVPL",
-            "getBlock",
-            [
-                blockId,
-                breakpoint.editorId
-            ]
-        );
-
         switch (src) {
             case "REMOTE":
-                EnableBreakpoint(block, true);
+                EnableBreakpoint(blockId, true);
                 
                 if (this.toolbar) {
                     this.toolbar.breakpoints.enableBreakpoint(blockId);
@@ -245,7 +234,7 @@ export class Debugger extends IDEUIComponent {
                 break;
             case "TOOLBAR":
                 // sync editor
-                EnableBreakpoint(block, true);
+                EnableBreakpoint(blockId, true);
 
                 // TODO: collaborative debugging message
 
@@ -260,19 +249,9 @@ export class Debugger extends IDEUIComponent {
         let breakpoint = this.breakpoints.find(breakpoint => breakpoint.elemId === blockId);
         breakpoint.isEnabled = false;
 
-        let block = ComponentsCommunication.functionRequest(
-            this.name,
-            "BlocklyVPL",
-            "getBlock",
-            [
-                blockId,
-                breakpoint.editorId
-            ]
-        );
-
         switch (src) {
             case "REMOTE":
-                DisableBreakpoint(block, true);
+                DisableBreakpoint(blockId, true);
                 
                 if (this.toolbar) {
                     this.toolbar.breakpoints.disableBreakpoint(blockId);
@@ -290,7 +269,7 @@ export class Debugger extends IDEUIComponent {
                 break;
             case "TOOLBAR":
                 // sync editor
-                DisableBreakpoint(block, true);
+                DisableBreakpoint(blockId, true);
 
                 // TODO: collaborative debugging message
 

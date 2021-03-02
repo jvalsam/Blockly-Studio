@@ -9,8 +9,8 @@
         <span><%= pelem.text %></span>
         <span style="color: grey">- ID <%= id %></span>
     </a>
-    <input type="checkbox" class="form-check-input" id="breakpointHandler-<%= id %>" />
-    <a href="#" id="DeleteButton-<%= id %>" class="trash-button">
+    <input type="checkbox" class="handle-state-breakpoint form-check-input" id="breakpointHandler-<%= id %>" <%= isEnabled ? 'checked' : '' %> />
+    <a href="#" class="delete-breakpoint trash-button">
        <i class="fas fa-trash"></i>
     </a>
 </li>
