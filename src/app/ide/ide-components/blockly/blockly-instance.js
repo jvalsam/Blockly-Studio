@@ -21,7 +21,8 @@ export function GetBlocklyWspOptions(mode, media, toolbox) {
     },
   };
   if (mode === Privillege.READ_ONLY) options.readOnly = true;
-  else
+  else{
+    options.readOnly = false;
     Object.assign(options, {
       toolbox: toolbox,
       collapse: true,
@@ -32,6 +33,7 @@ export function GetBlocklyWspOptions(mode, media, toolbox) {
       horizontalLayout: false,
       toolboxPosition: "start",
     });
+  }
   return options;
 }
 
@@ -160,6 +162,7 @@ export class BlocklyInstance {
 
   update_privileges() {
     this.state = InstStateEnum.INIT;
+    this.text = this.getText();
   }
 
   static update_src(data, pitem) {
@@ -226,6 +229,7 @@ export class BlocklyInstance {
     this.pinInfoInWSP();
 
     if (this.text) {
+      this.activeEvents = false;
       var xml = Blockly.Xml.textToDom(this.text);
       Blockly.Xml.domToWorkspace(xml, this.wsp);
     }
@@ -255,8 +259,9 @@ export class BlocklyInstance {
 
       // load text if exists
       if (this.text) {
+        this.activeEvents = false;
         var xml = Blockly.Xml.textToDom(this.text);
-        Blockly.Xml.domToWorkspace(xml, this.wsp);
+        Blockly.Xml.clearWorkspaceAndLoadFromXml(xml,this.wsp);
       }
 
       window.addEventListener("resize", (e) => this.onResize(e), false);
@@ -345,14 +350,19 @@ export class BlocklyInstance {
   }
 
   onChangeWSP(event) {
-    let priv = this.privilleges;
-    let resp = event instanceof Blockly.Events.Ui;
-    if (resp || priv === Privillege.READ_ONLY) {
-      return; // Don't mirror UI events.
+    if (this.activeEvents) {
+      let priv = this.privilleges;
+      let resp = event instanceof Blockly.Events.Ui;
+      if (resp || priv === Privillege.READ_ONLY) {
+        return; // Don't mirror UI events.
+      }
+      // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
+      HandleWorkspaceEvents(event, this.wsp);
+      this._syncWSP(event.toJson());
     }
-    // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
-    HandleWorkspaceEvents(event, this.wsp);
-    this._syncWSP(event.toJson());
+    if (event.type === "finished_loading") {
+      this.activeEvents = true;
+    }
   }
 
   editPrivilege() {

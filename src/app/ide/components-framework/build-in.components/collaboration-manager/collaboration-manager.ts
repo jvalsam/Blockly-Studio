@@ -216,15 +216,19 @@ export class CollaborationManager extends IDEUIComponent {
         return collabInfo.invitationCode;
     }
 
-    private reservedOptions = {
-        jstree_BlocklyTasks: [
+    private categoryOptions(id){
+        return [
             {
-                label: "A button",
-                icon: "../../../../../../images/collaboration/send.png",
-                action: () => alert(1)
+                label: "Create Personal Element",
+                icon: "../../../../../../images/collaboration/personal.png",
+                action: () => {
+                 // let newPItem  = createNewPItem,
+                 // newPItem.pliroforiaGiaCollab = "PERSONAL";
+                }
             }
-        ]
+        ];
     }
+
 
     private optionsFiltering(pitem){
         console.log(pitem);
@@ -240,7 +244,7 @@ export class CollaborationManager extends IDEUIComponent {
                 // First argument (this)
                 // Something like this openJoinSessionDialogue()
             }
-        })
+        });
         
         return opts;
     }
@@ -368,8 +372,8 @@ export class CollaborationManager extends IDEUIComponent {
         console.log(pitemId,this.getPItem(pitemId));
         if(this.getPItem(pitemId)){
             return this.optionsFiltering(this.getPItem(pitemId));
-        }else if(this.reservedOptions.hasOwnProperty(pitemId)){
-            return this.reservedOptions[pitemId];
+        }else{
+            return this.categoryOptions(pitemId);
         }
         return [];
     }
@@ -378,8 +382,6 @@ export class CollaborationManager extends IDEUIComponent {
     public pitemTools(pitemId: string): Array<ITool> {
         if(this.getPItem(pitemId)){
             return this.toolsFiltering(this.getPItem(pitemId));
-        }else if(this.reservedOptions.hasOwnProperty(pitemId)){
-            return this.reservedOptions[pitemId];
         }
         return [];
     }
@@ -519,6 +521,19 @@ export class CollaborationManager extends IDEUIComponent {
                 }
             ]
         );
+    }
+
+    @RequiredFunction("ProjectManager", "getCategoryInformation")
+    public getCategoryInformation(pitemId: string, categoryId: string){
+        return ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getCategoryInformation",
+            [
+                pitemId,
+                categoryId
+            ]
+        ).value;
     }
 
     @RequiredFunction("ProjectManager", "pitemRemoved")

@@ -1801,6 +1801,6 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public getCategoryInformation(pitemId: string, categoryId: string) {
-        this.getProjectInstanceView(pitemId).getCategoryInformation(categoryId);
+        return this.getProjectInstanceView(pitemId).getCategoryInformation(categoryId);
     }
 }
