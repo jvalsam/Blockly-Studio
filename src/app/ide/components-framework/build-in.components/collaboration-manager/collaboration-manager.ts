@@ -10,7 +10,8 @@ import {
 } from "./../../component/components-communication";
 import { 
     openStartSessionDialogue,
-    openJoinSessionDialogue 
+    openJoinSessionDialogue,
+    openSuggestionDialogue
 } from "./collaboration-component/collaboration-gui/dialogs";
 
 import { 
@@ -37,6 +38,7 @@ import {
     PassFloorPopup,
     SharePersonalFilePopup 
 } from './collaboration-component/collaboration-gui/CollaborationPopups';
+import { isAbsolute } from 'path';
 
 var menuJson;
 var configJson;
@@ -228,15 +230,17 @@ export class CollaborationManager extends IDEUIComponent {
         console.log(pitem);
 
         let opts = [];
-        
-        if(true){
-            opts.push(
-                {
-                label: "Share",
-                icon: "../../../../../../images/collaboration/send.png",
-                action: () => alert(pitem["renderParts"][1].value.text)
-            })
-        }
+
+        opts.push(
+            {
+            label: "Make Suggestion",
+            icon: "../../../../../../images/collaboration/send.png",
+            action: () => {
+                openSuggestionDialogue(this, )
+                // First argument (this)
+                // Something like this openJoinSessionDialogue()
+            }
+        })
         
         return opts;
     }
@@ -307,7 +311,14 @@ export class CollaborationManager extends IDEUIComponent {
                 tooltip: "Give Floor",
                 icon: "../../../../../../images/collaboration/send.png",
                 action: () => {
-                    let container = $("<div></div>");
+                    let container = $(`<div style = "
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100vw;
+                        height: 100vh;
+                    "></div>`);
+                    
                     $("body").append(container);
                     let passFloorPopup = new PassFloorPopup(container);
                     passFloorPopup.setMembers(allData.members.filter((member)=>member.name !== collabInfo.myInfo.name));

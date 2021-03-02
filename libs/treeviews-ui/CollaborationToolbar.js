@@ -1,73 +1,93 @@
-export function CollaborationUI(container){
+export class CollaborationUI{
+
+    constructor(container){
+        
+        this._membersA = {
+            'style' :   "                               \
+            display: flex;              \
+            align-items: center;        \
+            flex-wrap: wrap;            \
+            height : 33px;              \
+            margin-bottom: 4px;         \
+            margin-top: 4px;            \
+            "
+        };
+        this._fileA = {
+            'style' :   "                               \
+            display: flex;              \
+            align-items: center;        \
+            flex-wrap: wrap;            \
+            height : 19px;              \
+            margin-bottom: 5px;         \
+            font-size: 16px;            \
+            "
+        };
+        this._memberRequests = {};
+        this._onClickPersonalFile = (node) => {console.log(node)};
+        this._onClickSuggestion = (node) => {console.log(node)};
     
-    _injectHtml(container);
-    _initTrees();
-
-    let membersA = {
-        'style' :   "                               \
-                        display: flex;              \
-                        align-items: center;        \
-                        flex-wrap: wrap;            \
-                        height : 33px;              \
-                        margin-bottom: 4px;         \
-                        margin-top: 4px;            \
-                    "
-    };
+        /* Trees */
+        this._members;
+        this._personalFiles;
+        this._sharedPersonalFilesFromMe;
+        this._sharedPersonalFilesToMe;
+        
+        /* Html tree root ids */
     
-    let fileA = {
-        'style' :   "                               \
-                        display: flex;              \
-                        align-items: center;        \
-                        flex-wrap: wrap;            \
-                        height : 19px;              \
-                        margin-bottom: 5px;         \
-                        font-size: 16px;            \
-                    "
-    };
+        this._COLLABORATORS = 'members-collaborators';
+        this._PERSONAL_FILES = 'personal-files';
+        this._COLLABORATOR_ME = 'members-me'
+        
+        /* Prefixes for adding new nodes */
+        
+        this._MEMBER_PREFIX = 'collaborators-';
+        this._MEMBER_ME_PREFIX = 'collaborators-me-';
+        this._ANNOTATION_FILE_PREFIX = '-file-';
+        this._PERSONAL_FILE_PREFIX = 'personal-file-';
+        this._SHARED_FROM_ME_FILE_PREFIX = 'shared-from-me-';
+        this._SHARED_TO_ME_FILE_PREFIX = 'shared-to-me-';
 
-    /*
-        Trees
-    */
-    var members = $.jstree.reference('#collaboration-members');
-    var personalFiles = $.jstree.reference('#selected-member-files');
+        this._injectHtml(container);
+        this._initTrees();
 
-    /*
-        HTML IDS
-    */
-    var COLLABORATORS = 'members-collaborators';
-    var PERSONAL_FILES = 'personal-files'
+        /* Trees */
+        this._members = $.jstree.reference('#collaboration-members');
+        this._personalFiles = $.jstree.reference('#selected-member-files');
+        this._sharedPersonalFilesFromMe = $.jstree.reference('#collaboration-shared-from-me');
+        this._sharedPersonalFilesToMe = $.jstree.reference('#collaboration-shared-to-me');
+    }
 
+    /* PRIVATE FUNCTIONS */
 
-    var MEMBER_PREFIX = 'collaborators-';
-    var ANNOTATION_FILE_PREFIX = '-file-';
-    var PERSONAL_FILE_PREFIX = 'personal-file-'
-
-    /*
-        PRIVATE FUNCTIONS
-    */
-
-    function _initTrees(){
+    _initTrees(){
         $('#collaboration-members').jstree({
             "plugins": [
                 "wholerow",
-                "colorv",
                 "sort",
                 "contextmenu",
                 "unique",
-                "types"
+                "types",
+                "conditionalselect",
+                "colorv",
             ],
             'types': {
-                'smart_object': {},
+                'suggestion': {},
                 'other': {}
             },
             'core': {
                 'check_callback': true,
                 'data': []
+            },
+            'conditionalselect': (node, event) => {
+                if (this._members.get_type(node) === 'suggestion'){
+                    this._onClickSuggestion(node);
+                }
+                return true;
             }
         });
     
-        var members = $.jstree.reference('#collaboration-members');
-    
+        let members = $.jstree.reference('#collaboration-members');
+
         $('#selected-member-files').jstree({
             "plugins": [
                 "colorv",
@@ -75,7 +95,8 @@ export function CollaborationUI(container){
                 "wholerow",
                 "contextmenu",
                 "unique",
-                "types"
+                "types",
+                "conditionalselect"
             ],
             'types': {
                 'smart_object': {},
@@ -93,67 +114,19 @@ export function CollaborationUI(container){
                         'state' : {
                             'opened' : true,
                         },
-                        'a_attr': membersA
-                    },
-                    {
-                        'id': 'personal-files-Smart Objects',
-                        'parent': 'personal-files',
-                        'type': 'other',
-                        'text': 'Smart Objects',
-                        'icon': false,
-                        'a_attr': fileA
-                    },
-                    {
-                        'id': 'personal-files-Events',
-                        'parent': 'personal-files',
-                        'type': 'other',
-                        'text': 'Events',
-                        'icon': false,
-                        'a_attr': fileA
-                    },
-                    {
-                        'id': 'personal-files-Tasks',
-                        'parent': 'personal-files',
-                        'type': 'other',
-                        'text': 'Tasks',
-                        'icon': false,
-                        'a_attr': fileA
-                    },
-                    {
-                        'id': 'personal-files-Condition',
-                        'parent': 'personal-files-Events',
-                        'type': 'other',
-                        'text': 'Condition',
-                        'icon': false,
-                        'a_attr': fileA
-                    },
-                    {
-                        'id': 'personal-file-Alarm Clock Rings',
-                        'parent': 'personal-files-Condition',
-                        'type': 'smart_object',
-                        'text': 'Alarm Clock Rings',
-                        'icon': './Icons/clock.png',
-                        'a_attr': fileA,
-                        'color': 'red'
-                    },
-                    {
-                        'id': 'file-Water Is Ready',
-                        'parent': 'personal-files-Condition',
-                        'type': 'smart_object',
-                        'text': 'Water Is Ready',
-                        'icon': './Icons/water.png',
-                        'a_attr': fileA,
-                        'color': 'blue'
-                    },
-                    {
-                        'id': 'personal-files-Calendar',
-                        'parent': 'personal-files-Events',
-                        'type': 'other',
-                        'text': 'Calendar',
-                        'icon': false,
-                        'a_attr': fileA
+                        'a_attr': this._membersA
                     },
                 ]
+            },
+            "conditionalselect" : (node, event) => {
+                let file = {
+                    id: node.id,
+                    name: node.text,
+                    color: node.color,
+                    icon: node.icon,
+                };
+                this._onClickPersonalFile(file);
+                return true;
             }
         });
     
@@ -176,7 +149,7 @@ export function CollaborationUI(container){
             }
         });
     
-        var dummyTree1 = $.jstree.reference('#dummy-js-tree-1');
+        let dummyTree1 = $.jstree.reference('#dummy-js-tree-1');
         
         /* 
         programmaticaly create the root node and a dummy node (so that the root has the > symbol on its left)
@@ -189,10 +162,10 @@ export function CollaborationUI(container){
                 'id': 'dummy-js-tree-1-root',
                 'parent': '#',
                 'type': 'other',
-                'text': 'Shared Files',
+                'text': 'Shared Personal Files',
                 'icon': false,
                 'state' : { 'opened' : true },
-                'a_attr': membersA
+                'a_attr': this._membersA
             },
             0,
             function cb(){
@@ -234,66 +207,7 @@ export function CollaborationUI(container){
             },
             'core': {
                 'check_callback': true,
-                'data': [
-                    {
-                        'color': 'red',
-                        'id': 'shared-from-me-Alarm Clock Rings',
-                        'parent': '#',
-                        'type': 'smart_object',
-                        'text': 'Alarm Clock Rings',
-                        'icon': './Icons/clock.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'color': 'blue',
-                        'id': 'shared-from-me-Water Is Ready',
-                        'parent': '#',
-                        'type': 'smart_object',
-                        'text': 'Water Is Ready',
-                        'icon': './Icons/water.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'id': 'shared-from-me-Water Is Ready-Manos',
-                        'parent': 'shared-from-me-Water Is Ready',
-                        'type': 'smart_object',
-                        'text': 'Manos',
-                        'icon': './Icons/crown.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'id': 'shared-from-me-Water Is Ready-Mary',
-                        'parent': 'shared-from-me-Water Is Ready',
-                        'type': 'smart_object',
-                        'text': 'Mary',
-                        'icon': './Icons/transparent.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'id': 'shared-from-me-Water Is Ready-Mark',
-                        'parent': 'shared-from-me-Water Is Ready',
-                        'type': 'smart_object',
-                        'text': 'Mark',
-                        'icon': './Icons/pencil.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'id': 'shared-from-me-Alarm Clock Rings-Manos',
-                        'parent': 'shared-from-me-Alarm Clock Rings',
-                        'type': 'smart_object',
-                        'text': 'Manos',
-                        'icon': './Icons/crown.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'id': 'shared-from-me-Alarm Clock Rings-Mary',
-                        'parent': 'shared-from-me-Alarm Clock Rings',
-                        'type': 'smart_object',
-                        'text': 'Mary',
-                        'icon': './Icons/pencil.png',
-                        'a_attr': fileA,
-                    },
-                ]
+                'data': []
             }
         });
     
@@ -312,46 +226,12 @@ export function CollaborationUI(container){
             },
             'core': {
                 'check_callback': true,
-                'data': [
-                    {
-                        'color': 'red',
-                        'id': 'shared-to-me-Mary-Alarm Clock Rings',
-                        'parent': '#',
-                        'type': 'smart_object',
-                        'text': 'Alarm Clock Rings',
-                        'icon': './Icons/clock.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'id': 'shared-to-me-Mary-Alarm Clock Rings-Manos',
-                        'parent': 'shared-to-me-Mary-Alarm Clock Rings',
-                        'type': 'smart_object',
-                        'text': 'Manos',
-                        'icon': './Icons/pencil.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'id': 'shared-to-me-Mary-Alarm Clock Rings-Mary',
-                        'parent': 'shared-to-me-Mary-Alarm Clock Rings',
-                        'type': 'smart_object',
-                        'text': 'Mary',
-                        'icon': './Icons/crown.png',
-                        'a_attr': fileA,
-                    },
-                    {
-                        'id': 'shared-to-me-Mary-Alarm Clock Rings-Mark',
-                        'parent': 'shared-to-me-Mary-Alarm Clock Rings',
-                        'type': 'smart_object',
-                        'text': 'Mary',
-                        'icon': 'transparent',
-                        'a_attr': fileA,
-                    },
-                ]
+                'data': []
             }
         });
     
         function TabSwitcher(tab1, tab2){
-            var focused = tab1;
+            let focused = tab1;
             this.focusTab = function(tab){
                 if (tab != focused){
                     $('#' + tab1).toggle();
@@ -361,7 +241,7 @@ export function CollaborationUI(container){
             };
         }
     
-        var tabSwitcher = new TabSwitcher('collaboration-shared-from-me','collaboration-shared-to-me');
+        let tabSwitcher = new TabSwitcher('collaboration-shared-from-me','collaboration-shared-to-me');
         $('#collaboration-shared-from-me-tab-ui').click(function(){
             tabSwitcher.focusTab('collaboration-shared-from-me');
             $('#collaboration-shared-to-me-tab-ui').removeClass('collaboration-shared-tab-active');
@@ -390,7 +270,7 @@ export function CollaborationUI(container){
             }
         });
     
-        var dummyTree2 = $.jstree.reference('#dummy-js-tree-2');
+        let dummyTree2 = $.jstree.reference('#dummy-js-tree-2');
         
         /* 
         programmaticaly create the root node and a dummy node (so that the root has the > symbol on its left)
@@ -407,7 +287,7 @@ export function CollaborationUI(container){
                 'text': 'Recent Actions',
                 'icon': false,
                 'state' : { 'opened' : true },
-                'a_attr': membersA
+                'a_attr': this._membersA
             },
             0,
             function cb(){
@@ -443,10 +323,10 @@ export function CollaborationUI(container){
             'state' : {
                 'opened' : true,
             },
-            'a_attr': membersA
+            'a_attr': this._membersA
         }, 
         'last',
-        function(){
+        () => {
             members.create_node('members',{
                 'id': 'members-me',
                 'parent': 'members',
@@ -456,47 +336,61 @@ export function CollaborationUI(container){
                 'state' : {
                     'opened' : true,
                 },
-                'a_attr': membersA
-            },
-            'last', 
-            function(){
-                members.create_node('members-me',{
-                    'id': 'me-Manos',
-                    'parent': 'members-me',
-                    'type': 'other',
-                    'text': 'Manos',
-                    'icon': './Icons/man0.png',
-                    'a_attr': membersA
-                });
-            });
-    
-            members.create_node('members', {
-                'id': 'members-collaborators',
-                'parent': 'members',
-                'type': 'other',
-                'text': 'Collaborators',
-                'icon': false,
-                'state' : {
-                    'opened' : true,
-                },
-                'a_attr': membersA
+                'a_attr': this._membersA
             },
             'last',
-            function(){
-                ui.addMember('Mary', './Icons/woman0.png', function(){
-                    ui.addNoteAnnotation('Mary', 'Water Is Ready', 'blue', './Icons/water.png');
-                });
-                ui.addMember('James', './Icons/man0.png', function(){
-                    ui.addSuggestionAnnotation('James', 'Water Is Ready', 'blue', './Icons/water.png');
-                    ui.addNoteAnnotation('James','Alarm Clock Rings', 'red', './Icons/clock.png');
-                });
-            });
-        });
+            () => {
+                members.create_node('members', {
+                    'id': 'members-collaborators',
+                    'parent': 'members',
+                    'type': 'other',
+                    'text': 'Collaborators',
+                    'icon': false,
+                    'state' : {
+                        'opened' : true,
+                    },
+                    'a_attr': this._membersA
+                },
+                'last',
+                () => {
+                    this._serveMemberRequests();
+                }
+                );
+            }
+            );
+        }
+        );
     }
 
-    function _injectHtml() {
+    _injectHtml(container) {
         let html =
         '<div id = "collaboration-toolbar"> \
+            <div class = "collaboration-toolbar-opacity"></div>\
+            <div class = "collaboration-toolbar-menu">\
+                <div class = "collaboraiton-toolbar-top">\
+                    <div class = "toolbar-menu-member">\
+                        <div class = "toolbar-menu-member-icon"></div>\
+                        <div class = "toolbar-menu-member-name"> George Chang </div>\
+                    </div>\
+                    <div class = "toolbar-menu-minimize"></div>\
+                </div>\
+                <hr>\
+                <div class="toolbar-menu-section">\
+                    <div class="toolbar-menu-section-title"> Live Share </div>\
+                    <div class="toolbar-menu-project-and-link">\
+                        <div class="toolbar-menu-project-name"> IOT example project </div>\
+                        <div class="toolbar-menu-link">\
+                            <input readonly type="text" class="toolbar-menu-link-text">\
+                            <div class="toolbar-menu-copy-link"></div>\
+                        </div>\
+                    </div>\
+                </div>\
+                <div class="toolbar-menu-section">\
+                    <div class="toolbar-menu-section-title"> Settings </div>\
+                    <div class="toolbar-menu-settings">\
+                    </div>\
+                </div>\
+            </div>\
             <div id = "collaboration-header-container" class = "vcenter"> \
                 <div id = "collaboration-icon" class = "size30x30"> </div> \
                 <div id = "collaboration-title"> Collaboration </div> \
@@ -504,39 +398,27 @@ export function CollaborationUI(container){
                 <div class = "clear"></div> \
             </div> \
         \
-            <div id = "collaboration-members"> </div> \
-            <div id = "selected-member-files"> </div> \
-        \
-            <div> \
-                <!-- Header node for the collaboration-shared-files-ui --> \
-                <div id = "dummy-js-tree-1"></div> \
-        \
-                <div id = "collaboration-shared-files-ui"> \
-                    <div id = "collaboration-shared-from-me-tab-ui" class = "center collaboration-shared-tab-ui collaboration-shared-tab-active"> From me </div> \
-                    <div id = "collaboration-shared-to-me-tab-ui"class = "center collaboration-shared-tab-ui"> To me </div> \
-                    <div id = "collaboration-shared-files-content" class = "clear"> \
-                        <div id = "collaboration-shared-from-me"></div> \
-                        <div id = "collaboration-shared-to-me"></div> \
+            <div id = "collaboration-content"> \
+                <div id = "collaboration-members"> </div> \
+                <div id = "selected-member-files"> </div> \
+            \
+                <div> \
+                    <!-- Header node for the collaboration-shared-files-ui --> \
+                    <div id = "dummy-js-tree-1"></div> \
+            \
+                    <div id = "collaboration-shared-files-ui"> \
+                        <div id = "collaboration-shared-from-me-tab-ui" class = "center collaboration-shared-tab-ui collaboration-shared-tab-active"> From me </div> \
+                        <div id = "collaboration-shared-to-me-tab-ui"class = "center collaboration-shared-tab-ui"> To me </div> \
+                        <div id = "collaboration-shared-files-content" class = "clear"> \
+                            <div id = "collaboration-shared-from-me"></div> \
+                            <div id = "collaboration-shared-to-me"></div> \
+                        </div> \
                     </div> \
                 </div> \
-            </div> \
-        \
-            <div> \
-                <div id = "dummy-js-tree-2"> </div> \
-                <div id = "collaboration-recent-actions-ui"> \
-                    <div class = "collaboration-recent-action"> \
-                        <div class = "recent-action-row vcenter font-size16px"> \
-                            <div class = "member-icon float-left"> </div> \
-                            <div> Name </div> \
-                            <div class = "middle-right vcenter"> \
-                                <div class = "file-icon float-left"></div> \
-                                Alarm Clock Rings \
-                            </div> \
-                        </div> \
-                        <div class = "recent-action-last-row vcenter"> \
-                            <div>Type: Creation</div> \
-                            <div class = "middle-right">Time</div> \
-                        </div> \
+            \
+                <div> \
+                    <div id = "dummy-js-tree-2"> </div> \
+                    <div id = "collaboration-recent-actions-ui"> \
                     </div> \
                 </div> \
             </div> \
@@ -546,20 +428,57 @@ export function CollaborationUI(container){
             $("#" + container).append(html);
         else
             container.append(html);
+
+        $('.toolbar-menu-copy-link').click(() => {
+            $('.toolbar-menu-link-text').select();
+            document.execCommand("copy");
+        });
+        $('#collaboration-burger').click(() => this._toggleToolbarMenu());
+        $('.toolbar-menu-minimize').click(() => this._toggleToolbarMenu());
+        this._toggleToolbarMenu();
     }
 
-    function _addMemberFileAnotation(member, file, icon, color, bubble_color, cb = undefined){
-        var node = {
-            'id': MEMBER_PREFIX + member + ANNOTATION_FILE_PREFIX + file,
-            'text': file,
-            'icon': icon,
-            'a_attr': fileA
-        };
+    _toggleToolbarMenu(){
+        $('.collaboration-toolbar-opacity').toggle();
+        $('.collaboration-toolbar-menu').toggle();
+    }
 
-        if (!members.get_node(node.id)){
-            node.bubble_color = bubble_color;
-            node.color = color; 
-            members.create_node(MEMBER_PREFIX + member, node, 'last', cb);
+    _createPersonalFileNodes(parentId, node, calculateId){
+        let id = calculateId(parentId, node);
+
+        node.id = this._personalFiles.create_node(
+            parentId,
+            {
+                id: id,
+                text: node.name,
+                icon: node.icon,
+                color: node.color,
+                state : { opened : true },
+                a_attr: this._fileA
+            },
+            0,
+            () => {
+                if (node.children)
+                    for (let child of node.children)
+                        this._createPersonalFileNodes(id, child, calculateId)
+            },
+        );
+    }
+
+    _addMemberFileAnotation(memberName, fileName, fileIcon, fileColor, fileBubbleColor, cb = undefined){
+        var node = {
+            'id': this._MEMBER_PREFIX + memberName + this._ANNOTATION_FILE_PREFIX + fileName,
+            'text': fileName,
+            'icon': fileIcon,
+            'a_attr': this._fileA
+        };
+        if (!this._members.get_node(node.id)){
+            node.bubble_color = fileBubbleColor;
+            node.color = fileColor; 
+            this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', ()=>{
+                let suggestionNode = this._members.get_node(node.id);
+                this._members.set_type(suggestionNode, 'suggestion');
+            });
         }
     }
 
@@ -569,16 +488,16 @@ export function CollaborationUI(container){
      * @param {Object} file Should contain name, icon
      * @param {String} type
      * @param {String} time
-     * @param {function} add The function that will be used for adding
+     * @param {function} add The function that will be used for adding e.g append
      */
-    function _addAction(member, file, type, time, add){
+    _addAction(member, file, actionColor, type, time, add){
         let html = `                                                                                                \
-            <div class = "collaboration-recent-action">                                                             \
+            <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                 \
                 <div class = "recent-action-row vcenter font-size16px">                                             \
                     <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
                     <div> ${member.name} </div>                                                                     \
                     <div class = "middle-right vcenter">                                                            \
-                        <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \                                                  \
+                        <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \
                         ${file.name}                                                                                \
                     </div>                                                                                          \
                 </div>                                                                                              \
@@ -591,200 +510,240 @@ export function CollaborationUI(container){
         add(html);
     }
 
-    /* API */
-
-    this.addMember = function (name, icon = "./Icons/man0.png", cb = undefined ){
-        var node = {
-            'id': MEMBER_PREFIX + name,
-            'text': name,
-            'icon': icon,
-            'a_attr': membersA
+    _addSharedPersonalFile(tree, prefix, file, members){
+        let fileNode = {
+            'id' : prefix + file.name,
+            'text': file.name,
+            'icon': file.icon ? file.icon : './Icons/clock.png',
+            'color': file.color ? file.color : 'red',
+            'a_attr': this._fileA
         };
 
-        members.create_node(COLLABORATORS, node, "last", cb);
-    }
-    
-    this.removeMember = function (name){
-        members.delete_node(MEMBER_PREFIX + name);
+        tree.create_node('#', fileNode, "last", () => {
+            for (const member of members){
+                let icon = member.isMaster ? './Icons/crown.png' :
+                            member.hasFloor ? './Icons/pencil.png' : false;
+
+                let memberNode = {
+                    'id' : prefix + file.name + '-' + member.name,
+                    'text': member.name,
+                    'icon': icon,
+                    'a_attr': this._fileA
+                };
+
+                tree.create_node(fileNode.id, memberNode, "last");
+            }
+        });
     }
 
-    this.addSuggestionAnnotation = function(member, file, color = 'red', icon = './Icons/clock.png', cb = undefined){
-        _addMemberFileAnotation(member, file, icon, color, 'purple', cb);
+    _serveMemberRequests(){
+        for (let dest in this._memberRequests){
+            for (let node of this._memberRequests[dest])
+                this._members.create_node(dest, node, "last");
+        }
+        
+        this._memberRequests = {};
     }
 
-    this.addNoteAnnotation = function(member, file, color = 'red', icon = './Icons/clock.png', cb = undefined){
-        _addMemberFileAnotation(member, file, icon, color, 'orange', cb);
+    _addMember(member, me, cb = undefined){
+        var node = {
+            'id': (me ? this._MEMBER_ME_PREFIX : this._MEMBER_PREFIX) + member.name,
+            'text': member.name,
+            'icon': member.icon,
+            'a_attr': this._membersA
+        };
+
+        let dest = me ? this._COLLABORATOR_ME : this._COLLABORATORS; 
+
+        if (!this._members.get_node(dest)){
+
+            if (!this._memberRequests[dest])
+                this._memberRequests[dest] = [];
+            
+            this._memberRequests[dest].push(node);
+        }else
+            this._members.create_node(dest, node, "last", cb);
     }
 
-    this.removeMemberFileAnotation = function (name, fileName){
-        members.delete_node(MEMBER_PREFIX + name + ANNOTATION_FILE_PREFIX + fileName);
+    /* API */
+
+    setToolbarMenuMember(member){
+        $(".toolbar-menu-member-icon").css("background-image", member.icon);
+        $(".toolbar-menu-member-name").text(member.name);
     }
 
+    setToolbarMenuProjectInfo(projectName, link){
+        $('.toolbar-menu-project-name').text(projectName);
+        $('.toolbar-menu-link-text').val(link);
+    }
 
     /**
-     * @param {Object} file The file, should contain path, name, icon, color. 
-     *                      Path: is of the form folder1/folder2 and DOES NOT end up with the file's name
-     *                      Name: the name of the file
-     *                      Icon: the path to the icon: e.g. ./Icons/clock.png
-     *                      Color: the color of the file
+     * 
+     * @param {Array} settings for example [{name: 'settingName', checked: 'true'}, {name: 'settingName2' checked: false}] 
      */
-    function addPersonalFile(file, cb = undefined){
-        var path = file.path;
-
-        var ids = path.split('/');
-        var currId = '.', prev = PERSONAL_FILES;
-        var node;
-
-        // add folders if needed
-        for (var i = 0; i < ids.length; i++){
-            currId += '/' + ids[i];
-            if (!personalFiles.get_node(PERSONAL_FILE_PREFIX + currId)){
-                personalFiles.create_node(prev, {
-                    'id' : PERSONAL_FILE_PREFIX + currId,
-                    'text': ids[i],
-                    'icon': false,
-                    'a_attr': fileA
-                });
-            }
-            prev = PERSONAL_FILE_PREFIX + currId; 
-        }
-
-        //add the file
-        currId += '/' + file.name;
-        if (!personalFiles.get_node(PERSONAL_FILE_PREFIX + currId)){
-            personalFiles.create_node(prev, {
-                'id' : PERSONAL_FILE_PREFIX + currId,
-                'text': file.name,
-                'icon': file.icon ? file.icon : './Icons/clock.png',
-                'color': file.color ? file.color : 'red',
-                'a_attr': fileA
-            }, 
-            'last', 
-            cb);
-
-            personalFiles.get_node(PERSONAL_FILE_PREFIX + currId)['color'] = file.color ? file.color : 'red';
-            personalFiles.redraw_node(PERSONAL_FILE_PREFIX + currId);
+    setToolbarMenuSettings(settings){
+        $('.toolbar-menu-settings').empty();
+        for (let setting of settings){
+            let settingJqry = $(`\
+                <div class="collaboration-setting">\
+                    <div class="collaboration-setting-title"> ${setting.name} </div>\
+                    <label class="collaboration-setting-checkbox-container">\
+                        <span class="slider"></span>\
+                    </label>\
+                </div>\
+            `);
+    
+            let checkbox = $(`<input type="checkbox" ${setting.checked ? "checked" : ""}>`)
+            checkbox.click(()=>{
+                setting.checked = checkbox.is(':checked');
+            });
+            
+            settingJqry.children("label").prepend(checkbox);
+            $('.toolbar-menu-settings').append(settingJqry);
         }
     }
 
     /**
      * 
-     * @param {String} member The member's name
-     * @param {Array} files Each file, should contain path, name, icon, color.
-     *                      Path: is of the form folder1/folder2 and DOES NOT end up with the file's name
-     *                      Name: the name of the file
-     *                      Icon: the path to the icon: e.g. ./Icons/clock.png
-     *                      Color: the color of the file
-     * @param {function} cb Callback
+     * @param {Object} member Should contain name and icon
+     * @param {Function} cb 
      */
-    function clearAndAddMemberPersonalFiles(member, files, cb = undefined){
-        personalFiles.delete_node(PERSONAL_FILES);
-        personalFiles.create_node('#',{
-            'id': 'personal-files',
-            'type': 'other',
-            'text': 'Personal Files - ' + member,
-            'icon': false,
-            'state' : {
-                'opened' : true,
-            },
-            'a_attr': membersA
+    addMemberMe(member, cb = undefined ){
+        this._addMember(member, true, cb);
+        this._userName = member.name;
+    }
+
+    /**
+     * 
+     * @param {Object} member Should contain name and icon
+     * @param {Function} cb 
+     */
+    addMember(member, cb = undefined ){
+        this._addMember(member, false, cb);
+    }
+
+    removeMember(memberName){
+        this._members.delete_node(this._MEMBER_PREFIX + memberName);
+    }
+    /**
+     * 
+     * @param {Object} file 
+     * @param {Array} members 
+     */
+    addSharedPersonalFileToMe(file, members){
+        this._addSharedPersonalFile(
+            this._sharedPersonalFilesToMe,
+            this._SHARED_TO_ME_FILE_PREFIX,
+            file,
+            members
+        );
+    }
+
+    /**
+     * 
+     * @param {Object} file 
+     * @param {Array} members 
+     */
+    addSharedPersonalFileFromMe(file, members){
+        this._addSharedPersonalFile(
+            this._sharedPersonalFilesFromMe,
+            this._SHARED_FROM_ME_FILE_PREFIX,
+            file,
+            members
+        );
+    }
+
+    /**
+     * 
+     * @param {Object} memberName the member should already exist in the members tab (i.e. addMember has been called)
+     * @param {Object} file should contain name icon and color
+     * @param {Function} cb 
+     */
+    addSuggestionAnnotation(memberName, file, cb = undefined){
+        this._addMemberFileAnotation(memberName, file.name, file.icon, file.color, 'purple', cb);
+    }
+
+    addNoteAnnotation(memberName, file, cb = undefined){
+        this._addMemberFileAnotation(memberName, file.name, file.icon, file.color, 'orange', cb);
+    }
+
+    removeMemberFileAnotation(memberName, fileName){
+        this._members.delete_node(this._MEMBER_PREFIX + memberName + this._ANNOTATION_FILE_PREFIX + fileName);
+    }
+
+    clearAndAddPersonalFileSpecificIds(memberName, nodes){
+        this._personalFiles.delete_node(this._PERSONAL_FILES);
+        this._personalFiles.create_node('#',{
+            id: 'personal-files',
+            text: 'Personal Files - ' + memberName,
+            icon: false,
+            state : { opened : true, },
+            a_attr: this._membersA
         },
         'last',
-        function(){
-            if (!files.length) cb();
+        () => {
+            this._createPersonalFileNodes('personal-files', nodes, (parentId, node) => {
+                return node.id;
+            });
         });
-        
-        for (var i = 0; i < files.length - 1; i++)
-            addPersonalFile(files[i]);
-        
-        if (files.length) addPersonalFile(files[files.length - 1], cb);
     }
 
-    this.pushFrontAction = function pushFrontAction(member, file, type, time){
+    clearAndAddPersonalFilesAutoIds(memberName, nodes){
+        this._personalFiles.delete_node(this._PERSONAL_FILES);
+        this._personalFiles.create_node(
+            '#',
+            {
+                id: 'personal-files',
+                text: 'Personal Files - ' + memberName,
+                icon: false,
+                state : { opened : true, },
+                a_attr: this._membersA
+            },
+            'last',
+            () => {
+                this._createPersonalFileNodes('personal-files', nodes, (parentId, node) => {
+                    return parentId + '/' + node.name
+                });
+            }
+        );
+    }
+
+    addPersonalFile(parentId, id){
+        if (!parentId)
+            parentId = 'personal-files';
+
+        this._personalFiles.create_node(
+            parentId,
+            {
+                id: id,
+                text: node.name,
+                icon: node.icon,
+                color: node.color,
+                state : { opened : true },
+                a_attr: this._fileA
+            },
+        );
+    }
+
+    setOnClickPersonalFileCb(cb){
+        this._onClickPersonalFile = cb;
+    }
+
+    setOnClickSuggestionCb(cb){
+        this._onClickSuggestion = cb;
+    }
+
+    pushFrontAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.prepend.bind(recentActions);
-        _addAction(member, file, type, time, add);
+        this._addAction(member, file, actionColor, actionType, actionTime, add);
     }
 
-    this.pushBackAction = function pushBackAction(member, file, type, time){
+    pushBackAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.append.bind(recentActions);
-        _addAction(member, file, type, time, add);
+        this._addAction(member, file, actionColor, actionType, actionTime, add);
     }
-
-    this.addPersonalFile = addPersonalFile;
-    this.clearAndAddMemberPersonalFiles = clearAndAddMemberPersonalFiles;
-}
-
-var ui;
-var examples;
-
-$(function () {
-
-    ui = new CollaborationUI("container");
-    examples = new CollaborationUI_API_Examples();
-
-});
-
-/* Examples */
-
-function CollaborationUI_API_Examples(){
-
-    this.clearAndAddMemberPersonalFiles = function(){
-        var somefile1 = {
-            'path' : 'Whatever1/Whatever2',
-            'name' : 'example1'
-        };
-        var somefile2 = {
-            'path' : 'Folder1/Folder2/Folder3',
-            'name' : 'example2',
-            'color' : 'blue',
-            'icon' : './Icons/water.png'
-        };
-        var somefile3 = {
-            'path' : 'Folder1/Folder2/Folder3',
-            'name' : 'example3',
-            'color' : 'purple',
-            'icon' : './Icons/water.png'
-        };
-        var files = [somefile1, somefile2, somefile3];
-        ui.clearAndAddMemberPersonalFiles('Manos', files);
-    }
-
-    this.addPersonalFile = function(){
-        var somefile1 = {
-            'path' : 'Folder1/Folder2/Folder3',
-            'name' : 'example',
-            'color' : 'blue',
-            'icon' : './Icons/water.png'
-        };
-        ui.addPersonalFile(somefile1);
-    }
-
-    this.pushBackAction = function(){
-        let member = {
-            'name' : 'Manos',
-            'icon' : './Icons/man0.png'
-        };
-        let file = {
-            'name' : 'Alarm Clock Rings',
-            'icon' : './Icons/clock.png'
-        }
-        ui.pushBackAction(member, file, 'Creation', '01:05');
-    }
-
-    this.pushFrontAction = function(){
-        let member = {
-            'name' : 'Manos',
-            'icon' : './Icons/man0.png'
-        };
-        let file = {
-            'name' : 'Alarm Clock Rings',
-            'icon' : './Icons/clock.png'
-        }
-        ui.pushFrontAction(member, file, 'Creation', '01:05');
-    }
-
 }
 
 

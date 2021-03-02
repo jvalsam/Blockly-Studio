@@ -546,11 +546,12 @@
 
 .popup-opacity{
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     opacity: .75;
     z-index: 71; /* toolbox has opacity 70... */
     background-color: black;
+    transform: translate(calc(50vw - 50%), calc(50vh - 50%));
 }
 
 .collaboration-popup-header-bar{
@@ -585,7 +586,8 @@
 }
 
 .collaboration-popup-row {
-    display: block;
+    display: flex;
+    flex-direction: column;
     margin: 10px 0px;
     width: 100%;
     position: relative;
@@ -640,6 +642,7 @@
 .collaboration-popup-edit {
     text-decoration: underline;
     color: #787D82;
+    cursor: pointer;
 }
 
 .collaboration-popup-tick-icon {

@@ -1,7 +1,4 @@
 export class CollaborationUI {
-    
-    
-
 
     constructor(container){
 
@@ -29,7 +26,8 @@ export class CollaborationUI {
         };
         this._memberRequests = {};
         this._onClickPersonalFile = (node) => {console.log(node)};
-           
+        this._onClickSuggestion = (node) => {console.log(node)};
+
         /* Trees */
         this._members;
         this._personalFiles;
@@ -67,19 +65,26 @@ export class CollaborationUI {
         $('#collaboration-members').jstree({
             "plugins": [
                 "wholerow",
-                "colorv",
                 "sort",
                 "contextmenu",
                 "unique",
-                "types"
+                "types",
+                "conditionalselect",
+                "colorv",
             ],
             'types': {
-                'smart_object': {},
+                'suggestion': {},
                 'other': {}
             },
             'core': {
                 'check_callback': true,
                 'data': []
+            },
+            'conditionalselect': (node, event) => {
+                if (this._members.get_type(node) === 'suggestion'){
+                    this._onClickSuggestion(node);
+                }
+                return true;
             }
         });
     
@@ -477,11 +482,13 @@ export class CollaborationUI {
             'icon': fileIcon,
             'a_attr': this._fileA
         };
-
         if (!this._members.get_node(node.id)){
             node.bubble_color = fileBubbleColor;
             node.color = fileColor; 
-            this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', cb);
+            this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', ()=>{
+                let suggestionNode = this._members.get_node(node.id);
+                this._members.set_type(suggestionNode, 'suggestion');
+            });
         }
     }
 
@@ -735,6 +742,10 @@ export class CollaborationUI {
         this._onClickPersonalFile = cb;
     }
 
+    setOnClickSuggestionCb(cb){
+        this._onClickSuggestion = cb;
+    }
+
     pushFrontAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.prepend.bind(recentActions);
@@ -747,170 +758,3 @@ export class CollaborationUI {
         this._addAction(member, file, actionColor, actionType, actionTime, add);
     }
 }
-
-/* Examples */
-
-function CollaborationUI_API_Examples(ui){
-
-    function addMemberMe(){
-        let member = {
-            'name': 'Some Guy',
-            'icon': './Icons/man0.png'
-        }
-        ui.addMemberMe(member);
-    }
-
-    function addMember(){
-        let member = {
-            'name': 'Some Guy',
-            'icon': './Icons/man0.png'
-        }
-        ui.addMember(member);
-    }
-
-    function removeMember(){
-        //call addMember fist: member has to exist
-        ui.removeMember('Some Guy');
-    }
-
-    function addSuggestionAnnotation(){
-        //call addmember first: member has to exist
-        let file = {
-            'name' : 'Alarm Clock Rings',
-            'icon' : './Icons/clock.png',
-            'color': 'blue'
-        }
-        ui.addSuggestionAnnotation('Some Guy', file);
-    }
-
-    function addNoteAnnotation(){
-        //call addmember first: member has to exist
-        let file = {
-            'name' : 'Alarm Clock Stops',
-            'icon' : './Icons/clock.png',
-            'color': 'blue'
-        }
-        ui.addNoteAnnotation('Some Guy', file);
-    }
-
-    function removeMemberFileAnotation(){
-        // call addNoteAnnotation first: annotation has to exist
-        ui.removeMemberFileAnotation('Some Guy', 'Alarm Clock Rings');
-    }
-
-    function addPersonalFile(){
-        var somefile1 = {
-            'path' : 'Folder1/Folder2/Folder3',
-            'name' : 'example',
-            'color' : 'blue',
-            'icon' : './Icons/water.png'
-        };
-        ui.addPersonalFile(somefile1);
-    }
-
-    function clearAndAddMemberPersonalFiles(){
-        var somefile1 = {
-            'path' : 'Whatever1/Whatever2',
-            'name' : 'example1'
-        };
-        var somefile2 = {
-            'path' : 'Folder1/Folder2/Folder3',
-            'name' : 'example2',
-            'color' : 'blue',
-            'icon' : './Icons/water.png'
-        };
-        var somefile3 = {
-            'path' : 'Folder1/Folder2/Folder3',
-            'name' : 'example3',
-            'color' : 'purple',
-            'icon' : './Icons/water.png'
-        };
-        var files = [somefile1, somefile2, somefile3];
-        ui.clearAndAddMemberPersonalFiles('Some Guy', files);
-    }
-
-    function pushBackAction(){
-        let member = {
-            'name' : 'Manos',
-            'icon' : './Icons/man0.png'
-        };
-        let file = {
-            'name' : 'Alarm Clock Rings',
-            'icon' : './Icons/clock.png'
-        }
-        ui.pushBackAction(member, file, '#D4FFDE','Creation', '01:05');
-    }
-
-    function pushFrontAction(){
-        let member = {
-            'name' : 'Manos',
-            'icon' : './Icons/man0.png'
-        };
-        let file = {
-            'name' : 'Alarm Clock Rings',
-            'icon' : './Icons/clock.png'
-        }
-        ui.pushBackAction(member, file, 'red','Creation', '01:05');
-    }
-
-    function addSharedPersonalFileToMe(){
-        let file = {
-            'name': 'Some file 1',
-            'icon': './Icons/clock.png',
-            'color': 'blue',
-        };
-
-        let members = [
-            {
-                'name' : 'John Doe',
-                'isMaster': false,
-                'hasFloor': true
-            },
-            {
-                'name' : 'Johnathan Doevic',
-                'isMaster': false,
-                'hasFloor': true
-            }
-        ];
-
-        ui.addSharedPersonalFileToMe(file, members);
-    }
-
-    function addSharedPersonalFileFromMe(){
-        let file = {
-            'name': 'Some file 1',
-            'icon': './Icons/clock.png',
-            'color': 'blue',
-        };
-
-        let members = [
-            {
-                'name' : 'John Doe 2',
-                'isMaster': false,
-                'hasFloor': true
-            },
-            {
-                'name' : 'Johnathan Doevic 2',
-                'isMaster': false,
-                'hasFloor': true
-            }
-        ];
-
-        ui.addSharedPersonalFileFromMe(file, members);
-    }
-
-    this.addMemberMe = addMemberMe;
-    this.addMember = addMember;
-    this.removeMember = removeMember;
-    this.addSuggestionAnnotation = addSuggestionAnnotation;
-    this.addNoteAnnotation = addNoteAnnotation;
-    this.removeMemberFileAnotation = removeMemberFileAnotation; 
-    this.addPersonalFile = addPersonalFile;
-    this.clearAndAddMemberPersonalFiles = clearAndAddMemberPersonalFiles;
-    this.pushFrontAction = pushFrontAction;
-    this.pushBackAction = pushBackAction;
-    this.addSharedPersonalFileFromMe = addSharedPersonalFileFromMe;
-    this.addSharedPersonalFileToMe = addSharedPersonalFileToMe;
-}
-
-
