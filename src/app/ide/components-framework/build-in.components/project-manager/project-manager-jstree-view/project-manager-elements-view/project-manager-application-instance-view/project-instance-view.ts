@@ -510,8 +510,8 @@ export class ProjectInstanceView extends View {
         let menuItems = Object.assign({}, projectElement.menuObj);
         /* call the collaboration manager in case project is shared*/
         if (this.data.project.componentsData
-            && this.data.project.componentsData.collaborationData 
-            && this.data.project.componentsData.collaborationData.members) {
+            && this.data.project.componentsData.CollaborationManager 
+            && this.data.project.componentsData.CollaborationManager.members) {
             let index = Object.keys(menuItems).length;
             let collabMenuItems = this.parent["itemsMenuCollaboration"](node.id);
             if (collabMenuItems.length > 0) {

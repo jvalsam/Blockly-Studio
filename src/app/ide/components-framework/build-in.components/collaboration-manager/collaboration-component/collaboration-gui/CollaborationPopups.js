@@ -4,7 +4,9 @@ export {
     SharePopup,
     JoinPopup,
     PassFloorPopup,
-    SharePersonalFilePopup
+    SharePersonalFilePopup,
+    AuthorSuggestionPopup,
+    ViewSuggestionPopup
 }
 
 class CollaborationPopup{
@@ -181,7 +183,7 @@ class PassFloorPopup extends CollaborationPopup {
         //     </div>
         // </div>
 
-        let html = '<div class="vcenter center" style="width: 100%;"></div>';
+        let html = '<div class="vcenter center" style="width: 100%; padding: 2vw;"></div>';
 
         let buttonRowStr = '<div class="collaboration-popup-row center" style="width: 150px;"> </div>';
         let shareButtonStr = '<input type="button" value="Pass editing rights">';
@@ -512,5 +514,165 @@ class JoinPopup extends CollaborationPopup{
 
     setOnJoinCb(cb){
         this._onJoinCb = cb;
+    }
+}
+
+class SuggestionPopup extends CollaborationPopup{
+
+    constructor(container, fileName, comment, buttonNames){
+        super(container, `Suggestion - ${fileName}`);
+
+        this._onYesCb = () => {};
+        this._onNoCb = () => {};
+
+        let html = `\
+        <div class="suggestion-all-content">\
+            <div class="suggestion-editors-area">\
+                <div class="suggestion-editor-area">\
+                    <div class="suggestion-annotation-with-x suggestion-annotation-warning">\
+                        <div class="suggestion-text-14">\
+                            [Warning] This file was edited after this suggestion was made.\
+                        </div>\
+                        <div class="suggestion-annotation-x"> </div>\
+                    </div>\
+                    <div class="suggestion-vpl-editor suggestion-vpl-editor-left">\
+                    </div>\
+                </div>\
+                <div class="suggestion-editor-area">\
+                    <div class="suggestion-vpl-editor suggestion-vpl-editor-right">\
+                    </div>\
+                </div>\
+            </div>\
+            <div class="suggestion-right-menu">\
+                <div class="suggestion-right-menu-content">\
+                    <div class="suggestion-right-menu-section">\
+                        <div class="suggestion-text-16">\
+                            Manage Suggestion\
+                        </div>\
+                        <div class="suggestion-annotation suggestion-annotation-comment">\
+                            <div class="suggestion-comment-title">\
+                                <div class="suggestion-arrow"> </div>\
+                                <div class="suggestion-comment"> Comment </div>\
+                            </div>\
+                            <textarea\
+                                class="suggestion-comment-content"\ 
+                                ${comment.readonly ? 'readonly' : ''}\
+                                placeholder="Suggestion description"
+                            >${comment.text ? comment.text : ''}</textarea>\
+                        </div>\
+                        <div class="suggesiton-confirmation-buttons">\
+                            <div class="suggestion-confirmation-button suggestion-accept">\
+                                ${buttonNames.yes}\
+                            </div>\
+                            <div class="suggestion-confirmation-button suggestion-reject">\
+                                ${buttonNames.no}\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>`;
+
+        this._contentContainer.append(html);
+        
+        let arrow_rotation = 0;
+        $(".suggestion-comment-title").click( () => {
+            $(".suggestion-comment-content").toggle();
+            arrow_rotation = arrow_rotation == 0 ? -90 : 0;
+            $(".suggestion-arrow").css('transform', `rotate(${arrow_rotation}deg)`);
+        });
+
+        $(".suggestion-accept").click(() => {
+            this._onYesCb();
+            this.closePopup();
+        });
+
+        $(".suggestion-reject").click(() => {
+            this._onNoCb();
+            this.closePopup();
+        });
+
+        $(".suggestion-annotation-warning").hide();
+        $(".suggestion-annotation-x").click(function(){
+            $(this).parent().hide();
+        });
+    }
+
+    setOnYesCb(cb){
+        this._onYesCb = cb;
+    }
+
+    setOnNoCb(cb){
+        this._onNoCb = cb;
+    }
+
+    showWarning(){
+        $(".suggestion-annotation-warning").show();
+    }
+
+    getLeftContainer(){
+        return $(".suggestion-vpl-editor-left");
+    }
+
+    getRightContainer(){
+        return $(".suggestion-vpl-editor-right");
+    }
+}
+
+class AuthorSuggestionPopup extends SuggestionPopup {
+    constructor(container, fileName){
+        super(container, fileName, {readonly: false, text: ''}, {yes: 'Send', no: 'Cancel'});
+    }
+}
+
+class ViewSuggestionPopup extends SuggestionPopup {
+    
+    constructor(container, fileName, members, comment){
+        super(container, fileName, {readonly: true, text: comment ? comment : ' '}, {yes: 'Accept', no: 'Reject'});
+        
+        this._onMemberClick = (member) => {console.log(member)};
+        
+        let html = 
+        `<div class="suggestion-right-menu-section">\
+        <div class="suggestion-text-16">\
+                This item's other suggestions\
+            </div>\
+            <div class="suggestion-users-container">\
+            </div>\
+        </div>`;
+        
+        $(".suggestion-right-menu-content").append(html);
+
+        if (members)
+            this.addMembers(members);
+    }
+
+    setOnUserClickCb(cb){
+        this._onMemberClick = cb;
+    }
+
+    addMember(member){
+        let memberJqry = $(`\
+            <div class="suggestion-user">\
+                <div class="suggestion-user-icon" style="background-image: url(${member.icon})"> </div>\
+                <div class="suggestion-text-14"> ${member.name} </div>\
+            </div>\
+        `);
+        let onclick = () => this._onMemberClick(member);
+        memberJqry.click(function(){
+            $('.suggestion-user').removeClass('suggestion-user-active');
+            $(this).addClass('suggestion-user-active');
+            onclick();
+        });
+        $('.suggestion-users-container').append(memberJqry);
+    }
+
+    addMembers(members){
+        for (let member of members)
+            this.addMember(member);
+    }
+
+    clearMembers(){
+        $('.suggestion-users-container').empty();
     }
 }

@@ -1,7 +1,9 @@
 import { collabInfo } from '../collaboration-core/utilities';
 import {
         SharePopup,
-        JoinPopup
+        JoinPopup,
+        ViewSuggestionPopup,
+        AuthorSuggestionPopup
     }
     from './CollaborationPopups'
 
@@ -51,6 +53,26 @@ export function openStartSessionDialogue(
         return collaborationUI;
 }
 
+let $suggestionContainer =  $(
+                                `<div style = "
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                "></div>`
+                            );
+
+$(document).ready(() => {
+    $('body').append($suggestionContainer);
+});
+
+export function openSuggestionDialogue(collabPlugin) {
+    $suggestionContainer.empty();
+    new AuthorSuggestionPopup(
+        $suggestionContainer, 
+        'fileName',
+    );
+}
+
 export function openJoinSessionDialogue(
     collabPlugin,
     $dialog,   // jquery selector
@@ -65,6 +87,22 @@ export function openJoinSessionDialogue(
                     $(".project-manager-runtime-console-area").hide(); // fix me
                     $toolbarContainer = $($toolbarContainer);
                     collaborationUI["ui"] = new CollaborationUI($toolbarContainer);
+                    
+                    collaborationUI["ui"].setOnClickSuggestionCb( (node) => {
+                        $suggestionContainer.empty();
+                        new ViewSuggestionPopup($suggestionContainer, {name: 'something', icon: false}, [], 'comment');
+                    });
+
+                    collaborationUI["ui"].setOnToolbarMenuOpen( () => {    
+                        return {
+                            member: {
+                                name: collabInfo.myInfo.name,   //todo Katsa Need function for this
+                                icon: collabInfo.myInfo.icon,   //todo Katsa Need function for this
+                            },
+                            link: collabPlugin.getInvitationCode(),
+                            projectName: collabPlugin.shProject.description
+                        }
+                    });
                 });
                 return collaborationUI;
             });
