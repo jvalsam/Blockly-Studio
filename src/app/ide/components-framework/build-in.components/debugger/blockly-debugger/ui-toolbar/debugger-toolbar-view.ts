@@ -47,36 +47,30 @@ export class DebuggerToolbarView extends View {
         this.controller = <DebuggerControllerView>ViewRegistry.getEntry("DebuggerControllerView").create(
             this.parent,
             "#debugger-control-area",
+            this.blocklyDebugger,
             {
                 collaborative: false,
                 state: "RUNNING",
-                available: true,
-                blocklyDebugger: this.blocklyDebugger
+                available: true
             }
         );
         this.debuggerInfodata = <DebuggerInfoView>ViewRegistry.getEntry("DebuggerInfoView").create(
             this.parent,
             "#debugger-data-area",
-            {
-                // data to load
-                blocklyDebugger: this.blocklyDebugger
-            }
+            this.blocklyDebugger,
+            this.data.debuggerData
         );
         this.breakpoints = <BreakpointsView>ViewRegistry.getEntry("BreakpointsView").create(
             this.parent,
             "#breakpoints-data-area",
-            {
-
-                blocklyDebugger: this.blocklyDebugger
-            }
+            this.blocklyDebugger,
+            this.data.breakpoints
         );
         this.conditionalBreakpoints = <BreakpointsView>ViewRegistry.getEntry("BreakpointsView").create(
             this.parent,
             "#conditional-breakpoints-data-area",
-            {
-
-                blocklyDebugger: this.blocklyDebugger
-            }
+            this.blocklyDebugger,
+            this.data.conditionalBreakpoints
         );
     }
 

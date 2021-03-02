@@ -39,6 +39,7 @@ export class BreakpointViewBox extends View {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
+        private visualDebugger: any,
         private breakpoint: BreakpointInfo
     ) {
         super(parent, name, templateHTML, style, hookSelector);

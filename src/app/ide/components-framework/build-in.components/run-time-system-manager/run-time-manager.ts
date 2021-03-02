@@ -48,21 +48,20 @@ export class RuntimeManager extends IDEUIComponent {
     private isOpen: Boolean;
     private runtimeSystemInst: RuntimeSystem;
     private _environmentData: any;
-    private debuggerInst: Debugger;
 
     constructor(
         name: string,
         description: string,
         componentView: string,
         hookSelector: string,
-        private domainType: string
+        private domainType: string,
+        private debuggerInst: Debugger
     ) {
         super(name, description, componentView, hookSelector);
         this.isOpen = false;
         RuntimeManager.currentMode = 0;
         this.runtimeSystemInst = null;
         this._environmentData = null;
-        this.debuggerInst = null;
     }
 
     public registerEvents(): void { ; }
@@ -326,19 +325,19 @@ export class RuntimeManager extends IDEUIComponent {
     private onStartDebugApplicationBtn(): void {
         RuntimeManager.currentMode = 1;
 
-        if (!this.debuggerInst) {
-            this.debuggerInst = <Debugger>ComponentRegistry
-                .getEntry("Debugger")
-                .create([
-                    ".debugger-toolbar-area"
-                ]);
-            ComponentsCommunication.functionRequest(
-                this.name,
-                "Shell",
-                "openComponent",
-                [this.debuggerInst]);
-        }
-        this.debuggerInst.initiate();
+        // if (!this.debuggerInst) {
+        //     this.debuggerInst = <Debugger>ComponentRegistry
+        //         .getEntry("Debugger")
+        //         .create([
+        //             ".debugger-toolbar-area"
+        //         ]);
+        //     ComponentsCommunication.functionRequest(
+        //         this.name,
+        //         "Shell",
+        //         "openComponent",
+        //         [this.debuggerInst]);
+        // }
+        // this.debuggerInst.initiate();
 
         let toolbarView = this._viewElems.RuntimeManagerToolbarView[0].elem;
         toolbarView.disableButtons();

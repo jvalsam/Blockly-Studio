@@ -216,9 +216,19 @@ export class ProjectManager extends IDEUIComponent {
                 }
             });
 
+            var visualDebugger: Debugger = <Debugger>ComponentRegistry
+                .getEntry("Debugger")
+                .create([".debugger-toolbar-area"]);
+            
+            visualDebugger.initiate();
+
             var console: RuntimeManager = <RuntimeManager>ComponentRegistry
                 .getEntry("RuntimeManager")
-                .create([".project-manager-runtime-console-area"]);
+                .create([
+                    ".project-manager-runtime-console-area",
+                    this.domainType,
+                    visualDebugger
+                ]);
 
             ComponentsCommunication.functionRequest(
                 this.name,
@@ -228,11 +238,7 @@ export class ProjectManager extends IDEUIComponent {
 
             console.InitConsoleMsg();
 
-            var visualDebugger: Debugger = <Debugger>ComponentRegistry
-                .getEntry("Debugger")
-                .create([".debugger-toolbar-area"]);
             
-            visualDebugger.initiate();
         }
 
         this.loadProject(project);

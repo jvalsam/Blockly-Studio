@@ -1,7 +1,7 @@
-<li id="breakpoint-<%= id %>" class="jstree-node  jstree-leaf">
+<li class="jstree-node  jstree-leaf">
     <a class="jstree-anchor" href="#" tabindex="-1" id="projectElement-<%= id %>" style="width: 88%;">
         <span class="red-breakpoint-circle"></span>
-        <span class="project-element-square" style="border-left: 6px solid <%= color %>;"></span>
+        <span class="project-element-square" style="border-left: 6px solid <%= pelem.color %>;"></span>
         <i class="jstree-icon jstree-themeicon jstree-themeicon-custom project-element-img"
             role="presentation"
             style="background-image: url(\"<%= pelem.icon %>\");">
@@ -9,7 +9,7 @@
         <span><%= pelem.text %></span>
         <span style="color: grey">- ID <%= id %></span>
     </a>
-    <input type="checkbox" class="form-check-input" id="breakpointHandler-<%= id %>">
+    <input type="checkbox" class="form-check-input" id="breakpointHandler-<%= id %>" />
     <a href="#" id="DeleteButton-<%= id %>" class="trash-button">
        <i class="fas fa-trash"></i>
     </a>

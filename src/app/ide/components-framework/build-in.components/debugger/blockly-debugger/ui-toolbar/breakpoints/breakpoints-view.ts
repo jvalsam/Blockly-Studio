@@ -7,6 +7,7 @@ import { IDEUIComponent } from "../../../../../component/ide-ui-component";
 import { ActionsView } from "../../../../../common-views/actions-view/actions-view";
 import { ViewRegistry } from '../../../../../component/registry';
 import * as _ from "lodash";
+import { BreakpointInfo } from "./breakpoint-item/breakpoint-view-box";
 
 
 @ViewMetadata({
@@ -21,11 +22,8 @@ export class BreakpointsView extends View {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
-        private breakpoints: Array<{
-                pelem: { label: string, icon: string, color: string },
-                vplElem: { id: string },
-                id: string
-            }>
+        private blocklyDebugger: any,
+        private breakpoints: Array<BreakpointInfo>
     ) {
         super(parent, name, templateHTML, style, hookSelector);
     }
@@ -55,7 +53,11 @@ export class BreakpointsView extends View {
         if (this.breakpoints.length > 0) {
             _.forEach(this.breakpoints, (breakpoint) => {
                 const breakpointsViewBox: View = ViewRegistry.getEntry("BreakpointViewBox")
-                    .create(this.parent, "#"+this.id, breakpoint);
+                    .create(
+                        this.parent,
+                        "#"+this.id,
+                        this.blocklyDebugger,
+                        breakpoint);
                 breakpointsViewBox.clearSelectorArea = false;
                 breakpointsViewBox.render();
             });

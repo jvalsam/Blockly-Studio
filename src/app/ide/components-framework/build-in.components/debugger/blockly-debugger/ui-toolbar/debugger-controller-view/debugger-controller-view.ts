@@ -28,15 +28,15 @@ export class DebuggerControllerView extends View {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
+        private blocklyDebugger: any,
         private data: {
             available: boolean,
             collaborative: boolean,
-            state: "RUNNING" | "PAUSED",
-            blocklyDebugger: any
+            state: "RUNNING" | "PAUSED"
         }
     ) {
         super(parent, name, templateHTML, style, hookSelector);
-        let debuggerWorker = this.data.blocklyDebugger.getDebuggeeWorker();
+        let debuggerWorker = this.blocklyDebugger.getDebuggeeWorker();
         //
         this.continueDebuggerAction = debuggerWorker.RegisterContinueDebuggerAction();
         // this.pauseDebuggerAction = debuggerWorker.RegisterContinueDebuggerAction();
