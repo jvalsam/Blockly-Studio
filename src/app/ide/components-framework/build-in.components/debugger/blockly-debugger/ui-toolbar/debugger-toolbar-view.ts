@@ -7,6 +7,9 @@ import { IDEUIComponent } from "../../../../component/ide-ui-component";
 import { ActionsView } from "../../../../common-views/actions-view/actions-view";
 import { ViewRegistry } from '../../../../component/registry';
 import * as _ from "lodash";
+import { BreakpointsView } from "./breakpoints/breakpoints-view";
+import { DebuggerInfoView } from "./debugger-info-view/debugger-info-view";
+import { DebuggerControllerView } from "./debugger-controller-view/debugger-controller-view";
 
 @ViewMetadata({
     name: "DebuggerToolbarView",
@@ -14,10 +17,10 @@ import * as _ from "lodash";
     style: { system: DebuggerToolbarViewSYCSS }
 })
 export class DebuggerToolbarView extends View {
-    private controller: View;
-    private debuggerInfodata: View;
-    private breakpoints: View;
-    private conditionalBreakpoints: View;
+    public controller: DebuggerControllerView;
+    public debuggerInfodata: DebuggerInfoView;
+    public breakpoints: BreakpointsView;
+    public conditionalBreakpoints: View;
 
     constructor(
         parent: IDEUIComponent,
@@ -44,7 +47,7 @@ export class DebuggerToolbarView extends View {
     ) {
         super(parent, name, templateHTML, style, hookSelector);
         //
-        this.controller = ViewRegistry.getEntry("DebuggerControllerView").create(
+        this.controller = <DebuggerControllerView>ViewRegistry.getEntry("DebuggerControllerView").create(
             this.parent,
             "#debugger-control-area",
             {
@@ -54,7 +57,7 @@ export class DebuggerToolbarView extends View {
                 blocklyDebugger: this.blocklyDebugger
             }
         );
-        this.debuggerInfodata = ViewRegistry.getEntry("DebuggerInfoView").create(
+        this.debuggerInfodata = <DebuggerInfoView>ViewRegistry.getEntry("DebuggerInfoView").create(
             this.parent,
             "#debugger-data-area",
             {
@@ -62,7 +65,7 @@ export class DebuggerToolbarView extends View {
                 blocklyDebugger: this.blocklyDebugger
             }
         );
-        this.breakpoints = ViewRegistry.getEntry("BreakpointsView").create(
+        this.breakpoints = <BreakpointsView>ViewRegistry.getEntry("BreakpointsView").create(
             this.parent,
             "#breakpoints-data-area",
             {
@@ -70,7 +73,7 @@ export class DebuggerToolbarView extends View {
                 blocklyDebugger: this.blocklyDebugger
             }
         );
-        this.conditionalBreakpoints = ViewRegistry.getEntry("BreakpointsView").create(
+        this.conditionalBreakpoints = <BreakpointsView>ViewRegistry.getEntry("BreakpointsView").create(
             this.parent,
             "#conditional-breakpoints-data-area",
             {

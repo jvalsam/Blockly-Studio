@@ -7,11 +7,13 @@ import { ComponentsCommunication } from "../../component/components-communicatio
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import { ViewRegistry } from "../../component/registry";
 import { BlocklyDebugger } from "./blockly-debugger/index";
+import { DebuggerToolbarView } from "./blockly-debugger/ui-toolbar/debugger-toolbar-view";
 
 
 var menuJson; // todo: define them
 var configJson; // todo: define them
 
+type BreakpointSRC = "REMOTE" | "EDITOR" | "TOOLBAR";
 
 @UIComponentMetadata({
     description: "Debugger of the Blockly Studio",
@@ -25,6 +27,7 @@ var configJson; // todo: define them
 export class Debugger extends IDEUIComponent {
     private environmentData: any;
     private blocklyDebugger: BlocklyDebugger;
+    private toolbar: DebuggerToolbarView;
 
     private postMessage(msg, callback?: Function) {
         ComponentsCommunication.functionRequest(
@@ -49,6 +52,8 @@ export class Debugger extends IDEUIComponent {
     @ExportedFunction
     public initiate() {
         this.blocklyDebugger = new BlocklyDebugger(this);
+        
+        this.breakpoints = [];
     }
 
     @ExportedFunction
@@ -56,7 +61,7 @@ export class Debugger extends IDEUIComponent {
         alert("start debugging process...");
         this.environmentData = environmentData;
         
-        let toolbar = ViewRegistry.getEntry("DebuggerToolbarView")
+        this.toolbar = <DebuggerToolbarView>ViewRegistry.getEntry("DebuggerToolbarView")
             .create(
                 this,
                 ".debugger-toolbar-container",
@@ -64,7 +69,7 @@ export class Debugger extends IDEUIComponent {
                 {},//debuggerData
                 this.blocklyDebugger
             );
-        toolbar.render();
+        this.toolbar.render();
     }
 
     @RequiredFunction("BlocklyVPL", "getAllBlocklyWSPs")
@@ -99,5 +104,41 @@ export class Debugger extends IDEUIComponent {
     }
     public destroy(): void {
         throw new Error("Method not implemented.");
+    }
+
+    // handling breakpoints
+
+    private breakpoints: Array<any>;
+
+    @ExportedFunction
+    public addBreakpoint(breakpoint, src: "REMOTE" | "EDITOR") {
+        if (src === "REMOTE") {
+            this.breakpoints.push(breakpoint);
+            // TODO: send through collaborative debugging component
+        }
+        else {
+            let breakpointInfo = {};
+            // retrive project element names etc.
+            this.breakpoints.push(breakpointInfo);
+
+            // TODO: check to send the breakpoint information to collaborative debugging
+        }
+
+        this.toolbar.breakpoints.addBreakpoint(breakpoint);
+    }
+
+    @ExportedFunction
+    public removeBreakpoint(blockId: string, src: BreakpointSRC) {
+        
+    }
+
+    @ExportedFunction
+    public enableBreakpoint(blocklyId: string, src: BreakpointSRC) {
+
+    }
+
+    @ExportedFunction
+    public disableBreakpoint(blocklyId: string, src: BreakpointSRC) {
+
     }
 }
