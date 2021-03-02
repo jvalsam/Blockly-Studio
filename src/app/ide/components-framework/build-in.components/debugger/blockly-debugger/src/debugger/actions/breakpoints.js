@@ -1,6 +1,16 @@
 import { Debuggee_Worker, Blockly_Debugger } from '../debugger.js';
 import { generation } from "../../generator/blockly/blockly_init";
 
+
+export let EnableBreakpoint = (blockId, outer) => {
+    Blockly_Debugger.actions["Breakpoint"].enable(blockId, outer);
+};
+
+export let DisableBreakpoint = (blockId, outer) => {
+    Blockly_Debugger.actions["Breakpoint"].disable(blockId, outer);
+};
+
+
 export function RegisterDebuggerBreakpointFunctionality(visualDebugger) {
     Blockly_Debugger.actions["Breakpoint"] = {};
     // Breakpoints
@@ -25,7 +35,7 @@ export function RegisterDebuggerBreakpointFunctionality(visualDebugger) {
     }
 
     Blockly_Debugger.actions["Breakpoint"].onRemoveBreakpoint = (block) => {
-        visualDebugger.removeBreakpoint(block, "EDITOR");
+        visualDebugger.removeBreakpoint(block.id, "EDITOR");
     }
 
     Blockly_Debugger.actions["Breakpoint"].wait_view = (block_id) => {
@@ -52,7 +62,7 @@ export function RegisterDebuggerBreakpointFunctionality(visualDebugger) {
     }
 
 
-    Blockly_Debugger.actions["Breakpoint"].disable = (block_id) => {
+    Blockly_Debugger.actions["Breakpoint"].disable = (block_id, outer) => {
         var i = Blockly_Debugger
             .actions["Breakpoint"]
             .breakpoints
@@ -76,10 +86,13 @@ export function RegisterDebuggerBreakpointFunctionality(visualDebugger) {
                             };
                         }),
                 });
+            
+            if (!outer)
+                visualDebugger.disableBreakpoint(block_id, "EDITOR");
         }
     }
 
-    Blockly_Debugger.actions["Breakpoint"].enable = (block_id) => {
+    Blockly_Debugger.actions["Breakpoint"].enable = (block_id, outer) => {
         var i = Blockly_Debugger
             .actions["Breakpoint"]
             .breakpoints
@@ -102,6 +115,9 @@ export function RegisterDebuggerBreakpointFunctionality(visualDebugger) {
                             }
                         }),
                 });
+
+            if (!outer)
+                visualDebugger.enableBreakpoint(block_id, "EDITOR");
         }
     }
 

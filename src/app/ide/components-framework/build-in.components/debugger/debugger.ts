@@ -7,6 +7,9 @@ import { ComponentsCommunication } from "../../component/components-communicatio
 import { IDEUIComponent } from "../../component/ide-ui-component";
 import { ViewRegistry } from "../../component/registry";
 import { BlocklyDebugger } from "./blockly-debugger/index";
+import { DisableBreakpoint, EnableBreakpoint } from "./blockly-debugger/src/debugger/actions/breakpoints";
+import { AddBreakpoint, RemoveBreakpoint } from "./blockly-debugger/src/generator/blockly/core/block_svg";
+import { BreakpointInfo } from "./blockly-debugger/ui-toolbar/breakpoints/breakpoint-item/breakpoint-view-box";
 import { DebuggerToolbarView } from "./blockly-debugger/ui-toolbar/debugger-toolbar-view";
 
 
@@ -54,6 +57,7 @@ export class Debugger extends IDEUIComponent {
         this.blocklyDebugger = new BlocklyDebugger(this);
         
         this.breakpoints = [];
+        this.breakpointNO = 0;
     }
 
     @ExportedFunction
@@ -66,7 +70,9 @@ export class Debugger extends IDEUIComponent {
                 this,
                 ".debugger-toolbar-container",
                 environmentData,
-                {},//debuggerData
+                {
+                    breakpoints: this.breakpoints
+                },//debuggerData
                 this.blocklyDebugger
             );
         this.toolbar.render();
@@ -107,38 +113,190 @@ export class Debugger extends IDEUIComponent {
     }
 
     // handling breakpoints
-
-    private breakpoints: Array<any>;
+    private breakpointNO: number;
+    private breakpoints: Array<BreakpointInfo>;
 
     @ExportedFunction
     public addBreakpoint(breakpoint, src: "REMOTE" | "EDITOR") {
+        let breakpointInfo: BreakpointInfo = null;
+        
         if (src === "REMOTE") {
-            this.breakpoints.push(breakpoint);
-            // TODO: send through collaborative debugging component
+            breakpointInfo = breakpoint;
+            
+            // sync blockly editor view with breakpoint
+            let block = ComponentsCommunication.functionRequest(
+                this.name,
+                "BlocklyVPL",
+                "getBlock",
+                [
+                    breakpoint.elemId,
+                    breakpoint.editorId
+                ]
+            );
+            AddBreakpoint(block, true);
         }
         else {
-            let breakpointInfo = {};
-            // retrive project element names etc.
-            this.breakpoints.push(breakpointInfo);
+            let pitem = breakpoint.workspace.pitem._jstreeNode;
 
-            // TODO: check to send the breakpoint information to collaborative debugging
+            breakpointInfo = {
+                id: this.breakpointNO++,
+                elemId: breakpoint.id,
+                editorId: breakpoint.workspace.editorId,
+                pelem: {
+                    id: pitem.id,
+                    text: pitem.text,
+                    icon: pitem.icon,
+                    color: pitem.color
+                },
+                isEnabled: true
+            };
+
+            // TODO: collaborative debugging message
+
         }
 
-        this.toolbar.breakpoints.addBreakpoint(breakpoint);
+        this.breakpoints.push(breakpointInfo);
+
+        if (this.toolbar) {
+            this.toolbar.breakpoints.addBreakpoint(breakpoint);
+        }
     }
+
+    @RequiredFunction("BlocklyVPL", "getBlock")
 
     @ExportedFunction
     public removeBreakpoint(blockId: string, src: BreakpointSRC) {
-        
+        let breakpointIndex = this.breakpoints
+            .findIndex(breakpoint => breakpoint.elemId === blockId);
+        let breakpoint = this.breakpoints[breakpointIndex];
+        let block = ComponentsCommunication.functionRequest(
+            this.name,
+            "BlocklyVPL",
+            "getBlock",
+            [
+                blockId,
+                breakpoint.editorId
+            ]
+        );
+
+        switch (src) {
+            case "REMOTE":
+                RemoveBreakpoint(block, true);
+                
+                if (this.toolbar) {
+                    this.toolbar.breakpoints.removeBreakpoint(blockId);
+                }
+
+                this.breakpoints.splice(breakpointIndex, 1);
+                break;
+            case "EDITOR":
+                if (this.toolbar) {
+                    this.toolbar.breakpoints.removeBreakpoint(blockId);
+                }
+                this.breakpoints.splice(breakpointIndex, 1);
+
+                // TODO: collaborative debugging message
+
+                break;
+            case "TOOLBAR":
+                RemoveBreakpoint(block, true);
+                this.breakpoints.splice(breakpointIndex, 1);
+
+                // TODO: collaborative debugging message
+
+                break;
+            default:
+                throw new Error("Not supported source requested action in debugger!");
+        }
     }
 
     @ExportedFunction
-    public enableBreakpoint(blocklyId: string, src: BreakpointSRC) {
+    public enableBreakpoint(blockId: string, src: BreakpointSRC) {
+        let breakpoint = this.breakpoints.find(breakpoint => breakpoint.elemId === blockId);
+        breakpoint.isEnabled = true;
 
+        let block = ComponentsCommunication.functionRequest(
+            this.name,
+            "BlocklyVPL",
+            "getBlock",
+            [
+                blockId,
+                breakpoint.editorId
+            ]
+        );
+
+        switch (src) {
+            case "REMOTE":
+                EnableBreakpoint(block, true);
+                
+                if (this.toolbar) {
+                    this.toolbar.breakpoints.enableBreakpoint(blockId);
+                }
+
+                break;
+            case "EDITOR":
+                // sync toolbar
+                if (this.toolbar) {
+                    this.toolbar.breakpoints.enableBreakpoint(blockId);
+                }
+
+                // TODO: collaborative debugging message
+
+                break;
+            case "TOOLBAR":
+                // sync editor
+                EnableBreakpoint(block, true);
+
+                // TODO: collaborative debugging message
+
+                break;
+            default:
+                throw new Error("Not supported source requested action in debugger!");
+        }
     }
 
     @ExportedFunction
-    public disableBreakpoint(blocklyId: string, src: BreakpointSRC) {
+    public disableBreakpoint(blockId: string, src: BreakpointSRC) {
+        let breakpoint = this.breakpoints.find(breakpoint => breakpoint.elemId === blockId);
+        breakpoint.isEnabled = false;
 
+        let block = ComponentsCommunication.functionRequest(
+            this.name,
+            "BlocklyVPL",
+            "getBlock",
+            [
+                blockId,
+                breakpoint.editorId
+            ]
+        );
+
+        switch (src) {
+            case "REMOTE":
+                DisableBreakpoint(block, true);
+                
+                if (this.toolbar) {
+                    this.toolbar.breakpoints.disableBreakpoint(blockId);
+                }
+
+                break;
+            case "EDITOR":
+                // sync toolbar
+                if (this.toolbar) {
+                    this.toolbar.breakpoints.disableBreakpoint(blockId);
+                }
+
+                // TODO: collaborative debugging message
+
+                break;
+            case "TOOLBAR":
+                // sync editor
+                DisableBreakpoint(block, true);
+
+                // TODO: collaborative debugging message
+
+                break;
+            default:
+                throw new Error("Not supported source requested action in debugger!");
+        }
     }
 }

@@ -10,9 +10,18 @@ import * as _ from "lodash";
 
 
 
-export interface Breakpoint {
-
-}
+export interface BreakpointInfo {
+    id: number;
+    editorId: string;
+    elemId: string;
+    pelem: {
+        id: string,
+        text: string,
+        icon: string,
+        color: string
+    },
+    isEnabled: boolean
+};
 
 export interface ConditionalBreakpoint {
     
@@ -30,14 +39,9 @@ export class BreakpointViewBox extends View {
         templateHTML: string,
         style: Array<IViewUserStyleData>,
         hookSelector: string,
-        private breakpoint: {
-            pelem: { label: string, icon: string, color: string },
-            vplElem: { id: string },
-            id: string
-        }
+        private breakpoint: BreakpointInfo
     ) {
         super(parent, name, templateHTML, style, hookSelector);
-        this.breakpoint.id = this.id;
     }
 
     public registerEvents(): void {

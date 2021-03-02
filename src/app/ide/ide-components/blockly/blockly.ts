@@ -189,6 +189,11 @@ export class BlocklyVPL extends Editor {
     return null;
   }
 
+  @ExportedFunction
+  getBlock(blockId: string, editorId: string): any {
+    return this.instancesMap[editorId].getBlockById(blockId);
+  }
+
   @RequiredFunction("ProjectManager", "getComponentData")
   @RequiredFunction("ProjectManager", "saveComponentData")
   // save is used for Collaboration purposes

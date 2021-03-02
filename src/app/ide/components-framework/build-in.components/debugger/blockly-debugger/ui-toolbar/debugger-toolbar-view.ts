@@ -10,6 +10,7 @@ import * as _ from "lodash";
 import { BreakpointsView } from "./breakpoints/breakpoints-view";
 import { DebuggerInfoView } from "./debugger-info-view/debugger-info-view";
 import { DebuggerControllerView } from "./debugger-controller-view/debugger-controller-view";
+import { BreakpointInfo } from "./breakpoints/breakpoint-item/breakpoint-view-box";
 
 @ViewMetadata({
     name: "DebuggerToolbarView",
@@ -32,11 +33,7 @@ export class DebuggerToolbarView extends View {
         private data: {
             controller: any,
             debuggerData: any,
-            breakpoints: Array<{
-                pelem: { label: string, icon: string, color: string },
-                vplElem: { id: string, orderNO },
-                id: string
-            }>,
+            breakpoints: Array<BreakpointInfo>,
             conditionalBreakpoints: Array<{
                 pelem: { label: string, icon: string, color: string },
                 vplElem: { id: string, info: any }, /* info includes the data of conditional breakpoint */

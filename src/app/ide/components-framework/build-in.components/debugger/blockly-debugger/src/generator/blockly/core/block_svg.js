@@ -3,7 +3,7 @@ import { Breakpoint_Icon } from './breakpoint.js';
 import * as Blockly from 'blockly';
 
 
-export function AddBreakpoint(block) {
+export function AddBreakpoint(block, outer) {
     let new_br = {
         "block_id": block.id,
         "enable": true,
@@ -15,10 +15,12 @@ export function AddBreakpoint(block) {
 
     Blockly_Debugger.actions["Breakpoint"].handler();
 
-    Blockly_Debugger.actions["Breakpoint"].onAddBreakpoint(block);
+    if (!outer) {
+        Blockly_Debugger.actions["Breakpoint"].onAddBreakpoint(block);
+    }
 }
 
-export function RemoveBreakpoint(block) {
+export function RemoveBreakpoint(block, outer) {
     let icon = Blockly_Debugger.actions["Breakpoint"].breakpoints
         .map((obj) => {
             if (obj.block_id === block.id) return obj.icon});
@@ -33,7 +35,9 @@ export function RemoveBreakpoint(block) {
 
     Blockly_Debugger.actions["Breakpoint"].handler();
 
-    Blockly_Debugger.actions["Breakpoint"].onRemoveBreakpoint(block);
+    if (!outer) {
+        Blockly_Debugger.actions["Breakpoint"].onRemoveBreakpoint(block);
+    }
 }
 
 function BreakpointOption(block) {
