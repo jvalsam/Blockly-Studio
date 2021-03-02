@@ -162,9 +162,27 @@ export class Debugger extends IDEUIComponent {
         }
     }
 
+    @RequiredFunction("BlocklyVPL", "highlightBlockOfPItem")
     private openPelemBreakpoint(breakpoint: BreakpointInfo) {
-        // TODO: 
-        alert("not implemented yet");
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "BlocklyVPL",
+            "highlightBlockOfPItem",
+              [
+                  breakpoint.pelem.id,
+                  breakpoint.elemId
+              ]
+        );
+    }
+
+    @ExportedFunction
+    public renderBreakpoints(pelemId: string, blocklyInst) {
+        this.breakpoints
+            .filter(breakpoint => breakpoint.pelem.id === pelemId)
+            .forEach(breakpoint => {
+                let block = blocklyInst.getBlockById(breakpoint.elemId);
+                AddBreakpoint(block, true);
+            });
     }
 
     @RequiredFunction("BlocklyVPL", "getBlock")

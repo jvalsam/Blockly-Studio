@@ -134,6 +134,7 @@ export class BlocklyVPL extends Editor {
     }
   }
 
+  @RequiredFunction("Debugger", "renderBreakpoints")
   @RequiredFunction("ProjectManager", "saveEditorData")
   @RequiredFunction("Shell", "addTools")
   @ExportedFunction
@@ -169,6 +170,16 @@ export class BlocklyVPL extends Editor {
     //   this.instancesMap[editorData.editorId].text = editorData.src;
     // }
     this.instancesMap[editorData.editorId].open();
+
+    ComponentsCommunication.functionRequest(
+      this.name,
+      "Debugger",
+      "renderBreakpoints",
+      [
+        pitem.pi.systemID,
+        this.instancesMap[editorData.editorId]
+      ]
+    );
   }
 
   fixBlocksTrackerInit(projectId: string, elemName: string) {
