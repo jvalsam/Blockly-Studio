@@ -457,7 +457,7 @@ export class EditorManager extends IDEUIComponent {
 
         let tools = [];
 
-        if (pi.componentsData.collaborationData) {
+        if (pi.project.getProjectDB().componentsData.CollaborationManager) {
             tools = ComponentsCommunication.functionRequest(
                 this.name,
                 "CollaborationManager",

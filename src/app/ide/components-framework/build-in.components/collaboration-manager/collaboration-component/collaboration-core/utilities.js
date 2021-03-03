@@ -29,7 +29,6 @@ export function filterPItem(pitem,itsMine){
         pitem.componentsData.collaborationData.privileges.shared.readOnly = false;
         pitem.privileges = "EDITING";
     }else{
-        pitem.componentsData.collaborationData.privileges.shared.readOnly = true;
         pitem.privileges = "READ_ONLY";
     }
 }

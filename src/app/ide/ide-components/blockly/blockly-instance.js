@@ -22,7 +22,6 @@ export function GetBlocklyWspOptions(mode, media, toolbox) {
   };
   if (mode === Privillege.READ_ONLY) options.readOnly = true;
   else{
-    options.readOnly = false;
     Object.assign(options, {
       toolbox: toolbox,
       collapse: true,

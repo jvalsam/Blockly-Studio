@@ -233,6 +233,9 @@ export class CollaborationManager extends IDEUIComponent {
         ).value;
 
         createActions.forEach(action => {
+            let event = JSON.parse(JSON.stringify(action.events[0]));
+            event.isPersonal = true;
+            
             opts.push({
                 label: action.title + " - Personal",
                 icon: "../../../../../../images/collaboration/personal.png",
@@ -242,10 +245,10 @@ export class CollaborationManager extends IDEUIComponent {
                         "ProjectManager",
                         "onAddProjectElement",
                         [
-                            action.events[0],
+                            event,
                             concerned,
                             (pelem) => {
-                                alert("completed!");
+                                console.log(pelem);
                             }
                         ]
                     );
@@ -453,6 +456,10 @@ export class CollaborationManager extends IDEUIComponent {
     @ExportedFunction
     public pitemUpdated(pitemId: string, type: PItemEditType, data: any): any {
         // if(this.iAmMaster(collabInfo.myInfo.name))this.saveProject(this.shProject,()=>{});
+        let pItem = this.getPItem(pitemId);
+        if(pItem && pItem.componentsData.collaborationData.privileges.shared.isPrivate){
+            return;
+        }
         console.log("pitemUpdated",pitemId,type,data);
         sendPItemUpdated(pitemId, type, data);
         return true;
@@ -460,6 +467,10 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public pitemRemoved(pitemId: string): boolean {
+        let pItem = this.getPItem(pitemId);
+        if(pItem && pItem.componentsData.collaborationData.privileges.shared.isPrivate){
+            return;
+        }
         sendPItemRemoved(pitemId);
         return true;
     }
@@ -468,7 +479,14 @@ export class CollaborationManager extends IDEUIComponent {
     @ExportedFunction
     public pitemAdded(pitem: any): boolean {
         filterPItem(this.getPItem(pitem.itemData.systemID),true);
+        let realPItem = this.getPItem(pitem.itemData.systemID);
+        if(pitem.event.isPersonal){
+            realPItem.componentsData.collaborationData.privileges.shared.isPrivate = true;
+            return;
+        };
         // if(this.shProject.componentsData.collaborationData) TODO: ADD ON DB
+        pitem.itemData.componentsData = {};
+        pitem.itemData.componentsData = realPItem.componentsData;
         sendPItemAdded(pitem);
         return true;
     }
@@ -551,7 +569,7 @@ export class CollaborationManager extends IDEUIComponent {
                 pitem,
                 // callback to notify the member for action
                 (pitem2) => {
-                    filterPItem(pitem2,false);
+                    filterPItem(this.getPItem(pitem2.systemID),false);
                     console.log("PITEMADDED"); 
                 }
             ]

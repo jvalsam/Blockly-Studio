@@ -559,7 +559,7 @@ export class ProjectManager extends IDEUIComponent {
 
     private newSystemID (projectID): string {
         let systemIDs = ++this.loadedProjects[projectID].systemIDs;
-        return projectID + "_" + systemIDs;
+        return projectID + "_" + Math.floor(Math.random() * 10000000000);
     }
 
     @ExportedFunction
@@ -768,6 +768,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     private createNewItem(
+        event: any,
         concerned: ProjectElement,
         newItem: any,
         src: any,
@@ -802,6 +803,7 @@ export class ProjectManager extends IDEUIComponent {
                         "CollaborationManager",
                         "pitemAdded",
                         [{
+                            event,
                             itemData: itemData,
                             projCateg: concerned["_jstreeNode"].id
                         }]
@@ -967,6 +969,7 @@ export class ProjectManager extends IDEUIComponent {
                 }
                 
                 this.createNewItem(
+                    event,
                     concerned,
                     data,
                     this.createNewElement(
