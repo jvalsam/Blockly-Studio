@@ -1551,12 +1551,12 @@ export class ProjectManager extends IDEUIComponent {
             });
     }
 
-    public itemsMenuCollaboration(pitemId: string) {
+    public itemsMenuCollaboration(category: any) {
         return ComponentsCommunication.functionRequest(
             this.name,
             "CollaborationManager",
             "pitemOptions",
-            [pitemId]
+            [category]
         ).value;
     }
 

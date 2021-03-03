@@ -34,7 +34,7 @@ import {
     sendPItemUpdated
 } from "./collaboration-component/collaboration-core/senderHandlers";
 
-import { 
+import {
     PassFloorPopup,
     SharePersonalFilePopup 
 } from './collaboration-component/collaboration-gui/CollaborationPopups';
@@ -216,17 +216,46 @@ export class CollaborationManager extends IDEUIComponent {
         return collabInfo.invitationCode;
     }
 
-    private categoryOptions(id){
-        return [
-            {
-                label: "Create Personal Element",
+    @RequiredFunction("ProjectManager", "getProjectCategory")
+    @RequiredFunction("ProjectManager", "onAddProjectElement")
+    private categoryOptions(element: any) {
+        let opts = [];
+        let createActions = element.actions.filter(action => action.type === "create");
+        
+        let concerned = ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "getProjectCategory",
+            [
+                this.shProject._id,
+                element.type
+            ]
+        ).value;
+
+        createActions.forEach(action => {
+            opts.push({
+                label: action.title + " - Personal",
                 icon: "../../../../../../images/collaboration/personal.png",
                 action: () => {
-                 // let newPItem  = createNewPItem,
-                 // newPItem.pliroforiaGiaCollab = "PERSONAL";
+                    ComponentsCommunication.functionRequest(
+                        this.name,
+                        "ProjectManager",
+                        "onAddProjectElement",
+                        [
+                            action.events[0],
+                            concerned,
+                            (pelem) => {
+                                alert("completed!");
+                            }
+                        ]
+                    );
                 }
-            }
-        ];
+            });
+        });
+
+        // TODO: more options
+        
+        return opts;
     }
 
 
@@ -368,14 +397,17 @@ export class CollaborationManager extends IDEUIComponent {
 
 
     @ExportedFunction
-    public pitemOptions(pitemId: string): Array<IOption> {
-        console.log(pitemId,this.getPItem(pitemId));
-        if(this.getPItem(pitemId)){
-            return this.optionsFiltering(this.getPItem(pitemId));
-        }else{
-            return this.categoryOptions(pitemId);
+    public pitemOptions(element: any): Array<IOption> {
+        let pitem = this.getPItem(element);
+        if(pitem) {
+            return this.optionsFiltering(pitem);
         }
-        return [];
+        else if (this.shProject) {
+            return this.categoryOptions(element);
+        }
+        else {
+            return [];
+        }
     }
 
     @ExportedFunction
@@ -399,7 +431,10 @@ export class CollaborationManager extends IDEUIComponent {
 
     @ExportedFunction
     public getPItem(pitemId: string): ProjectItem {
-        return this.shProject.projectItems.find(pi => pi.systemID === pitemId);
+        if (this.shProject)
+            return this.shProject.projectItems.find(pi => pi.systemID === pitemId);
+        else
+            return null;
     }
 
     public setProject(projectObj: any) {

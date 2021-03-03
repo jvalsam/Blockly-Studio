@@ -332,9 +332,12 @@ export class BlocklyInstance {
 
   refresh() {
     this.state = InstStateEnum.INIT;
+    this.updateWSPToText();
   }
 
   close() {
+    this.updateWSPToText();
+
     this.state = InstStateEnum.CLOSE;
     this._blocklyDiv.style.visibility = "hidden";
 

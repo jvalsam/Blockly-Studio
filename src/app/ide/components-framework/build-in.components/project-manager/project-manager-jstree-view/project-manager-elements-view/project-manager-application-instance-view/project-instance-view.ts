@@ -513,7 +513,11 @@ export class ProjectInstanceView extends View {
             && this.data.project.componentsData.CollaborationManager 
             && this.data.project.componentsData.CollaborationManager.members) {
             let index = Object.keys(menuItems).length;
-            let collabMenuItems = this.parent["itemsMenuCollaboration"](node.id);
+            let element = this.data.meta.categories.find(category => category.id === node.id);
+            if (!element) {
+                element = node.id;
+            }
+            let collabMenuItems = this.parent["itemsMenuCollaboration"](element);
             if (collabMenuItems.length > 0) {
                 menuItems[index] = {
                     separator_before: true
