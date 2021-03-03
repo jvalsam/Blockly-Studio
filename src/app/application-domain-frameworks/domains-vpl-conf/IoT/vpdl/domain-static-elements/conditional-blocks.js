@@ -101,6 +101,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += ");";
       strBuilder += "whenCondData.splice(removedindex, 1);";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("When Block") + ",";
@@ -116,7 +117,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "return;";
       strBuilder += "}";
@@ -190,6 +190,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += ");";
       strBuilder += "whenCondData.splice(removedindex, 1);";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("When Block") + ",";
@@ -205,7 +206,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "return;";
       strBuilder += "}";
@@ -303,6 +303,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += ");";
       strBuilder += "whenCondData.splice(removedindex, 1);";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("When Statement Block") + ",";
@@ -318,7 +319,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "return;";
       strBuilder += "}";
@@ -392,6 +392,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += ");";
       strBuilder += "whenCondData.splice(removedindex, 1);";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("When Statement Block") + ",";
@@ -407,7 +408,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "return;";
       strBuilder += "}";
@@ -535,6 +535,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "whenCondData.splice(index, 1);";
       strBuilder += "}";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("When Times Block") + ",";
@@ -550,7 +551,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -661,6 +661,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "whenCondData.splice(index, 1);";
       strBuilder += "}";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("When Times Block") + ",";
@@ -676,7 +677,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -815,6 +815,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "whenCondData.splice(index, 1);";
       strBuilder += "}";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("When Times Statement Block") + ",";
@@ -830,7 +831,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -941,6 +941,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "whenCondData.splice(index, 1);";
       strBuilder += "}";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("When Times Statement Block") + ",";
@@ -956,7 +957,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -1092,6 +1092,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += ") {";
       strBuilder += "whenCondData.splice(index, 1);";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("After Block") + ",";
@@ -1107,7 +1108,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -1218,6 +1218,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += ") {";
       strBuilder += "whenCondData.splice(index, 1);";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("After Block") + ",";
@@ -1233,7 +1234,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -1372,6 +1372,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += ") {";
       strBuilder += "whenCondData.splice(index, 1);";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("After Statement Block") + ",";
@@ -1387,7 +1388,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -1498,6 +1498,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += ") {";
       strBuilder += "whenCondData.splice(index, 1);";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("After Statement Block") + ",";
@@ -1513,7 +1514,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -1627,6 +1627,7 @@ export const ConditionalStaticBlocks = [
         "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = true;";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("Forever Block") + ",";
@@ -1642,7 +1643,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -1733,6 +1733,7 @@ export const ConditionalStaticBlocks = [
         "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = true;";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("Forever Block") + ",";
@@ -1748,7 +1749,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -1863,6 +1863,7 @@ export const ConditionalStaticBlocks = [
         "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = true;";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("Forever Statement Block") + ",";
@@ -1878,7 +1879,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
@@ -1969,6 +1969,7 @@ export const ConditionalStaticBlocks = [
         "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = true;";
       strBuilder += "try {";
+      strBuilder += statements_statements;
       strBuilder += "if (" + (block.getCommentText() !== "") + ")";
       strBuilder += "CreateStaticBubbleForLog(";
       strBuilder += JSON.stringify("Forever Statement Block") + ",";
@@ -1984,7 +1985,6 @@ export const ConditionalStaticBlocks = [
       strBuilder += JSON.stringify(block.id);
       strBuilder += ")";
       strBuilder += ");";
-      strBuilder += statements_statements;
       strBuilder += "} catch (e) {";
       strBuilder += "if (e === 'break') {";
       strBuilder += "whenCondData.splice(index, 1);";
