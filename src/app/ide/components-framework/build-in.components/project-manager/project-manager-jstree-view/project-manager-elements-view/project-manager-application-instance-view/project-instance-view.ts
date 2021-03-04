@@ -140,13 +140,22 @@ export class ProjectInstanceView extends View {
 
     public updateProjectData(project: any): void {
         this.data.project = project;
-        this.projectElems.splice(0, this.projectElems.length);
+        // this.projectElems.splice(0, this.projectElems.length);
         if (project.saveMode === "SHARED") {
             this.actions.removeOption("Share");
         }
-        _.forEach(this.data.meta.categories, (category) => {
-            this.createCategoryItems(category, this.data.project.projectItems);
+
+        let jstreeProj = $(this.categoriesViewSelector)["jstree"](true);
+
+        this.data.project.projectItems.forEach(pitem => {
+            let pel = this.projectElems.find(pelem => pelem["systemId"] === pitem.systemID);
+            pel["_jstreeNode"]["shared_state"] = "SHARED_PROJECT";
+            pel["_componentsData"] = pitem.componentsData;
+
+            var node = jstreeProj.get_node(pel["_jstreeNode"].id);
+            node.shared_state = "SHARED_PROJECT"
         });
+        jstreeProj.redraw(true);
     }
 
     public get dbID() {
@@ -321,6 +330,14 @@ export class ProjectInstanceView extends View {
             && item.componentsData.collaborationData
             && item.componentsData.collaborationData.privileges) {
             shared_state = item.componentsData.collaborationData.privileges.shared.type;
+        }
+        if (item.collab) {
+            if (item.collab.isPersonal) {
+
+            }
+            else {
+                shared_state = "SHARED_PROJECT";
+            }
         }
         let editorsData = item.editorsData ? item.editorsData : {};
         let componentsData = item.componentsData ? item.componentsData : {};
@@ -565,12 +582,16 @@ export class ProjectInstanceView extends View {
             () => this.onRefreshJSTree());    
     }
 
+    public refreshPItems(pitems) {
+
+    }
+
     public render(): void {
         if (this.treeview) {
             this.treeview.destroy();
         }
         $(this.categoriesViewSelector).empty();
-        //
+        
         $("#"+this.id).remove();
         this.renderTmplEl(this.renderData);
         this.foldingView.render();

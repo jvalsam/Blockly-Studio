@@ -173,7 +173,7 @@ export class ProjectManagerJSTreeView extends ComponentView {
     public updateProject(project: any): void {
         let projectView = this.getProject(project._id);
         projectView.updateProjectData(project);
-        projectView.render();
+        // projectView.render();
     }
 
     public getProject(projectID): ProjectInstanceView {

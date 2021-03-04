@@ -508,6 +508,7 @@ export class ProjectManager extends IDEUIComponent {
     private pitemviewtoData(piView) {
         let pitem = piView.itemData();
         pitem.editorsData = piView.editorsData;
+        pitem.componentsData = piView._componentsData;
         return pitem;
     }
 
@@ -778,12 +779,16 @@ export class ProjectManager extends IDEUIComponent {
         let renderParts = CreateRenderPartsWithData(
             this.currModalData.itemData.renderParts,
             newItem);
-        let itemData = {
+        let itemData: any = {
             renderParts: renderParts,
             editorsData: src,
             systemID: src.systemID,
             type: this.currModalData.itemData.type
         };
+        if (project.saveMode === "SHARED")
+            itemData.collab = {
+                isPersonal: event.isPersonal
+            };
 
         concerned.project.addNewElement(
             itemData,
