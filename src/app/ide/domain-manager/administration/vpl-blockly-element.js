@@ -77,11 +77,9 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
 
     _codeGen(data) {
         let modeGen = (block) => {
-          /* TMP FOR CHECK */
-          // return RuntimeManager.getMode() === 'RELEASE'
-          //     ? this._ctor.codeGen(block, data)
-          //      : this._ctor.debugGen(block, data);
-          return this._ctor.debugGen(block, data);
+          return RuntimeManager.getMode() === 'RELEASE'
+              ? this._ctor.codeGen(block, data)
+               : this._ctor.debugGen(block, data);
         };
 
         return (typeof modeGen === 'object')
@@ -161,11 +159,9 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
 
     _codeGen(data) {
         let modeGen = (block) => {
-            /* TMP FOR CHECK */
-            // return RuntimeManager.getMode() === 'RELEASE'
-            //     ? this._ctor.codeGen(block, data)
-            //     : this._ctor.debugGen(block, data);
-            return this._ctor.debugGen(block, data);
+            return RuntimeManager.getMode() === 'RELEASE'
+                ? this._ctor.codeGen(block, data)
+                : this._ctor.debugGen(block, data);
         };
 
         return (typeof modeGen === 'object') ?
