@@ -11,7 +11,9 @@ import {
 import { 
     openStartSessionDialogue,
     openJoinSessionDialogue,
-    openSuggestionDialogue
+    openSuggestionDialogue,
+    logCreatePItem,
+    logUserJoined
 } from "./collaboration-component/collaboration-gui/dialogs";
 
 import { 
@@ -39,6 +41,7 @@ import {
     SharePersonalFilePopup 
 } from './collaboration-component/collaboration-gui/CollaborationPopups';
 import { isAbsolute } from 'path';
+import { debug } from 'console';
 
 var menuJson;
 var configJson;
@@ -431,6 +434,19 @@ export class CollaborationManager extends IDEUIComponent {
         else {
             return [];
         }
+    }
+
+    public logAction({type, user, pitemID}){
+        if(type === 'createPItem'){
+            let pitem = this.getPItem(pitemID);
+            logCreatePItem(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
+        }else if(type === 'removePItem'){
+            let pitem = this.getPItem(pitemID);
+            logCreatePItem(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
+        }else if(type === 'addUser'){
+            logUserJoined(this.collabUI,{user:user});
+        }
+        // this.collabUI
     }
 
     @ExportedFunction

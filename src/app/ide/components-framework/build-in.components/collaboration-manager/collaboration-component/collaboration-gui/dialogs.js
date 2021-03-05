@@ -77,6 +77,19 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
     );
 }
 
+export function logCreatePItem({ui}, {user,renderInfo}) {
+    // pushFrontAction(member, file, actionColor, actionType, actionTime){
+    let d = new Date();
+    let time = `${d.getHours()}:${d.getMinutes()}`;
+    ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#FFFDE7', 'Created', time);
+}
+
+export function logUserJoined({ui}, {user}) {
+    let d = new Date();
+    let time = `${d.getHours()}:${d.getMinutes()}`;
+    ui.pushFrontAction(user, null, '#D4FFDE', 'Joined the project', time);
+}
+
 export function openJoinSessionDialogue(
     collabPlugin,
     $dialog,   // jquery selector

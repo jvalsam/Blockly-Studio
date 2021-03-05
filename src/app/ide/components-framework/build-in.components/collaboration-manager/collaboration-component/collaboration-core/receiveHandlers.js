@@ -35,6 +35,7 @@ export function receiveAddUser(data,conn){
     compData.members.push(data.info);
     collabInfo.plugin.saveComponentData(compData);
     collabInfo.UI.addMember(data.info);
+    collabInfo.plugin.logAction({type: "addUser", user: data.info});
     printDB();
 }
 
@@ -57,6 +58,7 @@ export function receiveRemoveUser(data,conn){
 
 export function receivePItemAdded(data,conn){
     collabInfo.plugin.onPitemAdded(data.info);//(filterProjectItem(data.info));
+    collabInfo.plugin.logAction({type: "createPItem", user: collabInfo.myInfo, pitemID: data.info.itemData.id});
     collabInfo.connected_users.forEach(user => {
         if(user.id !== conn.id){
             sendPItemAdded(data.info,user);
@@ -122,6 +124,8 @@ function acceptUser(conn,infom){
         user.send(arg);
     });
 
+    collabInfo.plugin.logAction({type: "addUser", user: arg.info});
+    
     conn.name = infom.name;
     collabInfo.connected_users.push(conn);
     

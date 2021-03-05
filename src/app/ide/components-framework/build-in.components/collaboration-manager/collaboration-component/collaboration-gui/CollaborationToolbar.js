@@ -501,23 +501,54 @@ export class CollaborationUI {
      * @param {function} add The function that will be used for adding e.g append
      */
     _addAction(member, file, actionColor, type, time, add){
-        let html = `                                                                                                \
-            <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                 \
-                <div class = "recent-action-row vcenter font-size16px">                                             \
-                    <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
-                    <div> ${member.name} </div>                                                                     \
-                    <div class = "middle-right vcenter">                                                            \
-                        <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \
-                        ${file.name}                                                                                \
-                    </div>                                                                                          \
-                </div>                                                                                              \
-                <div class = "recent-action-last-row vcenter">                                                      \
-                    <div>Type: ${type}</div>                                                                        \
-                    <div class = "middle-right">${time}</div>                                                       \
-                </div>                                                                                              \
-            </div> 
-        `;
-        add(html);
+        // let html = `                                                                                                \
+        //     <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                 \
+        //         <div class = "recent-action-row vcenter font-size16px">                                             \
+        //             <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
+        //             <div> ${member.name} </div>                                                                     \
+        //             <div class = "middle-right">${time}</div>                                                       \
+        //         </div>                                                                                              \
+        //         <div class = "recent-action-last-row vcenter">                                                      \
+        //             <div> ${type}</div>     
+        //             <div class = "middle-right vcenter">                                                            \
+        //                 <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \
+        //                 ${file.name}                                                                                \
+        //             </div>                                                                                          \                                                                   \
+        //         </div>                                                                                              \
+        //     </div> 
+        // `;
+        
+        let $container = $(`
+            <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">
+            </div>
+        `);
+
+        let $left = $(`
+            <div class = "recent-action-row vcenter font-size16px">
+                <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>
+                <div> ${member.name} </div>
+                <div class = "middle-right">${time}</div>
+            </div>   
+        `);
+
+        let $right = $(`
+            <div class = "recent-action-last-row vcenter">
+                <div> ${type}</div>
+            </div>  
+        `);
+
+        if (file){
+            $right.append(`
+                <div class = "middle-right vcenter">
+                    <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>
+                    ${file.name}
+                </div>  
+            `);
+        }
+
+        $container.append($left).append($right);
+
+        add($container);
     }
 
     _addSharedPersonalFile(tree, prefix, file, members){
