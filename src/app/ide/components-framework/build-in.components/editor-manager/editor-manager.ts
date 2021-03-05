@@ -519,6 +519,11 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @ExportedFunction
+    public openPItemInDialogue(pitem, selector) {
+        
+    }
+
+    @ExportedFunction
     public refresh(project) {
         let pitem1 = project.getProjectElement(this.pitemOnFocusIds[0]);
         this.open(pitem1, this.areaOfPItem(pitem1.systemID));

@@ -1811,4 +1811,17 @@ export class ProjectManager extends IDEUIComponent {
     public getCategoryInformation(pitemId: string, categoryId: string) {
         return this.getProjectInstanceView(pitemId).getCategoryInformation(categoryId);
     }
+
+    @ExportedFunction
+    public openPItemInDialogue(pitem: any, selector: string) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "openPItemInDialogue",
+            [
+                pitem,
+                selector
+            ]
+        );
+    }
 }
