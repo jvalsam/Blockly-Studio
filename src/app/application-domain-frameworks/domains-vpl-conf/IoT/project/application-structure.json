@@ -1,6 +1,6 @@
 {
     "domain" : "IoT",
-    "title" : "Smart Automations",
+    "title" : "IoT Personal Automations",
     "img" : "./images/iot/iot-app-domain.png",
     "defaultInstImg" : "./images/IoT/iot-app-inst-domain.png",
     "style" : "BlueStyle",

@@ -111,11 +111,6 @@ let CreateModal = function (dom, idPrefix) {
 };
 
 let ClearModal = function (idPrefix) {
-  idPrefix + "-modal-title";
-  idPrefix + "-modal-body";
-  idPrefix + "-modal-cancel-button";
-  idPrefix + "-modal-confirm-button";
-
   document.getElementById(idPrefix + "-modal-title").innerHTML = "";
   document.getElementById(idPrefix + "-modal-body").innerHTML = "";
   document.getElementById(idPrefix + "-modal-cancel-button").innerHTML =
@@ -291,7 +286,7 @@ let CreateDifferencesTableInGroupSelection = function (
   thSOPropAliasHeader.setAttribute("scope", "col");
   trSecondHeader.appendChild(thSOPropAliasHeader);
 
-  let spanAlias = CreateDOMElement("span", { innerHtml: "Alias" });
+  let spanAlias = CreateDOMElement("span", { innerHtml: "Universal ID" });
   thSOPropAliasHeader.appendChild(spanAlias);
 
   if (isSO) {
@@ -546,7 +541,7 @@ function RenderSelectGroupsModal(
   trHead.appendChild(thName);
 
   let thAlias = CreateDOMElement("th", {
-    innerHtml: "Alias",
+    innerHtml: "Universal ID",
   });
   thAlias.setAttribute("scope", "col");
   trHead.appendChild(thAlias);
@@ -877,6 +872,187 @@ function RenderSelectGroupsModal(
 }
 /* End functions for selection group modal */
 
+/* Start functions for debug configuring action */
+export let RenderDebugConfigurationOfAction = function (
+  parent,
+  pitem,
+  action,
+  blocklyEditorId,
+  props,
+  resourceId,
+  onSave,
+  onSuccessFoldRuntime,
+  privilege
+) {
+  let prefix = resourceId + "-debug-configuration-" + action.name;
+
+  // Create Modal
+  CreateModal(
+    document.getElementsByClassName("modal-platform-container")[0],
+    prefix
+  );
+
+  // document.getElementById(prefix + "-modal").setAttribute("tabindex", "-1");
+
+  // title
+  $("#" + prefix + "-modal-title").html(
+    'Implementation of action "' + action.name + '" that runs on debug mode'
+  );
+
+  document
+    .getElementById(prefix + "-modal-body")
+    .style.setProperty("overflow-y", "auto");
+
+  document
+    .getElementById(prefix + "-modal-body")
+    .style.setProperty("position", "relative");
+
+  document
+    .getElementById(prefix + "-modal-body")
+    .style.setProperty("width", "100%");
+  document
+    .getElementById(prefix + "-modal-body")
+    .style.setProperty("height", "750px");
+
+  // create blockly workspace container
+  // <div id="blocklyDiv" style="position: absolute"></div>;
+  let blocklyWorkspaceDiv = document.createElement("div");
+  blocklyWorkspaceDiv.id = prefix + "-blockly-container";
+  blocklyWorkspaceDiv.style.setProperty("position", "absolute");
+  blocklyWorkspaceDiv.style.setProperty("width", "97%");
+  blocklyWorkspaceDiv.style.setProperty("height", "720px");
+  document
+    .getElementById(prefix + "-modal-body")
+    .appendChild(blocklyWorkspaceDiv);
+
+  $("#" + prefix + "-modal").on("hide.bs.modal", function () {
+    parent.closeSrcForBlocklyInstance(blocklyWorkspaceDiv.id);
+  });
+
+  $("#" + prefix + "-modal").on("hidden.bs.modal", function () {
+    document.getElementsByClassName("modal-platform-container")[0].innerHTML =
+      "";
+    document.getElementById("runtime-modal-title").click();
+    parent.closeSrcForBlocklyInstance(blocklyWorkspaceDiv.id);
+    if (onSuccessFoldRuntime) {
+      onSuccessFoldRuntime();
+    }
+  });
+
+  let confirmButton = document.getElementById(prefix + "-modal-confirm-button");
+
+  if (privilege === "READ_ONLY") {
+    confirmButton.style.setProperty("display", "none");
+    let cancelButton = document.getElementById(prefix + "-modal-cancel-button");
+    cancelButton.innerHTML = "Close";
+  } else {
+    /* change confirm name to save */
+    confirmButton.innerHTML = "Save";
+
+    /* Save changes */
+    confirmButton.onclick = () => {
+      let blocklyInstanceSrc = parent.getSrcFromBlocklyInstance(
+        blocklyWorkspaceDiv.id
+      );
+
+      onSave(blocklyInstanceSrc, blocklyWorkspaceDiv.id);
+
+      $("#" + prefix + "-modal").modal("toggle");
+    };
+  }
+
+  /* change modal size */
+  document
+    .getElementById(prefix + "-modal-dialog")
+    .classList.remove("modal-lg");
+  document.getElementById(prefix + "-modal-dialog").classList.add("modal-xl");
+
+  $("#" + prefix + "-modal").modal({
+    backdrop: "static",
+  });
+
+  $("#" + prefix + "-modal").on("shown.bs.modal", function (e) {
+    let blocklyEditorData = pitem._editorsData.items[blocklyWorkspaceDiv.id];
+    if (!blocklyEditorData) {
+      blocklyEditorData = {
+        src: DefineFunctionForDebugImplementation(action),
+        editorId: blocklyWorkspaceDiv.id,
+        systemID: pitem.systemId,
+        projectID: pitem.project.dbID,
+        title: "",
+        img: "",
+        colour: "",
+        tmplSel: "ec-action-implementation-debug",
+        confName: "ec-action-implementation-debug",
+        editorName: "BlocklyVPL",
+        editor: "BlocklyVPL",
+        noRenderOnPitemLoading: true,
+        zIndex: 1060,
+      };
+    }
+
+    parent.requestBlocklyInstance(
+      blocklyEditorData,
+      pitem,
+      "ec-action-implementation-debug",
+      blocklyWorkspaceDiv.id,
+      privilege
+    );
+
+    $(document).off("focusin.modal");
+  });
+
+  $("#" + prefix + "-modal").modal("show");
+};
+
+const DefineFunctionForDebugImplementation = function (action) {
+  let str = `<xml id="startBlocks" style="display: none">`;
+  if (action.parameters.length > 0) {
+    str += "<variables>";
+    for (const parameter of action.parameters) {
+      str +=
+        "<variable id='" +
+        action.id +
+        parameter.name +
+        "'>" +
+        parameter.name +
+        "_arg" +
+        "</variable>";
+    }
+    str += "</variables>";
+  }
+
+  str +=
+    `<block type="procedures_defnoreturn" id="` +
+    action.id +
+    `" x="138" y="38">`;
+  if (action.parameters.length > 0) {
+    str += "<mutation>";
+    for (const parameter of action.parameters) {
+      str +=
+        "<arg name='" +
+        parameter.name +
+        "_arg' varid='" +
+        action.id +
+        parameter.name +
+        "'></arg>";
+    }
+    str += "</mutation>";
+  }
+  str +=
+    `<field name="NAME">` +
+    action.name +
+    `</field>
+    <comment pinned="false" h="80" w="160">Implementation of action \"` +
+    action.name +
+    `\" that runs on debug mode
+    </comment>
+  </block>
+</xml>`;
+  return str;
+};
+/* End functions for debug configuring action */
+
 let FilterRegisteredDevicesForScan = function (
   registeredDevices, // {id: "..."}
   scannedDevices
@@ -890,7 +1066,7 @@ let FilterRegisteredDevicesForScan = function (
 let BuildPropertiesArea = function (dom, smartElem) {
   // Properties
   let propertiesRow = CreateDOMElement("div", { classList: ["row"] });
-  propertiesRow.style.marginTop = "2rem";
+  // propertiesRow.style.marginTop = "1rem";
   dom.appendChild(propertiesRow);
 
   let propertiesCol = CreateDOMElement("div", { classList: ["col-sm"] });
@@ -914,6 +1090,34 @@ let BuildPropertiesArea = function (dom, smartElem) {
   dom.appendChild(propertiesContainer);
 
   return propertiesContainer;
+};
+
+let BuildActionsArea = function (dom, smartElem) {
+  // Actions
+  let actionsRow = CreateDOMElement("div", { classList: ["row"] });
+  // actionsRow.style.marginTop = "1rem";
+  dom.appendChild(actionsRow);
+
+  let actionsCol = CreateDOMElement("div", { classList: ["col-sm"] });
+  actionsRow.appendChild(actionsCol);
+
+  let actionsHeader = CreateDOMElement("span", {
+    classList: ["font-weight-bold"],
+    innerHtml: "Actions (" + smartElem.editorData.details.actions.length + ")",
+  });
+  actionsHeader.style.fontSize = "large";
+  actionsCol.appendChild(actionsHeader);
+
+  let actionsContainer = CreateDOMElement("div", {
+    classList: ["container-fluid", "overflow-auto"],
+  });
+  actionsContainer.style.paddingTop = ".5rem";
+  actionsContainer.style.maxHeight = "21rem";
+  actionsContainer.style.marginTop = ".5rem";
+  actionsContainer.style.backgroundColor = "#f7f7f7";
+  dom.appendChild(actionsContainer);
+
+  return actionsContainer;
 };
 
 /* Start functions for bubbles at smart elements */
@@ -951,6 +1155,7 @@ let BuildBubblesArea = function (dom, htmlForHeading) {
   smartElemHeaderRow.appendChild(smartElemName);
 
   let bubblesDiv = CreateDOMElement("div", { classList: ["bubbles-area"] });
+  bubblesDiv.style.setProperty("margin-top", "0.5rem");
   dom.appendChild(bubblesDiv);
 
   return bubblesDiv;
@@ -1047,7 +1252,7 @@ let RenderSmartObjectProperty = function (
   selector,
   id,
   property,
-  alias,
+  universal_id,
   callbacks
 ) {
   soUIGenerator.RenderReadOnlyProperty(
@@ -1055,7 +1260,23 @@ let RenderSmartObjectProperty = function (
     id,
     property,
     "smartObject",
-    alias,
+    universal_id,
+    callbacks
+  );
+};
+
+let RenderSmartObjectAction = function (
+  selector,
+  id,
+  action,
+  configuration,
+  callbacks
+) {
+  soUIGenerator.RenderActionAsPropertyView(
+    selector,
+    id,
+    action,
+    configuration,
     callbacks
   );
 };
@@ -1064,12 +1285,14 @@ let RenderSmartObjectRegistered = function (
   selector,
   soData,
   projectComponentsData,
-  callbacksMap
+  callbacksMap,
+  pitem
 ) {
   let cardDiv = soUIGenerator.RenderCard({
     selector: selector,
     id: soData.editorData.editorId,
   });
+  cardDiv.style.setProperty("overflow-y", "auto");
 
   // Card Body
   let cardBodyDiv = CreateDOMElement("div", {
@@ -1080,11 +1303,10 @@ let RenderSmartObjectRegistered = function (
 
   // Environment
   let environmentRow = CreateDOMElement("div", { classList: ["row"] });
-  environmentRow.style.marginTop = "1rem";
   cardBodyDiv.appendChild(environmentRow);
 
   let environmentName = CreateDOMElement("div", {
-    classList: ["col-sm-6", "font-weight-bold"],
+    classList: ["col-5", "font-weight-bold"],
     innerHtml: "Environment",
   });
   environmentName.style.fontSize = "large";
@@ -1093,14 +1315,14 @@ let RenderSmartObjectRegistered = function (
   environmentRow.appendChild(environmentName);
 
   let environmentSelectCol = CreateDOMElement("div", {
-    classList: ["col-sm-6"],
+    classList: ["col"],
   });
   environmentRow.appendChild(environmentSelectCol);
 
   let environmentSelect = CreateDOMElement("select", {
     classList: ["form-control"],
   });
-  environmentSelect.style.maxWidth = "7rem";
+  environmentSelect.style.width = "fit-content";
   environmentSelectCol.appendChild(environmentSelect);
 
   let environmentOption = CreateDOMElement("option", { innerHtml: "Home" });
@@ -1129,6 +1351,35 @@ let RenderSmartObjectRegistered = function (
   let hrPropGroups = CreateDOMElement("hr");
   cardBodyDiv.appendChild(hrPropGroups);
 
+  // Actions
+  let actionsContainer = BuildActionsArea(cardBodyDiv, soData);
+
+  for (const action of soData.editorData.details.actions) {
+    let src;
+    if (!soData.editorData.details.blocklyEditorId[action.name]) {
+      src = "";
+    } else {
+      src =
+        pitem._editorsData.items[
+          soData.editorData.details.blocklyEditorId[action.name]
+        ].src;
+    }
+
+    RenderSmartObjectAction(
+      actionsContainer,
+      soData.editorData.editorId,
+      action,
+      src,
+      {
+        onClickDebugConfigurationOfAction:
+          callbacksMap.onClickDebugConfigurationOfAction,
+      }
+    );
+  }
+
+  let hrActionGroups = CreateDOMElement("hr");
+  cardBodyDiv.appendChild(hrActionGroups);
+
   // Groups
   let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Groups");
 
@@ -1140,15 +1391,20 @@ let RenderSmartObjectRegistered = function (
     selector
   );
 
-  let buttonsRow = CreateDOMElement("div", { classList: ["row"] });
-  buttonsRow.style.marginTop = "1.5rem";
-  cardBodyDiv.appendChild(buttonsRow);
+  // let buttonsRow = CreateDOMElement("div", { classList: ["row"] });
+  // buttonsRow.style.marginTop = "1.5rem";
+  // buttonsRow.style.paddingBottom = "2rem";
+  // selector.appendChild(buttonsRow);
 
-  let createGroupsButtonCol = CreateDOMElement("div", {
-    classList: ["col-sm"],
-  });
-  createGroupsButtonCol.style.textAlign = "right";
-  buttonsRow.appendChild(createGroupsButtonCol);
+  // let createGroupsButtonCol = CreateDOMElement("div", {
+  //   classList: ["col-sm"],
+  // });
+  // createGroupsButtonCol.style.textAlign = "right";
+  // buttonsRow.appendChild(createGroupsButtonCol);
+
+  let createGroupButtonOuter = CreateDOMElement("div");
+  createGroupButtonOuter.style.setProperty("margin-left", "57rem");
+  selector.appendChild(createGroupButtonOuter);
 
   let createGroupsButton = CreateDOMElement("button", {
     classList: ["btn", "btn-info"],
@@ -1158,6 +1414,7 @@ let RenderSmartObjectRegistered = function (
   let eventFunc = () => {
     callbacksMap.onCreateSmartGroup({
       properties: soData.editorData.details.properties,
+      actions: soData.editorData.details.actions,
       mapPropsAlias: soData.editorData.details.mapPropsAlias,
       soDataID: soData.editorData.systemID.split("SmartObjectVPLEditor_")[1],
       soName: soData.name,
@@ -1165,21 +1422,22 @@ let RenderSmartObjectRegistered = function (
   };
 
   eventsManager[selector.id].push({
-    dom: createGroupsButtonCol,
+    dom: createGroupsButton,
     eventType: "click",
     eventFunc: eventFunc,
   });
 
-  createGroupsButtonCol.addEventListener("click", eventFunc, false);
+  createGroupsButton.addEventListener("click", eventFunc, false);
 
-  createGroupsButtonCol.appendChild(createGroupsButton);
+  createGroupButtonOuter.appendChild(createGroupsButton);
 };
 
 let RenderSmartObjectUnregistered = function (
   selector,
   soData,
   projectComponentsData,
-  callbacksMap
+  callbacksMap,
+  pitem
 ) {
   let scanContainer = document.createElement("div");
   scanContainer.classList.add("container");
@@ -1228,7 +1486,8 @@ let RenderSmartObjectUnregistered = function (
             selector,
             soData,
             projectComponentsData,
-            callbacksMap
+            callbacksMap,
+            pitem
           );
         },
         false
@@ -1262,7 +1521,8 @@ let RenderSmartObjectInvalid = function (
   selector,
   soData,
   projectComponentsData,
-  callbacksMap
+  callbacksMap,
+  pitem
 ) {
   // render message for invalid smart object
   // filtered scan
@@ -1279,7 +1539,8 @@ export function RenderSmartObject(
   selector,
   soData,
   projectComponentsData,
-  callbacksMap
+  callbacksMap,
+  pitem
 ) {
   // Check if there are events to remove them
   CheckAndDeleteEventsOnRender(selector);
@@ -1288,7 +1549,8 @@ export function RenderSmartObject(
     selector,
     soData,
     projectComponentsData,
-    callbacksMap
+    callbacksMap,
+    pitem
   );
 }
 /* End functions for smart objects */
@@ -1298,7 +1560,7 @@ let RenderSmartGroupProperty = function (
   selector,
   id,
   property,
-  alias,
+  universal_id,
   callbacks
 ) {
   soUIGenerator.RenderReadOnlyProperty(
@@ -1306,7 +1568,7 @@ let RenderSmartGroupProperty = function (
     id,
     property,
     "smartGroup",
-    alias,
+    universal_id,
     callbacks
   );
 };
@@ -1317,6 +1579,7 @@ export function RenderSmartGroup(
   projectComponentsData,
   callbacksMap
 ) {
+  console.log(sgData);
   // Check if there are events to remove them
   CheckAndDeleteEventsOnRender(selector);
 
@@ -1373,9 +1636,23 @@ export function RenderSmartGroup(
   resetButton.addEventListener("click", eventFunc, false);
 
   resetButton.style.cssFloat = "right";
-  resetButton.style.marginRight = "2rem";
+  resetButton.style.marginRight = "1rem";
   resetRow.appendChild(resetButton);
 
+  // let actionsContainer = BuildActionsArea(cardBodyDiv, sgData);
+
+  // for (const action of sgData.editorData.details.actions) {
+  //   RenderSmartObjectAction(
+  //     actionsContainer,
+  //     sgData.editorData.editorId,
+  //     action,
+  //     soData.editorData.details.blocklySrc[action.name],
+  //     {}
+  //   );
+  // }
+
+  // let hrActionGroups = CreateDOMElement("hr");
+  // cardBodyDiv.appendChild(hrActionGroups);
   // Smart Objects
   let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Objects");
   RenderBubbles(

@@ -1,4 +1,5 @@
 import * as Blockly from "blockly";
+import { parse } from "querystring";
 
 // TODO: create infrastructure for the application-domain authoring and disconnect this depedence
 import { HandleWorkspaceEvents } from "../../../application-domain-frameworks/domains-vpl-conf/IoT/vpdl/domain-static-elements/handle-workspace-events";
@@ -140,7 +141,10 @@ export class BlocklyInstance {
     config,
     _toolbox,
     _syncWSP,
-    text
+    text,
+    _privilleges,
+    zIndex,
+    windowId
   ) {
     this.parent = parent;
     this.pitem = pitem;
@@ -149,14 +153,19 @@ export class BlocklyInstance {
     this.type = type;
     this.config = config;
     this.text = text;
+    this._privilleges = _privilleges;
     this.wsp = null;
     this.state = InstStateEnum.INIT;
     this.toolbox = () => _toolbox(type);
     this._syncWSP = (event) => _syncWSP(event);
+    this._zIndex = zIndex;
+    if (windowId === "BlocklyStudioIDE") this.windowApp = document;
+    else
+      this.windowApp = document.getElementById(windowId).contentWindow.document;
   }
 
   get privilleges() {
-    return this.pitem.getPrivileges();
+    return this._privilleges || this.pitem.getPrivileges();
   }
 
   update_privileges() {
@@ -169,7 +178,7 @@ export class BlocklyInstance {
       !this._syncNotFocusedEditorId ||
       this._syncNotFocusedInst !== data.editorId
     ) {
-      this._syncNotFocusedInst = document.getElementsByClassName(
+      this._syncNotFocusedInst = this.windowApp.getElementsByClassName(
         "blockly-sync-editors-area-diplay-none"
       );
 
@@ -203,7 +212,7 @@ export class BlocklyInstance {
   }
 
   calcPItemBlocklyArea() {
-    this._blocklyArea = document.getElementById(this.id);
+    this._blocklyArea = this.windowApp.getElementById(this.id);
   }
 
   pinInfoInWSP() {
@@ -216,7 +225,7 @@ export class BlocklyInstance {
     $(".blockly-editors-area").append(
       '<div id="' + blocklySel + '" style="position: absolute"></div>'
     );
-    this._blocklyDiv = document.getElementById(blocklySel);
+    this._blocklyDiv = this.windowApp.getElementById(blocklySel);
 
     this.wsp = Blockly.inject(
       this._blocklyDiv,
@@ -243,6 +252,7 @@ export class BlocklyInstance {
       let blocklySel = "blockly_" + this.id;
       // create new div with absolute position in the IDE
       if (this.wsp) {
+        // this.text = this.getText();
         this.wsp.dispose();
         // this.wsp = null;
         $("#" + blocklySel).empty();
@@ -251,8 +261,12 @@ export class BlocklyInstance {
           '<div id="' + blocklySel + '" style="position: absolute"></div>'
         );
         this.calcPItemBlocklyArea();
+
         this._blocklyDiv = document.getElementById(blocklySel);
       }
+
+      if (this.__editorData) this._zIndex = this.__editorData.zIndex;
+      this._blocklyDiv.style.setProperty("z-index", this._zIndex);
 
       this["initWSP_" + this.privilleges]();
 
@@ -287,11 +301,16 @@ export class BlocklyInstance {
     let element = this._blocklyArea;
     let x = 0;
     let y = 0;
+    if (element.getAttribute("data-xOffset")) {
+      x += parseInt(element.getAttribute("data-xOffset"));
+      y += parseInt(element.getAttribute("data-yOffset"));
+    }
     do {
       x += element.offsetLeft;
       y += element.offsetTop;
       element = element.offsetParent;
     } while (element);
+
     // Position blocklyDiv over blocklyArea.
     this._blocklyDiv.style.left = x + "px";
     this._blocklyDiv.style.top = y + "px";

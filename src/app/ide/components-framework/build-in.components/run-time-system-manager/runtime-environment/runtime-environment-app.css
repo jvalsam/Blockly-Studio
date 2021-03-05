@@ -74,7 +74,8 @@ body {
 }
 
 /* Actions logger */
-#logger-container {
+#logger-container,
+#simulated-actions-container {
   height: 100%;
   font-family: Satellite, Roboto, sans-serif;
   -webkit-box-shadow: 0 0 4px rgb(21 21 21 / 21%);
@@ -95,7 +96,8 @@ body {
   -o-user-select: none;
 }
 
-#logger-header {
+#logger-header,
+#simulated-actions-header {
   width: 100% !important;
   background-color: rgb(74 129 177) !important;
   color: rgb(255, 236, 179);
@@ -105,13 +107,14 @@ body {
   height: 9%;
 }
 
-#logger-body {
+#logger-body,
+#simulated-actions-body {
   background-color: #f6f6f6;
   display: block;
   height: 91%;
   font-size: small;
-  overflow-y: auto;
   font-size: 15px;
+  overflow-y: auto;
   max-height: 20rem;
 }
 
@@ -135,18 +138,18 @@ body {
 
 .log-bubble-name {
   float: left;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
   font-weight: 600;
 }
 
 .log-bubble-time {
   float: right;
+  font-size: 12px;
 }
 
 .log-bubble-text {
   padding: 0.4rem 0rem 0.4rem 0rem;
-  margin-left: 2.6rem;
-  margin-top: 1.1rem;
+  margin-top: 1.6rem;
 }
 
 /* Smart Devices Preview */
@@ -456,4 +459,55 @@ body {
 .hand-style-hollow .fat-hand {
   background: black;
   border: 2px solid black;
+}
+
+.custom-btn {
+  color: #fff !important;
+  background-color: #4a81b1 !important;
+  border-color: #4a81b1 !important;
+}
+
+/* Tests container */
+#folder-test-button {
+  color: #ffee97;
+  opacity: 77%;
+  position: absolute;
+  right: 17.8rem;
+  top: 19.5rem;
+  z-index: 100;
+  background-color: #4a81b1;
+  border-radius: 98px;
+  line-height: 0;
+  padding: 0.5rem;
+}
+
+#folder-test-button:hover {
+  cursor: pointer;
+  opacity: 100%;
+}
+
+.fold-smart-device-create-test {
+  cursor: pointer;
+}
+
+.create-test-changes-container hr {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: 109%;
+}
+
+.create-test-changes-container .property-value-number,
+.create-test-changes-container .property-value-array {
+  width: 9.5rem;
+}
+
+.create-test-changes-container label {
+  margin-bottom: 0rem;
+}
+
+.log-bubble-text-tests {
+  padding: 0.4rem 0rem 0.4rem 0rem;
+  /* max-height: 7rem;
+  overflow-y: auto; */
+  width: 100%;
 }

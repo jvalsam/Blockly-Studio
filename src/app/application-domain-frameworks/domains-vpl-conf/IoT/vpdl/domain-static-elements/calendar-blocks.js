@@ -27,91 +27,229 @@ export const CalendarStaticBlocks = [
         this.setCommentText("At Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_time = Blockly.JavaScript.valueToCode(
-          block,
-          "TIME",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statement = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENT"
-        );
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
 
-        if (value_time === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
-        const id = ID();
-
+      if (value_time === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder +=
-          "arrayIntervals.push({type: 'calendar_at', time: setTimeout(async function () {";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(";
-        strBuilder +=
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id);
-        strBuilder += ").isFired = true;";
+        return strBuilder;
+      }
 
-        strBuilder += statements_statement;
+      const id = ID();
 
-        strBuilder +=
-          "let endTime =" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().hour()).slice(-2) +" +
-          JSON.stringify(":") +
-          " +" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().minute()).slice(-2) +" +
-          JSON.stringify(":") +
-          " + (" +
-          JSON.stringify("0") +
-          " + dayjs().second()).slice(-2);";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").endTime = endTime;";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").isCompleted = true;";
-        strBuilder +=
-          "}, timeDispatch[JSON.parse(" +
-          value_time +
-          ").type](JSON.parse(" +
-          value_time +
-          ")," +
-          JSON.stringify(block.getCommentText()) +
-          ", " +
-          JSON.stringify(id) +
-          "))";
-        strBuilder += "});";
-        strBuilder += "})();";
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder +=
+        "arrayIntervals.push({type: 'calendar_at', time: setTimeout(async function () {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder +=
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      strBuilder += statements_statement;
+
+      strBuilder +=
+        "let endTime =" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().hour()).slice(-2) +" +
+        JSON.stringify(":") +
+        " +" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().minute()).slice(-2) +" +
+        JSON.stringify(":") +
+        " + (" +
+        JSON.stringify("0") +
+        " + dayjs().second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").isCompleted = true;";
+      strBuilder +=
+        "}, timeDispatch[JSON.parse(" +
+        value_time +
+        ").type](JSON.parse(" +
+        value_time +
+        ")," +
+        JSON.stringify(block.getCommentText()) +
+        ", " +
+        JSON.stringify(id) +
+        "))";
+      strBuilder += "});";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
+
+      if (value_time === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      // (function () {
+      //   let func = function () {
+      //     // if simulated time >= value_time
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).isFired = true;
+
+      //     let calculateTime = dayjs();
+
+      //     statements_statement;
+
+      //     let diffTime = dayjs().diff(calculateTime);
+
+      //     let endTime = dayjs(realEndTime).set(
+      //       "millisecond",
+      //       realEndTime.millisecond() + diffTime
+      //     );
+
+      //     endTime =
+      //       ("0" + endTime.hour()).slice(-2) +
+      //       ":" +
+      //       ("0" + endTime.minute()).slice(-2) +
+      //       ":" +
+      //       ("0" + endTime.second()).slice(-2);
+
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).endTime = endTime;
+
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).isCompleted = true;
+
+      //     return;
+      //   };
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
+      //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //     JSON.parse(value_time),
+      //     block.getCommentText(),
+      //     id,
+      //     func,
+      //     funcInterval
+      //   );
+      // })();
+
+      const id = ID();
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let func = function () {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
+      strBuilder += "let calculateTime = dayjs();";
+      strBuilder += statements_statement;
+      strBuilder += "let diffTime = dayjs().diff(calculateTime);";
+      strBuilder += "let endTime = dayjs(realEndTime).set(";
+      strBuilder += JSON.stringify("millisecond") + ",";
+      strBuilder += "realEndTime.millisecond() + diffTime";
+      strBuilder += ");";
+      strBuilder += "endTime =";
+      strBuilder += "(" + JSON.stringify("0") + "+ endTime.hour()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + "+";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ endTime.minute()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + " +";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ endTime.second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id ===" +
+        JSON.stringify(id);
+      strBuilder += ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id ===" +
+        JSON.stringify(id);
+      strBuilder += ").isCompleted = true;";
+      strBuilder += "return;";
+      strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
+      strBuilder +=
+        "let realEndTime= timeDispatch[JSON.parse(" + value_time + ").type](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += JSON.stringify(id) + ", func, funcInterval";
+      strBuilder += ");";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "calendar_at_top_bottom",
@@ -134,91 +272,227 @@ export const CalendarStaticBlocks = [
         this.setCommentText("At Statement Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_time = Blockly.JavaScript.valueToCode(
-          block,
-          "TIME",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statement = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENT"
-        );
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
 
-        if (value_time === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
-        const id = ID();
-
+      if (value_time === "") {
         let strBuilder = "";
-        strBuilder += "(function(){";
-        strBuilder +=
-          "arrayIntervals.push({type: 'calendar_at_top_bottom', time: setTimeout(async function () {";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(";
-        strBuilder +=
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id);
-        strBuilder += ").isFired = true;";
+        return strBuilder;
+      }
 
-        strBuilder += statements_statement;
+      const id = ID();
 
-        strBuilder +=
-          "let endTime =" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().hour()).slice(-2) +" +
-          JSON.stringify(":") +
-          " +" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().minute()).slice(-2) +" +
-          JSON.stringify(":") +
-          " + (" +
-          JSON.stringify("0") +
-          " + dayjs().second()).slice(-2);";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").endTime = endTime;";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").isCompleted = true;";
-        strBuilder +=
-          "}, timeDispatch[JSON.parse(" +
-          value_time +
-          ").type](JSON.parse(" +
-          value_time +
-          ")," +
-          JSON.stringify(block.getCommentText()) +
-          ", " +
-          JSON.stringify(id) +
-          "))";
-        strBuilder += "});";
-        strBuilder += "})();";
+      let strBuilder = "";
+      strBuilder += "(function(){";
+      strBuilder +=
+        "arrayIntervals.push({type: 'calendar_at_top_bottom', time: setTimeout(async function () {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder +=
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      strBuilder += statements_statement;
+
+      strBuilder +=
+        "let endTime =" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().hour()).slice(-2) +" +
+        JSON.stringify(":") +
+        " +" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().minute()).slice(-2) +" +
+        JSON.stringify(":") +
+        " + (" +
+        JSON.stringify("0") +
+        " + dayjs().second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").isCompleted = true;";
+      strBuilder +=
+        "}, timeDispatch[JSON.parse(" +
+        value_time +
+        ").type](JSON.parse(" +
+        value_time +
+        ")," +
+        JSON.stringify(block.getCommentText()) +
+        ", " +
+        JSON.stringify(id) +
+        "))";
+      strBuilder += "});";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
+
+      if (value_time === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      // (function () {
+      //   let func = function () {
+      //     // if simulated time >= value_time
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).isFired = true;
+
+      //     let calculateTime = dayjs();
+
+      //     statements_statement;
+
+      //     let diffTime = dayjs().diff(calculateTime);
+
+      //     let endTime = dayjs(realEndTime).set(
+      //       "millisecond",
+      //       realEndTime.millisecond() + diffTime
+      //     );
+
+      //     endTime =
+      //       ("0" + endTime.hour()).slice(-2) +
+      //       ":" +
+      //       ("0" + endTime.minute()).slice(-2) +
+      //       ":" +
+      //       ("0" + endTime.second()).slice(-2);
+
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).endTime = endTime;
+
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).isCompleted = true;
+      //     return;
+      //   };
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
+      //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //     JSON.parse(value_time),
+      //     block.getCommentText(),
+      //     id,
+      //     func, funcInterval
+      //   );
+      // })();
+
+      const id = ID();
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let func = function () {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
+      strBuilder += "let calculateTime = dayjs();";
+      strBuilder += statements_statement;
+      strBuilder += "let diffTime = dayjs().diff(calculateTime);";
+      strBuilder += "let endTime = dayjs(realEndTime).set(";
+      strBuilder += JSON.stringify("millisecond") + ",";
+      strBuilder += "realEndTime.millisecond() + diffTime";
+      strBuilder += ");";
+      strBuilder += "endTime =";
+      strBuilder += "(" + JSON.stringify("0") + "+ endTime.hour()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + "+";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ endTime.minute()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + " +";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ endTime.second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id ===" +
+        JSON.stringify(id);
+      strBuilder += ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id ===" +
+        JSON.stringify(id);
+      strBuilder += ").isCompleted = true;";
+      strBuilder += "return;";
+      strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
+      strBuilder +=
+        "let realEndTime= timeDispatch[JSON.parse(" + value_time + ").type](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += JSON.stringify(id) + ", func, funcInterval";
+      strBuilder += ");";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "calendar_every",
@@ -243,131 +517,309 @@ export const CalendarStaticBlocks = [
         this.setCommentText("Every Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_time = Blockly.JavaScript.valueToCode(
-          block,
-          "TIME",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statement = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENT"
-        );
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
 
-        const id = ID();
+      const id = ID();
 
-        // (function () {
-        //   let index = arrayIntervals.length;
-        //   arrayIntervals.push({ type: "calendar_every" });
-        //   let f = function () {
-        //     arrayIntervals[index].time = setTimeout(async () => {
-        //       try {
-        //         statements_statement;
-        //         // update fire boolean
-        //         activeDateOnCalendar[timeIdsToDate[id].day][
-        //           timeIdsToDate[id].startTime
-        //         ].isFired = true;
-        //       } catch (e) {
-        //         if (e === "break") {
-        //           clearTimeout(arrayIntervals[index].time);
-        //           arrayIntervals.slice(index, 1);
-        //           return;
-        //         } else if (e === "continue") {
-        //         }
-        //       }
-        //       arrayIntervals[index].func();
-        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id));
-        //   };
-        //   arrayIntervals[index].func = f;
-        //   arrayIntervals[index].func();
-        // })();
+      // (function () {
+      //   let index = arrayIntervals.length;
+      //   arrayIntervals.push({ type: "calendar_every" });
+      //   let f = function () {
+      //     arrayIntervals[index].time = setTimeout(async () => {
+      //       try {
+      //         statements_statement;
+      //         // update fire boolean
+      //         activeDateOnCalendar[timeIdsToDate[id].day][
+      //           timeIdsToDate[id].startTime
+      //         ].isFired = true;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           clearTimeout(arrayIntervals[index].time);
+      //           arrayIntervals.slice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //       arrayIntervals[index].func();
+      //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id));
+      //   };
+      //   arrayIntervals[index].func = f;
+      //   arrayIntervals[index].func();
+      // })();
 
-        if (value_time === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_time === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "let index = arrayIntervals.length;";
-        strBuilder += "arrayIntervals.push({type: 'calendar_every'});";
-        strBuilder += "let f = function () {";
-        strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
-        strBuilder += "try {";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(";
-        strBuilder +=
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id);
-        strBuilder += ").isFired = true;";
+        return strBuilder;
+      }
 
-        strBuilder += statements_statement;
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let index = arrayIntervals.length;";
+      strBuilder += "arrayIntervals.push({type: 'calendar_every'});";
+      strBuilder += "let f = function () {";
+      strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
+      strBuilder += "try {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder +=
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
 
-        strBuilder +=
-          "let endTime =" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().hour()).slice(-2) +" +
-          JSON.stringify(":") +
-          " +" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().minute()).slice(-2) +" +
-          JSON.stringify(":") +
-          " + (" +
-          JSON.stringify("0") +
-          " + dayjs().second()).slice(-2);";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").endTime = endTime;";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").isCompleted = true;";
-        strBuilder += "} catch (e) {";
-        strBuilder += 'if (e === "break") {';
-        strBuilder += "clearTimeout(arrayIntervals[index].time);";
-        strBuilder += "arrayIntervals.slice(index, 1);";
-        strBuilder += "return;";
-        strBuilder += '} else if (e === "continue") {';
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder += "arrayIntervals[index].func();";
-        strBuilder +=
-          "}, timeDispatch[JSON.parse(" +
-          value_time +
-          ").type](JSON.parse(" +
-          value_time +
-          "), " +
-          JSON.stringify(block.getCommentText()) +
-          ", " +
-          JSON.stringify(id) +
-          "));";
-        strBuilder += "};";
-        strBuilder += "arrayIntervals[index].func = f;";
-        strBuilder += "arrayIntervals[index].func();";
-        strBuilder += "})();";
+      strBuilder += statements_statement;
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      strBuilder +=
+        "let endTime =" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().hour()).slice(-2) +" +
+        JSON.stringify(":") +
+        " +" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().minute()).slice(-2) +" +
+        JSON.stringify(":") +
+        " + (" +
+        JSON.stringify("0") +
+        " + dayjs().second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").isCompleted = true;";
+      strBuilder += "} catch (e) {";
+      strBuilder += 'if (e === "break") {';
+      strBuilder += "clearTimeout(arrayIntervals[index].time);";
+      strBuilder += "arrayIntervals.slice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += '} else if (e === "continue") {';
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "arrayIntervals[index].func();";
+      strBuilder +=
+        "}, timeDispatch[JSON.parse(" +
+        value_time +
+        ").type](JSON.parse(" +
+        value_time +
+        "), " +
+        JSON.stringify(block.getCommentText()) +
+        ", " +
+        JSON.stringify(id) +
+        "));";
+      strBuilder += "};";
+      strBuilder += "arrayIntervals[index].func = f;";
+      strBuilder += "arrayIntervals[index].func();";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
+
+      // (function () {
+      //   let id = ID();
+      //   let func = function () {
+      //     let calculatedEndTime, keepRealTime;
+      //     try {
+      //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //         (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //       ).isFired = true;
+
+      //       let calculateTime = dayjs();
+      //       keepRealTime = realEndTime;
+
+      //       statements_statement;
+
+      //       let diffTime = dayjs().diff(calculateTime);
+
+      //       calculatedEndTime = dayjs(realEndTime).set(
+      //         "millisecond",
+      //         realEndTime.millisecond() + diffTime
+      //       );
+
+      //       let endTime =
+      //         ("0" + calculatedEndTime.hour()).slice(-2) +
+      //         ":" +
+      //         ("0" + calculatedEndTime.minute()).slice(-2) +
+      //         ":" +
+      //         ("0" + calculatedEndTime.second()).slice(-2);
+
+      //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //         (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //       ).endTime = endTime;
+
+      //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //         (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //       ).isCompleted = true;
+      //     } catch (e) {
+      //       if (e === "break") {
+      //         return;
+      //       } else if (e === "continue") {
+      //       }
+      //     }
+      //     let nextStartTime = NextStartTime(calculatedEndTime, timeStep);
+      //     if (nextStartTime === -1)
+      //       realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //         JSON.parse(value_time),
+      //         block.getCommentText(),
+      //         id,
+      //         func, funcInterval
+      //       );
+      //     else
+      //       realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //         JSON.parse(value_time),
+      //         block.getCommentText(),
+      //         id,
+      //         func, funcInterval,
+      //         nextStartTime
+      //       );
+      //   };
+      //   let timeStep = CalculateMillisecondsForNextTime(JSON.parse(value_time));
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
+      //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //     JSON.parse(value_time),
+      //     block.getCommentText(),
+      //     id,
+      //     func, funcInterval
+      //   );
+      // })();
+
+      if (value_time === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let id = ID();";
+      strBuilder += "let func = function () {";
+      strBuilder += "let calculatedEndTime, keepRealTime;";
+      strBuilder += "try {";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
+      strBuilder += ").isFired = true;";
+      strBuilder += "let calculateTime = dayjs();";
+      strBuilder += "keepRealTime = realEndTime;";
+      strBuilder += statements_statement;
+      strBuilder += "let diffTime = dayjs().diff(calculateTime);";
+      strBuilder += "calculatedEndTime = dayjs(realEndTime).set(";
+      strBuilder += JSON.stringify("millisecond") + ",";
+      strBuilder += "realEndTime.millisecond() + diffTime";
+      strBuilder += ");";
+      strBuilder += "let endTime =";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ calculatedEndTime.hour()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + "+";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ calculatedEndTime.minute()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + " +";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ calculatedEndTime.second()).slice(-2);";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
+      strBuilder += ").endTime = endTime;";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
+      strBuilder += ").isCompleted = true;";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "let nextStartTime = NextStartTime(";
+      strBuilder += "calculatedEndTime,";
+      strBuilder += "timeStep";
+      strBuilder += ");";
+      strBuilder += "if (nextStartTime === -1)";
+      strBuilder += "realEndTime = timeDispatch[";
+      strBuilder += "JSON.parse(" + value_time + ").type";
+      strBuilder +=
+        "](JSON.parse(" +
+        value_time +
+        "), " +
+        JSON.stringify(block.getCommentText()) +
+        ", id, func, funcInterval);";
+      strBuilder += "else ";
+      strBuilder += "realEndTime = timeDispatch[";
+      strBuilder += "JSON.parse(" + value_time + ").type";
+      strBuilder += "](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += "id,";
+      strBuilder += "func, funcInterval,";
+      strBuilder += "nextStartTime";
+      strBuilder += ");";
+      strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
+      strBuilder +=
+        "let realEndTime = timeDispatch[JSON.parse(" + value_time + ").type](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += "id, func, funcInterval";
+      strBuilder += ");";
+      strBuilder +=
+        "let timeStep = CalculateMillisecondsForNextTime(JSON.parse(" +
+        value_time +
+        "));";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "calendar_every_top_bottom",
@@ -412,132 +864,283 @@ export const CalendarStaticBlocks = [
         this.setCommentText("Every Statement Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_time = Blockly.JavaScript.valueToCode(
-          block,
-          "TIME",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statement = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENT"
-        );
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
 
-        const id = ID();
+      const id = ID();
 
-        // (function () {
-        //   let index = arrayIntervals.length;
-        //   arrayIntervals.push({ type: "calendar_every_top_bottom" });
-        //   let f = function () {
-        //     arrayIntervals[index].time = setTimeout(() => {
-        //       try {
-        //         statements_statement;
-        //         // update fire boolean
-        //         activeDateOnCalendar[timeIdsToDate[id].day][
-        //           timeIdsToDate[id].startTime
-        //         ].isFired = true;
-        //       } catch (e) {
-        //         if (e === "break") {
-        //           clearTimeout(arrayIntervals[index].time);
-        //           arrayIntervals.slice(index, 1);
-        //           return;
-        //         } else if (e === "continue") {
-        //         }
-        //       }
-        //       arrayIntervals[index].func();
-        //     }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id));
-        //   };
-        //   arrayIntervals[index].func = f;
-        //   arrayIntervals[index].func();
-        // })();
-
-        if (value_time === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_time === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "let index = arrayIntervals.length;";
-        strBuilder +=
-          "arrayIntervals.push({type: 'calendar_every_top_bottom'});";
-        strBuilder += "let f = function () {";
-        strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
-        strBuilder += "try {";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(";
-        strBuilder +=
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id);
-        strBuilder += ").isFired = true;";
+        return strBuilder;
+      }
 
-        strBuilder += statements_statement;
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let index = arrayIntervals.length;";
+      strBuilder += "arrayIntervals.push({type: 'calendar_every_top_bottom'});";
+      strBuilder += "let f = function () {";
+      strBuilder += "arrayIntervals[index].time = setTimeout(async () => {";
+      strBuilder += "try {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder +=
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
 
-        strBuilder +=
-          "let endTime =" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().hour()).slice(-2) +" +
-          JSON.stringify(":") +
-          " +" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().minute()).slice(-2) +" +
-          JSON.stringify(":") +
-          " + (" +
-          JSON.stringify("0") +
-          " + dayjs().second()).slice(-2);";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").endTime = endTime;";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").isCompleted = true;";
-        strBuilder += "} catch (e) {";
-        strBuilder += 'if (e === "break") {';
-        strBuilder += "clearTimeout(arrayIntervals[index].time);";
-        strBuilder += "arrayIntervals.slice(index, 1);";
-        strBuilder += "return;";
-        strBuilder += '} else if (e === "continue") {';
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder += "arrayIntervals[index].func();";
-        strBuilder +=
-          "}, timeDispatch[JSON.parse(" +
-          value_time +
-          ").type](JSON.parse(" +
-          value_time +
-          "), " +
-          JSON.stringify(block.getCommentText()) +
-          ", " +
-          JSON.stringify(id) +
-          "));";
-        strBuilder += "};";
-        strBuilder += "arrayIntervals[index].func = f;";
-        strBuilder += "arrayIntervals[index].func();";
-        strBuilder += "})();";
+      strBuilder += statements_statement;
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      strBuilder +=
+        "let endTime =" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().hour()).slice(-2) +" +
+        JSON.stringify(":") +
+        " +" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().minute()).slice(-2) +" +
+        JSON.stringify(":") +
+        " + (" +
+        JSON.stringify("0") +
+        " + dayjs().second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").isCompleted = true;";
+      strBuilder += "} catch (e) {";
+      strBuilder += 'if (e === "break") {';
+      strBuilder += "clearTimeout(arrayIntervals[index].time);";
+      strBuilder += "arrayIntervals.slice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += '} else if (e === "continue") {';
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "arrayIntervals[index].func();";
+      strBuilder +=
+        "}, timeDispatch[JSON.parse(" +
+        value_time +
+        ").type](JSON.parse(" +
+        value_time +
+        "), " +
+        JSON.stringify(block.getCommentText()) +
+        ", " +
+        JSON.stringify(id) +
+        "));";
+      strBuilder += "};";
+      strBuilder += "arrayIntervals[index].func = f;";
+      strBuilder += "arrayIntervals[index].func();";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
+
+      // (function () {
+      //   let func = function () {
+      //     let id = ID();
+      //     let calculatedEndTime, keepRealTime;
+      //     try {
+      //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //         (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //       ).isFired = true;
+
+      //       let calculateTime = dayjs();
+      //       keepRealTime = realEndTime;
+
+      //       statements_statement;
+
+      //       let diffTime = dayjs().diff(calculateTime);
+
+      //       calculatedEndTime = dayjs(realEndTime).set(
+      //         "millisecond",
+      //         realEndTime.millisecond() + diffTime
+      //       );
+
+      //       let endTime =
+      //         ("0" + calculatedEndTime.hour()).slice(-2) +
+      //         ":" +
+      //         ("0" + calculatedEndTime.minute()).slice(-2) +
+      //         ":" +
+      //         ("0" + calculatedEndTime.second()).slice(-2);
+
+      //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //         (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //       ).endTime = endTime;
+
+      //       activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //         (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //       ).isCompleted = true;
+      //     } catch (e) {
+      //       if (e === "break") {
+      //         return;
+      //       } else if (e === "continue") {
+      //       }
+      //     }
+      //     let nextStartTime = NextStartTime(calculatedEndTime, timeStep);
+      //     if (nextStartTime === -1)
+      //       realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //         JSON.parse(value_time),
+      //         block.getCommentText(),
+      //         id,
+      //         func, funcInterval
+      //       );
+      //     else
+      //       realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //         JSON.parse(value_time),
+      //         block.getCommentText(),
+      //         id,
+      //         func, funcInterval,
+      //         nextStartTime
+      //       );
+      //   };
+      //   let timeStep = CalculateMillisecondsForNextTime(JSON.parse(value_time));
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
+      //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //     JSON.parse(value_time),
+      //     block.getCommentText(),
+      //     id,
+      //     func, funcInterval
+      //   );
+      // })();
+
+      if (value_time === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let id = ID();";
+      strBuilder += "let func = function () {";
+      strBuilder += "let calculatedEndTime, keepRealTime;";
+      strBuilder += "try {";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
+      strBuilder += ").isFired = true;";
+      strBuilder += "let calculateTime = dayjs();";
+      strBuilder += "keepRealTime = realEndTime;";
+      strBuilder += statements_statement;
+      strBuilder += "let diffTime = dayjs().diff(calculateTime);";
+      strBuilder += "calculatedEndTime = dayjs(realEndTime).set(";
+      strBuilder += JSON.stringify("millisecond") + ",";
+      strBuilder += "realEndTime.millisecond() + diffTime";
+      strBuilder += ");";
+      strBuilder += "let endTime =";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ calculatedEndTime.hour()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + "+";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ calculatedEndTime.minute()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + " +";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ calculatedEndTime.second()).slice(-2);";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
+      strBuilder += ").endTime = endTime;";
+      strBuilder += "activeDateOnCalendar[timeIdsToDate[id].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[id].startTime && e.id === id";
+      strBuilder += ").isCompleted = true;";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "let nextStartTime = NextStartTime(";
+      strBuilder += "calculatedEndTime,";
+      strBuilder += "timeStep";
+      strBuilder += ");";
+      strBuilder += "if (nextStartTime === -1)";
+      strBuilder += "realEndTime = timeDispatch[";
+      strBuilder += "JSON.parse(" + value_time + ").type";
+      strBuilder +=
+        "](JSON.parse(" +
+        value_time +
+        "), " +
+        JSON.stringify(block.getCommentText()) +
+        ", id, func, funcInterval);";
+      strBuilder += "else ";
+      strBuilder += "realEndTime = timeDispatch[";
+      strBuilder += "JSON.parse(" + value_time + ").type";
+      strBuilder += "](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += "id,";
+      strBuilder += "func, funcInterval,";
+      strBuilder += "nextStartTime";
+      strBuilder += ");";
+      strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
+      strBuilder +=
+        "let realEndTime = timeDispatch[JSON.parse(" + value_time + ").type](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += "id, func, funcInterval";
+      strBuilder += ");";
+      strBuilder +=
+        "let timeStep = CalculateMillisecondsForNextTime(JSON.parse(" +
+        value_time +
+        "));";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "break_continue_every",
@@ -612,14 +1215,18 @@ export const CalendarStaticBlocks = [
         this.setHelpUrl("");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var dropdown_action = block.getFieldValue("ACTION");
+    codeGen: (block) => {
+      var dropdown_action = block.getFieldValue("ACTION");
 
-        // TODO: Assemble JavaScript into code variable.
-        var code = "throw '" + dropdown_action + "'";
-        return code;
-      },
+      var code = "throw '" + dropdown_action + "'";
+      return code;
+    },
+    debugGen: (block) => {
+      var dropdown_action = block.getFieldValue("ACTION");
+
+      var code = "throw '" + dropdown_action + "'";
+      return code;
+    },
   },
   {
     name: "calendar_wait_then",
@@ -642,102 +1249,237 @@ export const CalendarStaticBlocks = [
         this.setCommentText("Wait Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_time = Blockly.JavaScript.valueToCode(
-          block,
-          "TIME",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statement = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENT"
-        );
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
 
-        const id = ID();
+      const id = ID();
 
-        // arrayIntervals.push({
-        //   type: "calendar_wait_then",
-        //   time: setTimeout(() => {
-        //     statements_statement;
-        //     // update fire boolean
-        //     activeDateOnCalendar[timeIdsToDate[id].day][
-        //       timeIdsToDate[id].startTime
-        //     ].isFired = true;
-        //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id)),
-        // });
+      // arrayIntervals.push({
+      //   type: "calendar_wait_then",
+      //   time: setTimeout(() => {
+      //     statements_statement;
+      //     // update fire boolean
+      //     activeDateOnCalendar[timeIdsToDate[id].day][
+      //       timeIdsToDate[id].startTime
+      //     ].isFired = true;
+      //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id)),
+      // });
 
-        if (value_time === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_time === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder +=
-          "arrayIntervals.push({type: 'calendar_wait_then', time: setTimeout(async () => {";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(";
-        strBuilder +=
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id);
-        strBuilder += ").isFired = true;";
+        return strBuilder;
+      }
 
-        strBuilder += statements_statement;
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder +=
+        "arrayIntervals.push({type: 'calendar_wait_then', time: setTimeout(async () => {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder +=
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
 
-        strBuilder +=
-          "let endTime =" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().hour()).slice(-2) +" +
-          JSON.stringify(":") +
-          " +" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().minute()).slice(-2) +" +
-          JSON.stringify(":") +
-          " + (" +
-          JSON.stringify("0") +
-          " + dayjs().second()).slice(-2);";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").endTime = endTime;";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").isCompleted = true;";
-        strBuilder +=
-          "}, timeDispatch[JSON.parse(" +
-          value_time +
-          ").type](JSON.parse(" +
-          value_time +
-          ")," +
-          JSON.stringify(block.getCommentText()) +
-          ", " +
-          JSON.stringify(id) +
-          "))";
-        strBuilder += "});";
-        strBuilder += "})()";
+      strBuilder += statements_statement;
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      strBuilder +=
+        "let endTime =" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().hour()).slice(-2) +" +
+        JSON.stringify(":") +
+        " +" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().minute()).slice(-2) +" +
+        JSON.stringify(":") +
+        " + (" +
+        JSON.stringify("0") +
+        " + dayjs().second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").isCompleted = true;";
+      strBuilder +=
+        "}, timeDispatch[JSON.parse(" +
+        value_time +
+        ").type](JSON.parse(" +
+        value_time +
+        ")," +
+        JSON.stringify(block.getCommentText()) +
+        ", " +
+        JSON.stringify(id) +
+        "))";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
+
+      const id = ID();
+
+      // (function () {
+      //   let func = function () {
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).isFired = true;
+
+      //     let calculateTime = dayjs();
+
+      //     statements_statement;
+
+      //     let diffTime = dayjs().diff(calculateTime);
+
+      //     let endTime = dayjs(realEndTime).set(
+      //       "millisecond",
+      //       realEndTime.millisecond() + diffTime
+      //     );
+
+      //     endTime =
+      //       ("0" + endTime.hour()).slice(-2) +
+      //       ":" +
+      //       ("0" + endTime.minute()).slice(-2) +
+      //       ":" +
+      //       ("0" + endTime.second()).slice(-2);
+
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).endTime = endTime;
+
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).isCompleted = true;
+      //     return;
+      //   };
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
+      //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //     JSON.parse(value_time),
+      //     block.getCommentText(),
+      //     id,
+      //     func, funcInterval
+      //   );
+      // })();
+
+      if (value_time === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let func = function () {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
+      strBuilder += "let calculateTime = dayjs();";
+      strBuilder += statements_statement;
+      strBuilder += "let diffTime = dayjs().diff(calculateTime);";
+      strBuilder += "let endTime = dayjs(realEndTime).set(";
+      strBuilder += JSON.stringify("millisecond") + ",";
+      strBuilder += "realEndTime.millisecond() + diffTime";
+      strBuilder += ");";
+      strBuilder += "endTime =";
+      strBuilder += "(" + JSON.stringify("0") + "+ endTime.hour()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + "+";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ endTime.minute()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + " +";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ endTime.second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id ===" +
+        JSON.stringify(id);
+      strBuilder += ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id ===" +
+        JSON.stringify(id);
+      strBuilder += ").isCompleted = true;";
+      strBuilder += "return;";
+      strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
+      strBuilder +=
+        "let realEndTime = timeDispatch[JSON.parse(" + value_time + ").type](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += JSON.stringify(id) + ",func, funcInterval";
+      strBuilder += ");";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "calendar_wait_then_top_bottom",
@@ -762,101 +1504,236 @@ export const CalendarStaticBlocks = [
         this.setCommentText("Wait Statement Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_time = Blockly.JavaScript.valueToCode(
-          block,
-          "TIME",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statement = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENT"
-        );
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
 
-        const id = ID();
+      const id = ID();
 
-        // arrayIntervals.push({
-        //   type: "calendar_wait_then_top_bottom",
-        //   time: setTimeout(() => {
-        //     statements_statement;
-        //     // update fire boolean
-        //     activeDateOnCalendar[timeIdsToDate[id].day].find(
-        //       (e) => e.startTime === timeIdsToDate[id].startTime
-        //     ).isFired = true;
-        //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id)),
-        // });
+      // arrayIntervals.push({
+      //   type: "calendar_wait_then_top_bottom",
+      //   time: setTimeout(() => {
+      //     statements_statement;
+      //     // update fire boolean
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime
+      //     ).isFired = true;
+      //   }, timeDispatch[JSON.parse(value_time).type](JSON.parse(value_time), block.getCommentText(), id)),
+      // });
 
-        if (value_time === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_time === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder +=
-          "arrayIntervals.push({type: 'calendar_wait_then_top_bottom', time: setTimeout(async () => {";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(";
-        strBuilder +=
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id);
-        strBuilder += ").isFired = true;";
+        return strBuilder;
+      }
 
-        strBuilder += statements_statement;
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder +=
+        "arrayIntervals.push({type: 'calendar_wait_then_top_bottom', time: setTimeout(async () => {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder +=
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
 
-        strBuilder +=
-          "let endTime =" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().hour()).slice(-2) +" +
-          JSON.stringify(":") +
-          " +" +
-          "(" +
-          JSON.stringify("0") +
-          " + dayjs().minute()).slice(-2) +" +
-          JSON.stringify(":") +
-          " + (" +
-          JSON.stringify("0") +
-          " + dayjs().second()).slice(-2);";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").endTime = endTime;";
-        strBuilder +=
-          "activeDateOnCalendar[timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].day].find(" +
-          "(e) => e.startTime === timeIdsToDate[" +
-          JSON.stringify(id) +
-          "].startTime && e.id === " +
-          JSON.stringify(id) +
-          ").isCompleted = true;";
-        strBuilder +=
-          "}, timeDispatch[JSON.parse(" +
-          value_time +
-          ").type](JSON.parse(" +
-          value_time +
-          "), " +
-          JSON.stringify(block.getCommentText()) +
-          ", " +
-          JSON.stringify(id) +
-          "))";
-        strBuilder += "});";
-        strBuilder += "})();";
+      strBuilder += statements_statement;
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      strBuilder +=
+        "let endTime =" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().hour()).slice(-2) +" +
+        JSON.stringify(":") +
+        " +" +
+        "(" +
+        JSON.stringify("0") +
+        " + dayjs().minute()).slice(-2) +" +
+        JSON.stringify(":") +
+        " + (" +
+        JSON.stringify("0") +
+        " + dayjs().second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(" +
+        "(e) => e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id) +
+        ").isCompleted = true;";
+      strBuilder +=
+        "}, timeDispatch[JSON.parse(" +
+        value_time +
+        ").type](JSON.parse(" +
+        value_time +
+        "), " +
+        JSON.stringify(block.getCommentText()) +
+        ", " +
+        JSON.stringify(id) +
+        "))";
+      strBuilder += "});";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_time = Blockly.JavaScript.valueToCode(
+        block,
+        "TIME",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statement = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENT"
+      );
+
+      const id = ID();
+
+      // (function () {
+      //   let func = function () {
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).isFired = true;
+
+      //     let calculateTime = dayjs();
+
+      //     statements_statement;
+
+      //     let diffTime = dayjs().diff(calculateTime);
+
+      //     let endTime = dayjs(realEndTime).set(
+      //       "millisecond",
+      //       realEndTime.millisecond() + diffTime
+      //     );
+
+      //     endTime =
+      //       ("0" + endTime.hour()).slice(-2) +
+      //       ":" +
+      //       ("0" + endTime.minute()).slice(-2) +
+      //       ":" +
+      //       ("0" + endTime.second()).slice(-2);
+
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).endTime = endTime;
+
+      //     activeDateOnCalendar[timeIdsToDate[id].day].find(
+      //       (e) => e.startTime === timeIdsToDate[id].startTime && e.id === id
+      //     ).isCompleted = true;
+      //     return;
+      //   };
+      //   let funcInterval = setInterval(() => {
+      //     if (simulatedTime.diff(realEndTime) > 0) {
+      //       func();
+      //       clearInterval(funcInterval);
+      //     }
+      //   }, 100);
+      //   let realEndTime = timeDispatch[JSON.parse(value_time).type](
+      //     JSON.parse(value_time),
+      //     block.getCommentText(),
+      //     id,
+      //     func, funcInterval
+      //   );
+      // })();
+
+      if (value_time === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let func = function () {";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id === " +
+        JSON.stringify(id);
+      strBuilder += ").isFired = true;";
+      strBuilder += "let calculateTime = dayjs();";
+      strBuilder += statements_statement;
+      strBuilder += "let diffTime = dayjs().diff(calculateTime);";
+      strBuilder += "let endTime = dayjs(realEndTime).set(";
+      strBuilder += JSON.stringify("millisecond") + ",";
+      strBuilder += "realEndTime.millisecond() + diffTime";
+      strBuilder += ");";
+      strBuilder += "endTime =";
+      strBuilder += "(" + JSON.stringify("0") + "+ endTime.hour()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + "+";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ endTime.minute()).slice(-2) +";
+      strBuilder += JSON.stringify(":") + " +";
+      strBuilder +=
+        "(" + JSON.stringify("0") + "+ endTime.second()).slice(-2);";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id ===" +
+        JSON.stringify(id);
+      strBuilder += ").endTime = endTime;";
+      strBuilder +=
+        "activeDateOnCalendar[timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].day].find(";
+      strBuilder += "(e) =>";
+      strBuilder +=
+        "e.startTime === timeIdsToDate[" +
+        JSON.stringify(id) +
+        "].startTime && e.id ===" +
+        JSON.stringify(id);
+      strBuilder += ").isCompleted = true;";
+      strBuilder += "return;";
+      strBuilder += "};";
+      strBuilder += "let funcInterval = setInterval(() => {";
+      strBuilder += "if (simulatedTime.diff(realEndTime) > 0) {";
+      strBuilder += "func();";
+      strBuilder += "clearInterval(funcInterval);";
+      strBuilder += "}";
+      strBuilder += "}, 100);";
+      strBuilder +=
+        "let realEndTime = timeDispatch[JSON.parse(" + value_time + ").type](";
+      strBuilder += "JSON.parse(" + value_time + "),";
+      strBuilder += JSON.stringify(block.getCommentText()) + ",";
+      strBuilder += JSON.stringify(id) + ",func, funcInterval";
+      strBuilder += ");";
+      strBuilder += "})();";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
 ];

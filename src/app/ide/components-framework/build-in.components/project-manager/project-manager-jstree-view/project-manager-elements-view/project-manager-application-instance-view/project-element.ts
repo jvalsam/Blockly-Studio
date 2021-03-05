@@ -7,8 +7,8 @@ export abstract class ProjectElement {
     private _menuObj: any;
 
     public constructor(
-        private _jstreeNode: IJSTreeNode,
-        private _meta: any
+        protected _jstreeNode: IJSTreeNode,
+        protected _meta: any
     ) {
         this._menuObj = {};
         if (this._meta.actions) {

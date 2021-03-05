@@ -260,7 +260,8 @@ export class ProjectManager extends IDEUIComponent {
             created: mainProject.created,
             description: mainProject.description,
             domain: mainProject.domainType,
-            project: {}
+            project: {},
+            projectId: mainProject._id
         };
         this.projManagerDescr.project.categories.forEach(category => {
             // collect data for each one of the project item with category.type
@@ -1783,7 +1784,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public createReplicaOfPItemEditorsData (pitemId: string): any {
+    public createReplicaOfPItemEditorsData (pitemId: string): ProjectItem {
         return this.getProjectItem(pitemId).createReplica();
     }
 
@@ -1810,5 +1811,19 @@ export class ProjectManager extends IDEUIComponent {
     @ExportedFunction
     public getCategoryInformation(pitemId: string, categoryId: string) {
         return this.getProjectInstanceView(pitemId).getCategoryInformation(categoryId);
+    }
+
+    @ExportedFunction
+    public openPItemInDialogue(pitem: any, selector: string, isEditable) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "openPItemInDialogue",
+            [
+                pitem,
+                selector,
+                isEditable
+            ]
+        );
     }
 }

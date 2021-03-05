@@ -284,6 +284,8 @@ export class CollaborationManager extends IDEUIComponent {
         return opts;
     }
 
+    @RequiredFunction("ProjectManager", "createReplicaOfPItemEditorsData")
+    @RequiredFunction("ProjectManager", "openPItemInDialogue")
     public openPItemOnDialogue(selector, pItemID, isReplica, isEditable){
         let pItem;
         if(isReplica){
@@ -294,10 +296,21 @@ export class CollaborationManager extends IDEUIComponent {
                 [
                     pItemID
                 ]).value;
-        }else {
+        }
+        else {
             pItem = this.getPItem(pItemID);
         }
-        // openPItemOnDialogue(pitem, dialogue);
+        
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManager",
+            "openPItemInDialogue",
+            [
+                pItem,
+                selector,
+                isEditable
+            ]
+        );
     }
 
     public saveNewSuggestion(pitemID, newSource){

@@ -22,6 +22,7 @@ import { ITool } from "../../components-framework/build-in.components/editor-man
 import { ComponentsCommunication } from "../../components-framework/component/components-communication";
 import { ModalView } from "../../components-framework/component/view";
 import { ViewRegistry } from "../../components-framework/component/registry";
+import { RuntimeManager } from "../../components-framework/build-in.components/run-time-system-manager/run-time-manager";
 
 var menuJson: any = require("./conf_menu.json");
 var confJson: any = require("./conf_props.json");
@@ -292,8 +293,6 @@ export class SmartObjectVPLEditor extends Editor {
   @RequiredFunction("ProjectManager", "getProjectCategory")
   @RequiredFunction("ProjectManager", "onAddProjectElement")
   private createSmartGroup(group, projectId, onCreated) {
-    this._groupDataOnCreate = group;
-
     let projectCategory = ComponentsCommunication.functionRequest(
       this.name,
       "ProjectManager",
@@ -331,7 +330,10 @@ export class SmartObjectVPLEditor extends Editor {
           ],
         },
         projectCategory,
-        onCreated,
+        (pitem) => {
+          this._groupDataOnCreate = group;
+          onCreated(pitem);
+        },
       ]
     );
   }
@@ -527,8 +529,17 @@ export class SmartObjectVPLEditor extends Editor {
 
   @ExportedFunction
   public generateCodeDataForExecution(data: any) {
+    // if (RuntimeManager.getMode() === "RELEASE") {
     // alert("Not implemented generateCodeDataForExecution in " + this.name);
-    return data;
+    let runTimeData = JSON.parse(JSON.stringify(data));
+    // if (RuntimeManager.getMode() === "DEBUG") {
+    runTimeData.debugTests = this.getDebugTests(data);
+    runTimeData.testsCounter = this.getTestsCounter(data);
+    // }
+    return runTimeData;
+    // } else {
+    //   return this.instancesMap[data.domainElementId];
+    // }
   }
 
   @ExportedFunction
@@ -548,6 +559,204 @@ export class SmartObjectVPLEditor extends Editor {
       editorData.editorId,
       pitem.getPrivileges(),
       this.config
+    );
+  }
+
+  @ExportedFunction
+  public saveDebugTests(data: any) {
+    let compData = this.getProjectComponentData(data.projectID);
+    compData.debugTests = data.debugTests;
+    if (data.editDebugId) {
+      let xml = ComponentsCommunication.functionRequest(
+        this.name,
+        "BlocklyVPL",
+        "getEditorSrc",
+        [data.editorId]
+      ).value;
+
+      let js = ComponentsCommunication.functionRequest(
+        this.name,
+        "BlocklyVPL",
+        "generateCodeDataForExecution",
+        [{ editorId: data.editorId }]
+      ).value;
+
+      // add line for debugging eval
+      // js += "//# sourceURL=eval-debug-test.js";
+
+      let test = compData.debugTests.expectedValueCheckingTests.find(
+        (x) => x.debugTest.id === data.editDebugId
+      );
+
+      test.debugTest.js = js;
+      test.debugTest.xml = xml;
+    }
+    this.saveProjectComponentData(data.projectID, compData);
+    return compData.debugTests;
+  }
+
+  @ExportedFunction
+  saveTestsCounter(projectId: string, testsCounter: number) {
+    let compData = this.getProjectComponentData(projectId);
+    compData.testsCounter = testsCounter;
+    this.saveProjectComponentData(projectId, compData);
+  }
+
+  @RequiredFunction("BlocklyVPL", "getEditorSrc")
+  @RequiredFunction("BlocklyVPL", "generateCodeDataForExecution")
+  @ExportedFunction
+  saveExpectedValueTest(projectId: string, editorId: string, test: any) {
+    let xml = ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "getEditorSrc",
+      [editorId]
+    ).value;
+
+    let js = ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "generateCodeDataForExecution",
+      [{ editorId }]
+    ).value;
+
+    let compData = this.getProjectComponentData(projectId);
+
+    if (!compData.debugTests) compData.debugTests = {};
+    if (!compData.debugTests.expectedValueChecking)
+      compData.debugTests.expectedValueChecking = [];
+
+    let testInComp = compData.debugTests.expectedValueChecking.find(
+      (x) => x.debugTest.id === test.debugTest.id
+    );
+
+    if (testInComp) {
+      testInComp.debugTest.js = js;
+      testInComp.debugTest.xml = xml;
+    } else {
+      test.debugTest.js = js;
+      test.debugTest.xml = xml;
+      compData.debugTests.expectedValueChecking.push(test);
+    }
+    this.saveProjectComponentData(projectId, compData);
+  }
+
+  // @ExportedFunction
+  // public saveSimulateBehaviorTest(data: any) {
+  //   let compData = this.getProjectComponentData(data.projectID);
+  //   if (!compData.debugTests) compData.debugTests = {};
+  //   if (!compData.debugTests.simulateBehaviorTests)
+  //     compData.debugTests.simulateBehaviorTests = [];
+  //   compData.debugTests.simulateBehaviorTests.push(data);
+  //   // test = data.debugTest;
+  //   this.saveProjectComponentData(data.projectID, compData);
+  // }
+
+  // @ExportedFunction
+  // public saveExpectedValuesCheckingTest(data: any) {
+  //   let compData = this.getProjectComponentData(data.projectID);
+  //   if (!compData.debugTests) compData.debugTests = {};
+  //   if (!compData.debugTests.expectedValuesCheckingTests)
+  //     compData.debugTests.expectedValuesCheckingTests = [];
+  //   compData.debugTests.expectedValuesCheckingTests.push({
+  //     time: data.time,
+  //     projectId: data.projectId,
+  //     test: data.debugTest,
+  //   });
+  //   // test = data.debugTest;
+  //   this.saveProjectComponentData(data.projectID, compData);
+  // }
+
+  @ExportedFunction
+  public deleteDebugTest(data: any) {
+    let compData = this.getProjectComponentData(data.projectID);
+    let indexDebugTest = compData.debugTests.findIndex(
+      (x) => x.id === data.debugTestId
+    );
+    if (indexDebugTest > -1) {
+      compData.debugTests.splice(indexDebugTest, 1);
+    }
+    this.saveProjectComponentData(data.projectID, compData);
+  }
+
+  @ExportedFunction
+  public getDebugTests(data: any) {
+    let compData = this.getProjectComponentData(data.projectID);
+    if (compData.debugTests) return compData.debugTests;
+    return {};
+  }
+
+  @ExportedFunction
+  public getTestsCounter(data: any) {
+    let compData = this.getProjectComponentData(data.projectID);
+    if (compData.testsCounter) return compData.testsCounter;
+    return 1;
+  }
+
+  @ExportedFunction
+  public foldRunTimeModal() {
+    document.getElementById("fold-runtime-modal").click();
+  }
+
+  @ExportedFunction
+  public clickDebugConfigurationOfAction(
+    smartElementId: string,
+    action: any,
+    privilege
+  ) {
+    this.instancesMap[smartElementId].onClickDebugConfigurationOfAction(
+      action,
+      privilege
+    );
+  }
+
+  @RequiredFunction("BlocklyVPL", "openInDialogue")
+  @ExportedFunction
+  requestBlocklyInstance(
+    editorsData: any,
+    pitem: PItemView,
+    confName: string,
+    selector: string,
+    privileges: string
+  ) {
+    ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "openInDialogue",
+      [editorsData, pitem, confName, selector, privileges, "BlocklyStudioIDE"]
+    );
+  }
+
+  @RequiredFunction("BlocklyVPL", "saveEditorData")
+  @ExportedFunction
+  saveEditorDataForBlocklyInstance(editorId: string) {
+    return ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "saveEditorData",
+      [editorId]
+    ).value;
+  }
+
+  @RequiredFunction("BlocklyVPL", "getEditorSrc")
+  @ExportedFunction
+  getSrcFromBlocklyInstance(editorId: string) {
+    return ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "getEditorSrc",
+      [editorId]
+    ).value;
+  }
+
+  @RequiredFunction("BlocklyVPL", "closeSRC")
+  @ExportedFunction
+  closeSrcForBlocklyInstance(editorId: string) {
+    ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "closeSRC",
+      [editorId]
     );
   }
 }

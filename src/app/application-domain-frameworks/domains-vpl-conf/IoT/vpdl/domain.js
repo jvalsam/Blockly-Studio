@@ -7,6 +7,7 @@ import {
 import { ConditionalStaticBlocks } from "./domain-static-elements/conditional-blocks";
 import { CalendarStaticBlocks } from "./domain-static-elements/calendar-blocks";
 import { TimeAndDateStaticBlocks } from "./domain-static-elements/time-date-block";
+import { ChecksExpectedValuesBlocks } from "./domain-static-elements/checks-expected-block";
 
 import { SmartObject as SmartObjectVPLElem } from "./domain-elems/smart-object";
 import { SmartObject as SmartObjectConf } from "./editor-configs/smart-object";
@@ -28,6 +29,9 @@ import { CalendarTask as CalendarTaskVPLElem } from "./domain-elems/calendar-tas
 import { BlocklyCalendar as BlocklyCalendarConf } from "./editor-configs/blockly-calendar";
 import { BlocklyCalendar as BlocklyCalendarPI } from "./project-items/blockly-calendar/blockly-calendar";
 
+import { ActionImplementationDebug as ActionImplementationDebugConf } from "./editor-configs/action-implementation";
+import { ChecksExpectedValues as ChecksExpectedValuesConf } from "./editor-configs/checks-expected-values";
+
 let predefinedCategories = getPredefinedCategories();
 // domain author is able to edit them...
 defineGeneralCategories(predefinedCategories);
@@ -39,12 +43,13 @@ export function InitializeVPDL() {
       SmartGroupVPLElem,
       AutomationTaskVPLElem,
       ConditionalTaskVPLElem,
-      CalendarTaskVPLElem
+      CalendarTaskVPLElem,
     ],
     domainStaticElements: [
       ConditionalStaticBlocks,
       CalendarStaticBlocks,
       TimeAndDateStaticBlocks,
+      ChecksExpectedValuesBlocks,
     ],
     editorConfigs: [
       SmartObjectConf,
@@ -52,6 +57,8 @@ export function InitializeVPDL() {
       AutomationTaskConf,
       BlocklyConditionalConf,
       BlocklyCalendarConf,
+      ActionImplementationDebugConf,
+      ChecksExpectedValuesConf,
     ],
     projectItems: [
       SmartObjectPI,
