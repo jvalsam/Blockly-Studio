@@ -272,13 +272,33 @@ export class CollaborationManager extends IDEUIComponent {
             label: "Make Suggestion",
             icon: "../../../../../../images/collaboration/send.png",
             action: () => {
-                openSuggestionDialogue(this, )
+                openSuggestionDialogue(this, pitem.systemID)
                 // First argument (this)
                 // Something like this openJoinSessionDialogue()
             }
         });
         
         return opts;
+    }
+
+    public openPItemOnDialogue(selector, pItemID, isReplica, isEditable){
+        let pItem;
+        if(isReplica){
+            pItem = ComponentsCommunication.functionRequest(
+                this.name,
+                "ProjectManager",
+                "createReplicaOfPItemEditorsData",
+                [
+                    pItemID
+                ]).value;
+        }else {
+            pItem = this.getPItem(pItemID);
+        }
+        // openPItemOnDialogue(pitem, dialogue);
+    }
+
+    public saveNewSuggestion(pitemID, newSource){
+        
     }
 
     private toolsFiltering(pitem){

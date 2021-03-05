@@ -65,11 +65,15 @@ $(document).ready(() => {
     $('body').append($suggestionContainer);
 });
 
-export function openSuggestionDialogue(collabPlugin) {
+export function openSuggestionDialogue(collabPlugin, pitemID) {
     $suggestionContainer.empty();
-    new AuthorSuggestionPopup(
+    let popup = new AuthorSuggestionPopup(
         $suggestionContainer, 
-        'fileName',
+        pitemID,
+        (popup) => {
+            collabPlugin.openPItemOnDialogue(popup.getLeftContainerSelector(), pitemID, false, false);
+            collabPlugin.openPItemOnDialogue(popup.getRightContainerSelector(), pitemID, true, true);
+        }
     );
 }
 

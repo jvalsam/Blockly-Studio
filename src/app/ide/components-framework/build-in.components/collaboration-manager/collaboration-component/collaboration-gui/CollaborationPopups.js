@@ -519,7 +519,7 @@ class JoinPopup extends CollaborationPopup{
 
 class SuggestionPopup extends CollaborationPopup{
 
-    constructor(container, fileName, comment, buttonNames){
+    constructor(container, fileName, comment, buttonNames, cb){
         super(container, `Suggestion - ${fileName}`);
 
         this._onYesCb = () => {};
@@ -535,11 +535,11 @@ class SuggestionPopup extends CollaborationPopup{
                         </div>\
                         <div class="suggestion-annotation-x"> </div>\
                     </div>\
-                    <div class="suggestion-vpl-editor suggestion-vpl-editor-left">\
+                    <div id = "suggestion-left-editor" class="suggestion-vpl-editor suggestion-vpl-editor-left">\
                     </div>\
                 </div>\
                 <div class="suggestion-editor-area">\
-                    <div class="suggestion-vpl-editor suggestion-vpl-editor-right">\
+                    <div id = "suggestion-right-editor" class="suggestion-vpl-editor suggestion-vpl-editor-right">\
                     </div>\
                 </div>\
             </div>\
@@ -573,29 +573,32 @@ class SuggestionPopup extends CollaborationPopup{
             </div>\
         </div>`;
 
-        this._contentContainer.append(html);
+        this._contentContainer.append(html).ready( () => {
+            let arrow_rotation = 0;
+            $(".suggestion-comment-title").click( () => {
+                $(".suggestion-comment-content").toggle();
+                arrow_rotation = arrow_rotation == 0 ? -90 : 0;
+                $(".suggestion-arrow").css('transform', `rotate(${arrow_rotation}deg)`);
+            });
+
+            $(".suggestion-accept").click(() => {
+                this._onYesCb();
+                this.closePopup();
+            });
+
+            $(".suggestion-reject").click(() => {
+                this._onNoCb();
+                this.closePopup();
+            });
+
+            $(".suggestion-annotation-warning").hide();
+            $(".suggestion-annotation-x").click(function(){
+                $(this).parent().hide();
+            });
+
+            cb(this);
+        });
         
-        let arrow_rotation = 0;
-        $(".suggestion-comment-title").click( () => {
-            $(".suggestion-comment-content").toggle();
-            arrow_rotation = arrow_rotation == 0 ? -90 : 0;
-            $(".suggestion-arrow").css('transform', `rotate(${arrow_rotation}deg)`);
-        });
-
-        $(".suggestion-accept").click(() => {
-            this._onYesCb();
-            this.closePopup();
-        });
-
-        $(".suggestion-reject").click(() => {
-            this._onNoCb();
-            this.closePopup();
-        });
-
-        $(".suggestion-annotation-warning").hide();
-        $(".suggestion-annotation-x").click(function(){
-            $(this).parent().hide();
-        });
     }
 
     setOnYesCb(cb){
@@ -610,18 +613,18 @@ class SuggestionPopup extends CollaborationPopup{
         $(".suggestion-annotation-warning").show();
     }
 
-    getLeftContainer(){
-        return $(".suggestion-vpl-editor-left");
+    getLeftContainerSelector(){
+        return "#suggestion-left-editor";
     }
 
-    getRightContainer(){
-        return $(".suggestion-vpl-editor-right");
+    getRightContainerSelector(){
+        return "#suggestion-right-editor";
     }
 }
 
 class AuthorSuggestionPopup extends SuggestionPopup {
-    constructor(container, fileName){
-        super(container, fileName, {readonly: false, text: ''}, {yes: 'Send', no: 'Cancel'});
+    constructor(container, fileName, cb){
+        super(container, fileName, {readonly: false, text: ''}, {yes: 'Send', no: 'Cancel'}, cb);
     }
 }
 
