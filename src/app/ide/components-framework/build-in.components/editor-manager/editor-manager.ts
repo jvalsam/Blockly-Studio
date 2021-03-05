@@ -440,9 +440,11 @@ export class EditorManager extends IDEUIComponent {
         // TODO: for dynamic templates add load pitem-view from the DB.
         // Save the tmpl on dynamicTmpl property of the project item
 
+        let selector = null;
+
         this.closePItem(pitemArea);
-        
-        let selector = ".pitem-editors-area-" + pitemArea;
+            
+        selector = ".pitem-editors-area-" + pitemArea;
 
         // TODO: reuse map{this.projectItemsMap}, not create instance again...
         const pitemView: PItemView = <PItemView>ViewRegistry
