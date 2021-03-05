@@ -1784,7 +1784,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public createReplicaOfPItemEditorsData (pitemId: string): any {
+    public createReplicaOfPItemEditorsData (pitemId: string): ProjectItem {
         return this.getProjectItem(pitemId).createReplica();
     }
 

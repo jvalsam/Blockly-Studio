@@ -551,20 +551,19 @@ export class EditorManager extends IDEUIComponent {
             let confName = item.confName;
             let econfig = pitemData.editorConfigs[confName][0];
 
-            let args = [
-                item,
-                pitemView,
-                this.convertEconf(confName),
-                // deactivate caching data mechanism of the VPL Editor
-                project.saveMode !== "COLLAB_DEBUG" 
-            ];
-
             ComponentsCommunication.functionRequest(
                 this.name,
                 econfig.name,
                 "openInDialogue",
-                args
-            );
+                [
+                    item,
+                    pitemView,
+                    this.convertEconf(confName),
+                    selector,
+                    isEditable ? "EDITING" : "READ_ONLY",
+                    "BlocklyStudioIDE"
+                ]);
+
             pitemView.addEditor(item.editorId, econfig.name);
         }
     }

@@ -181,11 +181,13 @@ export class BlocklyVPL extends Editor {
     privileges: string, // "READ_ONLY" or "EDITING"
     windowsId: string
   ): void {
-    if (!this.instancesMap[editorData.editorId])
-      this.instancesMap[editorData.editorId] = new BlocklyInstance(
+    let editorId = editorData.editorId + "_dialogue";
+
+    if (!this.instancesMap[editorId])
+      this.instancesMap[editorId] = new BlocklyInstance(
         this,
         pitem,
-        editorData.editorId,
+        editorId,
         selector, // selector has to be unique (injected in DOM, not in pitem template)
         config,
         this.configsMap[config],
@@ -198,9 +200,9 @@ export class BlocklyVPL extends Editor {
         editorData.zIndex,
         windowsId
       );
-    this.instancesMap[editorData.editorId]["__editorData"] = editorData;
+    this.instancesMap[editorId]["__editorData"] = editorData;
 
-    this.instancesMap[editorData.editorId].open();
+    this.instancesMap[editorId].open();
   }
 
   @ExportedFunction

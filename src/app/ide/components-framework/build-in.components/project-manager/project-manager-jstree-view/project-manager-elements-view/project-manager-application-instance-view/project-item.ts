@@ -26,7 +26,7 @@ export class ProjectItem extends ProjectElement {
         return this._componentsData;
     }
 
-    public createReplica(): any {
+    public createReplica(): ProjectItem {
         return new ProjectItem(
             JSON.parse(JSON.stringify(this._jstreeNode)),
             this._category,
