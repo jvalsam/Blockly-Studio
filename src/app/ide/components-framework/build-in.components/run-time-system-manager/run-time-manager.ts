@@ -242,9 +242,9 @@ export class RuntimeManager extends IDEUIComponent {
         ).value;
 
         this._environmentData = {
-            execType: RuntimeManager.getMode(),
-            domainType: appData.domain,
-            execData: appData
+          execType: RuntimeManager.getMode(),
+          domainType: appData.domain,
+          execData: appData,
         };
     }
 

@@ -38,99 +38,185 @@ export const ConditionalStaticBlocks = [
         this.setHelpUrl("");
         this.setCommentText("");
       },
-    }),
-    codeGen: () =>
-      function (block) {
-        var value_condition = Blockly.JavaScript.valueToCode(
-          block,
-          "condition",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    }), 
+    codeGen: (block) => {
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "condition",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statements = Blockly.JavaScript.statementToCode(
-          block,
-          "statements"
-        );
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "statements"
+      );
 
-        let whenCondID = CreateWhenID();
+      let whenCondID = CreateWhenID();
 
-        // whenCondData.push({
-        //   key: whenCondID,
-        //   func: () => {
-        //     if (value_condition) {
-        //       let removedindex = whenCondData.findIndex(
-        //         (x) => x.key === whenCondID
-        //       );
-        //       whenCondData.splice(removedindex, 1);
-        //       try {
-        //         statements_statements;
-        //       } catch (e) {
-        //         return;
-        //       }
-        //     }
-        //   },
-        // });
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   func: () => {
+      //     if (value_condition) {
+      //       let removedindex = whenCondData.findIndex(
+      //         (x) => x.key === whenCondID
+      //       );
+      //       whenCondData.splice(removedindex, 1);
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         return;
+      //       }
+      //     }
+      //   },
+      // });
 
-        if (value_condition === "") {
-          let code = "";
-          return code;
-        }
-
-        let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("When Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Starts, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "whenCondData.push({";
-        strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "func: async () => {";
-        strBuilder += "if (" + value_condition + ") {";
-        strBuilder += "let removedindex = whenCondData.findIndex(";
-        strBuilder += "(x) => x.key === " + whenCondID + "";
-        strBuilder += ");";
-        strBuilder += "whenCondData.splice(removedindex, 1);";
-        strBuilder += "try {";
-        strBuilder += statements_statements;
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("When Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Ends, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "} catch (e) {";
-        strBuilder += "return;";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder += "},";
-        strBuilder += "});";
-        strBuilder += "})()";
-
-        var code = strBuilder + "\n";
+      if (value_condition === "") {
+        let code = "";
         return code;
-      },
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "func: async () => {";
+      strBuilder += "if (" + value_condition + ") {";
+      strBuilder += "let removedindex = whenCondData.findIndex(";
+      strBuilder += "(x) => x.key === " + whenCondID + "";
+      strBuilder += ");";
+      strBuilder += "whenCondData.splice(removedindex, 1);";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "return;";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "condition",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "statements"
+      );
+
+      let whenCondID = CreateWhenID();
+
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   func: () => {
+      //     if (value_condition) {
+      //       let removedindex = whenCondData.findIndex(
+      //         (x) => x.key === whenCondID
+      //       );
+      //       whenCondData.splice(removedindex, 1);
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         return;
+      //       }
+      //     }
+      //   },
+      // });
+
+      if (value_condition === "") {
+        let code = "";
+        return code;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "func: async () => {";
+      strBuilder += "if (" + value_condition + ") {";
+      strBuilder += "let removedindex = whenCondData.findIndex(";
+      strBuilder += "(x) => x.key === " + whenCondID + "";
+      strBuilder += ");";
+      strBuilder += "whenCondData.splice(removedindex, 1);";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "return;";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "conditional_when_top_bottom",
@@ -155,99 +241,184 @@ export const ConditionalStaticBlocks = [
         this.setCommentText("When Statement Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_condition = Blockly.JavaScript.valueToCode(
-          block,
-          "condition",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "condition",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statements = Blockly.JavaScript.statementToCode(
-          block,
-          "statements"
-        );
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "statements"
+      );
 
-        let whenCondID = CreateWhenID();
+      let whenCondID = CreateWhenID();
 
-        // whenCondData.push({
-        //   key: whenCondID,
-        //   func: () => {
-        //     if (value_condition) {
-        //       let removedindex = whenCondData.findIndex(
-        //         (x) => x.key === whenCondID
-        //       );
-        //       whenCondData.splice(removedindex, 1);
-        //       try {
-        //         statements_statements;
-        //       } catch (e) {
-        //         return;
-        //       }
-        //     }
-        //   },
-        // });
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   func: () => {
+      //     if (value_condition) {
+      //       let removedindex = whenCondData.findIndex(
+      //         (x) => x.key === whenCondID
+      //       );
+      //       whenCondData.splice(removedindex, 1);
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         return;
+      //       }
+      //     }
+      //   },
+      // });
 
-        if (value_condition === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_condition === "") {
         let strBuilder = "";
-        strBuilder += " (function () {";
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("When Statement Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Starts, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "whenCondData.push({";
-        strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "func: async () => {";
-        strBuilder += "if (" + value_condition + ") {";
-        strBuilder += "let removedindex = whenCondData.findIndex(";
-        strBuilder += "(x) => x.key === " + whenCondID + "";
-        strBuilder += ");";
-        strBuilder += "whenCondData.splice(removedindex, 1);";
-        strBuilder += "try {";
-        strBuilder += statements_statements;
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("When Statement Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Ends, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
+        return strBuilder;
+      }
 
-        strBuilder += "} catch (e) {";
-        strBuilder += "return;";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder += "},";
-        strBuilder += "});";
-        strBuilder += "})()";
+      let strBuilder = "";
+      strBuilder += " (function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "func: async () => {";
+      strBuilder += "if (" + value_condition + ") {";
+      strBuilder += "let removedindex = whenCondData.findIndex(";
+      strBuilder += "(x) => x.key === " + whenCondID + "";
+      strBuilder += ");";
+      strBuilder += "whenCondData.splice(removedindex, 1);";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "return;";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "condition",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "statements"
+      );
+
+      let whenCondID = CreateWhenID();
+
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   func: () => {
+      //     if (value_condition) {
+      //       let removedindex = whenCondData.findIndex(
+      //         (x) => x.key === whenCondID
+      //       );
+      //       whenCondData.splice(removedindex, 1);
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         return;
+      //       }
+      //     }
+      //   },
+      // });
+
+      if (value_condition === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += " (function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "func: async () => {";
+      strBuilder += "if (" + value_condition + ") {";
+      strBuilder += "let removedindex = whenCondData.findIndex(";
+      strBuilder += "(x) => x.key === " + whenCondID + "";
+      strBuilder += ");";
+      strBuilder += "whenCondData.splice(removedindex, 1);";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "return;";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "when_times",
@@ -274,136 +445,258 @@ export const ConditionalStaticBlocks = [
         this.setCommentText("When Times Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var number_times = block.getFieldValue("TIMES");
+    codeGen: (block) => {
+      var number_times = block.getFieldValue("TIMES");
 
-        var value_condition = Blockly.JavaScript.valueToCode(
-          block,
-          "CONDITION",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statements = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENTS"
-        );
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
 
-        let whenCondID = CreateWhenID();
+      let whenCondID = CreateWhenID();
 
-        // whenCondData.push({
-        //   key: whenCondID,
-        //   triggerFlag: false,
-        //   totalTimes: number_times,
-        //   triggerTimes: 0,
-        //   func: () => {
-        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
-        //     if (value_condition && !whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = true;
-        //       whenCondData[index].triggerTimes++;
-        //       if (
-        //         whenCondData[index].triggerTimes ===
-        //         whenCondData[index].totalTimes
-        //       ) {
-        //         whenCondData.splice(index, 1);
-        //       }
-        //       try {
-        //         statements_statements;
-        //       } catch (e) {
-        //         if (e === "break") {
-        //           whenCondData.splice(index, 1);
-        //           return;
-        //         } else if (e === "continue") {
-        //         }
-        //       }
-        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = false;
-        //     }
-        //   },
-        // });
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   totalTimes: number_times,
+      //   triggerTimes: 0,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       whenCondData[index].triggerTimes++;
+      //       if (
+      //         whenCondData[index].triggerTimes ===
+      //         whenCondData[index].totalTimes
+      //       ) {
+      //         whenCondData.splice(index, 1);
+      //       }
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           whenCondData.splice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
 
-        if (value_condition === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_condition === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("When Times Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Starts, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "whenCondData.push({";
-        strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "triggerFlag: false,";
-        strBuilder += "totalTimes: " + number_times + ",";
-        strBuilder += "triggerTimes: 0,";
-        strBuilder += "func: async () => {";
-        strBuilder +=
-          "let index = whenCondData.findIndex((x) => x.key === " +
-          whenCondID +
-          ");";
-        strBuilder +=
-          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = true;";
-        strBuilder += "whenCondData[index].triggerTimes++;";
-        strBuilder += "if (";
-        strBuilder += "whenCondData[index].triggerTimes ===";
-        strBuilder += "whenCondData[index].totalTimes";
-        strBuilder += ") {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "}";
-        strBuilder += "try {";
-        strBuilder += statements_statements;
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("When Times Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Ends, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
+        return strBuilder;
+      }
 
-        strBuilder += "} catch (e) {";
-        strBuilder += "if (e === 'break') {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "return;";
-        strBuilder += "} else if (e === 'continue') {";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder +=
-          "} else if (!" +
-          value_condition +
-          " && whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = false;";
-        strBuilder += "}";
-        strBuilder += "},";
-        strBuilder += "});";
-        strBuilder += "})()";
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Times Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "totalTimes: " + number_times + ",";
+      strBuilder += "triggerTimes: 0,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "whenCondData[index].triggerTimes++;";
+      strBuilder += "if (";
+      strBuilder += "whenCondData[index].triggerTimes ===";
+      strBuilder += "whenCondData[index].totalTimes";
+      strBuilder += ") {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "}";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Times Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var number_times = block.getFieldValue("TIMES");
+
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
+
+      let whenCondID = CreateWhenID();
+
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   totalTimes: number_times,
+      //   triggerTimes: 0,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       whenCondData[index].triggerTimes++;
+      //       if (
+      //         whenCondData[index].triggerTimes ===
+      //         whenCondData[index].totalTimes
+      //       ) {
+      //         whenCondData.splice(index, 1);
+      //       }
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           whenCondData.splice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
+
+      if (value_condition === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Times Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "totalTimes: " + number_times + ",";
+      strBuilder += "triggerTimes: 0,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "whenCondData[index].triggerTimes++;";
+      strBuilder += "if (";
+      strBuilder += "whenCondData[index].triggerTimes ===";
+      strBuilder += "whenCondData[index].totalTimes";
+      strBuilder += ") {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "}";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Times Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "when_times_top_bottom",
@@ -432,135 +725,258 @@ export const ConditionalStaticBlocks = [
         this.setCommentText("When Times Statement Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var number_times = block.getFieldValue("TIMES");
+    codeGen: (block) => {
+      var number_times = block.getFieldValue("TIMES");
 
-        var value_condition = Blockly.JavaScript.valueToCode(
-          block,
-          "CONDITION",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statements = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENTS"
-        );
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
 
-        let whenCondID = CreateWhenID();
+      let whenCondID = CreateWhenID();
 
-        // whenCondData.push({
-        //   key: whenCondID,
-        //   triggerFlag: false,
-        //   totalTimes: number_times,
-        //   triggerTimes: 0,
-        //   func: () => {
-        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
-        //     if (value_condition && !whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = true;
-        //       whenCondData[index].triggerTimes++;
-        //       if (
-        //         whenCondData[index].triggerTimes ===
-        //         whenCondData[index].totalTimes
-        //       ) {
-        //         whenCondData.splice(index, 1);
-        //       }
-        //       try {
-        //         statements_statements;
-        //       } catch (e) {
-        //         if (e === "break") {
-        //           whenCondData.splice(index, 1);
-        //           return;
-        //         } else if (e === "continue") {
-        //         }
-        //       }
-        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = false;
-        //     }
-        //   },
-        // });
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   totalTimes: number_times,
+      //   triggerTimes: 0,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       whenCondData[index].triggerTimes++;
+      //       if (
+      //         whenCondData[index].triggerTimes ===
+      //         whenCondData[index].totalTimes
+      //       ) {
+      //         whenCondData.splice(index, 1);
+      //       }
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           whenCondData.splice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
 
-        if (value_condition === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_condition === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("When Times Statement Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Starts, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "whenCondData.push({";
-        strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "triggerFlag: false,";
-        strBuilder += "totalTimes: " + number_times + ",";
-        strBuilder += "triggerTimes: 0,";
-        strBuilder += "func: async () => {";
-        strBuilder +=
-          "let index = whenCondData.findIndex((x) => x.key === " +
-          whenCondID +
-          ");";
-        strBuilder +=
-          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = true;";
-        strBuilder += "whenCondData[index].triggerTimes++;";
-        strBuilder += "if (";
-        strBuilder += "whenCondData[index].triggerTimes ===";
-        strBuilder += "whenCondData[index].totalTimes";
-        strBuilder += ") {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "}";
-        strBuilder += "try {";
-        strBuilder += statements_statements;
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("When Times Statement Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Ends, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "} catch (e) {";
-        strBuilder += "if (e === 'break') {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "return;";
-        strBuilder += "} else if (e === 'continue') {";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder +=
-          "} else if (!" +
-          value_condition +
-          " && whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = false;";
-        strBuilder += "}";
-        strBuilder += "},";
-        strBuilder += "});";
-        strBuilder += "})()";
+        return strBuilder;
+      }
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Times Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "totalTimes: " + number_times + ",";
+      strBuilder += "triggerTimes: 0,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "whenCondData[index].triggerTimes++;";
+      strBuilder += "if (";
+      strBuilder += "whenCondData[index].triggerTimes ===";
+      strBuilder += "whenCondData[index].totalTimes";
+      strBuilder += ") {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "}";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Times Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var number_times = block.getFieldValue("TIMES");
+
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
+
+      let whenCondID = CreateWhenID();
+
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   totalTimes: number_times,
+      //   triggerTimes: 0,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       whenCondData[index].triggerTimes++;
+      //       if (
+      //         whenCondData[index].triggerTimes ===
+      //         whenCondData[index].totalTimes
+      //       ) {
+      //         whenCondData.splice(index, 1);
+      //       }
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           whenCondData.splice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
+
+      if (value_condition === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Times Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "totalTimes: " + number_times + ",";
+      strBuilder += "triggerTimes: 0,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "whenCondData[index].triggerTimes++;";
+      strBuilder += "if (";
+      strBuilder += "whenCondData[index].triggerTimes ===";
+      strBuilder += "whenCondData[index].totalTimes";
+      strBuilder += ") {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "}";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("When Times Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "when_after",
@@ -587,135 +1003,258 @@ export const ConditionalStaticBlocks = [
         this.setCommentText("After Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var number_times = block.getFieldValue("TIMES");
+    codeGen: (block) => {
+      var number_times = block.getFieldValue("TIMES");
 
-        var value_condition = Blockly.JavaScript.valueToCode(
-          block,
-          "CONDITION",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statements = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENTS"
-        );
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
 
-        let whenCondID = CreateWhenID();
+      let whenCondID = CreateWhenID();
 
-        // whenCondData.push({
-        //   key: whenCondID,
-        //   triggerFlag: false,
-        //   afterTimes: number_times,
-        //   triggerTimes: 0,
-        //   func: () => {
-        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
-        //     if (value_condition && !whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = true;
-        //       whenCondData[index].triggerTimes++;
-        //       if (
-        //         whenCondData[index].triggerTimes ===
-        //         whenCondData[index].afterTimes
-        //       ) {
-        //         whenCondData.splice(index, 1);
-        //         try {
-        //           statements_statements;
-        //         } catch (e) {
-        //           if (e === "break") {
-        //             whenCondData.splice(index, 1);
-        //             return;
-        //           } else if (e === "continue") {
-        //           }
-        //         }
-        //       }
-        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = false;
-        //     }
-        //   },
-        // });
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   afterTimes: number_times,
+      //   triggerTimes: 0,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       whenCondData[index].triggerTimes++;
+      //       if (
+      //         whenCondData[index].triggerTimes ===
+      //         whenCondData[index].afterTimes
+      //       ) {
+      //         whenCondData.splice(index, 1);
+      //         try {
+      //           statements_statements;
+      //         } catch (e) {
+      //           if (e === "break") {
+      //             whenCondData.splice(index, 1);
+      //             return;
+      //           } else if (e === "continue") {
+      //           }
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
 
-        if (value_condition === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_condition === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("After Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Starts, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "whenCondData.push({";
-        strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "triggerFlag: false,";
-        strBuilder += "afterTimes: " + number_times + ",";
-        strBuilder += "triggerTimes: 0,";
-        strBuilder += "func: async () => {";
-        strBuilder +=
-          "let index = whenCondData.findIndex((x) => x.key === " +
-          whenCondID +
-          ");";
-        strBuilder +=
-          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = true;";
-        strBuilder += "whenCondData[index].triggerTimes++;";
-        strBuilder += "if (";
-        strBuilder += "whenCondData[index].triggerTimes ===";
-        strBuilder += "whenCondData[index].afterTimes";
-        strBuilder += ") {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "try {";
-        strBuilder += statements_statements;
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("After Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Ends, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "} catch (e) {";
-        strBuilder += "if (e === 'break') {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "return;";
-        strBuilder += "} else if (e === 'continue') {";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder +=
-          "} else if (!" +
-          value_condition +
-          " && whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = false;";
-        strBuilder += "}";
-        strBuilder += "},";
-        strBuilder += "});";
-        strBuilder += "})()";
+        return strBuilder;
+      }
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("After Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "afterTimes: " + number_times + ",";
+      strBuilder += "triggerTimes: 0,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "whenCondData[index].triggerTimes++;";
+      strBuilder += "if (";
+      strBuilder += "whenCondData[index].triggerTimes ===";
+      strBuilder += "whenCondData[index].afterTimes";
+      strBuilder += ") {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("After Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var number_times = block.getFieldValue("TIMES");
+
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
+
+      let whenCondID = CreateWhenID();
+
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   afterTimes: number_times,
+      //   triggerTimes: 0,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       whenCondData[index].triggerTimes++;
+      //       if (
+      //         whenCondData[index].triggerTimes ===
+      //         whenCondData[index].afterTimes
+      //       ) {
+      //         whenCondData.splice(index, 1);
+      //         try {
+      //           statements_statements;
+      //         } catch (e) {
+      //           if (e === "break") {
+      //             whenCondData.splice(index, 1);
+      //             return;
+      //           } else if (e === "continue") {
+      //           }
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
+
+      if (value_condition === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("After Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "afterTimes: " + number_times + ",";
+      strBuilder += "triggerTimes: 0,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "whenCondData[index].triggerTimes++;";
+      strBuilder += "if (";
+      strBuilder += "whenCondData[index].triggerTimes ===";
+      strBuilder += "whenCondData[index].afterTimes";
+      strBuilder += ") {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("After Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "when_after_top_bottom",
@@ -744,135 +1283,258 @@ export const ConditionalStaticBlocks = [
         this.setCommentText("After Statement Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var number_times = block.getFieldValue("TIMES");
+    codeGen: (block) => {
+      var number_times = block.getFieldValue("TIMES");
 
-        var value_condition = Blockly.JavaScript.valueToCode(
-          block,
-          "CONDITION",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statements = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENTS"
-        );
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
 
-        let whenCondID = CreateWhenID();
+      let whenCondID = CreateWhenID();
 
-        // whenCondData.push({
-        //   key: whenCondID,
-        //   triggerFlag: false,
-        //   afterTimes: number_times,
-        //   triggerTimes: 0,
-        //   func: () => {
-        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
-        //     if (value_condition && !whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = true;
-        //       whenCondData[index].triggerTimes++;
-        //       if (
-        //         whenCondData[index].triggerTimes ===
-        //         whenCondData[index].afterTimes
-        //       ) {
-        //         whenCondData.splice(index, 1);
-        //         try {
-        //           statements_statements;
-        //         } catch (e) {
-        //           if (e === "break") {
-        //             whenCondData.splice(index, 1);
-        //             return;
-        //           } else if (e === "continue") {
-        //           }
-        //         }
-        //       }
-        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = false;
-        //     }
-        //   },
-        // });
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   afterTimes: number_times,
+      //   triggerTimes: 0,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       whenCondData[index].triggerTimes++;
+      //       if (
+      //         whenCondData[index].triggerTimes ===
+      //         whenCondData[index].afterTimes
+      //       ) {
+      //         whenCondData.splice(index, 1);
+      //         try {
+      //           statements_statements;
+      //         } catch (e) {
+      //           if (e === "break") {
+      //             whenCondData.splice(index, 1);
+      //             return;
+      //           } else if (e === "continue") {
+      //           }
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
 
-        if (value_condition === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_condition === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("After Statement Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Starts, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "whenCondData.push({";
-        strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "triggerFlag: false,";
-        strBuilder += "afterTimes: " + number_times + ",";
-        strBuilder += "triggerTimes: 0,";
-        strBuilder += "func: async () => {";
-        strBuilder +=
-          "let index = whenCondData.findIndex((x) => x.key === " +
-          whenCondID +
-          ");";
-        strBuilder +=
-          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = true;";
-        strBuilder += "whenCondData[index].triggerTimes++;";
-        strBuilder += "if (";
-        strBuilder += "whenCondData[index].triggerTimes ===";
-        strBuilder += "whenCondData[index].afterTimes";
-        strBuilder += ") {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "try {";
-        strBuilder += statements_statements;
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("After Statement Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Ends, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "} catch (e) {";
-        strBuilder += "if (e === 'break') {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "return;";
-        strBuilder += "} else if (e === 'continue') {";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder +=
-          "} else if (!" +
-          value_condition +
-          " && whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = false;";
-        strBuilder += "}";
-        strBuilder += "},";
-        strBuilder += "});";
-        strBuilder += "})()";
+        return strBuilder;
+      }
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("After Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "afterTimes: " + number_times + ",";
+      strBuilder += "triggerTimes: 0,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "whenCondData[index].triggerTimes++;";
+      strBuilder += "if (";
+      strBuilder += "whenCondData[index].triggerTimes ===";
+      strBuilder += "whenCondData[index].afterTimes";
+      strBuilder += ") {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("After Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var number_times = block.getFieldValue("TIMES");
+
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
+
+      let whenCondID = CreateWhenID();
+
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   afterTimes: number_times,
+      //   triggerTimes: 0,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       whenCondData[index].triggerTimes++;
+      //       if (
+      //         whenCondData[index].triggerTimes ===
+      //         whenCondData[index].afterTimes
+      //       ) {
+      //         whenCondData.splice(index, 1);
+      //         try {
+      //           statements_statements;
+      //         } catch (e) {
+      //           if (e === "break") {
+      //             whenCondData.splice(index, 1);
+      //             return;
+      //           } else if (e === "continue") {
+      //           }
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
+
+      if (value_condition === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("After Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "afterTimes: " + number_times + ",";
+      strBuilder += "triggerTimes: 0,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "whenCondData[index].triggerTimes++;";
+      strBuilder += "if (";
+      strBuilder += "whenCondData[index].triggerTimes ===";
+      strBuilder += "whenCondData[index].afterTimes";
+      strBuilder += ") {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("After Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "when_forever",
@@ -895,115 +1557,218 @@ export const ConditionalStaticBlocks = [
         this.setCommentText("Forever Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_condition = Blockly.JavaScript.valueToCode(
-          block,
-          "CONDITION",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statements = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENTS"
-        );
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
 
-        let whenCondID = CreateWhenID();
+      let whenCondID = CreateWhenID();
 
-        // whenCondData.push({
-        //   key: whenCondID,
-        //   triggerFlag: false,
-        //   func: () => {
-        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
-        //     if (value_condition && !whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = true;
-        //       try {
-        //         statements_statements;
-        //       } catch (e) {
-        //         if (e === "break") {
-        //           whenCondData.splice(index, 1);
-        //           return;
-        //         } else if (e === "continue") {
-        //         }
-        //       }
-        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = false;
-        //     }
-        //   },
-        // });
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           whenCondData.splice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
 
-        if (value_condition === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_condition === "") {
         let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("Forever Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Starts, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "whenCondData.push({";
-        strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "triggerFlag: false,";
-        strBuilder += "func: async () => {";
-        strBuilder +=
-          "let index = whenCondData.findIndex((x) => x.key === " +
-          whenCondID +
-          ");";
-        strBuilder +=
-          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = true;";
-        strBuilder += "try {";
-        strBuilder += statements_statements;
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("Forever Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Ends, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "} catch (e) {";
-        strBuilder += "if (e === 'break') {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "return;";
-        strBuilder += "} else if (e === 'continue') {";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder +=
-          "} else if (!" +
-          value_condition +
-          " && whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = false;";
-        strBuilder += "}";
-        strBuilder += "},";
-        strBuilder += "});";
-        strBuilder += "})()";
+        return strBuilder;
+      }
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("Forever Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("Forever Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
+
+      let whenCondID = CreateWhenID();
+
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           whenCondData.splice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
+
+      if (value_condition === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("Forever Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("Forever Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "when_forever_top_bottom",
@@ -1028,115 +1793,218 @@ export const ConditionalStaticBlocks = [
         this.setCommentText("Forever Statement Block");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_condition = Blockly.JavaScript.valueToCode(
-          block,
-          "CONDITION",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var statements_statements = Blockly.JavaScript.statementToCode(
-          block,
-          "STATEMENTS"
-        );
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
 
-        let whenCondID = CreateWhenID();
+      let whenCondID = CreateWhenID();
 
-        // whenCondData.push({
-        //   key: whenCondID,
-        //   triggerFlag: false,
-        //   func: () => {
-        //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
-        //     if (value_condition && !whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = true;
-        //       try {
-        //         statements_statements;
-        //       } catch (e) {
-        //         if (e === "break") {
-        //           whenCondData.splice(index, 1);
-        //           return;
-        //         } else if (e === "continue") {
-        //         }
-        //       }
-        //     } else if (!value_condition && whenCondData[index].triggerFlag) {
-        //       whenCondData[index].triggerFlag = false;
-        //     }
-        //   },
-        // });
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           whenCondData.splice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
 
-        if (value_condition === "") {
-          let strBuilder = "";
-          return strBuilder;
-        }
-
+      if (value_condition === "") {
         let strBuilder = "";
-        strBuilder += "(function(){";
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("Forever Statement Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Starts, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "whenCondData.push({";
-        strBuilder += "key: " + whenCondID + ",";
-        strBuilder += "triggerFlag: false,";
-        strBuilder += "func: async () => {";
-        strBuilder +=
-          "let index = whenCondData.findIndex((x) => x.key === " +
-          whenCondID +
-          ");";
-        strBuilder +=
-          "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = true;";
-        strBuilder += "try {";
-        strBuilder += statements_statements;
-        strBuilder += "if (" + (block.getCommentText() !== "") + ")";
-        strBuilder += "CreateStaticBubbleForLog(";
-        strBuilder += JSON.stringify("Forever Statement Block") + ",";
-        strBuilder += JSON.stringify("#93a55b") + ",";
-        strBuilder +=
-          JSON.stringify("Status: Ends, Comment: ") +
-          "+" +
-          JSON.stringify("<b>" + block.getCommentText() + "</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "} catch (e) {";
-        strBuilder += "if (e === 'break') {";
-        strBuilder += "whenCondData.splice(index, 1);";
-        strBuilder += "return;";
-        strBuilder += "} else if (e === 'continue') {";
-        strBuilder += "}";
-        strBuilder += "}";
-        strBuilder +=
-          "} else if (!" +
-          value_condition +
-          " && whenCondData[index].triggerFlag) {";
-        strBuilder += "whenCondData[index].triggerFlag = false;";
-        strBuilder += "}";
-        strBuilder += "},";
-        strBuilder += "});";
-        strBuilder += "})()";
+        return strBuilder;
+      }
 
-        var code = strBuilder + "\n";
-        return code;
-      },
+      let strBuilder = "";
+      strBuilder += "(function(){";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("Forever Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("Forever Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
+    debugGen: (block) => {
+      var value_condition = Blockly.JavaScript.valueToCode(
+        block,
+        "CONDITION",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var statements_statements = Blockly.JavaScript.statementToCode(
+        block,
+        "STATEMENTS"
+      );
+
+      let whenCondID = CreateWhenID();
+
+      // whenCondData.push({
+      //   key: whenCondID,
+      //   triggerFlag: false,
+      //   func: () => {
+      //     let index = whenCondData.findIndex((x) => x.key === whenCondID);
+      //     if (value_condition && !whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = true;
+      //       try {
+      //         statements_statements;
+      //       } catch (e) {
+      //         if (e === "break") {
+      //           whenCondData.splice(index, 1);
+      //           return;
+      //         } else if (e === "continue") {
+      //         }
+      //       }
+      //     } else if (!value_condition && whenCondData[index].triggerFlag) {
+      //       whenCondData[index].triggerFlag = false;
+      //     }
+      //   },
+      // });
+
+      if (value_condition === "") {
+        let strBuilder = "";
+        return strBuilder;
+      }
+
+      let strBuilder = "";
+      strBuilder += "(function(){";
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("Forever Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Starts, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "whenCondData.push({";
+      strBuilder += "key: " + whenCondID + ",";
+      strBuilder += "triggerFlag: false,";
+      strBuilder += "func: async () => {";
+      strBuilder +=
+        "let index = whenCondData.findIndex((x) => x.key === " +
+        whenCondID +
+        ");";
+      strBuilder +=
+        "if (" + value_condition + " && !whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = true;";
+      strBuilder += "try {";
+      strBuilder += statements_statements;
+      strBuilder += "if (" + (block.getCommentText() !== "") + ")";
+      strBuilder += "CreateStaticBubbleForLog(";
+      strBuilder += JSON.stringify("Forever Statement Block") + ",";
+      strBuilder += JSON.stringify("#93a55b") + ",";
+      strBuilder +=
+        JSON.stringify("Status: Ends, Description: ") +
+        "+" +
+        JSON.stringify("<b>" + block.getCommentText() + "</b>") +
+        ",";
+      strBuilder += "() =>";
+      strBuilder += "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+      strBuilder += "projectElementId,";
+      strBuilder += JSON.stringify(block.id);
+      strBuilder += ")";
+      strBuilder += ");";
+      strBuilder += "} catch (e) {";
+      strBuilder += "if (e === 'break') {";
+      strBuilder += "whenCondData.splice(index, 1);";
+      strBuilder += "return;";
+      strBuilder += "} else if (e === 'continue') {";
+      strBuilder += "}";
+      strBuilder += "}";
+      strBuilder +=
+        "} else if (!" +
+        value_condition +
+        " && whenCondData[index].triggerFlag) {";
+      strBuilder += "whenCondData[index].triggerFlag = false;";
+      strBuilder += "}";
+      strBuilder += "},";
+      strBuilder += "});";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      return code;
+    },
   },
   {
     name: "break_continue_when",
@@ -1218,14 +2086,20 @@ export const ConditionalStaticBlocks = [
         this.setHelpUrl("");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var dropdown_action = block.getFieldValue("ACTION");
+    codeGen: (block) => {
+      var dropdown_action = block.getFieldValue("ACTION");
 
-        // TODO: Assemble JavaScript into code variable.
-        var code = "throw " + JSON.stringify(dropdown_action);
-        return code;
-      },
+      // TODO: Assemble JavaScript into code variable.
+      var code = "throw " + JSON.stringify(dropdown_action);
+      return code;
+    },
+    debugGen: (block) => {
+      var dropdown_action = block.getFieldValue("ACTION");
+
+      // TODO: Assemble JavaScript into code variable.
+      var code = "throw " + JSON.stringify(dropdown_action);
+      return code;
+    },
   },
   {
     name: "logical_operators",
@@ -1258,34 +2132,60 @@ export const ConditionalStaticBlocks = [
         this.setHelpUrl("");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_left = Blockly.JavaScript.valueToCode(
-          block,
-          "LEFT",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
-        var dropdown_operators = block.getFieldValue("OPERATORS");
-        var value_right = Blockly.JavaScript.valueToCode(
-          block,
-          "RIGHT",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_left = Blockly.JavaScript.valueToCode(
+        block,
+        "LEFT",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+      var dropdown_operators = block.getFieldValue("OPERATORS");
+      var value_right = Blockly.JavaScript.valueToCode(
+        block,
+        "RIGHT",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var code = "(function () {";
-        code +=
-          "return" +
-          value_left +
-          "" +
-          dropdown_operators +
-          "" +
-          value_right +
-          ";";
-        code += "})()";
+      var code = "(function () {";
+      code +=
+        "return" +
+        value_left +
+        "" +
+        dropdown_operators +
+        "" +
+        value_right +
+        ";";
+      code += "})()";
 
-        // TODO: Change ORDER_NONE to the correct strength.
-        return [code, Blockly.JavaScript.ORDER_NONE];
-      },
+      // TODO: Change ORDER_NONE to the correct strength.
+      return [code, Blockly.JavaScript.ORDER_NONE];
+    },
+    debugGen: (block) => {
+      var value_left = Blockly.JavaScript.valueToCode(
+        block,
+        "LEFT",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+      var dropdown_operators = block.getFieldValue("OPERATORS");
+      var value_right = Blockly.JavaScript.valueToCode(
+        block,
+        "RIGHT",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var code = "(function () {";
+      code +=
+        "return" +
+        value_left +
+        "" +
+        dropdown_operators +
+        "" +
+        value_right +
+        ";";
+      code += "})()";
+
+      // TODO: Change ORDER_NONE to the correct strength.
+      return [code, Blockly.JavaScript.ORDER_NONE];
+    },
   },
   {
     name: "relational_operators",
@@ -1320,68 +2220,127 @@ export const ConditionalStaticBlocks = [
         this.setHelpUrl("");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_left_value = Blockly.JavaScript.valueToCode(
-          block,
-          "left_value",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_left_value = Blockly.JavaScript.valueToCode(
+        block,
+        "left_value",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        var dropdown_operators = block.getFieldValue("OPERATORS");
+      var dropdown_operators = block.getFieldValue("OPERATORS");
 
-        var value_right_value = Blockly.JavaScript.valueToCode(
-          block,
-          "right_value",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+      var value_right_value = Blockly.JavaScript.valueToCode(
+        block,
+        "right_value",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        let leftEval = false;
-        let rightEval = false;
+      let leftEval = false;
+      let rightEval = false;
 
-        // Get children to check if any of the blocks is getter
-        let children = block.getChildren();
-        if (children.length !== 2) {
-          let code = "(function () {";
-          code +=
-            'throw {InvalidWsp: "Relational operator: Invalid left or right value"};';
-          code += "})()";
-          return code;
-        }
-        let blockLeftType = GetBlockTypeByBlockId(children[0].type);
-        let blockRightType = GetBlockTypeByBlockId(children[1].type);
-
-        // check if left or right value is needed eval
-        if (
-          blockLeftType &&
-          (blockLeftType === "getter" || blockLeftType === "getter_boolean")
-        )
-          leftEval = true;
-        if (
-          blockRightType &&
-          (blockRightType === "getter" || blockRightType === "getter_boolean")
-        )
-          rightEval = true;
-
-        var code = "";
-        code += "(function () { return ";
-
-        if (leftEval) code += "eval(" + JSON.stringify(value_left_value) + ")";
-        else code += value_left_value;
-
-        code += " " + dropdown_operators + " ";
-
-        if (rightEval)
-          code += "eval(" + JSON.stringify(value_right_value) + ")";
-        else code += value_right_value;
-
+      // Get children to check if any of the blocks is getter
+      let children = block.getChildren();
+      if (children.length !== 2) {
+        let code = "(function () {";
+        code +=
+          'throw {InvalidWsp: "Relational operator: Invalid left or right value"};';
         code += "})()";
+        return code;
+      }
+      let blockLeftType = GetBlockTypeByBlockId(children[0].type);
+      let blockRightType = GetBlockTypeByBlockId(children[1].type);
 
-        // var code = value_left_value + dropdown_operators + value_right_value;
+      // check if left or right value is needed eval
+      if (
+        blockLeftType &&
+        (blockLeftType === "getter" || blockLeftType === "getter_boolean")
+      )
+        leftEval = true;
+      if (
+        blockRightType &&
+        (blockRightType === "getter" || blockRightType === "getter_boolean")
+      )
+        rightEval = true;
 
-        // TODO: Change ORDER_NONE to the correct strength.
-        return [code, Blockly.JavaScript.ORDER_NONE];
-      },
+      var code = "";
+      code += "(function () { return ";
+
+      if (leftEval) code += "eval(" + JSON.stringify(value_left_value) + ")";
+      else code += value_left_value;
+
+      code += " " + dropdown_operators + " ";
+
+      if (rightEval) code += "eval(" + JSON.stringify(value_right_value) + ")";
+      else code += value_right_value;
+
+      code += "})()";
+
+      // var code = value_left_value + dropdown_operators + value_right_value;
+
+      // TODO: Change ORDER_NONE to the correct strength.
+      return [code, Blockly.JavaScript.ORDER_NONE];
+    },
+    debugGen: (block) => {
+      var value_left_value = Blockly.JavaScript.valueToCode(
+        block,
+        "left_value",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      var dropdown_operators = block.getFieldValue("OPERATORS");
+
+      var value_right_value = Blockly.JavaScript.valueToCode(
+        block,
+        "right_value",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      let leftEval = false;
+      let rightEval = false;
+
+      // Get children to check if any of the blocks is getter
+      let children = block.getChildren();
+      if (children.length !== 2) {
+        let code = "(function () {";
+        code +=
+          'throw {InvalidWsp: "Relational operator: Invalid left or right value"};';
+        code += "})()";
+        return code;
+      }
+      let blockLeftType = GetBlockTypeByBlockId(children[0].type);
+      let blockRightType = GetBlockTypeByBlockId(children[1].type);
+
+      // check if left or right value is needed eval
+      if (
+        blockLeftType &&
+        (blockLeftType === "getter" || blockLeftType === "getter_boolean")
+      )
+        leftEval = true;
+      if (
+        blockRightType &&
+        (blockRightType === "getter" || blockRightType === "getter_boolean")
+      )
+        rightEval = true;
+
+      var code = "";
+      code += "(function () { return ";
+
+      if (leftEval) code += "eval(" + JSON.stringify(value_left_value) + ")";
+      else code += value_left_value;
+
+      code += " " + dropdown_operators + " ";
+
+      if (rightEval) code += "eval(" + JSON.stringify(value_right_value) + ")";
+      else code += value_right_value;
+
+      code += "})()";
+      code += "";
+
+      // var code = value_left_value + dropdown_operators + value_right_value;
+
+      // TODO: Change ORDER_NONE to the correct strength.
+      return [code, Blockly.JavaScript.ORDER_NONE];
+    },
   },
   {
     name: "changes",
@@ -1401,60 +2360,109 @@ export const ConditionalStaticBlocks = [
         this.setHelpUrl("");
       },
     }),
-    codeGen: () =>
-      function (block) {
-        var value_value = Blockly.JavaScript.valueToCode(
-          block,
-          "VALUE",
-          Blockly.JavaScript.ORDER_ATOMIC
-        );
+    codeGen: (block) => {
+      var value_value = Blockly.JavaScript.valueToCode(
+        block,
+        "VALUE",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
 
-        let changesID = CreateChangesID();
+      let changesID = CreateChangesID();
 
-        // (function () {
-        //   let index = changesData.findIndex((data) =>
-        //     data.key === changesID
-        //   );
-        //   if (index === -1) {
-        //     changesData.push({ key: changesID, value: value_value });
-        //   } else {
-        //     if (changesData[index].value !== value_value) {
-        //       changesData[index].value = value_value;
-        //       return true;
-        //     }
-        //     return false;
-        //   }
-        // })()
+      // (function () {
+      //   let index = changesData.findIndex((data) =>
+      //     data.key === changesID
+      //   );
+      //   if (index === -1) {
+      //     changesData.push({ key: changesID, value: value_value });
+      //   } else {
+      //     if (changesData[index].value !== value_value) {
+      //       changesData[index].value = value_value;
+      //       return true;
+      //     }
+      //     return false;
+      //   }
+      // })()
 
-        let strBuilder = "";
-        strBuilder += "(function () {";
-        strBuilder += "let index = changesData.findIndex((data) => ";
-        strBuilder += "data.key === " + changesID + ");";
-        strBuilder += "if (index === -1) {";
-        strBuilder +=
-          "changesData.push({ key: " +
-          changesID +
-          ", value: eval(" +
-          JSON.stringify(value_value) +
-          ")});";
-        strBuilder += "} else {";
-        strBuilder +=
-          "if (changesData[index].value !== eval(" +
-          JSON.stringify(value_value) +
-          ")) {";
-        strBuilder +=
-          "changesData[index].value = eval(" +
-          JSON.stringify(value_value) +
-          ");";
-        strBuilder += "return true;";
-        strBuilder += "}";
-        strBuilder += "return false;";
-        strBuilder += "}";
-        strBuilder += "})()";
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let index = changesData.findIndex((data) => ";
+      strBuilder += "data.key === " + changesID + ");";
+      strBuilder += "if (index === -1) {";
+      strBuilder +=
+        "changesData.push({ key: " +
+        changesID +
+        ", value: eval(" +
+        JSON.stringify(value_value) +
+        ")});";
+      strBuilder += "} else {";
+      strBuilder +=
+        "if (changesData[index].value !== eval(" +
+        JSON.stringify(value_value) +
+        ")) {";
+      strBuilder +=
+        "changesData[index].value = eval(" + JSON.stringify(value_value) + ");";
+      strBuilder += "return true;";
+      strBuilder += "}";
+      strBuilder += "return false;";
+      strBuilder += "}";
+      strBuilder += "})()";
 
-        var code = strBuilder + "\n";
-        // TODO: Change ORDER_NONE to the correct strength.
-        return [code, Blockly.JavaScript.ORDER_NONE];
-      },
+      var code = strBuilder + "\n";
+      // TODO: Change ORDER_NONE to the correct strength.
+      return [code, Blockly.JavaScript.ORDER_NONE];
+    },
+    debugGen: (block) => {
+      var value_value = Blockly.JavaScript.valueToCode(
+        block,
+        "VALUE",
+        Blockly.JavaScript.ORDER_ATOMIC
+      );
+
+      let changesID = CreateChangesID();
+
+      // (function () {
+      //   let index = changesData.findIndex((data) =>
+      //     data.key === changesID
+      //   );
+      //   if (index === -1) {
+      //     changesData.push({ key: changesID, value: value_value });
+      //   } else {
+      //     if (changesData[index].value !== value_value) {
+      //       changesData[index].value = value_value;
+      //       return true;
+      //     }
+      //     return false;
+      //   }
+      // })()
+
+      let strBuilder = "";
+      strBuilder += "(function () {";
+      strBuilder += "let index = changesData.findIndex((data) => ";
+      strBuilder += "data.key === " + changesID + ");";
+      strBuilder += "if (index === -1) {";
+      strBuilder +=
+        "changesData.push({ key: " +
+        changesID +
+        ", value: eval(" +
+        JSON.stringify(value_value) +
+        ")});";
+      strBuilder += "} else {";
+      strBuilder +=
+        "if (changesData[index].value !== eval(" +
+        JSON.stringify(value_value) +
+        ")) {";
+      strBuilder +=
+        "changesData[index].value = eval(" + JSON.stringify(value_value) + ");";
+      strBuilder += "return true;";
+      strBuilder += "}";
+      strBuilder += "return false;";
+      strBuilder += "}";
+      strBuilder += "})()";
+
+      var code = strBuilder + "\n";
+      // TODO: Change ORDER_NONE to the correct strength.
+      return [code, Blockly.JavaScript.ORDER_NONE];
+    },
   },
 ];

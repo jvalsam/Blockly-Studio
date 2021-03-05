@@ -74,6 +74,7 @@ export class RuntimeSystem extends RuntimeEnvironmentMessageHandler {
             + $envApp.html()
             + '</head><body>'
             + '<div class="container-fluid" id="run-application-view-container"></div>'
+            + '<div class="blockly-editors-area"></div>'
             + '</body></html>';
     }
 

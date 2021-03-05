@@ -472,6 +472,7 @@ export class EditorManager extends IDEUIComponent {
         for (const key in _editorsData.items) {
             let item = _editorsData.items[key];
 
+            if (item.noRenderOnPitemLoading) continue;
             // only one editor is supported
             // if domain author give more
             // TODO: selection by the end-user... now we just choose the 1st

@@ -4,19 +4,6 @@ import {
 } from "../../components-framework/build-in.components/run-time-system-manager/run-time-manager";
 import { VPLDomainElementsHolder } from "./vpl-domain-elements-holder";
 
-const GEN_CODE_MODE = {
-    'RELEASE': 'codeGen',
-    'DEBUG': 'debugGen'
-};
-
-function codeGenMethodName(mode) {
-    return GEN_CODE_MODE[mode];
-}
-
-function codeGenName() {
-    return codeGenMethodName(RuntimeManager.getMode());
-}
-
 /**
  * Used only by statically blockly elements exist in the domain
  */
@@ -35,7 +22,7 @@ class VPLBlocklyElement {
  */
 class VPLElementHandler {
     constructor(
-        ctor /* { blockDef, codeGen, debGen =codeGen } */,
+        ctor /* { blockDef, codeGen, debugGen =codeGen } */,
         name,
         parent =null
     ) {
@@ -62,12 +49,12 @@ class VPLElementHandler {
 }
 
 export class VPLBlocklyElementHandler extends VPLElementHandler {
-    // blockDef, codeGen and debGen* are functions or objects include func key 
+    // blockDef, codeGen and debugGen* are functions or objects include func key 
     // that includes method which gets data and return function
     // this happens in case the domain author would like to tranform the 
     // VPLBlocklyElement on load.
     constructor(
-        ctor /* { blockDef, codeGen, debGen =codeGen } */,
+        ctor /* { blockDef, codeGen, debugGen =codeGen } */,
         name,
         parent =null
     ) {
@@ -89,7 +76,13 @@ export class VPLBlocklyElementHandler extends VPLElementHandler {
     }
 
     _codeGen(data) {
-        let modeGen = this._ctor[codeGenName()];
+        let modeGen = (block) => {
+          /* TMP FOR CHECK */
+          // return RuntimeManager.getMode() === 'RELEASE'
+          //     ? this._ctor.codeGen(block, data)
+          //      : this._ctor.debugGen(block, data);
+          return this._ctor.debugGen(block, data);
+        };
 
         return (typeof modeGen === 'object')
             ? modeGen.func(data)
@@ -167,7 +160,13 @@ export class VPLBlocklyMultiElementHandler extends VPLBlocklyElementHandler {
     }
 
     _codeGen(data) {
-        let modeGen = this._ctor[codeGenName()];
+        let modeGen = (block) => {
+            /* TMP FOR CHECK */
+            // return RuntimeManager.getMode() === 'RELEASE'
+            //     ? this._ctor.codeGen(block, data)
+            //     : this._ctor.debugGen(block, data);
+            return this._ctor.debugGen(block, data);
+        };
 
         return (typeof modeGen === 'object') ?
             modeGen.func(data) :
@@ -252,9 +251,9 @@ export class VPLDomainElementHandler {
 
         blocklyElems.forEach((blocklyElem) => {
             let ctor = {
-                uniqueInstance: blocklyElem.uniqueInstance || false,
-                codeGen: blocklyElem.codeGen,
-                debGen: blocklyElem.debGen
+              uniqueInstance: blocklyElem.uniqueInstance || false,
+              codeGen: blocklyElem.codeGen,
+              debugGen: blocklyElem.debugGen,
             };
 
             if ('multiBlocksDef' in blocklyElem) {
