@@ -27,7 +27,15 @@ export class ProjectItem extends ProjectElement {
     }
 
     public createReplica(): any {
-        return JSON.parse(JSON.stringify(this._editorsData));
+        return new ProjectItem(
+            JSON.parse(JSON.stringify(this._jstreeNode)),
+            this._category,
+            this._meta,
+            this.systemId,
+            JSON.parse(JSON.stringify(this._editorsData)),
+            this.orderNO,
+            this._componentsData
+        );
     }
 
     private getRender_img(rimg) {

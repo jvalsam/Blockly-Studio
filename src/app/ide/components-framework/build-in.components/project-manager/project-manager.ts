@@ -1813,14 +1813,15 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public openPItemInDialogue(pitem: any, selector: string) {
+    public openPItemInDialogue(pitem: any, selector: string, isEditable) {
         ComponentsCommunication.functionRequest(
             this.name,
             "EditorManager",
             "openPItemInDialogue",
             [
                 pitem,
-                selector
+                selector,
+                isEditable
             ]
         );
     }

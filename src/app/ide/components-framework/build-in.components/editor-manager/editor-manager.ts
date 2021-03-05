@@ -440,12 +440,10 @@ export class EditorManager extends IDEUIComponent {
         // TODO: for dynamic templates add load pitem-view from the DB.
         // Save the tmpl on dynamicTmpl property of the project item
 
-        let selector = null;
+        let selector = ".pitem-editors-area-" + pitemArea;
 
         this.closePItem(pitemArea);
-            
-        selector = ".pitem-editors-area-" + pitemArea;
-
+        
         // TODO: reuse map{this.projectItemsMap}, not create instance again...
         const pitemView: PItemView = <PItemView>ViewRegistry
             .getEntry("PItemView")
@@ -521,8 +519,53 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public openPItemInDialogue(pitem, selector) {
-        
+    public openPItemInDialogue(pi: ProjectItem, selector: string, isEditable: string) {
+        let project = pi.project["data"].project;
+
+        let pitemData = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItem",
+            [pi.jstreeNode.type]
+        ).value;
+        let editorConfigs = ComponentsCommunication.functionRequest(
+            this.name,
+            "DomainsManager",
+            "getProjectItemEditorsConfig",
+            [name]).value;
+
+        const pitemView: PItemView = <PItemView>ViewRegistry
+            .getEntry("PItemView")
+            .create(
+                this,
+                selector,
+                pi,
+                pitemData.view
+            );
+        pitemView.render();
+
+        for (const key in pi.editorsData.items) {
+            let item = pi.editorsData.items[key];
+
+            let confName = item.confName;
+            let econfig = pitemData.editorConfigs[confName][0];
+
+            let args = [
+                item,
+                pitemView,
+                this.convertEconf(confName),
+                // deactivate caching data mechanism of the VPL Editor
+                project.saveMode !== "COLLAB_DEBUG" 
+            ];
+
+            ComponentsCommunication.functionRequest(
+                this.name,
+                econfig.name,
+                "openInDialogue",
+                args
+            );
+            pitemView.addEditor(item.editorId, econfig.name);
+        }
     }
 
     @ExportedFunction
