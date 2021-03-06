@@ -519,6 +519,8 @@ export class EditorManager extends IDEUIComponent {
         );
     }
 
+    private dialogueNo: number = 1;
+
     @ExportedFunction
     public openPItemInDialogue(pi: ProjectItem, selector: string, isEditable: string) {
         let project = pi.project["data"].project;
@@ -541,7 +543,8 @@ export class EditorManager extends IDEUIComponent {
                 this,
                 selector,
                 pi,
-                pitemData.view
+                pitemData.view,
+                this.dialogueNo
             );
         pitemView.render();
 
@@ -551,6 +554,9 @@ export class EditorManager extends IDEUIComponent {
             let confName = item.confName;
             let econfig = pitemData.editorConfigs[confName][0];
 
+            item.editorId = item.editorId + "_dialogue_" + this.dialogueNo;
+            item.zIndex = 99999999999999999999;
+
             ComponentsCommunication.functionRequest(
                 this.name,
                 econfig.name,
@@ -559,13 +565,15 @@ export class EditorManager extends IDEUIComponent {
                     item,
                     pitemView,
                     this.convertEconf(confName),
-                    selector,
+                    item.editorId,
                     isEditable ? "EDITING" : "READ_ONLY",
                     "BlocklyStudioIDE"
                 ]);
 
             pitemView.addEditor(item.editorId, econfig.name);
         }
+
+        ++this.dialogueNo;
     }
 
     @ExportedFunction

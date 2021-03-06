@@ -30,7 +30,8 @@ export class PItemView extends View {
         style: Array<IViewUserStyleData>,
         hookSelector: string,
         private _pi: ProjectItem,
-        private view: any
+        private view: any,
+        private onDialogue: number = 0
     ) {
         super(
             parent,
@@ -56,7 +57,11 @@ export class PItemView extends View {
         for (const key in this._pi.editorsData.items) {
             let item = this._pi.editorsData.items[key];
             if (item.noRenderOnPitemLoading) continue;
-            $local.find("." + item.tmplSel).attr("id", item.editorId);
+            let editorId = item.editorId
+                + (this.onDialogue > 0
+                    ? "_dialogue_" + this.onDialogue
+                    : "");
+            $local.find("." + item.tmplSel).attr("id", editorId);
             this.template = "<div class=\"project-item-container\" style=\"height: 100%\">"
             + $local[0].outerHTML
             + "</div>";

@@ -286,6 +286,7 @@ export class CollaborationManager extends IDEUIComponent {
 
     @RequiredFunction("ProjectManager", "createReplicaOfPItemEditorsData")
     @RequiredFunction("ProjectManager", "openPItemInDialogue")
+    @RequiredFunction("ProjectManager", "getProjectItem")
     public openPItemOnDialogue(selector, pItemID, isReplica, isEditable){
         let pItem;
         if(isReplica){
@@ -298,7 +299,13 @@ export class CollaborationManager extends IDEUIComponent {
                 ]).value;
         }
         else {
-            pItem = this.getPItem(pItemID);
+            pItem = ComponentsCommunication.functionRequest(
+                this.name,
+                "ProjectManager",
+                "getProjectItem",
+                [
+                    pItemID
+                ]).value;
         }
         
         ComponentsCommunication.functionRequest(
