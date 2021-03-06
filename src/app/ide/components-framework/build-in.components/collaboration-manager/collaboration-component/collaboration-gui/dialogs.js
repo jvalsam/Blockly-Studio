@@ -71,8 +71,30 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
         $suggestionContainer, 
         pitemID,
         (popup) => {
-            collabPlugin.openPItemOnDialogue(popup.getLeftContainerSelector(), pitemID, false, false);
-            collabPlugin.openPItemOnDialogue(popup.getRightContainerSelector(), pitemID, true, true);
+            collabPlugin.openPItemOnDialogue(
+                popup.getLeftContainerSelector(),
+                pitemID,
+                false,
+                false,
+                {
+                    height: -8,
+                    width: 0,
+                    top: 198,
+                    left: 290,
+                    zIndex: 99999999999999999999
+                });
+            collabPlugin.openPItemOnDialogue(
+                popup.getRightContainerSelector(),
+                pitemID,
+                true,
+                true,
+                {
+                    height: -10,
+                    width: 0,
+                    top: 200,
+                    left: 290,
+                    zIndex: 99999999999999999999
+                });
         }
     );
 }

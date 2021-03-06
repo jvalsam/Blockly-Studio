@@ -1214,10 +1214,6 @@ export class ProjectManager extends IDEUIComponent {
     private onDeleteElementLocal(concerned) {
         let pitemID = concerned.systemID;
         let projectID = concerned.project.projectID;
-        
-        this.onDeleteElement(concerned);
-
-        this.saveProject(projectID);
 
         ComponentsCommunication.functionRequest(
             this.name,
@@ -1225,6 +1221,10 @@ export class ProjectManager extends IDEUIComponent {
             "pitemRemoved",
             [ pitemID ]
         );
+
+        this.onDeleteElement(concerned);
+
+        this.saveProject(projectID);        
     }
 
     // Project Element Pre and Post action
@@ -1814,7 +1814,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public openPItemInDialogue(pitem: any, selector: string, isEditable) {
+    public openPItemInDialogue(pitem: any, selector: string, isEditable, posize) {
         ComponentsCommunication.functionRequest(
             this.name,
             "EditorManager",
@@ -1822,7 +1822,8 @@ export class ProjectManager extends IDEUIComponent {
             [
                 pitem,
                 selector,
-                isEditable
+                isEditable,
+                posize
             ]
         );
     }

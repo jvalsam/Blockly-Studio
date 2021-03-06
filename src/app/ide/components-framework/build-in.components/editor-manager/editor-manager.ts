@@ -522,9 +522,11 @@ export class EditorManager extends IDEUIComponent {
     private dialogueNo: number = 1;
 
     @ExportedFunction
-    public openPItemInDialogue(pi: ProjectItem, selector: string, isEditable: string) {
-        let project = pi.project["data"].project;
-
+    public openPItemInDialogue(
+        pi: ProjectItem,
+        selector: string,
+        isEditable: string,
+        posize: any) {
         let pitemData = ComponentsCommunication.functionRequest(
             this.name,
             "DomainsManager",
@@ -556,6 +558,7 @@ export class EditorManager extends IDEUIComponent {
 
             item.editorId = item.editorId + "_dialogue_" + this.dialogueNo;
             item.zIndex = 99999999999999999999;
+            item.posize = posize;
 
             ComponentsCommunication.functionRequest(
                 this.name,

@@ -144,7 +144,8 @@ export class BlocklyInstance {
     text,
     _privilleges,
     zIndex,
-    windowId
+    windowId,
+    posize
   ) {
     this.parent = parent;
     this.pitem = pitem;
@@ -162,6 +163,7 @@ export class BlocklyInstance {
     if (windowId === "BlocklyStudioIDE") this.windowApp = document;
     else
       this.windowApp = document.getElementById(windowId).contentWindow.document;
+    this.posize = posize;
   }
 
   get privilleges() {
@@ -311,11 +313,18 @@ export class BlocklyInstance {
       element = element.offsetParent;
     } while (element);
 
+    let left = x + (this.posize ? this.posize.left : 0);
+    let top = y + (this.posize ? this.posize.top : 0);
+    let width = this._blocklyArea.offsetWidth
+      + (this.posize ? this.posize.width : 0);
+    let height = this._blocklyArea.offsetHeight
+      + (this.posize ? this.posize.height : 0);
+
     // Position blocklyDiv over blocklyArea.
-    this._blocklyDiv.style.left = x + "px";
-    this._blocklyDiv.style.top = y + "px";
-    this._blocklyDiv.style.width = this._blocklyArea.offsetWidth + "px";
-    this._blocklyDiv.style.height = this._blocklyArea.offsetHeight + "px";
+    this._blocklyDiv.style.left = left + "px";
+    this._blocklyDiv.style.top = top + "px";
+    this._blocklyDiv.style.width = width + "px";
+    this._blocklyDiv.style.height = height + "px";
     Blockly.svgResize(this.wsp);
   }
 

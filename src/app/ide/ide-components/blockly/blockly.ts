@@ -196,7 +196,8 @@ export class BlocklyVPL extends Editor {
         editorData.src,
         privileges,
         editorData.zIndex,
-        windowsId
+        windowsId,
+        editorData.posize
       );
     this.instancesMap[editorData.editorId]["__editorData"] = editorData;
 
