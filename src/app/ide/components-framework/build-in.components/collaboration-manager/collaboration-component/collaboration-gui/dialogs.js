@@ -79,7 +79,7 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
                 {
                     height: -8,
                     width: 0,
-                    top: 198,
+                    top: 182,
                     left: 290,
                     zIndex: 99999999999999999999
                 });
@@ -91,10 +91,37 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
                 {
                     height: -10,
                     width: 0,
-                    top: 200,
+                    top: 184,
                     left: 290,
                     zIndex: 99999999999999999999
                 });
+
+            let closeDialog = () => {
+                popup.closePopup();
+            }
+            popup.setOnYesCb(() => {
+                collabPlugin.saveSuggestion(
+                    popup.getFileId(),
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog);
+            });
+            popup.setOnNoCb(() => {
+                collabPlugin.closeSuggestion(
+                    popup.getFileId(), 
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog
+                );
+            });
+            popup.setOnClickX( () => {
+                collabPlugin.closeSuggestion(
+                    popup.getFileId(),
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog
+                );
+            });
         }
     );
 }

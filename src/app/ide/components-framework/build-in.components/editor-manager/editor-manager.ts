@@ -520,6 +520,7 @@ export class EditorManager extends IDEUIComponent {
     }
 
     private dialogueNo: number = 1;
+    private pitemIndialogue: PItemView;
 
     @ExportedFunction
     public openPItemInDialogue(
@@ -539,7 +540,7 @@ export class EditorManager extends IDEUIComponent {
             "getProjectItemEditorsConfig",
             [name]).value;
 
-        const pitemView: PItemView = <PItemView>ViewRegistry
+        this.pitemIndialogue = <PItemView>ViewRegistry
             .getEntry("PItemView")
             .create(
                 this,
@@ -548,7 +549,7 @@ export class EditorManager extends IDEUIComponent {
                 pitemData.view,
                 this.dialogueNo
             );
-        pitemView.render();
+        this.pitemIndialogue.render();
 
         for (const key in pi.editorsData.items) {
             let item = pi.editorsData.items[key];
@@ -566,17 +567,35 @@ export class EditorManager extends IDEUIComponent {
                 "openInDialogue",
                 [
                     item,
-                    pitemView,
+                    this.pitemIndialogue,
                     this.convertEconf(confName),
                     item.editorId,
                     isEditable ? "EDITING" : "READ_ONLY",
                     "BlocklyStudioIDE"
                 ]);
 
-            pitemView.addEditor(item.editorId, econfig.name);
+            this.pitemIndialogue.addEditor(item.editorId, econfig.name);
+
+            ++this.dialogueNo;
         }
 
-        ++this.dialogueNo;
+        this.dialogueNo = 1;
+    }
+
+    @ExportedFunction
+    public closePItemInDialogue(
+        pitemId: string,
+        selector: string
+    ) {
+        this.pitemIndialogue.destroy();
+    }
+
+    @ExportedFunction
+    public savePItemInDialogue(
+        pitemId: string,
+        selector: string
+    ) {
+        
     }
 
     @ExportedFunction

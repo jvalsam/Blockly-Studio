@@ -321,6 +321,63 @@ export class CollaborationManager extends IDEUIComponent {
         );
     }
 
+    public saveSuggestion(id, readOnlySel, editableSel, cb) {
+        let pitemData = ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManger",
+            "savePItemInDialogue",
+            [
+                id,
+                editableSel
+            ]
+        ).value;
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManger",
+            "closePItemInDialogue",
+            [
+                id,
+                readOnlySel
+            ]
+        );
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManger",
+            "closePItemInDialogue",
+            [
+                id,
+                editableSel
+            ]
+        );
+
+        cb();
+    }
+
+    public closeSuggestion(id, readOnlySel, editableSel, cb){
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManger",
+            "closePItemInDialogue",
+            [
+                id,
+                readOnlySel
+            ]
+        );
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "ProjectManger",
+            "closePItemInDialogue",
+            [
+                id,
+                editableSel
+            ]
+        );
+        cb();
+    }
+
     public saveNewSuggestion(pitemID, newSource){
         
     }

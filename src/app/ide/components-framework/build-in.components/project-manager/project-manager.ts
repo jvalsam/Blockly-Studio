@@ -1827,4 +1827,30 @@ export class ProjectManager extends IDEUIComponent {
             ]
         );
     }
+
+    @ExportedFunction
+    public closePItemInDialogue(pitemId: string, selector: string) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "closePItemInDialogue",
+            [
+                pitemId,
+                selector
+            ]
+        );
+    }
+
+    @ExportedFunction
+    public savePItemInDialogue(pitemId: string, selector: string) {
+        ComponentsCommunication.functionRequest(
+            this.name,
+            "EditorManager",
+            "savePItemInDialogue",
+            [
+                pitemId,
+                selector
+            ]
+        );
+    }
 }

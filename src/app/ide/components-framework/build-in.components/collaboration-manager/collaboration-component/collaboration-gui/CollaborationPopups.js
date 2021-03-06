@@ -13,6 +13,7 @@ class CollaborationPopup{
     constructor(container, title) {
         this._container = container;
         this._onnCloseCb = false;
+        this._onClickX = () => { this.closePopup(); };
 
         let html = `\
         <div class = "popup-opacity"> </div>\
@@ -32,13 +33,17 @@ class CollaborationPopup{
             this._container.append(html);
 
         // $(".popup-opacity").click(() => this.closePopup());
-        $(".collaboration-popup-header-x").click(() => this.closePopup());
+        $(".collaboration-popup-header-x").click(() => {this._onClickX()});
 
         this._contentContainer = $(".collaboration-popup-content-container");
     }
 
     setOnCloseCb(cb){
         this._onnCloseCb = cb;
+    }
+
+    setOnClickX(cb){
+        this._onClickX = cb;
     }
 
     closePopup(ignoreCb = false){
@@ -519,9 +524,10 @@ class JoinPopup extends CollaborationPopup{
 
 class SuggestionPopup extends CollaborationPopup{
 
-    constructor(container, fileName, comment, buttonNames, cb){
-        super(container, `Suggestion - ${fileName}`);
+    constructor(container, fileId, comment, buttonNames, cb){
+        super(container, `Visual Code Suggestion`);
 
+        this.fileId = fileId;
         this._onYesCb = () => {};
         this._onNoCb = () => {};
 
@@ -583,12 +589,10 @@ class SuggestionPopup extends CollaborationPopup{
 
             $(".suggestion-accept").click(() => {
                 this._onYesCb();
-                this.closePopup();
             });
 
             $(".suggestion-reject").click(() => {
                 this._onNoCb();
-                this.closePopup();
             });
 
             $(".suggestion-annotation-warning").hide();
@@ -620,6 +624,10 @@ class SuggestionPopup extends CollaborationPopup{
     getRightContainerSelector(){
         return "#suggestion-right-editor";
     }
+
+    getFileId(){
+        return this.fileId;
+    }
 }
 
 class AuthorSuggestionPopup extends SuggestionPopup {
@@ -630,8 +638,8 @@ class AuthorSuggestionPopup extends SuggestionPopup {
 
 class ViewSuggestionPopup extends SuggestionPopup {
     
-    constructor(container, fileName, members, comment){
-        super(container, fileName, {readonly: true, text: comment ? comment : ' '}, {yes: 'Accept', no: 'Reject'});
+    constructor(container, fileId, members, comment){
+        super(container, fileId, {readonly: true, text: comment ? comment : ' '}, {yes: 'Accept', no: 'Reject'});
         
         this._onMemberClick = (member) => {console.log(member)};
         
