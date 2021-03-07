@@ -559,8 +559,7 @@ export const SmartObject = {
         strBuilder += "}\n";
         strBuilder +=
           "} else if (" + JSON.stringify(checkArray[0]) + ' === "Boolean") {';
-        strBuilder +=
-          "newValue = " + value_value + ' === "true" ? true : false;\n';
+        strBuilder += "newValue = (" + value_value + " === true ) ;\n";
         strBuilder +=
           "} else if (" + JSON.stringify(checkArray[0]) + ' === "String") {';
         strBuilder += "newValue = " + value_value + ";\n";
@@ -1202,7 +1201,7 @@ export const SmartObject = {
         strBuilder += "args.push(number);\n";
         strBuilder +=
           '} else if (checksArray["INPUT" + i][0] === "Boolean") {\n';
-        strBuilder += 'args.push(inputsToCode[i] === "true" ? true : false);\n';
+        strBuilder += "args.push(inputsToCode[i] === true);\n";
         strBuilder +=
           '} else if (checksArray["INPUT" + i][0] === "String") {\n';
         strBuilder += "args.push(inputsToCode[i]);\n";
