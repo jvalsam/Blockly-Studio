@@ -125,6 +125,7 @@ export class PItemView extends View {
     }
 
     public destroy(): void {
+        this.onDialogue = 0;
         for (let editorId of Object.keys(this.editorsMap)) {
             this.parent["closeEditorInstance"](editorId, this.editorsMap[editorId]);
         }

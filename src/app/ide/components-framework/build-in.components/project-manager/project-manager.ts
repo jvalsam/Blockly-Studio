@@ -1846,7 +1846,7 @@ export class ProjectManager extends IDEUIComponent {
         return ComponentsCommunication.functionRequest(
             this.name,
             "EditorManager",
-            "savePItemInDialogue",
+            "getEditorsDataInDialogue",
             [
                 pitemId,
                 selector

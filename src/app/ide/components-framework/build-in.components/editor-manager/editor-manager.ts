@@ -556,7 +556,7 @@ export class EditorManager extends IDEUIComponent {
         this.pitemIndialogue[selector].render();
 
         for (const key in pi.editorsData.items) {
-            let item = pi.editorsData.items[key];
+            let item = JSON.parse(JSON.stringify(pi.editorsData.items[key]));
 
             let confName = item.confName;
             let econfig = pitemData.editorConfigs[confName][0];
@@ -582,8 +582,6 @@ export class EditorManager extends IDEUIComponent {
 
             ++this.dialogueNo;
         }
-
-        this.dialogueNo = 1;
     }
 
     @ExportedFunction
@@ -596,26 +594,28 @@ export class EditorManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public savePItemInDialogue(
+    public getEditorsDataInDialogue(
         pitemId: string,
         selector: string
     ) {
-        let pitem = this.pitemIndialogue[selector].pitem;
-
-        // for (const key in pitem.editorsData.items) {
-        //     let item = pitem.editorsData.items[key];
-        //     let editorId = item.editorId + "_dialogue_" + this.dialogueNo;
-        //     let edata = ComponentsCommunication.functionRequest(
-        //         this.name,
-        //         item.editor,
-        //         "getEditorData",
-        //         [editorId]
-        //       ).value;
+        let editorsData = this.pitemIndialogue[selector].pitem.editorsData;
+        
+        for (const key in editorsData.items) {
+            let item = editorsData.items[key];
+            let editorId = item.editorId + "_dialogue_" + (this.dialogueNo-1);
+            let edata = ComponentsCommunication.functionRequest(
+                this.name,
+                item.editor,
+                "getEditorData",
+                [editorId]
+              ).value;
             
-        //     pitem.editorsData.items[key] = edata;
-        // }
+            Object.keys(edata).forEach(index => {
+                item[index] = edata[index];
+            });
+        }
 
-        return pitem;
+        return this.pitemIndialogue[selector].pitem;
     }
 
     @ExportedFunction
