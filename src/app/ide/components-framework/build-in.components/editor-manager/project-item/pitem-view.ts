@@ -48,6 +48,22 @@ export class PItemView extends View {
         this.focusEditor = null;
     }
 
+    public get pitem() {
+        return this._pi;
+    }
+
+    public get editorsSel(): Array<string> {
+        let selectors = [];
+        for (const key in this._pi.editorsData.items) {
+            selectors.push(
+                this._pi.editorsData.items[key].editorId
+                + (this.onDialogue > 0
+                    ? "_dialogue_" + this.onDialogue
+                    : ""));
+        }
+        return selectors;
+    }
+
     public set selector(sel: string) {
         this._selector = sel;
     }

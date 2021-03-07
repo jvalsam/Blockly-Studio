@@ -287,6 +287,8 @@ export class CollaborationManager extends IDEUIComponent {
     @RequiredFunction("ProjectManager", "createReplicaOfPItemEditorsData")
     @RequiredFunction("ProjectManager", "openPItemInDialogue")
     @RequiredFunction("ProjectManager", "getProjectItem")
+    @RequiredFunction("ProjectManager", "savePItemInDialogue")
+    @RequiredFunction("ProjectManager", "closePItemInDialogue")
     public openPItemOnDialogue(selector, pItemID, isReplica, isEditable, posize){
         let pItem;
         if(isReplica){
@@ -320,11 +322,11 @@ export class CollaborationManager extends IDEUIComponent {
             ]
         );
     }
-
+    
     public saveSuggestion(id, readOnlySel, editableSel, cb) {
         let pitemData = ComponentsCommunication.functionRequest(
             this.name,
-            "ProjectManger",
+            "ProjectManager",
             "savePItemInDialogue",
             [
                 id,
@@ -334,7 +336,7 @@ export class CollaborationManager extends IDEUIComponent {
 
         ComponentsCommunication.functionRequest(
             this.name,
-            "ProjectManger",
+            "ProjectManager",
             "closePItemInDialogue",
             [
                 id,
@@ -344,7 +346,7 @@ export class CollaborationManager extends IDEUIComponent {
 
         ComponentsCommunication.functionRequest(
             this.name,
-            "ProjectManger",
+            "ProjectManager",
             "closePItemInDialogue",
             [
                 id,
@@ -358,7 +360,7 @@ export class CollaborationManager extends IDEUIComponent {
     public closeSuggestion(id, readOnlySel, editableSel, cb){
         ComponentsCommunication.functionRequest(
             this.name,
-            "ProjectManger",
+            "ProjectManager",
             "closePItemInDialogue",
             [
                 id,
@@ -368,7 +370,7 @@ export class CollaborationManager extends IDEUIComponent {
 
         ComponentsCommunication.functionRequest(
             this.name,
-            "ProjectManger",
+            "ProjectManager",
             "closePItemInDialogue",
             [
                 id,

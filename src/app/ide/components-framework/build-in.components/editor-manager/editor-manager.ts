@@ -520,7 +520,7 @@ export class EditorManager extends IDEUIComponent {
     }
 
     private dialogueNo: number = 1;
-    private pitemIndialogue: PItemView;
+    private pitemIndialogue: {[key: string]: PItemView} = null;
 
     @ExportedFunction
     public openPItemInDialogue(
@@ -540,7 +540,11 @@ export class EditorManager extends IDEUIComponent {
             "getProjectItemEditorsConfig",
             [name]).value;
 
-        this.pitemIndialogue = <PItemView>ViewRegistry
+        if (this.pitemIndialogue === null) {
+            this.pitemIndialogue = {};
+        }
+
+        this.pitemIndialogue[selector] = <PItemView>ViewRegistry
             .getEntry("PItemView")
             .create(
                 this,
@@ -549,7 +553,7 @@ export class EditorManager extends IDEUIComponent {
                 pitemData.view,
                 this.dialogueNo
             );
-        this.pitemIndialogue.render();
+        this.pitemIndialogue[selector].render();
 
         for (const key in pi.editorsData.items) {
             let item = pi.editorsData.items[key];
@@ -558,7 +562,7 @@ export class EditorManager extends IDEUIComponent {
             let econfig = pitemData.editorConfigs[confName][0];
 
             item.editorId = item.editorId + "_dialogue_" + this.dialogueNo;
-            item.zIndex = 99999999999999999999;
+            item.zIndex = posize.zIndex;
             item.posize = posize;
 
             ComponentsCommunication.functionRequest(
@@ -567,14 +571,14 @@ export class EditorManager extends IDEUIComponent {
                 "openInDialogue",
                 [
                     item,
-                    this.pitemIndialogue,
+                    this.pitemIndialogue[selector],
                     this.convertEconf(confName),
                     item.editorId,
                     isEditable ? "EDITING" : "READ_ONLY",
                     "BlocklyStudioIDE"
                 ]);
 
-            this.pitemIndialogue.addEditor(item.editorId, econfig.name);
+            this.pitemIndialogue[selector].addEditor(item.editorId, econfig.name);
 
             ++this.dialogueNo;
         }
@@ -587,7 +591,8 @@ export class EditorManager extends IDEUIComponent {
         pitemId: string,
         selector: string
     ) {
-        this.pitemIndialogue.destroy();
+        this.pitemIndialogue[selector].destroy();
+        --this.dialogueNo;
     }
 
     @ExportedFunction
@@ -595,7 +600,22 @@ export class EditorManager extends IDEUIComponent {
         pitemId: string,
         selector: string
     ) {
-        
+        let pitem = this.pitemIndialogue[selector].pitem;
+
+        // for (const key in pitem.editorsData.items) {
+        //     let item = pitem.editorsData.items[key];
+        //     let editorId = item.editorId + "_dialogue_" + this.dialogueNo;
+        //     let edata = ComponentsCommunication.functionRequest(
+        //         this.name,
+        //         item.editor,
+        //         "getEditorData",
+        //         [editorId]
+        //       ).value;
+            
+        //     pitem.editorsData.items[key] = edata;
+        // }
+
+        return pitem;
     }
 
     @ExportedFunction

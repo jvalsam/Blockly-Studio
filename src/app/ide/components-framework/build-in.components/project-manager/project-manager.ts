@@ -1843,7 +1843,7 @@ export class ProjectManager extends IDEUIComponent {
 
     @ExportedFunction
     public savePItemInDialogue(pitemId: string, selector: string) {
-        ComponentsCommunication.functionRequest(
+        return ComponentsCommunication.functionRequest(
             this.name,
             "EditorManager",
             "savePItemInDialogue",
@@ -1851,6 +1851,6 @@ export class ProjectManager extends IDEUIComponent {
                 pitemId,
                 selector
             ]
-        );
+        ).value;
     }
 }

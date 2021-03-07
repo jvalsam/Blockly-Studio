@@ -413,6 +413,7 @@ export class BlocklyVPL extends Editor {
     ];
   }
 
+  @ExportedFunction
   public getEditorData(editorId: string): any {
     return {
       editor: this.name,
