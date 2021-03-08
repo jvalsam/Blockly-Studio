@@ -43,7 +43,6 @@ export class CollaborationUI {
         /* Prefixes for adding new nodes */
         
         this._MEMBER_PREFIX = 'collaborators-';
-        this._MEMBER_ME_PREFIX = 'collaborators-me-';
         this._ANNOTATION_FILE_PREFIX = '-file-';
         this._PERSONAL_FILE_PREFIX = 'personal-file-';
         this._SHARED_FROM_ME_FILE_PREFIX = 'shared-from-me-';
@@ -71,7 +70,6 @@ export class CollaborationUI {
                 "wholerow",
                 "sort",
                 "contextmenu",
-                "unique",
                 "types",
                 "conditionalselect",
                 "colorv",
@@ -86,7 +84,7 @@ export class CollaborationUI {
             },
             'conditionalselect': (node, event) => {
                 if (this._members.get_type(node) === 'suggestion'){
-                    this._onClickSuggestion(node, this.userData[node.id]);
+                    this._onClickSuggestion(node, this.suggestionUserData[node.id]);
                 }
                 return true;
             }
@@ -481,18 +479,23 @@ export class CollaborationUI {
 
     _addMemberFileAnotation(memberName, fileName, fileIcon, fileColor, fileBubbleColor, cb = undefined){
         var node = {
-            'id': this._MEMBER_PREFIX + memberName + this._ANNOTATION_FILE_PREFIX + fileName,
+            'id': this._MEMBER_PREFIX + memberName 
+                + this._ANNOTATION_FILE_PREFIX 
+                + fileName
+                + '-Suggestion Number-'
+                + Object.keys(this.suggestionUserData).length,
             'text': fileName,
             'icon': fileIcon,
             'a_attr': this._fileA
         };
         if (!this._members.get_node(node.id)){
             node.bubble_color = fileBubbleColor;
-            node.color = fileColor; 
-            return this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', ()=>{
+            node.color = fileColor;
+            this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', ()=>{
                 let suggestionNode = this._members.get_node(node.id);
                 this._members.set_type(suggestionNode, 'suggestion');
             });
+            return node.id;
         }
     }
 
@@ -592,7 +595,7 @@ export class CollaborationUI {
 
     _addMember(member, me, cb = undefined){
         var node = {
-            'id': (me ? this._MEMBER_ME_PREFIX : this._MEMBER_PREFIX) + member.name,
+            'id': this._MEMBER_PREFIX + member.name,
             'text': member.name,
             'icon': member.icon,
             'a_attr': this._membersA

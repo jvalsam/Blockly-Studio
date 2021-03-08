@@ -35,7 +35,7 @@ export function openStartSessionDialogue(
                         projectName: collabPlugin.shProject.description
                     }
                 });
-                setUpSuggestionOnClick(collaborationUI["ui"]);
+                setUpSuggestionOnClick(collaborationUI["ui"], collabPlugin);
             });
             onSuccess(member, {});
         }
@@ -54,8 +54,9 @@ export function openStartSessionDialogue(
         return collaborationUI;
 }
 
-function setUpSuggestionOnClick(ui){
-    ui.setOnClickSuggestionCb((node, {suggestionId, pItemID}) => {
+function setUpSuggestionOnClick(ui, collabPlugin){
+    ui.setOnClickSuggestionCb((node, {suggestionID, pItemID}) => {
+        debugger;
         new ViewSuggestionPopup(
             $suggestionContainer, 
             pItemID,
@@ -68,13 +69,12 @@ function setUpSuggestionOnClick(ui){
                     false,
                     false,
                     {
-                        height: -8,
+                        height: -10,
                         width: 0,
-                        top: 182,
+                        top: 163,
                         left: 290,
-                        zIndex: 99999999999999999999
+                        zIndex: 73
                     },
-                    suggestionId
                 );
                 collabPlugin.openPItemOnDialogue(
                     popup.getRightContainerSelector(),
@@ -84,10 +84,11 @@ function setUpSuggestionOnClick(ui){
                     {
                         height: -10,
                         width: 0,
-                        top: 184,
+                        top: 163,
                         left: 290,
-                        zIndex: 99999999999999999999
-                    }
+                        zIndex: 73
+                    },
+                    suggestionID
                 );
 
                 let closeDialog = () => {
@@ -148,11 +149,11 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
                 false,
                 false,
                 {
-                    height: -8,
+                    height: -10,
                     width: 0,
-                    top: 182,
+                    top: 163,
                     left: 290,
-                    zIndex: 99999999999999999999
+                    zIndex: 73
                 });
             collabPlugin.openPItemOnDialogue(
                 popup.getRightContainerSelector(),
@@ -162,9 +163,9 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
                 {
                     height: -10,
                     width: 0,
-                    top: 184,
+                    top: 163,
                     left: 290,
-                    zIndex: 99999999999999999999
+                    zIndex: 73
                 });
 
             let closeDialog = () => {
@@ -210,8 +211,9 @@ export function createSuggestionOnToolbar(
     ui.addSuggestionAnnotation(
         user.name, 
         {
-            icon: renderInfo[0].value, 
-            name: renderInfo[1].value.text
+            icon: renderInfo[0].value.path,
+            name: renderInfo[1].value.text,
+            color: renderInfo[2].value.colour
         },
         {
             suggestionID,
@@ -264,7 +266,7 @@ export function openJoinSessionDialogue(
                         }
                     });
 
-                    setUpSuggestionOnClick(collaborationUI["ui"]);
+                    setUpSuggestionOnClick(collaborationUI["ui"], collabPlugin);
                 });
                 return collaborationUI;
             });

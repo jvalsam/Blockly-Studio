@@ -188,6 +188,20 @@
     border: 0px;
 }
 
+#members-me > .jstree-children > .jstree-node > .jstree-children a i {
+    background-position: center center !important;
+    background-size: 16px 16px !important;
+    size: 16px 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent !important;
+    border-radius: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+    border: 0px;
+}
+
 #members-collaborators > .jstree-children > .jstree-node > .jstree-children > .jstree-node > i {
     float: left;
 }
@@ -927,7 +941,7 @@
 }
 
 .suggestion-arrow{
-    background-image: url(./Icons/arrow.png);
+    /* background-image: url(./Icons/arrow.png); */
     width: 10px;
     height: 10px;
     cursor: pointer;

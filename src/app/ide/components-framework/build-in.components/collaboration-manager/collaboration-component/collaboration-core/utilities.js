@@ -98,6 +98,7 @@ export function handleSaveSuggestion(data){
             pitemID: data.systemID,
             suggestionID: data.suggestionID
         });
+    console.log(pitem);
 }
 
 // export function handleRemoveSuggestion(data){
