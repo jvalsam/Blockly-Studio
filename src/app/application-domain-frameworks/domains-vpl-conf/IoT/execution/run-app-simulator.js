@@ -122,7 +122,7 @@ const Initialize = function (selector, runTimeData) {
         while (i < simulatedTimeTable.length) {
           if (
             specificDate.diff(simulatedTimeTable[i].time) > 0 &&
-            simulatedTime.diff(simulatedTimeTable[i].time) < 0
+            simulatedTime.diff(simulatedTimeTable[i].time) <= 0
           ) {
             clearInterval(simulatedTimeTable[i].intervalFunc);
             simulatedTime = simulatedTimeTable[i].time;
