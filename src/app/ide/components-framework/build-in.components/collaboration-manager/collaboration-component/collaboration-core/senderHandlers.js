@@ -9,7 +9,6 @@ export function sendPItemAdded(pItem,conn){
         info: pItem
     };
 
-    collabInfo.plugin.logAction({type: "createPItem", user: collabInfo.myInfo, pitemID: pItem.itemData.id});
     if(!conn)sendToAll(arg);
     else conn.send(arg);
 }
@@ -19,7 +18,6 @@ export function sendPItemRemoved(pItem,conn){
         type: "removePItem",
         info: pItem
     };
-    collabInfo.plugin.logAction({type: "removePItem", user: collabInfo.myInfo, pitemID: pItem});
     if(!conn)sendToAll(arg);
     else conn.send(arg);
 }

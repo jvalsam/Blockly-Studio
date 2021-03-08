@@ -11,7 +11,8 @@ import {
 import {
     sendPItemAdded,
     sendPItemRemoved,
-    sendPItemUpdated
+    sendPItemUpdated,
+    sendAddSuggestion
 }from './senderHandlers'
 
 

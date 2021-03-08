@@ -562,6 +562,7 @@ export class CollaborationManager extends IDEUIComponent {
                 user: user,
                 suggestionID: suggestionID
             });
+            // logAddSuggestion(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
         }
         // this.collabUI
     }
@@ -624,6 +625,7 @@ export class CollaborationManager extends IDEUIComponent {
         if(pItem && pItem.componentsData.collaborationData.privileges.shared.isPrivate){
             return;
         }
+        collabInfo.plugin.logAction({type: "removePItem", user: collabInfo.myInfo, pitemID: pitemId});
         sendPItemRemoved(pitemId);
         return true;
     }
@@ -640,6 +642,7 @@ export class CollaborationManager extends IDEUIComponent {
         // if(this.shProject.componentsData.collaborationData) TODO: ADD ON DB
         pitem.itemData.componentsData = {};
         pitem.itemData.componentsData = realPItem.componentsData;
+        collabInfo.plugin.logAction({type: "createPItem", user: collabInfo.myInfo, pitemID: pitem.itemData.id});
         sendPItemAdded(pitem);
         return true;
     }

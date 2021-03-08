@@ -88,13 +88,16 @@ export function handleSaveSuggestion(data){
     if(!pitem.componentsData.collaborationData.suggestions)
         pitem.componentsData.collaborationData.suggestions = [];
     
-    if(!data.suggestionID)data.suggestionID = generateRandom(20);
+    if(!data.suggestionID){
+        data.suggestionID = generateRandom(20);
+        data.suggestionAuthor = collabInfo.myInfo
+    }
     pitem.componentsData.collaborationData.suggestions[data.suggestionID] = data;
 
     collabInfo.plugin.logAction(
         {
             type: "addSuggestion", 
-            user: collabInfo.myInfo, 
+            user: data.suggestionAuthor, 
             pitemID: data.systemID,
             suggestionID: data.suggestionID
         });
