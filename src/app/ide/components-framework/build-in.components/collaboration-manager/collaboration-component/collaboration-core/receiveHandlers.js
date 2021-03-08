@@ -1,6 +1,7 @@
 import {
     collabInfo,
-    printDB
+    printDB,
+    handleSaveSuggestion
 }from "./utilities.js"
 
 import {
@@ -81,6 +82,18 @@ export function receivePItemRemoved(data,conn){
     printDB();
 }
 
+export function receiveAddSuggestion(data, conn){
+    data.info = JSON.parse(data.info);
+    handleSaveSuggestion(data.info);
+    collabInfo.connected_users.forEach(user => {
+        if(user.id !== conn.id){
+            console.log('sending',data.info)
+            sendAddSuggestion(data.info,user);
+        }
+    });
+    printDB();
+}
+
 export function receivePItemUpdated(data,conn){
     // if(!pItemExists(data.pItemId)){
     //     console.log("THIS PROJECT ITEM DOESNT EXIST"); //TODO: this
@@ -125,7 +138,7 @@ function acceptUser(conn,infom){
     });
 
     collabInfo.plugin.logAction({type: "addUser", user: arg.info});
-    
+
     conn.name = infom.name;
     collabInfo.connected_users.push(conn);
     

@@ -13,7 +13,8 @@ import {
   receivePItemAdded,
   receivePItemRemoved,
   receivePItemUpdated,
-  receiveAddUser
+  receiveAddUser,
+  receiveAddSuggestion
 } from "./receiveHandlers.js"
 
 export function communicationInitialize(myInfo, settings, CollabManager) {
@@ -23,7 +24,8 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
     "addPItem": receivePItemAdded ,
     "removePItem": receivePItemRemoved ,
     "updatePItem": receivePItemUpdated ,
-    "addUser": receiveAddUser
+    "addUser": receiveAddUser,
+    "addSuggestion": receiveAddSuggestion
   };
   console.log("myInfo:",myInfo);
   collabInfo.plugin = CollabManager;
@@ -95,7 +97,8 @@ export function startCommunicationUser(myInfo, externalLink, CollabManager, load
     "removePItem": receivePItemRemoved ,
     "updatePItem": receivePItemUpdated ,
     "addUser": receiveAddUser,
-    "acceptedUser": acceptedUser
+    "acceptedUser": acceptedUser,
+    "addSuggestion": receiveAddSuggestion
   };
   collabInfo.plugin = CollabManager;
   collabInfo.myInfo = myInfo;

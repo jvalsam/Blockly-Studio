@@ -78,30 +78,34 @@ export function collaborationFilter(projectObj, myInfo, settings){
     return projectObj;
 }
 
-var currentPItemsPriviledges = {
-    "pItemId1": {
-        "Options": ["priv1", "priv2"],
-        "Tools": ["x","y","z"]
-    },
-    "pItemId2": {
-        "Options": ["priv1", "priv3"],
-        "Tools": ["x","y"]
-    }
-}
-
-function pItemOptions(pItemId){
-    var temp = currentPItemsPriviledges[pItemId1].Options;
-    //filter temp
-    return temp;
-}
-
-function pItemTools(pItemId){
-    var temp = currentPItemsPriviledges[pItemId1].Tools;
-    //filter temp
-    return temp;
-}
-
 export function printDB(){
     let DB = collabInfo.plugin.getProject();
 	console.log(DB);
 }
+
+export function handleSaveSuggestion(data){
+    let pitem = collabInfo.plugin.getPItem(data.systemID);
+    if(!pitem.componentsData.collaborationData.suggestions)
+        pitem.componentsData.collaborationData.suggestions = [];
+    
+    if(!data.suggestionID)data.suggestionID = generateRandom(20);
+    pitem.componentsData.collaborationData.suggestions[data.suggestionID] = data;
+
+    collabInfo.plugin.logAction(
+        {
+            type: "addSuggestion", 
+            user: collabInfo.myInfo, 
+            pitemID: data.systemID,
+            suggestionID: data.suggestionID
+        });
+}
+
+// export function handleRemoveSuggestion(data){
+//     let pitem = collabInfo.plugin.getPItem(data.systemID);
+//     if(!pitem.componentsData.collaborationData.suggestions)
+//         pitem.componentsData.collaborationData.suggestions = [];
+    
+//     if(!data.suggestionID)data.suggestionID = generateRandom(20);
+//     pitem.componentsData.collaborationData.suggestions[data.suggestionID] = data;
+//     return data.suggestionID;
+// }

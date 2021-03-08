@@ -638,8 +638,8 @@ class AuthorSuggestionPopup extends SuggestionPopup {
 
 class ViewSuggestionPopup extends SuggestionPopup {
     
-    constructor(container, fileId, members, comment){
-        super(container, fileId, {readonly: true, text: comment ? comment : ' '}, {yes: 'Accept', no: 'Reject'});
+    constructor(container, fileId, members, comment, cb){
+        super(container, fileId, {readonly: true, text: comment ? comment : ' '}, {yes: 'Accept', no: 'Reject'}, cb);
         
         this._onMemberClick = (member) => {console.log(member)};
         

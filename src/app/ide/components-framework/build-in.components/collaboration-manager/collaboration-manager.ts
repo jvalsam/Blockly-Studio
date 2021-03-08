@@ -13,7 +13,8 @@ import {
     openJoinSessionDialogue,
     openSuggestionDialogue,
     logCreatePItem,
-    logUserJoined
+    logUserJoined,
+    createSuggestionOnToolbar
 } from "./collaboration-component/collaboration-gui/dialogs";
 
 import { 
@@ -27,13 +28,15 @@ import {
 import {
     collaborationFilter,
     collabInfo,
-    filterPItem
+    filterPItem,
+    handleSaveSuggestion
 } from "./collaboration-component/collaboration-core/utilities";
 
 import {
     sendPItemAdded,
     sendPItemRemoved,
-    sendPItemUpdated
+    sendPItemUpdated,
+    sendAddSuggestion
 } from "./collaboration-component/collaboration-core/senderHandlers";
 
 import {
@@ -289,7 +292,13 @@ export class CollaborationManager extends IDEUIComponent {
     @RequiredFunction("ProjectManager", "getProjectItem")
     @RequiredFunction("ProjectManager", "savePItemInDialogue")
     @RequiredFunction("ProjectManager", "closePItemInDialogue")
-    public openPItemOnDialogue(selector, pItemID, isReplica, isEditable, posize){
+    public openPItemOnDialogue(
+        selector,
+        pItemID,
+        isReplica,
+        isEditable,
+        posize,
+        suggestionId = null) {
         let pItem;
         if(isReplica){
             pItem = ComponentsCommunication.functionRequest(
@@ -299,6 +308,13 @@ export class CollaborationManager extends IDEUIComponent {
                 [
                     pItemID
                 ]).value;
+            
+            if (suggestionId) {
+                pItem._editorsData = this.getPItem(pItemID)
+                    .componentsData
+                    .collaborationData
+                    .suggestions[suggestionId];
+            }
         }
         else {
             pItem = ComponentsCommunication.functionRequest(
@@ -309,7 +325,6 @@ export class CollaborationManager extends IDEUIComponent {
                     pItemID
                 ]).value;
         }
-        
         ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
@@ -323,6 +338,15 @@ export class CollaborationManager extends IDEUIComponent {
         );
     }
     
+    public denySuggestion(){
+
+    }
+
+    public acceptSuggestion(){
+
+    }
+
+
     public saveSuggestion(id, readOnlySel, editableSel, cb) {
         let pitemData = ComponentsCommunication.functionRequest(
             this.name,
@@ -353,8 +377,17 @@ export class CollaborationManager extends IDEUIComponent {
                 editableSel
             ]
         );
+        let suggID = handleSaveSuggestion(pitemData._editorsData);
+        sendAddSuggestion(pitemData._editorsData);
 
         cb();
+
+        let realPItem = this.getPItem(pitemData._editorsData.systemID);
+
+        return {
+            suggestionID: suggID,
+            realPItem
+        }
     }
 
     public closeSuggestion(id, readOnlySel, editableSel, cb){
@@ -378,10 +411,6 @@ export class CollaborationManager extends IDEUIComponent {
             ]
         );
         cb();
-    }
-
-    public saveNewSuggestion(pitemID, newSource){
-        
     }
 
     private toolsFiltering(pitem){
@@ -516,7 +545,7 @@ export class CollaborationManager extends IDEUIComponent {
         }
     }
 
-    public logAction({type, user, pitemID}){
+    public logAction({type, user, pitemID, suggestionID}){
         if(type === 'createPItem'){
             let pitem = this.getPItem(pitemID);
             logCreatePItem(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
@@ -525,6 +554,14 @@ export class CollaborationManager extends IDEUIComponent {
             logCreatePItem(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
         }else if(type === 'addUser'){
             logUserJoined(this.collabUI,{user:user});
+        }else if(type === 'addSuggestion'){
+            let pitem = this.getPItem(pitemID);
+            createSuggestionOnToolbar(this.collabUI,{
+                pItemID: pitemID,
+                renderInfo: pitem["renderParts"],
+                user: user,
+                suggestionID: suggestionID
+            });
         }
         // this.collabUI
     }

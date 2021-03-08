@@ -26,7 +26,7 @@ export class CollaborationUI {
         };
         this._memberRequests = {};
         this._onClickPersonalFile = (node) => {console.log(node)};
-        this._onClickSuggestion = (node) => {console.log(node)};
+        this._onClickSuggestion = (node, userData) => {console.log(node); console.log(userData);};
 
         /* Trees */
         this._members;
@@ -57,6 +57,10 @@ export class CollaborationUI {
         this._personalFiles = $.jstree.reference('#selected-member-files');
         this._sharedPersonalFilesFromMe = $.jstree.reference('#collaboration-shared-from-me');
         this._sharedPersonalFilesToMe = $.jstree.reference('#collaboration-shared-to-me');
+
+        /* User Data */
+        this.suggestionUserData = {};
+
     }
 
     /* PRIVATE FUNCTIONS */
@@ -82,7 +86,7 @@ export class CollaborationUI {
             },
             'conditionalselect': (node, event) => {
                 if (this._members.get_type(node) === 'suggestion'){
-                    this._onClickSuggestion(node);
+                    this._onClickSuggestion(node, this.userData[node.id]);
                 }
                 return true;
             }
@@ -485,7 +489,7 @@ export class CollaborationUI {
         if (!this._members.get_node(node.id)){
             node.bubble_color = fileBubbleColor;
             node.color = fileColor; 
-            this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', ()=>{
+            return this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', ()=>{
                 let suggestionNode = this._members.get_node(node.id);
                 this._members.set_type(suggestionNode, 'suggestion');
             });
@@ -703,12 +707,9 @@ export class CollaborationUI {
      * @param {Object} file should contain name icon and color
      * @param {Function} cb 
      */
-    addSuggestionAnnotation(memberName, file, cb = undefined){
-        this._addMemberFileAnotation(memberName, file.name, file.icon, file.color, 'purple', cb);
-    }
-
-    addNoteAnnotation(memberName, file, cb = undefined){
-        this._addMemberFileAnotation(memberName, file.name, file.icon, file.color, 'orange', cb);
+    addSuggestionAnnotation(memberName, file, userData, cb = undefined){
+        let id = this._addMemberFileAnotation(memberName, file.name, file.icon, file.color, 'purple', cb);
+        this.suggestionUserData[id] = userData;
     }
 
     removeMemberFileAnotation(memberName, fileName){

@@ -24,6 +24,16 @@ export function sendPItemRemoved(pItem,conn){
     else conn.send(arg);
 }
 
+export function sendAddSuggestion(sugg,conn){
+    var arg = {
+        type: "addSuggestion",
+        info: JSON.stringify(sugg)
+    };
+    // debugger;
+    if(!conn)sendToAll(arg);
+    else conn.send(arg);
+}
+
 export function sendPItemUpdated(pItemId,updateType,info,conn){
     var arg = {
         type: "updatePItem",

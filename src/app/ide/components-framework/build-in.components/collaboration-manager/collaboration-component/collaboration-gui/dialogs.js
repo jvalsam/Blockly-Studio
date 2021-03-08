@@ -35,6 +35,7 @@ export function openStartSessionDialogue(
                         projectName: collabPlugin.shProject.description
                     }
                 });
+                setUpSuggestionOnClick(collaborationUI["ui"]);
             });
             onSuccess(member, {});
         }
@@ -51,6 +52,76 @@ export function openStartSessionDialogue(
         //     //TODO: return array of shared pitem ids
         // });
         return collaborationUI;
+}
+
+function setUpSuggestionOnClick(ui){
+    ui.setOnClickSuggestionCb((node, {suggestionId, pItemID}) => {
+        new ViewSuggestionPopup(
+            $suggestionContainer, 
+            pItemID,
+            [],
+            '',
+            (popup) => {
+                collabPlugin.openPItemOnDialogue(
+                    popup.getLeftContainerSelector(),
+                    pItemID,
+                    false,
+                    false,
+                    {
+                        height: -8,
+                        width: 0,
+                        top: 182,
+                        left: 290,
+                        zIndex: 99999999999999999999
+                    },
+                    suggestionId
+                );
+                collabPlugin.openPItemOnDialogue(
+                    popup.getRightContainerSelector(),
+                    pItemID,
+                    true,
+                    false,
+                    {
+                        height: -10,
+                        width: 0,
+                        top: 184,
+                        left: 290,
+                        zIndex: 99999999999999999999
+                    }
+                );
+
+                let closeDialog = () => {
+                    popup.closePopup();
+                }
+                popup.setOnYesCb(() => {
+                    collabPlugin.acceptSuggestion();
+                    collabPlugin.closeSuggestion(
+                        popup.getFileId(), 
+                        popup.getLeftContainerSelector(),
+                        popup.getRightContainerSelector(),
+                        closeDialog
+                    );
+                });
+                popup.setOnNoCb(() => {
+                    collabPlugin.denySuggestion();
+                    collabPlugin.closeSuggestion(
+                        popup.getFileId(), 
+                        popup.getLeftContainerSelector(),
+                        popup.getRightContainerSelector(),
+                        closeDialog
+                    );
+                });
+                popup.setOnClickX( () => {
+                    collabPlugin.closeSuggestion(
+                        popup.getFileId(),
+                        popup.getLeftContainerSelector(),
+                        popup.getRightContainerSelector(),
+                        closeDialog
+                    );
+                });
+            }
+        );
+    });
 }
 
 let $suggestionContainer =  $(
@@ -104,7 +175,8 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
                     popup.getFileId(),
                     popup.getLeftContainerSelector(),
                     popup.getRightContainerSelector(),
-                    closeDialog);
+                    closeDialog
+                );
             });
             popup.setOnNoCb(() => {
                 collabPlugin.closeSuggestion(
@@ -124,6 +196,28 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
             });
         }
     );
+}
+
+export function createSuggestionOnToolbar(
+    {ui}, 
+    {
+        pItemID, 
+        suggestionID, 
+        user, 
+        renderInfo
+    }
+){
+    ui.addSuggestionAnnotation(
+        user.name, 
+        {
+            icon: renderInfo[0].value, 
+            name: renderInfo[1].value.text
+        },
+        {
+            suggestionID,
+            pItemID
+        }
+    )
 }
 
 export function logCreatePItem({ui}, {user,renderInfo}) {
@@ -169,6 +263,8 @@ export function openJoinSessionDialogue(
                             projectName: collabPlugin.shProject.description
                         }
                     });
+
+                    setUpSuggestionOnClick(collaborationUI["ui"]);
                 });
                 return collaborationUI;
             });
