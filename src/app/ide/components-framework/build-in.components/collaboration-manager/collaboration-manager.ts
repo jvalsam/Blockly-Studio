@@ -14,6 +14,7 @@ import {
     openSuggestionDialogue,
     logCreatePItem,
     logUserJoined,
+    logSuggestion,
     createSuggestionOnToolbar
 } from "./collaboration-component/collaboration-gui/dialogs";
 
@@ -562,7 +563,7 @@ export class CollaborationManager extends IDEUIComponent {
                 user: user,
                 suggestionID: suggestionID
             });
-            // logAddSuggestion(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
+            logSuggestion(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
         }
         // this.collabUI
     }

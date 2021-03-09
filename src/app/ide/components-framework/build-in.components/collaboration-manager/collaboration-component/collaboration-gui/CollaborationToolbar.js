@@ -11,6 +11,7 @@ export class CollaborationUI {
                 height : 33px;              \
                 margin-bottom: 4px;         \
                 margin-top: 4px;            \
+                font-size: 16px;            \
             "
         };
         this._fileA = {
@@ -396,7 +397,7 @@ export class CollaborationUI {
                 </div>\
             </div>\
             <div id = "collaboration-header-container" class = "vcenter"> \
-                <div id = "collaboration-icon" class = "size30x30"> </div> \
+                <div id = "collaboration-icon" class = "size22x22"> </div> \
                 <div id = "collaboration-title"> Collaboration </div> \
                 <div id = "collaboration-burger" class = "size22x22 middle-right"> </div> \
                 <div class = "clear"></div> \

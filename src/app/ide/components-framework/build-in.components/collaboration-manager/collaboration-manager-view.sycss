@@ -53,11 +53,17 @@
 
 /*****************************************************************************/
 
+.collaboration-manager-container{
+    padding: 3px;
+    border: 1px solid #afafafaf;
+    background-color: #dad9d9;
+}
+
 #collaboration-toolbar{
-    font-family: "Roboto";
     width: 350px;
     height: 91vh;
     position: relative;
+    background: white;
 }
 
 #collaboration-content{
@@ -75,7 +81,7 @@
     width: 100%;
     color: #eeeeee;
     height: 45px;
-    background-color: rgb(80, 80, 80);
+    background-color: #4488AA;
     margin-bottom: 10px;
 }
 
@@ -92,7 +98,7 @@
 }
 
 #collaboration-title{
-    font-size: 22px;
+    font-size: 18px;
 }
 
 #collaboration-burger {
