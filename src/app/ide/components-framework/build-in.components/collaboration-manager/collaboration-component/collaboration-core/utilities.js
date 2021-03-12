@@ -104,6 +104,50 @@ export function handleSaveSuggestion(data){
     console.log(pitem);
 }
 
+export function handleAcceptSuggestion(pitemID, suggID){
+    let pitem = collabInfo.plugin.getPItem(pitemID);
+
+    let suggestions = pitem.componentsData.collaborationData.suggestions;
+
+    if(!suggestions[suggID]) throw Error('Tried to accept a suggestion that does not exist');
+
+    // pitem.editorsData = suggestions[suggID];
+    debugger;
+    collabInfo.plugin.onPItemUpdate(pitemID, 'replace', suggestions[suggID]);
+    
+    collabInfo.plugin.logAction(
+        {
+            type: "acceptSuggestion", 
+            user: collabInfo.myInfo,
+            pitemID: pitemID,
+            suggestionID: suggID,
+        });
+
+    console.log('ACCEPT',pitem);
+    delete suggestions[suggID];
+
+}
+
+export function handleDenySuggestion(pitemID, suggID){
+    let pitem = collabInfo.plugin.getPItem(pitemID);
+
+    let suggestions = pitem.componentsData.collaborationData.suggestions;
+
+    if(!suggestions[suggID]) throw Error('Tried to deny a suggestion that does not exist');
+
+    collabInfo.plugin.logAction(
+        {
+            type: "rejectSuggestion", 
+            user: collabInfo.myInfo,
+            pitemID: pitemID,
+            suggestionID: suggID,
+        });
+
+    console.log('DENY',pitem);
+    delete suggestions[suggID];
+
+}
+
 // export function handleRemoveSuggestion(data){
 //     let pitem = collabInfo.plugin.getPItem(data.systemID);
 //     if(!pitem.componentsData.collaborationData.suggestions)

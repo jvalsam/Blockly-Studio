@@ -27,7 +27,24 @@ export function sendAddSuggestion(sugg,conn){
         type: "addSuggestion",
         info: JSON.stringify(sugg)
     };
-    // debugger;
+    if(!conn)sendToAll(arg);
+    else conn.send(arg);
+}
+
+export function sendAcceptSuggestion(info,conn){
+    var arg = {
+        type: "acceptSuggestion",
+        info: JSON.stringify(info)
+    };
+    if(!conn)sendToAll(arg);
+    else conn.send(arg);
+}
+
+export function sendDenySuggestion(info,conn){
+    var arg = {
+        type: "denySuggestion",
+        info: JSON.stringify(info)
+    };
     if(!conn)sendToAll(arg);
     else conn.send(arg);
 }

@@ -67,7 +67,7 @@
 }
 
 #collaboration-content{
-    overflow: scroll;
+    overflow: auto;
     height: 81vh;
 }
 
@@ -81,7 +81,7 @@
     width: 100%;
     color: #eeeeee;
     height: 45px;
-    background-color: #4488AA;
+    background-color: #4a81b1;
     margin-bottom: 10px;
 }
 

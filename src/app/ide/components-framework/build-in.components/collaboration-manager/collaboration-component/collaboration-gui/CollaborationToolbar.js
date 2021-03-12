@@ -415,8 +415,9 @@ export class CollaborationUI {
                         <div id = "collaboration-shared-from-me-tab-ui" class = "center collaboration-shared-tab-ui collaboration-shared-tab-active"> From me </div> \
                         <div id = "collaboration-shared-to-me-tab-ui"class = "center collaboration-shared-tab-ui"> To me </div> \
                         <div id = "collaboration-shared-files-content" class = "clear"> \
-                            <div id = "collaboration-shared-from-me"></div> \
-                            <div id = "collaboration-shared-to-me"></div> \
+                            <div style = "opacity: 0.64"> Currently empty... </div> \
+                            <div id = "collaboration-shared-from-me">  </div> \
+                            <div id = "collaboration-shared-to-me"> There are currently no files in this queue. </div> \
                         </div> \
                     </div> \
                 </div> \
@@ -509,23 +510,6 @@ export class CollaborationUI {
      * @param {function} add The function that will be used for adding e.g append
      */
     _addAction(member, file, actionColor, type, time, add){
-        // let html = `                                                                                                \
-        //     <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                 \
-        //         <div class = "recent-action-row vcenter font-size16px">                                             \
-        //             <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
-        //             <div> ${member.name} </div>                                                                     \
-        //             <div class = "middle-right">${time}</div>                                                       \
-        //         </div>                                                                                              \
-        //         <div class = "recent-action-last-row vcenter">                                                      \
-        //             <div> ${type}</div>     
-        //             <div class = "middle-right vcenter">                                                            \
-        //                 <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \
-        //                 ${file.name}                                                                                \
-        //             </div>                                                                                          \                                                                   \
-        //         </div>                                                                                              \
-        //     </div> 
-        // `;
-        
         let $container = $(`
             <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">
             </div>
@@ -557,6 +541,7 @@ export class CollaborationUI {
         $container.append($left).append($right);
 
         add($container);
+        return $container;
     }
 
     _addSharedPersonalFile(tree, prefix, file, members){
@@ -716,8 +701,14 @@ export class CollaborationUI {
         this.suggestionUserData[id] = userData;
     }
 
-    removeMemberFileAnotation(memberName, fileName){
-        this._members.delete_node(this._MEMBER_PREFIX + memberName + this._ANNOTATION_FILE_PREFIX + fileName);
+    removeSuggestionAnnotation(userDataPredicate){
+        for (let id in this.suggestionUserData){
+            if (userDataPredicate(this.suggestionUserData[id])){
+                this._members.delete_node(id);
+                delete this.suggestionUserData[id];
+                break;
+            }
+        }
     }
 
     clearAndAddPersonalFileSpecificIds(memberName, nodes){
@@ -785,12 +776,12 @@ export class CollaborationUI {
     pushFrontAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.prepend.bind(recentActions);
-        this._addAction(member, file, actionColor, actionType, actionTime, add);
+        return this._addAction(member, file, actionColor, actionType, actionTime, add);
     }
 
     pushBackAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.append.bind(recentActions);
-        this._addAction(member, file, actionColor, actionType, actionTime, add);
+        return this._addAction(member, file, actionColor, actionType, actionTime, add);
     }
 }

@@ -56,72 +56,7 @@ export function openStartSessionDialogue(
 
 function setUpSuggestionOnClick(ui, collabPlugin){
     ui.setOnClickSuggestionCb((node, {suggestionID, pItemID}) => {
-        debugger;
-        new ViewSuggestionPopup(
-            $suggestionContainer, 
-            pItemID,
-            [],
-            '',
-            (popup) => {
-                collabPlugin.openPItemOnDialogue(
-                    popup.getLeftContainerSelector(),
-                    pItemID,
-                    false,
-                    false,
-                    {
-                        height: -10,
-                        width: 0,
-                        top: 163,
-                        left: 290,
-                        zIndex: 73
-                    },
-                );
-                collabPlugin.openPItemOnDialogue(
-                    popup.getRightContainerSelector(),
-                    pItemID,
-                    true,
-                    false,
-                    {
-                        height: -10,
-                        width: 0,
-                        top: 163,
-                        left: 290,
-                        zIndex: 73
-                    },
-                    suggestionID
-                );
-
-                let closeDialog = () => {
-                    popup.closePopup();
-                }
-                popup.setOnYesCb(() => {
-                    collabPlugin.acceptSuggestion();
-                    collabPlugin.closeSuggestion(
-                        popup.getFileId(), 
-                        popup.getLeftContainerSelector(),
-                        popup.getRightContainerSelector(),
-                        closeDialog
-                    );
-                });
-                popup.setOnNoCb(() => {
-                    collabPlugin.denySuggestion();
-                    collabPlugin.closeSuggestion(
-                        popup.getFileId(), 
-                        popup.getLeftContainerSelector(),
-                        popup.getRightContainerSelector(),
-                        closeDialog
-                    );
-                });
-                popup.setOnClickX( () => {
-                    collabPlugin.closeSuggestion(
-                        popup.getFileId(),
-                        popup.getLeftContainerSelector(),
-                        popup.getRightContainerSelector(),
-                        closeDialog
-                    );
-                });
-            }
-        );
+        openViewSuggestionDialogue(collabPlugin, {suggestionID, pItemID});
     });
 }
 
@@ -136,6 +71,75 @@ let $suggestionContainer =  $(
 $(document).ready(() => {
     $('body').append($suggestionContainer);
 });
+
+function openViewSuggestionDialogue(collabPlugin, {suggestionID, pItemID}){
+    new ViewSuggestionPopup(
+        $suggestionContainer, 
+        pItemID,
+        [],
+        collabPlugin.getSuggestionComment(pItemID,suggestionID),
+        collabPlugin.amIAuthor(pItemID),
+        (popup) => {
+            collabPlugin.openPItemOnDialogue(
+                popup.getLeftContainerSelector(),
+                pItemID,
+                false,
+                false,
+                {
+                    height: -10,
+                    width: 0,
+                    top: 163,
+                    left: 290,
+                    zIndex: 73
+                },
+            );
+            collabPlugin.openPItemOnDialogue(
+                popup.getRightContainerSelector(),
+                pItemID,
+                true,
+                false,
+                {
+                    height: -10,
+                    width: 0,
+                    top: 163,
+                    left: 290,
+                    zIndex: 73
+                },
+                suggestionID
+            );
+
+            let closeDialog = () => {
+                popup.closePopup();
+            }
+            popup.setOnYesCb(() => {
+                collabPlugin.acceptSuggestion(pItemID, suggestionID);
+                collabPlugin.closeSuggestion(
+                    popup.getFileId(), 
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog
+                );
+            });
+            popup.setOnNoCb(() => {
+                collabPlugin.denySuggestion(pItemID, suggestionID);
+                collabPlugin.closeSuggestion(
+                    popup.getFileId(), 
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog
+                );
+            });
+            popup.setOnClickX( () => {
+                collabPlugin.closeSuggestion(
+                    popup.getFileId(),
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog
+                );
+            });
+        }
+    );
+}
 
 export function openSuggestionDialogue(collabPlugin, pitemID) {
     $suggestionContainer.empty();
@@ -174,6 +178,7 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
             popup.setOnYesCb(() => {
                 collabPlugin.saveSuggestion(
                     popup.getFileId(),
+                    popup.getComment(),
                     popup.getLeftContainerSelector(),
                     popup.getRightContainerSelector(),
                     closeDialog
@@ -203,9 +208,9 @@ export function createSuggestionOnToolbar(
     {ui}, 
     {
         pItemID, 
-        suggestionID, 
+        suggestionID,
         user, 
-        renderInfo
+        renderInfo,
     }
 ){
     ui.addSuggestionAnnotation(
@@ -220,6 +225,12 @@ export function createSuggestionOnToolbar(
             pItemID
         }
     )
+}
+
+export function removeSuggestionFromToolbar({ui}, suggestionID){
+    ui.removeSuggestionAnnotation((suggestionData) => {
+        return suggestionData.suggestionID == suggestionID;
+    });
 }
 
 export function logCreatePItem({ui}, {user,renderInfo}) {
@@ -240,6 +251,18 @@ export function logSuggestion({ui}, {user,renderInfo}) {
     ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#FBFF46', 'Suggested', time);
 }
 
+export function logAcceptSuggestion({ui}, {user,renderInfo}) {
+    let d = new Date();
+    let time = `${d.getHours()}:${d.getMinutes()}`;
+    ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#53FF50', 'Accepted suggestion', time);
+}
+
+export function logRejectSuggestion({ui}, {user,renderInfo}) {
+    let d = new Date();
+    let time = `${d.getHours()}:${d.getMinutes()}`;
+    ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#F54C27', 'Rejected suggestion', time);
+}
+
 export function openJoinSessionDialogue(
     collabPlugin,
     $dialog,   // jquery selector
@@ -254,11 +277,6 @@ export function openJoinSessionDialogue(
                     $(".project-manager-runtime-console-area").hide(); // fix me
                     $toolbarContainer = $($toolbarContainer);
                     collaborationUI["ui"] = new CollaborationUI($toolbarContainer);
-                    
-                    collaborationUI["ui"].setOnClickSuggestionCb( (node) => {
-                        $suggestionContainer.empty();
-                        new ViewSuggestionPopup($suggestionContainer, {name: 'something', icon: false}, [], 'comment');
-                    });
 
                     collaborationUI["ui"].setOnToolbarMenuOpen( () => {    
                         return {

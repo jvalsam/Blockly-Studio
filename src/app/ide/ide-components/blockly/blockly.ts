@@ -181,8 +181,10 @@ export class BlocklyVPL extends Editor {
     privileges: string, // "READ_ONLY" or "EDITING"
     windowsId: string
   ): void {
-    // if (!this.instancesMap[editorData.editorId])
-      this.instancesMap[editorData.editorId] = new BlocklyInstance(
+    if (this.instancesMap[editorData.editorId])
+      this.instancesMap[editorData.editorId].destroy();
+
+    this.instancesMap[editorData.editorId] = new BlocklyInstance(
         this,
         pitem,
         editorData.editorId,

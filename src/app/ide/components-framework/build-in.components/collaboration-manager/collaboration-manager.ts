@@ -15,7 +15,10 @@ import {
     logCreatePItem,
     logUserJoined,
     logSuggestion,
-    createSuggestionOnToolbar
+    logAcceptSuggestion,
+    logRejectSuggestion,
+    createSuggestionOnToolbar,
+    removeSuggestionFromToolbar
 } from "./collaboration-component/collaboration-gui/dialogs";
 
 import { 
@@ -30,14 +33,18 @@ import {
     collaborationFilter,
     collabInfo,
     filterPItem,
-    handleSaveSuggestion
+    handleSaveSuggestion,
+    handleAcceptSuggestion,
+    handleDenySuggestion
 } from "./collaboration-component/collaboration-core/utilities";
 
 import {
     sendPItemAdded,
     sendPItemRemoved,
     sendPItemUpdated,
-    sendAddSuggestion
+    sendAddSuggestion,
+    sendAcceptSuggestion,
+    sendDenySuggestion
 } from "./collaboration-component/collaboration-core/senderHandlers";
 
 import {
@@ -97,6 +104,8 @@ export class CollaborationManager extends IDEUIComponent {
     private shProject: any;
     private collabUI: any;
 
+    private personalPItemsMap: {[pitemId: string]: any};
+
     public registerEvents(): void {
         throw new Error("Method not implemented.");
     }
@@ -146,6 +155,8 @@ export class CollaborationManager extends IDEUIComponent {
             (memberInfo, settings) => {
                 communicationInitialize(memberInfo, settings, this);
                 
+                this.personalPItemsMap = {};
+
                 success(
                     collaborationFilter(
                         projectObj,
@@ -339,16 +350,26 @@ export class CollaborationManager extends IDEUIComponent {
         );
     }
     
-    public denySuggestion(){
+    public amIAuthor(pitemID){
+        let pitem = this.getPItem(pitemID);
 
+        if(pitem.componentsData.collaborationData.privileges.owner === collabInfo.myInfo.name){
+            return true;
+        }
+        return false;
     }
 
-    public acceptSuggestion(){
-
+    public denySuggestion(pitemID, suggID){
+        handleDenySuggestion(pitemID, suggID);
+        sendDenySuggestion({pitemID,suggID});
     }
 
+    public acceptSuggestion(pitemID, suggID){
+        handleAcceptSuggestion(pitemID, suggID);
+        sendAcceptSuggestion({pitemID,suggID});
+    }
 
-    public saveSuggestion(id, readOnlySel, editableSel, cb) {
+    public saveSuggestion(id, comment, readOnlySel, editableSel, cb) {
         let pitemData = ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
@@ -378,6 +399,7 @@ export class CollaborationManager extends IDEUIComponent {
                 editableSel
             ]
         );
+        pitemData._editorsData.comment = comment;
         let suggID = handleSaveSuggestion(pitemData._editorsData);
         sendAddSuggestion(pitemData._editorsData);
 
@@ -546,6 +568,10 @@ export class CollaborationManager extends IDEUIComponent {
         }
     }
 
+    public getSuggestionComment(pItemID, suggID){
+        return this.getPItem(pItemID).componentsData.collaborationData.suggestions[suggID].comment;
+    }
+
     public logAction({type, user, pitemID, suggestionID}){
         if(type === 'createPItem'){
             let pitem = this.getPItem(pitemID);
@@ -564,6 +590,14 @@ export class CollaborationManager extends IDEUIComponent {
                 suggestionID: suggestionID
             });
             logSuggestion(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
+        }else if (type ==='acceptSuggestion'){
+            let pitem = this.getPItem(pitemID);
+            logAcceptSuggestion(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
+            removeSuggestionFromToolbar(this.collabUI, suggestionID);
+        }else if (type ==='rejectSuggestion'){
+            let pitem = this.getPItem(pitemID);
+            logRejectSuggestion(this.collabUI,{user:user, renderInfo:pitem["renderParts"]});
+            removeSuggestionFromToolbar(this.collabUI, suggestionID);
         }
         // this.collabUI
     }
@@ -630,7 +664,6 @@ export class CollaborationManager extends IDEUIComponent {
         sendPItemRemoved(pitemId);
         return true;
     }
-
 
     @ExportedFunction
     public pitemAdded(pitem: any): boolean {
