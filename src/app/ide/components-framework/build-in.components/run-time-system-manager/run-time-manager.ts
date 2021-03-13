@@ -238,7 +238,10 @@ export class RuntimeManager extends IDEUIComponent {
         let appData = ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
-            "getRunApplicationData"
+            "getRunApplicationData",
+            [
+                RuntimeManager.getMode()
+            ]
         ).value;
 
         this._environmentData = {

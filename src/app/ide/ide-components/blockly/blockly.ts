@@ -610,8 +610,17 @@ export class BlocklyVPL extends Editor {
   }
 
   @ExportedFunction
-  public generateCodeDataForExecution(data: any) {
-    return this.instancesMap[data.editorId].generateJavaScriptCode();
+  public generateCodeDataForExecution(data: any, execType: string) {
+    if (execType === "RELEASE") {
+      return this.instancesMap[data.editorId].generateJavaScriptCode();
+    }
+    else {
+      return {
+        src: this.instancesMap[data.editorId].generateJavaScriptCode(),
+        variables: this.instancesMap[data.editorId].wsp
+          .getAllVariables().map(variable => variable.name)
+      }
+    }
   }
 
   @ExportedFunction

@@ -528,7 +528,7 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @ExportedFunction
-  public generateCodeDataForExecution(data: any) {
+  public generateCodeDataForExecution(data: any, execType: string) {
     // if (RuntimeManager.getMode() === "RELEASE") {
     // alert("Not implemented generateCodeDataForExecution in " + this.name);
     let runTimeData = JSON.parse(JSON.stringify(data));

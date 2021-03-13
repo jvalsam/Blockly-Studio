@@ -136,7 +136,6 @@ Blockly.Generator.prototype.workspaceToCode = function (workspace) {
     return Blockly.Generator["workspaceToCode" + RuntimeManager.getMode()].bind(this) (workspace);
 }
 
-// den einai kalh idea pou to exw balei sto Blockly.Generator.prototype gt einai diko m
 Blockly.Generator.prototype.myBlockToCode = function (block) {
     if (!block) {
         return '';

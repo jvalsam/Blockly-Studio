@@ -252,7 +252,7 @@ export class ProjectManager extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public getRunApplicationData() {
+    public getRunApplicationData(execType) {
         let mainProject = this.loadedProjects[this.mainProject];
         let runAppData = {
             title: mainProject.title,
@@ -266,13 +266,16 @@ export class ProjectManager extends IDEUIComponent {
         this.projManagerDescr.project.categories.forEach(category => {
             // collect data for each one of the project item with category.type
             let categData = [];
-            let pitems = mainProject.projectItems.filter(x => category.validChildren.includes(x.type));
+            let pitems = mainProject.projectItems
+                .filter(x => category.validChildren
+                    .includes(x.type));
             
             pitems.forEach(pitem => {
 
                 let pitemData = {
                     title: pitem.renderParts.find(e => e.type === "title").value.text,
                     img: pitem.renderParts.find(e => e.type === "img").value.path,
+                    color: pitem.renderParts.find(e => e.type === "colour").value.colour,
                     id: pitem.systemID,
                     type: pitem.type,
                     options: pitem.editorsData.options,
@@ -286,7 +289,10 @@ export class ProjectManager extends IDEUIComponent {
                         this.name,
                         item.editorName,
                         "generateCodeDataForExecution",
-                        [ item ]
+                        [
+                            item,
+                            execType
+                        ]
                     ).value;
 
                     pitemData.editorsData.push({

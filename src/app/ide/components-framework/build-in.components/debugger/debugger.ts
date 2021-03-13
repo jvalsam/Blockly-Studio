@@ -65,6 +65,8 @@ export class Debugger extends IDEUIComponent {
         alert("start debugging process...");
         this.environmentData = environmentData;
         
+//
+
         this.toolbar = <DebuggerToolbarView>ViewRegistry.getEntry("DebuggerToolbarView")
             .create(
                 this,
@@ -76,6 +78,8 @@ export class Debugger extends IDEUIComponent {
                 this.blocklyDebugger
             );
         this.toolbar.render();
+
+        onSuccess("debugger toolbar has been loaded!");
     }
 
     @RequiredFunction("BlocklyVPL", "getAllBlocklyWSPs")

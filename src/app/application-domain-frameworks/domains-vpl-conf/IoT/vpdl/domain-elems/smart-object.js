@@ -1227,8 +1227,16 @@ export const SmartObject = {
           "x.id === " +
           JSON.stringify(block.soData.editorId.split("_ec-smart-object")[0]);
         strBuilder += ").editorsData[editorDataIndex].generated;";
+        
+        let defDebugVarCode = "let debuggerScopeId = "
+          + 'debugger_'
+          + JSON.stringify(block.soData.editorId.split("_ec-smart-object")[0])
+          + '_'
+          + dropdown_actions
+          + ';';
+        
         strBuilder +=
-          "eval(funcCode + ';' + JSON.parse('" +
+          "eval(" + defDebugVarCode + " funcCode + ';' + JSON.parse('" +
           JSON.stringify(dropdown_actions + "(...args);") +
           "'))";
         strBuilder += "}";

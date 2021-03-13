@@ -385,7 +385,7 @@ export class ViSmaOE extends Editor {
         return { src: "<xml id=\"startBlocks\" style=\"display: none\"></xml>" };
     }
 
-    public generateCodeDataForExecution (data: any) {
+    public generateCodeDataForExecution (data: any, execType: string) {
         
     }
 
