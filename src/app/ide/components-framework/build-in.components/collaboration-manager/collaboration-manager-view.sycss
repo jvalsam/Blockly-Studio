@@ -53,15 +53,21 @@
 
 /*****************************************************************************/
 
+.collaboration-manager-container{
+    padding: 3px;
+    border: 1px solid #afafafaf;
+    background-color: #dad9d9;
+}
+
 #collaboration-toolbar{
-    font-family: "Roboto";
     width: 350px;
     height: 91vh;
     position: relative;
+    background: white;
 }
 
 #collaboration-content{
-    overflow: scroll;
+    overflow: auto;
     height: 81vh;
 }
 
@@ -75,7 +81,7 @@
     width: 100%;
     color: #eeeeee;
     height: 45px;
-    background-color: rgb(80, 80, 80);
+    background-color: #4a81b1;
     margin-bottom: 10px;
 }
 
@@ -92,7 +98,7 @@
 }
 
 #collaboration-title{
-    font-size: 22px;
+    font-size: 18px;
 }
 
 #collaboration-burger {
@@ -175,6 +181,20 @@
 ****************************************************************************/
 
 #members-collaborators > .jstree-children > .jstree-node > .jstree-children a i {
+    background-position: center center !important;
+    background-size: 16px 16px !important;
+    size: 16px 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent !important;
+    border-radius: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-left: 0px;
+    border: 0px;
+}
+
+#members-me > .jstree-children > .jstree-node > .jstree-children a i {
     background-position: center center !important;
     background-size: 16px 16px !important;
     size: 16px 16px !important;
@@ -927,7 +947,7 @@
 }
 
 .suggestion-arrow{
-    background-image: url(./Icons/arrow.png);
+    /* background-image: url(./Icons/arrow.png); */
     width: 10px;
     height: 10px;
     cursor: pointer;

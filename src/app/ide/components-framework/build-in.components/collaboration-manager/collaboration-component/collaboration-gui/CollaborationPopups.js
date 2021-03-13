@@ -531,7 +531,7 @@ class SuggestionPopup extends CollaborationPopup{
         this._onYesCb = () => {};
         this._onNoCb = () => {};
 
-        let html = `\
+        let $html = $(`\
         <div class="suggestion-all-content">\
             <div class="suggestion-editors-area">\
                 <div class="suggestion-editor-area">\
@@ -566,20 +566,25 @@ class SuggestionPopup extends CollaborationPopup{
                                 placeholder="Suggestion description"
                             >${comment.text ? comment.text : ''}</textarea>\
                         </div>\
-                        <div class="suggesiton-confirmation-buttons">\
-                            <div class="suggestion-confirmation-button suggestion-accept">\
-                                ${buttonNames.yes}\
-                            </div>\
-                            <div class="suggestion-confirmation-button suggestion-reject">\
-                                ${buttonNames.no}\
-                            </div>\
-                        </div>\
                     </div>\
                 </div>\
             </div>\
-        </div>`;
+        </div>`);
 
-        this._contentContainer.append(html).ready( () => {
+        if (buttonNames){
+            $html.find('.suggestion-right-menu-section').append(
+                `<div class="suggesiton-confirmation-buttons">
+                    <div class="suggestion-confirmation-button suggestion-accept">
+                        ${buttonNames.yes}
+                    </div>
+                    <div class="suggestion-confirmation-button suggestion-reject">
+                        ${buttonNames.no}
+                    </div>
+                </div>`
+            );
+        }
+
+        this._contentContainer.append($html).ready( () => {
             let arrow_rotation = 0;
             $(".suggestion-comment-title").click( () => {
                 $(".suggestion-comment-content").toggle();
@@ -628,6 +633,10 @@ class SuggestionPopup extends CollaborationPopup{
     getFileId(){
         return this.fileId;
     }
+
+    getComment(){
+        return $('.suggestion-comment-content').val() || '';
+    }
 }
 
 class AuthorSuggestionPopup extends SuggestionPopup {
@@ -638,18 +647,21 @@ class AuthorSuggestionPopup extends SuggestionPopup {
 
 class ViewSuggestionPopup extends SuggestionPopup {
     
-    constructor(container, fileId, members, comment, cb){
-        super(container, fileId, {readonly: true, text: comment ? comment : ' '}, {yes: 'Accept', no: 'Reject'}, cb);
+    constructor(container, fileId, members, comment, hasButtons, cb){
+        super(
+            container, 
+            fileId, 
+            {readonly: true, text: comment ? comment : ' '}, 
+            hasButtons ? {yes: 'Accept', no: 'Reject'} : undefined,
+            cb
+        );
         
         this._onMemberClick = (member) => {console.log(member)};
         
         let html = 
         `<div class="suggestion-right-menu-section">\
-        <div class="suggestion-text-16">\
-                This item's other suggestions\
-            </div>\
-            <div class="suggestion-users-container">\
-            </div>\
+            <div class="suggestion-text-16"> </div>\
+            <div class="suggestion-users-container"> </div>\
         </div>`;
         
         $(".suggestion-right-menu-content").append(html);

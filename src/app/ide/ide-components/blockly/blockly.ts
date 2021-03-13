@@ -181,8 +181,10 @@ export class BlocklyVPL extends Editor {
     privileges: string, // "READ_ONLY" or "EDITING"
     windowsId: string
   ): void {
-    if (!this.instancesMap[editorData.editorId])
-      this.instancesMap[editorData.editorId] = new BlocklyInstance(
+    if (this.instancesMap[editorData.editorId])
+      this.instancesMap[editorData.editorId].destroy();
+
+    this.instancesMap[editorData.editorId] = new BlocklyInstance(
         this,
         pitem,
         editorData.editorId,
@@ -314,6 +316,15 @@ export class BlocklyVPL extends Editor {
       "Request to close not existing source ID in Blockly Editor!"
     );
     this.instancesMap[srcId].close();
+  }
+
+  @ExportedFunction
+  public destroySRC(srcId: string): void {
+    assert(
+      srcId in this.instancesMap,
+      "Request to close not existing source ID in Blockly Editor!"
+    );
+    this.instancesMap[srcId].wsp.dispose();
   }
 
   @ExportedFunction

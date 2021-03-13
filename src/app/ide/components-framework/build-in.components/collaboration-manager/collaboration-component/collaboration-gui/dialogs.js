@@ -35,7 +35,7 @@ export function openStartSessionDialogue(
                         projectName: collabPlugin.shProject.description
                     }
                 });
-                setUpSuggestionOnClick(collaborationUI["ui"]);
+                setUpSuggestionOnClick(collaborationUI["ui"], collabPlugin);
             });
             onSuccess(member, {});
         }
@@ -54,73 +54,9 @@ export function openStartSessionDialogue(
         return collaborationUI;
 }
 
-function setUpSuggestionOnClick(ui){
-    ui.setOnClickSuggestionCb((node, {suggestionId, pItemID}) => {
-        new ViewSuggestionPopup(
-            $suggestionContainer, 
-            pItemID,
-            [],
-            '',
-            (popup) => {
-                collabPlugin.openPItemOnDialogue(
-                    popup.getLeftContainerSelector(),
-                    pItemID,
-                    false,
-                    false,
-                    {
-                        height: -8,
-                        width: 0,
-                        top: 182,
-                        left: 290,
-                        zIndex: 99999999999999999999
-                    },
-                    suggestionId
-                );
-                collabPlugin.openPItemOnDialogue(
-                    popup.getRightContainerSelector(),
-                    pItemID,
-                    true,
-                    false,
-                    {
-                        height: -10,
-                        width: 0,
-                        top: 184,
-                        left: 290,
-                        zIndex: 99999999999999999999
-                    }
-                );
-
-                let closeDialog = () => {
-                    popup.closePopup();
-                }
-                popup.setOnYesCb(() => {
-                    collabPlugin.acceptSuggestion();
-                    collabPlugin.closeSuggestion(
-                        popup.getFileId(), 
-                        popup.getLeftContainerSelector(),
-                        popup.getRightContainerSelector(),
-                        closeDialog
-                    );
-                });
-                popup.setOnNoCb(() => {
-                    collabPlugin.denySuggestion();
-                    collabPlugin.closeSuggestion(
-                        popup.getFileId(), 
-                        popup.getLeftContainerSelector(),
-                        popup.getRightContainerSelector(),
-                        closeDialog
-                    );
-                });
-                popup.setOnClickX( () => {
-                    collabPlugin.closeSuggestion(
-                        popup.getFileId(),
-                        popup.getLeftContainerSelector(),
-                        popup.getRightContainerSelector(),
-                        closeDialog
-                    );
-                });
-            }
-        );
+function setUpSuggestionOnClick(ui, collabPlugin){
+    ui.setOnClickSuggestionCb((node, {suggestionID, pItemID}) => {
+        openViewSuggestionDialogue(collabPlugin, {suggestionID, pItemID});
     });
 }
 
@@ -136,6 +72,75 @@ $(document).ready(() => {
     $('body').append($suggestionContainer);
 });
 
+function openViewSuggestionDialogue(collabPlugin, {suggestionID, pItemID}){
+    new ViewSuggestionPopup(
+        $suggestionContainer, 
+        pItemID,
+        [],
+        collabPlugin.getSuggestionComment(pItemID,suggestionID),
+        collabPlugin.amIAuthor(pItemID),
+        (popup) => {
+            collabPlugin.openPItemOnDialogue(
+                popup.getLeftContainerSelector(),
+                pItemID,
+                false,
+                false,
+                {
+                    height: -10,
+                    width: 0,
+                    top: 163,
+                    left: 290,
+                    zIndex: 73
+                },
+            );
+            collabPlugin.openPItemOnDialogue(
+                popup.getRightContainerSelector(),
+                pItemID,
+                true,
+                false,
+                {
+                    height: -10,
+                    width: 0,
+                    top: 163,
+                    left: 290,
+                    zIndex: 73
+                },
+                suggestionID
+            );
+
+            let closeDialog = () => {
+                popup.closePopup();
+            }
+            popup.setOnYesCb(() => {
+                collabPlugin.acceptSuggestion(pItemID, suggestionID);
+                collabPlugin.closeSuggestion(
+                    popup.getFileId(), 
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog
+                );
+            });
+            popup.setOnNoCb(() => {
+                collabPlugin.denySuggestion(pItemID, suggestionID);
+                collabPlugin.closeSuggestion(
+                    popup.getFileId(), 
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog
+                );
+            });
+            popup.setOnClickX( () => {
+                collabPlugin.closeSuggestion(
+                    popup.getFileId(),
+                    popup.getLeftContainerSelector(),
+                    popup.getRightContainerSelector(),
+                    closeDialog
+                );
+            });
+        }
+    );
+}
+
 export function openSuggestionDialogue(collabPlugin, pitemID) {
     $suggestionContainer.empty();
     let popup = new AuthorSuggestionPopup(
@@ -148,11 +153,11 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
                 false,
                 false,
                 {
-                    height: -8,
+                    height: -10,
                     width: 0,
-                    top: 182,
+                    top: 163,
                     left: 290,
-                    zIndex: 99999999999999999999
+                    zIndex: 73
                 });
             collabPlugin.openPItemOnDialogue(
                 popup.getRightContainerSelector(),
@@ -162,9 +167,9 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
                 {
                     height: -10,
                     width: 0,
-                    top: 184,
+                    top: 163,
                     left: 290,
-                    zIndex: 99999999999999999999
+                    zIndex: 73
                 });
 
             let closeDialog = () => {
@@ -173,6 +178,7 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
             popup.setOnYesCb(() => {
                 collabPlugin.saveSuggestion(
                     popup.getFileId(),
+                    popup.getComment(),
                     popup.getLeftContainerSelector(),
                     popup.getRightContainerSelector(),
                     closeDialog
@@ -202,16 +208,17 @@ export function createSuggestionOnToolbar(
     {ui}, 
     {
         pItemID, 
-        suggestionID, 
+        suggestionID,
         user, 
-        renderInfo
+        renderInfo,
     }
 ){
     ui.addSuggestionAnnotation(
         user.name, 
         {
-            icon: renderInfo[0].value, 
-            name: renderInfo[1].value.text
+            icon: renderInfo[0].value.path,
+            name: renderInfo[1].value.text,
+            color: renderInfo[2].value.colour
         },
         {
             suggestionID,
@@ -220,17 +227,40 @@ export function createSuggestionOnToolbar(
     )
 }
 
+export function removeSuggestionFromToolbar({ui}, suggestionID){
+    ui.removeSuggestionAnnotation((suggestionData) => {
+        return suggestionData.suggestionID == suggestionID;
+    });
+}
+
 export function logCreatePItem({ui}, {user,renderInfo}) {
-    // pushFrontAction(member, file, actionColor, actionType, actionTime){
     let d = new Date();
     let time = `${d.getHours()}:${d.getMinutes()}`;
-    ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#FFFDE7', 'Created', time);
+    ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#53FF50', 'Created', time);
 }
 
 export function logUserJoined({ui}, {user}) {
     let d = new Date();
     let time = `${d.getHours()}:${d.getMinutes()}`;
-    ui.pushFrontAction(user, null, '#D4FFDE', 'Joined the project', time);
+    ui.pushFrontAction(user, null, '#51C0FF', 'Joined the project', time);
+}
+
+export function logSuggestion({ui}, {user,renderInfo}) {
+    let d = new Date();
+    let time = `${d.getHours()}:${d.getMinutes()}`;
+    ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#FBFF46', 'Suggested', time);
+}
+
+export function logAcceptSuggestion({ui}, {user,renderInfo}) {
+    let d = new Date();
+    let time = `${d.getHours()}:${d.getMinutes()}`;
+    ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#53FF50', 'Accepted suggestion', time);
+}
+
+export function logRejectSuggestion({ui}, {user,renderInfo}) {
+    let d = new Date();
+    let time = `${d.getHours()}:${d.getMinutes()}`;
+    ui.pushFrontAction(user, {icon: renderInfo[0].value, name: renderInfo[1].value.text}, '#F54C27', 'Rejected suggestion', time);
 }
 
 export function openJoinSessionDialogue(
@@ -247,11 +277,6 @@ export function openJoinSessionDialogue(
                     $(".project-manager-runtime-console-area").hide(); // fix me
                     $toolbarContainer = $($toolbarContainer);
                     collaborationUI["ui"] = new CollaborationUI($toolbarContainer);
-                    
-                    collaborationUI["ui"].setOnClickSuggestionCb( (node) => {
-                        $suggestionContainer.empty();
-                        new ViewSuggestionPopup($suggestionContainer, {name: 'something', icon: false}, [], 'comment');
-                    });
 
                     collaborationUI["ui"].setOnToolbarMenuOpen( () => {    
                         return {
@@ -264,7 +289,7 @@ export function openJoinSessionDialogue(
                         }
                     });
 
-                    setUpSuggestionOnClick(collaborationUI["ui"]);
+                    setUpSuggestionOnClick(collaborationUI["ui"], collabPlugin);
                 });
                 return collaborationUI;
             });

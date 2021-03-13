@@ -14,7 +14,9 @@ import {
   receivePItemRemoved,
   receivePItemUpdated,
   receiveAddUser,
-  receiveAddSuggestion
+  receiveAddSuggestion,
+  receiveAcceptSuggestion,
+  receiveDenySuggestion
 } from "./receiveHandlers.js"
 
 export function communicationInitialize(myInfo, settings, CollabManager) {
@@ -25,7 +27,9 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
     "removePItem": receivePItemRemoved ,
     "updatePItem": receivePItemUpdated ,
     "addUser": receiveAddUser,
-    "addSuggestion": receiveAddSuggestion
+    "addSuggestion": receiveAddSuggestion,
+    "acceptSuggestion": receiveAcceptSuggestion,
+    "denySuggestion": receiveDenySuggestion
   };
   console.log("myInfo:",myInfo);
   collabInfo.plugin = CollabManager;
@@ -34,12 +38,12 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   // console.log(collabInfo.plugin.shProject);
   console.log(collabInfo.UI);
   let randomId = generateRandom(20);
-  // let peer = new Peer(randomId, {
-  //   host: '147.52.17.129',
-  //   port: 9000,
-  //   path: '/myapp'
-  // });
-  var peer = new Peer(randomId);
+  let peer = new Peer(randomId, {
+    host: '147.52.17.129',
+    port: 9000,
+    path: '/myapp'
+  });
+  // var peer = new Peer(randomId);
   peer.on('open', (id) => {
     console.log('My peer ID is: ' + id);
     collabInfo.UI.addMemberMe(myInfo);
@@ -47,7 +51,7 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   console.log(collabInfo.plugin);
   collabInfo.invitationCode = randomId;
   peer.on('connection', (conn) => {
-    console.log('connected ' + conn);
+    console.log('connected ' + conn.id);
 
     conn.on('open', () => {
         conn.on('data', (data) => { 
@@ -98,36 +102,42 @@ export function startCommunicationUser(myInfo, externalLink, CollabManager, load
     "updatePItem": receivePItemUpdated ,
     "addUser": receiveAddUser,
     "acceptedUser": acceptedUser,
-    "addSuggestion": receiveAddSuggestion
+    "addSuggestion": receiveAddSuggestion,
+    "acceptSuggestion": receiveAcceptSuggestion,
+    "denySuggestion": receiveDenySuggestion
   };
   collabInfo.plugin = CollabManager;
   collabInfo.myInfo = myInfo;
-  // externalLink = "akatsarakis1234a";
-  // var peer = new Peer({
-  //   host: '147.52.17.129',
-  //   port: 9000,
-  //   path: '/myapp'
-  // });
-  var peer = new Peer();
+  var peer = new Peer(generateRandom(20),{
+    host: '147.52.17.129',
+    port: 9000,
+    path: '/myapp'
+  });
+  // var peer = new Peer();
   peer.on('error', function(err) { console.log(err); });
   console.log(myInfo,"trying to connect to "+externalLink);
-  var conn = peer.connect(externalLink);
-  conn.on('open', function () {
-    console.log('connected');
-    conn.on('data', function (data) {
-      console.log(data);
-      receivedHandler[data.type](data,conn);
+  peer.on('open', function (id) {
+    conn.on('open', function () {
+
+      console.log('connected',id);
+      conn.on('data', function (data) {
+        console.log(data);
+        receivedHandler[data.type](data,conn);
+      });
+      
+      //sendRegister
+      setTimeout(()=>{
+        if(conn.open === false)debugger;
+        var arg = {
+          type: "registerUser",
+          info: myInfo
+        };
+        conn.send(arg);
+        console.log("Sent register");
+      },1000)
     });
-
-
-    //sendRegister
-    var arg = {
-      type: "registerUser",
-      info: myInfo
-    };
-    conn.send(arg);
-    console.log("Sent register");
   });
+  var conn = peer.connect(externalLink);
   
   return conn;
   

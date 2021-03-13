@@ -1,7 +1,9 @@
 import {
     collabInfo,
     printDB,
-    handleSaveSuggestion
+    handleSaveSuggestion,
+    handleAcceptSuggestion,
+    handleDenySuggestion
 }from "./utilities.js"
 
 import {
@@ -11,7 +13,8 @@ import {
 import {
     sendPItemAdded,
     sendPItemRemoved,
-    sendPItemUpdated
+    sendPItemUpdated,
+    sendAddSuggestion
 }from './senderHandlers'
 
 
@@ -89,6 +92,29 @@ export function receiveAddSuggestion(data, conn){
         if(user.id !== conn.id){
             console.log('sending',data.info)
             sendAddSuggestion(data.info,user);
+        }
+    });
+    printDB();
+}
+
+export function receiveAcceptSuggestion(data, conn){
+    data.info = JSON.parse(data.info);
+    handleAcceptSuggestion(data.info.pitemID, data.info.suggID);
+    collabInfo.connected_users.forEach(user => {
+        if(user.id !== conn.id){
+            sendAcceptSuggestion(data.info,user);
+        }
+    });
+    printDB();
+}
+
+
+export function receiveDenySuggestion(data, conn){
+    data.info = JSON.parse(data.info);
+    handleDenySuggestion(data.info.pitemID, data.info.suggID);
+    collabInfo.connected_users.forEach(user => {
+        if(user.id !== conn.id){
+            sendDenySuggestion(data.info,user);
         }
     });
     printDB();

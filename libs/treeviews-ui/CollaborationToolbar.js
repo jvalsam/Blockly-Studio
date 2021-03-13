@@ -491,7 +491,7 @@ export class CollaborationUI{
      * @param {function} add The function that will be used for adding e.g append
      */
     _addAction(member, file, actionColor, type, time, add){
-        let html = `                                                                                                \
+        let $action = `                                                                                                \
             <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                 \
                 <div class = "recent-action-row vcenter font-size16px">                                             \
                     <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
@@ -507,7 +507,8 @@ export class CollaborationUI{
                 </div>                                                                                              \
             </div> 
         `;
-        add(html);
+        add($action);
+        return $action;
     }
 
     _addSharedPersonalFile(tree, prefix, file, members){
@@ -736,13 +737,13 @@ export class CollaborationUI{
     pushFrontAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.prepend.bind(recentActions);
-        this._addAction(member, file, actionColor, actionType, actionTime, add);
+        return this._addAction(member, file, actionColor, actionType, actionTime, add); 
     }
 
     pushBackAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.append.bind(recentActions);
-        this._addAction(member, file, actionColor, actionType, actionTime, add);
+        return this._addAction(member, file, actionColor, actionType, actionTime, add);
     }
 }
 

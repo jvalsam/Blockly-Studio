@@ -88,16 +88,64 @@ export function handleSaveSuggestion(data){
     if(!pitem.componentsData.collaborationData.suggestions)
         pitem.componentsData.collaborationData.suggestions = [];
     
-    if(!data.suggestionID)data.suggestionID = generateRandom(20);
+    if(!data.suggestionID){
+        data.suggestionID = generateRandom(20);
+        data.suggestionAuthor = collabInfo.myInfo
+    }
     pitem.componentsData.collaborationData.suggestions[data.suggestionID] = data;
 
     collabInfo.plugin.logAction(
         {
             type: "addSuggestion", 
-            user: collabInfo.myInfo, 
+            user: data.suggestionAuthor, 
             pitemID: data.systemID,
             suggestionID: data.suggestionID
         });
+    console.log(pitem);
+}
+
+export function handleAcceptSuggestion(pitemID, suggID){
+    let pitem = collabInfo.plugin.getPItem(pitemID);
+
+    let suggestions = pitem.componentsData.collaborationData.suggestions;
+
+    if(!suggestions[suggID]) throw Error('Tried to accept a suggestion that does not exist');
+
+    // pitem.editorsData = suggestions[suggID];
+    debugger;
+    collabInfo.plugin.onPItemUpdate(pitemID, 'replace', suggestions[suggID]);
+    
+    collabInfo.plugin.logAction(
+        {
+            type: "acceptSuggestion", 
+            user: collabInfo.myInfo,
+            pitemID: pitemID,
+            suggestionID: suggID,
+        });
+
+    console.log('ACCEPT',pitem);
+    delete suggestions[suggID];
+
+}
+
+export function handleDenySuggestion(pitemID, suggID){
+    let pitem = collabInfo.plugin.getPItem(pitemID);
+
+    let suggestions = pitem.componentsData.collaborationData.suggestions;
+
+    if(!suggestions[suggID]) throw Error('Tried to deny a suggestion that does not exist');
+
+    collabInfo.plugin.logAction(
+        {
+            type: "rejectSuggestion", 
+            user: collabInfo.myInfo,
+            pitemID: pitemID,
+            suggestionID: suggID,
+        });
+
+    console.log('DENY',pitem);
+    delete suggestions[suggID];
+
 }
 
 // export function handleRemoveSuggestion(data){

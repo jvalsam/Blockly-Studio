@@ -500,6 +500,20 @@ export class ProjectManager extends IDEUIComponent {
                         data
                     ]
                 ).value;
+            case 'replace':
+                let projectId = data.projectID;
+                let upitem = this.loadedProjects[projectId].projectItems.find(pi => pi.systemID === data.systemID);
+                upitem.editorsData = data;
+                //
+                ComponentsCommunication.functionRequest(
+                    this.name,
+                    "EditorManager",
+                    "pitemReplace_src",
+                    [
+                        pitem,
+                        data
+                    ]
+                ).value;
             case "rename":
                 this.renameElementRemote(pitemId, data, callback);
                 break;

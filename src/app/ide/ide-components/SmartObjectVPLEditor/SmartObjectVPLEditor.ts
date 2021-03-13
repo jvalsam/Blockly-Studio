@@ -136,6 +136,11 @@ export class SmartObjectVPLEditor extends Editor {
     this.instancesMap[srcId].close();
   }
 
+  
+  @ExportedFunction
+  public destroySRC(srcId: string): void {
+  }
+
   @ExportedFunction
   public update_privileges(editorData: any, privilege: string): void {
 
@@ -148,7 +153,7 @@ export class SmartObjectVPLEditor extends Editor {
       id in this.instancesMap,
       "Not found instance of Smart Object VPL Editor"
     );
-    this.instancesMap[id].sync(data.details, pitem, focus);
+    this.instancesMap[id].sync(data.event.data, pitem, focus);
   }
 
   @ExportedFunction
@@ -261,7 +266,7 @@ export class SmartObjectVPLEditor extends Editor {
   private filterToSave(data) {
     return {
       type: data.type,
-      details: data.details,
+      data: data,
     };
   }
 
@@ -750,12 +755,19 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @RequiredFunction("BlocklyVPL", "closeSRC")
+  @RequiredFunction("BlocklyVPL", "destroySRC")
   @ExportedFunction
   closeSrcForBlocklyInstance(editorId: string) {
     ComponentsCommunication.functionRequest(
       this.name,
       "BlocklyVPL",
       "closeSRC",
+      [editorId]
+    );
+    ComponentsCommunication.functionRequest(
+      this.name,
+      "BlocklyVPL",
+      "destroySRC",
       [editorId]
     );
   }

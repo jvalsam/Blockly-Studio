@@ -444,8 +444,8 @@ export class SOVPLElemInstance {
     //this.render(this.selector, this.elemData);
   }
 
-  sync(details, pitem, focus) {
-    this.elemData.editorData.details = details;
+  sync(data, pitem, focus) {
+    this.elemData.editorData = data;
 
     if (focus) {
       this.render(this.selector, this.elemData);

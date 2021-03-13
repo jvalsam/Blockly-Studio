@@ -602,6 +602,7 @@ export class EditorManager extends IDEUIComponent {
         
         for (const key in editorsData.items) {
             let item = editorsData.items[key];
+            item.editor = item.editor || item.editorName;
             let editorId = item.editorId + "_dialogue_" + (this.dialogueNo-1);
             let edata = ComponentsCommunication.functionRequest(
                 this.name,
@@ -703,6 +704,13 @@ export class EditorManager extends IDEUIComponent {
             this.name,
             editorName,
             "closeSRC",
+            [ editorId ]
+        );
+
+        ComponentsCommunication.functionRequest(
+            this.name,
+            editorName,
+            "destroySRC",
             [ editorId ]
         );
     }

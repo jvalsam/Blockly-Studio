@@ -11,6 +11,7 @@ export class CollaborationUI {
                 height : 33px;              \
                 margin-bottom: 4px;         \
                 margin-top: 4px;            \
+                font-size: 16px;            \
             "
         };
         this._fileA = {
@@ -43,7 +44,6 @@ export class CollaborationUI {
         /* Prefixes for adding new nodes */
         
         this._MEMBER_PREFIX = 'collaborators-';
-        this._MEMBER_ME_PREFIX = 'collaborators-me-';
         this._ANNOTATION_FILE_PREFIX = '-file-';
         this._PERSONAL_FILE_PREFIX = 'personal-file-';
         this._SHARED_FROM_ME_FILE_PREFIX = 'shared-from-me-';
@@ -71,7 +71,6 @@ export class CollaborationUI {
                 "wholerow",
                 "sort",
                 "contextmenu",
-                "unique",
                 "types",
                 "conditionalselect",
                 "colorv",
@@ -86,7 +85,7 @@ export class CollaborationUI {
             },
             'conditionalselect': (node, event) => {
                 if (this._members.get_type(node) === 'suggestion'){
-                    this._onClickSuggestion(node, this.userData[node.id]);
+                    this._onClickSuggestion(node, this.suggestionUserData[node.id]);
                 }
                 return true;
             }
@@ -398,7 +397,7 @@ export class CollaborationUI {
                 </div>\
             </div>\
             <div id = "collaboration-header-container" class = "vcenter"> \
-                <div id = "collaboration-icon" class = "size30x30"> </div> \
+                <div id = "collaboration-icon" class = "size22x22"> </div> \
                 <div id = "collaboration-title"> Collaboration </div> \
                 <div id = "collaboration-burger" class = "size22x22 middle-right"> </div> \
                 <div class = "clear"></div> \
@@ -416,8 +415,9 @@ export class CollaborationUI {
                         <div id = "collaboration-shared-from-me-tab-ui" class = "center collaboration-shared-tab-ui collaboration-shared-tab-active"> From me </div> \
                         <div id = "collaboration-shared-to-me-tab-ui"class = "center collaboration-shared-tab-ui"> To me </div> \
                         <div id = "collaboration-shared-files-content" class = "clear"> \
-                            <div id = "collaboration-shared-from-me"></div> \
-                            <div id = "collaboration-shared-to-me"></div> \
+                            <div style = "opacity: 0.64"> Currently empty... </div> \
+                            <div id = "collaboration-shared-from-me">  </div> \
+                            <div id = "collaboration-shared-to-me"> There are currently no files in this queue. </div> \
                         </div> \
                     </div> \
                 </div> \
@@ -481,18 +481,23 @@ export class CollaborationUI {
 
     _addMemberFileAnotation(memberName, fileName, fileIcon, fileColor, fileBubbleColor, cb = undefined){
         var node = {
-            'id': this._MEMBER_PREFIX + memberName + this._ANNOTATION_FILE_PREFIX + fileName,
+            'id': this._MEMBER_PREFIX + memberName 
+                + this._ANNOTATION_FILE_PREFIX 
+                + fileName
+                + '-Suggestion Number-'
+                + Object.keys(this.suggestionUserData).length,
             'text': fileName,
             'icon': fileIcon,
             'a_attr': this._fileA
         };
         if (!this._members.get_node(node.id)){
             node.bubble_color = fileBubbleColor;
-            node.color = fileColor; 
-            return this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', ()=>{
+            node.color = fileColor;
+            this._members.create_node(this._MEMBER_PREFIX + memberName, node, 'last', ()=>{
                 let suggestionNode = this._members.get_node(node.id);
                 this._members.set_type(suggestionNode, 'suggestion');
             });
+            return node.id;
         }
     }
 
@@ -505,23 +510,6 @@ export class CollaborationUI {
      * @param {function} add The function that will be used for adding e.g append
      */
     _addAction(member, file, actionColor, type, time, add){
-        // let html = `                                                                                                \
-        //     <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">                 \
-        //         <div class = "recent-action-row vcenter font-size16px">                                             \
-        //             <div class = "member-icon float-left" style = "background-image: url(${member.icon});"></div>   \
-        //             <div> ${member.name} </div>                                                                     \
-        //             <div class = "middle-right">${time}</div>                                                       \
-        //         </div>                                                                                              \
-        //         <div class = "recent-action-last-row vcenter">                                                      \
-        //             <div> ${type}</div>     
-        //             <div class = "middle-right vcenter">                                                            \
-        //                 <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>   \
-        //                 ${file.name}                                                                                \
-        //             </div>                                                                                          \                                                                   \
-        //         </div>                                                                                              \
-        //     </div> 
-        // `;
-        
         let $container = $(`
             <div class = "collaboration-recent-action" style = "background-color: ${actionColor};">
             </div>
@@ -553,6 +541,7 @@ export class CollaborationUI {
         $container.append($left).append($right);
 
         add($container);
+        return $container;
     }
 
     _addSharedPersonalFile(tree, prefix, file, members){
@@ -592,7 +581,7 @@ export class CollaborationUI {
 
     _addMember(member, me, cb = undefined){
         var node = {
-            'id': (me ? this._MEMBER_ME_PREFIX : this._MEMBER_PREFIX) + member.name,
+            'id': this._MEMBER_PREFIX + member.name,
             'text': member.name,
             'icon': member.icon,
             'a_attr': this._membersA
@@ -712,8 +701,14 @@ export class CollaborationUI {
         this.suggestionUserData[id] = userData;
     }
 
-    removeMemberFileAnotation(memberName, fileName){
-        this._members.delete_node(this._MEMBER_PREFIX + memberName + this._ANNOTATION_FILE_PREFIX + fileName);
+    removeSuggestionAnnotation(userDataPredicate){
+        for (let id in this.suggestionUserData){
+            if (userDataPredicate(this.suggestionUserData[id])){
+                this._members.delete_node(id);
+                delete this.suggestionUserData[id];
+                break;
+            }
+        }
     }
 
     clearAndAddPersonalFileSpecificIds(memberName, nodes){
@@ -781,12 +776,12 @@ export class CollaborationUI {
     pushFrontAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.prepend.bind(recentActions);
-        this._addAction(member, file, actionColor, actionType, actionTime, add);
+        return this._addAction(member, file, actionColor, actionType, actionTime, add);
     }
 
     pushBackAction(member, file, actionColor, actionType, actionTime){
         let recentActions = $("#collaboration-recent-actions-ui");
         let add = recentActions.append.bind(recentActions);
-        this._addAction(member, file, actionColor, actionType, actionTime, add);
+        return this._addAction(member, file, actionColor, actionType, actionTime, add);
     }
 }
