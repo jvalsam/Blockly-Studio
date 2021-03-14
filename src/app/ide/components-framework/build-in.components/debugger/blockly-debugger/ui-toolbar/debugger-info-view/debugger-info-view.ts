@@ -12,6 +12,9 @@ import * as _ from "lodash";
     style: { system: DebuggerInfoViewSYCSS }
 })
 export class DebuggerInfoView extends View {
+    // variables data
+    private envTree: any;
+
     constructor(
         parent: IDEUIComponent,
         name: string,
@@ -26,6 +29,11 @@ export class DebuggerInfoView extends View {
     public registerEvents(): void {}
 
     public setStyle(): void {}
+
+    public setEnvironmentData(envTree) {
+        this.envTree = envTree;
+        this.render();
+    }
 
     public render(): void {
         this.renderTmplEl();

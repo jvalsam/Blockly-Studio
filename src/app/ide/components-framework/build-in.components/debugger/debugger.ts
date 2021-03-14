@@ -32,6 +32,7 @@ export class Debugger extends IDEUIComponent {
     private blocklyDebugger: BlocklyDebugger;
     private toolbar: DebuggerToolbarView;
 
+    @RequiredFunction("RuntimeManager", "functionRequest")
     private postMessage(msg, callback?: Function) {
         ComponentsCommunication.functionRequest(
             this.name,
@@ -41,7 +42,9 @@ export class Debugger extends IDEUIComponent {
                 this.name,
                 "RuntimeEnvironmentDebug",
                 "receiveFrontendMessage",
-                msg,
+                [
+                    msg
+                ],
                 callback
             ]
         );
@@ -60,18 +63,22 @@ export class Debugger extends IDEUIComponent {
         this.breakpointNO = 1;
     }
 
+    @RequiredFunction("RuntimeManager", "getEnvironmentRunData")
     @ExportedFunction
-    public start(environmentData: any, onSuccess: Function) {
-        alert("start debugging process...");
-        this.environmentData = environmentData;
-        
+    public start(onSuccess: Function) {
+        this.environmentData = ComponentsCommunication.functionRequest(
+            this.name,
+            "RuntimeManager",
+            "getEnvironmentRunData",
+            []
+        ).value;
 //
 
         this.toolbar = <DebuggerToolbarView>ViewRegistry.getEntry("DebuggerToolbarView")
             .create(
                 this,
                 ".debugger-toolbar-area",
-                environmentData,
+                this.environmentData,
                 {
                     breakpoints: this.breakpoints
                 },//debuggerData
@@ -90,6 +97,26 @@ export class Debugger extends IDEUIComponent {
             "getAllBlocklyWSPs",
             []
         ).value;
+    }
+
+    @ExportedFunction
+    public setEnvironmentVariablesTree(envTree) {
+        this.toolbar.debuggerInfodata.setEnvironmentData(envTree);
+
+        let bdi = this.blocklyDebugger.getDebuggerInstance();
+
+        bdi.actions.Variables.init(envTree);
+
+        return {
+            "breakpoints": bdi.actions["Breakpoint"].breakpoints.map((obj) => {
+                return {
+                    "block_id": obj.block_id,
+                    "enable": obj.enable
+                }
+            }),
+            "cursorBreakpoint": "", // run to cursor in block: TODO
+            "watches": bdi.actions["Watch"].getWatches()
+        }
     }
 
     private getEnvironmentData(): any {

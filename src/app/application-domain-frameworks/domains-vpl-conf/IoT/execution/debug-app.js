@@ -4,6 +4,10 @@ import {
     window
 } from '../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init.js';
 
+import {
+    BlocklyDebuggeeStartAction
+} from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/actions/start.js";
+
 var debuggerEnvironmentVariables = [
 
 ];
@@ -158,6 +162,14 @@ function AddAutomationsVariables(automations) {
 }
 
 export async function StartApplication(runTimeData) {
+    let debuggeeActions = BlocklyDebuggeeStartAction();
+
+    // initialize functions of debugge that are used in generated source
+    let $id = debuggeeActions.$id;
+    let wait = debuggeeActions.wait;
+    let isStepOver = debuggeeActions.isStepOver;
+    let isStepParent = debuggeeActions.isStepParent;
+
     // init variables for UI toolbar
     InitializePredefinedDebuggerNodes(runTimeData.execData.project);
     // collect pelements
@@ -182,70 +194,85 @@ export async function StartApplication(runTimeData) {
     AddAutomationsVariables(runTimeData.execData.project.CalendarEvents);
     AddAutomationsVariables(runTimeData.execData.project.AutomationTasks);
     AddSmartDevicesVariables(runTimeData.execData.project.SmartObjects);
-    //
-
-    // iniate variables for the debugger toolbar
-    watches = Blockly_Debuggee
-        .actions["watch"]
-        .getWatches();
-
-    var update_values = () => {
-        var update_var = Blockly_Debuggee.actions["variables"].update_values();
-        var update_watch = Blockly_Debuggee.actions["watch"].update_values();
-        return update_var + update_watch;
-    }
-
-    function evalLocal(expr) {
-        eval(expr);
-    }
-
-    var variablesWatches_code = 
-        `eval(update_values(debuggerScopeId));
-            Blockly_Debuggee
-            .actions[\"variables\"]
-            .updateDebugger();
-        Blockly_Debuggee
-            .actions[\"watch\"]
-            .updateDebugger();`;
     
-    Blockly_Debuggee
-            .actions["eval"]
-            .evalLocal = evalLocal;
+    // notify debugger for environment variables tree
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
+        "Debugger",
+        "setEnvironmentVariablesTree",
+        [
+            debuggerEnvironmentVariables
+        ],
+        {
+            type: "sync",
+            func: async (debuggerContent) => {
+                //todo: build rest data to init debuggee
+                debuggerContent.variables = debuggerEnvironmentVariables;
 
-    var finalAppCode = "";
+                debuggeeActions.init(debuggerContent);
+                
+                // iniate variables for the debugger toolbar
+                watches = debuggerContent.watches;
 
-    // TODO: code building...
-    // just code gen for testing
-    runTimeData.execData.project.AutomationTasks.forEach(
-        (basicTask) => {
-            let variablesDef = "";
-            basicTask.editorsData[0].generated.variables.forEach(variable => {
-                variablesDef += "let " + variable + ";\n";
-            });
+                var update_values = (pelemId) => {
+                    var update_var = Blockly_Debuggee
+                        .actions["variables"]
+                        .update_values(pelemId);
+                    var update_watch = Blockly_Debuggee
+                        .actions["watch"]
+                        .update_values(pelemId);
+                    return update_var + update_watch;
+                }
 
-            // notify debugger about variables that are available
-            
+                function evalLocal(expr) {
+                    eval(expr);
+                }
 
-            finalAppCode += (
-                + "(async () => {"
-                + "let projectElementId = " + JSON.stringify(basicTask.id) + ";"
-                + "let debuggerScopeId = " + JSON.stringify("debugger_" + basicTask.id) + ";"
-                + variablesDef
-                + basicTask.editorsData[0].generated.src
-                + "})()"
-          );
-        }
-    );
+                var variablesWatches_code = 
+                    `eval(update_values(debuggerScopeId));
+                        Blockly_Debuggee
+                        .actions[\"variables\"]
+                        .updateDebugger();
+                    Blockly_Debuggee
+                        .actions[\"watch\"]
+                        .updateDebugger();`;
+                
+                Blockly_Debuggee
+                        .actions["eval"]
+                        .evalLocal = evalLocal;
 
-    await eval(
-        `async function code(){
-            ${ finalAppCode }
-            ${ variablesWatches_code }
-        };
-        code();`
-    );
+                var finalAppCode = "";
 
-    runTimeData.postMessage({ "type": "execution_finished" });
+                runTimeData.execData.project.AutomationTasks.forEach(
+                    (basicTask) => {
+                        let variablesDef = "";
+                        basicTask.editorsData[0]
+                            .generated
+                            .variables
+                            .forEach(variable => {
+                                variablesDef += "let " + variable + ";\n";
+                            });
+
+                        finalAppCode += 
+                            "(async () => {"
+                            + "let projectElementId = " + JSON.stringify(basicTask.id) + ";"
+                            + "let debuggerScopeId = " + JSON.stringify("debugger_" + basicTask.id) + ";"
+                            + variablesDef
+                            + basicTask.editorsData[0].generated.src
+                            + variablesWatches_code
+                            + "})()";
+                    }
+                );
+
+                await eval(
+                    `async function code(){
+                        ${ finalAppCode }
+                    };
+                    code();`
+                );
+
+                runTimeData.RuntimeEnvironmentDebug.postMessage({ "type": "execution_finished" });
+            }
+        });
 }
   
 export async function StopApplication(execData) {

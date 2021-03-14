@@ -14,7 +14,8 @@ import './src/generator/blockly/blockly_init.js';
 
 import {
     Debuggee_Worker,
-    InitializeDebuggeeWorker
+    InitializeDebuggeeWorker,
+    Blockly_Debugger
 } from "./src/debugger/debugger";
 
 export function BlocklyDebugger(plugin) {
@@ -35,7 +36,19 @@ export function BlocklyDebugger(plugin) {
         return generation.workspaces[editorId];
     };
 
+    this.getDebuggerInstance = () => Blockly_Debugger;
+
     this.getDebuggeeWorker = () => Debuggee_Worker;
+
+
+    Debuggee_Worker.RegisterVariablesDebuggerAction("variables");
+    Debuggee_Worker.RegisterWatchDebuggerAction("watches");
+    Debuggee_Worker.RegisterEvalDebuggerAction();
+    Debuggee_Worker.RegisterStopDebuggerAction("StopButton");
+    Debuggee_Worker.RegisterStepInDebuggerAction("StepInButton");
+    Debuggee_Worker.RegisterStepOutDebuggerAction("StepOutButton");
+    Debuggee_Worker.RegisterStepOverDebuggerAction("StepOverButton");
+    Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
 
     this.initiateToolbar = (data, onFinish) => {
         // let data2 =[{
@@ -68,7 +81,6 @@ export function BlocklyDebugger(plugin) {
         //         $('#debugger-toggle').hide();
         //     });
 
-        //     Debuggee_Worker.registerDebuggerActions();
         //     Debuggee_Worker.RegisterContinueDebuggerAction("ContinueButton");
 
         Debuggee_Worker.RegisterStartDebuggerAction(
@@ -91,6 +103,6 @@ export function BlocklyDebugger(plugin) {
     };
 
     this.onmessage = (msg, callback) => {
-        Debuggee_Worker.getInstance().onmessage(msg);
+        Debuggee_Worker.Instance().onmessage(msg);
     };
 }

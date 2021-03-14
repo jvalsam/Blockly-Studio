@@ -66,7 +66,6 @@ export function RegisterStartDebuggerAction(selector, envDataGetter, onClick) {
                 // "code": code,
                 "breakpoints": Blockly_Debugger.actions["Breakpoint"].breakpoints.map((obj) => {
                     return {
-                        // pelem id
                         "block_id": obj.block_id,
                         "enable": obj.enable
                     }

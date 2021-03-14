@@ -462,5 +462,7 @@ export function InitiateBlocklyGenerator() {
 }
 
 export function InitiateBlocklyGeneratorDebug() {
-  Blockly.JavaScript.STATEMENT_PREFIX = 'await $id(%1, 0);\n';
+  Blockly.JavaScript.STATEMENT_PREFIX =
+    '; runTimeData.checkRuntimeEnvironment();\n'
+    + 'await $id(%1, 0);\n';
 }

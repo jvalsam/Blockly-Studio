@@ -676,11 +676,6 @@ export class BlocklyVPL extends Editor {
   }
 
   @ExportedFunction
-  public initiateCodeGenerator() {
-    InitiateBlocklyGenerator();
-  }
-
-  @ExportedFunction
   public getAllBlocklyWSPs() {
     return this.instancesMap;
   }

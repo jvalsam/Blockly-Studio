@@ -50,16 +50,21 @@ Blockly.Generator.prototype.blockToCodeDEBUG = function (block, opt_thisOnly) {
         }
         return [this.scrub_(block, code[0], opt_thisOnly), code[1]];
     } else if (typeof code == 'string') {
-        let id = block.id.replace(/\$/g, '$$$$');  // Issue 251.  //!! New blockly 
-        let cs = genEval(my_nest, block.id, generation.currentSystemEditorId);
-        if (this.STATEMENT_PREFIX && !block.suppressPrefixSuffix) {
-            //code = this.injectId(this.STATEMENT_PREFIX, cs) + code;
-            code = this.STATEMENT_PREFIX.replace(/%1/g, cs) +
+        let id = block.id.replace(/\$/g, '$$$$');  // Issue 251.  //!! New blockly
+        if (this.STATEMENT_PREFIX) {
+            let cs = genEval (my_nest,  block.id, generation.currentSystemEditorId);
+            code = this.STATEMENT_PREFIX.replace(/%1/g, cs ) +
                 code;
-        }
-        if (this.STATEMENT_SUFFIX && !block.suppressPrefixSuffix) {
-            code = code + this.STATEMENT_PREFIX.replace(/%1/g, cs);
-        }
+          } 
+        // let cs = genEval(my_nest, block.id, generation.currentSystemEditorId);
+        // if (this.STATEMENT_PREFIX && !block.suppressPrefixSuffix) {
+        //     //code = this.injectId(this.STATEMENT_PREFIX, cs) + code;
+        //     code = this.STATEMENT_PREFIX.replace(/%1/g, cs) +
+        //         code;
+        // }
+        // if (this.STATEMENT_SUFFIX && !block.suppressPrefixSuffix) {
+        //     code = code + this.STATEMENT_PREFIX.replace(/%1/g, cs);
+        // }
         return this.scrub_(block, code, opt_thisOnly);
     } else if (code === null) {
         // Block has handled code generation itself.

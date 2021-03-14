@@ -39,7 +39,6 @@ export function BlocklyDebuggee (plugin) {
     BlocklyDebuggeeeRunToCursor();
 
     this.onmessage = (msg) => {
-        let obj = msg.data;
-        dispatcher[obj.type](obj.data);
+        dispatcher[msg.type](msg.data);
     };
 }
