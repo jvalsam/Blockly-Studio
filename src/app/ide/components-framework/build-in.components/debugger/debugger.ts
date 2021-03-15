@@ -100,23 +100,23 @@ export class Debugger extends IDEUIComponent {
     }
 
     @ExportedFunction
-    public setEnvironmentVariablesTree(envTree) {
-        this.toolbar.debuggerInfodata.setEnvironmentData(envTree);
-
-        let bdi = this.blocklyDebugger.getDebuggerInstance();
-
-        bdi.actions.Variables.init(envTree);
-
-        return {
-            "breakpoints": bdi.actions["Breakpoint"].breakpoints.map((obj) => {
-                return {
-                    "block_id": obj.block_id,
-                    "enable": obj.enable
-                }
-            }),
-            "cursorBreakpoint": "", // run to cursor in block: TODO
-            "watches": bdi.actions["Watch"].getWatches()
-        }
+    public setEnvironmentVariablesTree(envTree, callback) {
+        this.toolbar.debuggerInfodata.setEnvironmentData(
+            envTree,
+            () => {
+                let bdi = this.blocklyDebugger.getDebuggerInstance();
+                bdi.actions.Variables.init(envTree);
+                callback({
+                    "breakpoints": bdi.actions["Breakpoint"].breakpoints.map((obj) => {
+                        return {
+                            "block_id": obj.block_id,
+                            "enable": obj.enable
+                        }
+                    }),
+                    "cursorBreakpoint": "", // run to cursor in block: TODO
+                    "watches": bdi.actions["Watch"].getWatches()
+                });
+            });        
     }
 
     private getEnvironmentData(): any {
@@ -125,6 +125,18 @@ export class Debugger extends IDEUIComponent {
 
     private stop() {
         alert("stop debugging process...");
+    }
+
+    private updateWatches(watches) {
+
+    }
+
+    private updateVariables(variables) {
+        this.toolbar.debuggerInfodata.setEnvironmentData(variables);
+    }
+
+    private onBreakpointTriggered(blockId: string) {
+        this.toolbar.controller.onPauseExecution();
     }
 
     public registerEvents(): void {

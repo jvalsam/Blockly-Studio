@@ -54,7 +54,7 @@ export class DebuggerControllerView extends View {
                 eventType: "click",
                 selector: "#ContinueButton",
                 handler: () => {
-                    alert("continue");
+                    this.onContinueExecution();
                     this.continueDebuggerAction();
                 }
             },
@@ -62,16 +62,13 @@ export class DebuggerControllerView extends View {
                 eventType: "click",
                 selector: "#PauseButton",
                 handler: () => {
-                    alert("pause");
-
+                    alert("pause not implemented");
                 }
             },
             {
                 eventType: "click",
                 selector: "#StopButton",
                 handler: () => {
-                    alert("stop");
-
                     this.stopDebuggerAction();
                 }
             },
@@ -79,8 +76,6 @@ export class DebuggerControllerView extends View {
                 eventType: "click",
                 selector: "#StepInButton",
                 handler: () => {
-                    alert("step in");
-
                     this.stepInDebuggerAction();
                 }
             },
@@ -88,7 +83,6 @@ export class DebuggerControllerView extends View {
                 eventType: "click",
                 selector: "#StepOverButton",
                 handler: () => {
-                    
                     this.stepOverDebuggerAction();
                 }
             },
@@ -96,7 +90,6 @@ export class DebuggerControllerView extends View {
                 eventType: "click",
                 selector: "#StepParentButton",
                 handler: () => {
-
                     this.stepParentDebuggerAction();
                 }
             },
@@ -104,7 +97,6 @@ export class DebuggerControllerView extends View {
                 eventType: "click",
                 selector: "#StepOutButton",
                 handler: () => {
-
                     this.stepOutDebuggerAction();
                 }
             }
@@ -118,6 +110,62 @@ export class DebuggerControllerView extends View {
         }
 
         this.attachEvents(...events);
+    }
+
+    public onContinueExecution() {
+        $("#ContinueButton")
+            .addClass('not-enable-fa-btn')
+            .removeClass('enable-fa-btn');
+        $("#PauseButton")
+            .addClass('enable-fa-btn')
+            .removeClass('not-enable-fa-btn');
+        $("#StopButton")
+            .addClass('enable-fa-btn')
+            .removeClass('not-enable-fa-btn');
+        //
+        $("#StepInButton")
+            .addClass('not-enable-icon-btn')
+            .removeClass('enable-icon-btn');
+        $("#StepOverButton")
+            .addClass('not-enable-icon-btn')
+            .removeClass('enable-icon-btn');
+        $("#StepParentButton")
+            .addClass('not-enable-icon-btn')
+            .removeClass('enable-icon-btn');
+        $("#StepOutButton")
+            .addClass('not-enable-icon-btn')
+            .removeClass('enable-icon-btn');
+        $("#ControlMasterButton")
+            .addClass('not-enable-icon-btn')
+            .removeClass('enable-icon-btn');
+    }
+
+    public onPauseExecution() {
+        $("#ContinueButton")
+            .removeClass('not-enable-fa-btn')
+            .addClass('enable-fa-btn');
+        $("#PauseButton")
+            .removeClass('enable-fa-btn')
+            .addClass('not-enable-fa-btn');
+        $("#StopButton")
+            .removeClass('enable-fa-btn')
+            .addClass('not-enable-fa-btn');
+        //
+        $("#StepInButton")
+            .removeClass('not-enable-icon-btn')
+            .addClass('enable-icon-btn');
+        $("#StepOverButton")
+            .removeClass('not-enable-icon-btn')
+            .addClass('enable-icon-btn');
+        $("#StepParentButton")
+            .removeClass('not-enable-icon-btn')
+            .addClass('enable-icon-btn');
+        $("#StepOutButton")
+            .removeClass('not-enable-icon-btn')
+            .addClass('enable-icon-btn');
+        $("#ControlMasterButton")
+            .removeClass('not-enable-icon-btn')
+            .addClass('enable-icon-btn');
     }
 
     public setStyle(): void {}

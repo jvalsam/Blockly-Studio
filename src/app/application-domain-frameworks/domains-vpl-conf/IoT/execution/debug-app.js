@@ -93,7 +93,7 @@ function AddSmartDevicesVariables(smartObjects) {
         // add smart device properties
         smartObject.editorsData[0].generated.details.properties.forEach(property => {
             debuggerEnvironmentVariables.push({
-                icon: "fas fa-certificate",
+                icon: "fas fa-bullseye",
                 id: "debugger_" + smartObject.id + "_" + property.name,
                 options: false,
                 parent: "debugger_" + smartObject.id,
@@ -113,7 +113,7 @@ function AddSmartDevicesVariables(smartObjects) {
                 .find(key => blocklyEditorDataIndex[key] === i);
             
             debuggerEnvironmentVariables.push({
-                icon: "fab fa-elementor",
+                icon: "fas fa-puzzle-piece",
                 id: "debugger_" + smartObject.id + "_" + actionName,
                 options: false,
                 parent: "debugger_" + smartObject.id,
@@ -203,7 +203,7 @@ export async function StartApplication(runTimeData) {
             debuggerEnvironmentVariables
         ],
         {
-            type: "sync",
+            type: "async",
             func: async (debuggerContent) => {
                 //todo: build rest data to init debuggee
                 debuggerContent.variables = debuggerEnvironmentVariables;

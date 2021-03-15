@@ -82,6 +82,12 @@ export function BlocklyDebuggeeVariablesAction(plugin) {
                 code += 'debuggerEnvironmentVariables.find(elem => elem.id === '
                     + JSON.stringify(varNode.id)
                     + ').variableValue = ' + varNode.variableName + ';\n';
+                code += 'debuggerEnvironmentVariables.find(elem => elem.id === '
+                    + JSON.stringify(varNode.id)
+                    + ').text = '
+                    + JSON.stringify(varNode.variableName + " : ")
+                    + " + "
+                    + varNode.variableName + ";\n";
             });
                     
             return code;

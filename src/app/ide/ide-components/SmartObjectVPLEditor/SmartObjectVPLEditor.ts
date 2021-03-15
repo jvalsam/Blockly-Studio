@@ -764,11 +764,11 @@ export class SmartObjectVPLEditor extends Editor {
       "closeSRC",
       [editorId]
     );
-    ComponentsCommunication.functionRequest(
-      this.name,
-      "BlocklyVPL",
-      "destroySRC",
-      [editorId]
-    );
+    // ComponentsCommunication.functionRequest(
+    //   this.name,
+    //   "BlocklyVPL",
+    //   "destroySRC",
+    //   [editorId]
+    // );
   }
 }

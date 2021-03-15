@@ -3,10 +3,9 @@ import {
     Blockly_Debugger
 } from '../debugger.js';
 import * as Blockly from 'blockly';
-import { generation } from "../../generator/blockly/blockly_init";
 
 // Variables
-export function RegisterVariablesDebuggerAction (event) {
+export function RegisterVariablesDebuggerAction (event, plugin) {
     Blockly_Debugger.actions["Variables"] = (function () {
         var variables = {};
     
@@ -26,19 +25,14 @@ export function RegisterVariablesDebuggerAction (event) {
                 
                 if (debugVar.value !== variable.variableValue) {
                     debugVar.value = variable.variableValue;
+                    debugVar.text = variable.variableName + " : " + variable.variableValue;
                     debugVar.change = true;
                 } else {
                     debugVar.change = false;
                 }
             });
 
-            dispatchEvent(new CustomEvent(
-                "updateTable",
-                {
-                    detail: {
-                        variables: variables
-                    }})
-            );
+            plugin.updateVariables(envTree);
         };
     
         function getVariables(pelemId) {
@@ -79,7 +73,7 @@ export function RegisterVariablesDebuggerAction (event) {
 }
 
 // Watches
-export function RegisterWatchDebuggerAction(event) {
+export function RegisterWatchDebuggerAction(event, plugin) {
     Blockly_Debugger.actions["Watch"] = (function () {
         var watches = [];
     
@@ -101,7 +95,7 @@ export function RegisterWatchDebuggerAction(event) {
                 }
             }
             
-            dispatchEvent(new Event("updateWatchesTable"));
+            plugin.updateWatches(new_watches);
         };
     
         function getWatches(pelemId) {

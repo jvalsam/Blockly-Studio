@@ -64,10 +64,6 @@ export var InitializeDebuggeeWorker = function (plugin) {
             Debuggee_Worker.Instance().postMessage({ "type": "prompt", "data": window.prompt(msg) });
         };
         dispatcher["highlightBlock"] = (data) => {
-            // it entered here with editor null
-            //
-            let blocklyWSP = generation.getBlocklyWSP(data.currentSystemEditorId);
-            
             generation.workspaces[data.currentSystemEditorId].wsp.traceOn_ = true;
             generation.workspaces[data.currentSystemEditorId].highlightBlock(data.id);
         };
@@ -92,8 +88,10 @@ export var InitializeDebuggeeWorker = function (plugin) {
         //
         RegisterContinueDebuggerAction : () => RegisterContinueDebuggerAction(),
         RegisterStartDebuggerAction : (selector, handler) => RegisterStartDebuggerAction(selector, handler),
-        RegisterVariablesDebuggerAction : (selector) => RegisterVariablesDebuggerAction(selector),
-        RegisterWatchDebuggerAction : (selector) => RegisterWatchDebuggerAction(selector),
+        RegisterVariablesDebuggerAction :
+            (selector, plugin) => RegisterVariablesDebuggerAction(selector, plugin),
+        RegisterWatchDebuggerAction :
+            (selector, plugin) => RegisterWatchDebuggerAction(selector, plugin),
         RegisterStopDebuggerAction : () => RegisterStopDebuggerAction(),
         RegisterStepInDebuggerAction : () => RegisterStepInDebuggerAction(),
         RegisterStepOutDebuggerAction : () => RegisterStepOutDebuggerAction(),

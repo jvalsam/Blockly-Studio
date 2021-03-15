@@ -54,6 +54,8 @@ export function RegisterDebuggerBreakpointFunctionality(visualDebugger) {
         document.getElementById(block_id).style.stroke = 'red';
         document.getElementById(block_id).style.fill = 'yellow';
         document.getElementById(block_id).style['stroke-width'] = '5px';
+
+        visualDebugger.onBreakpointTriggered(block_id);
     }
 
 

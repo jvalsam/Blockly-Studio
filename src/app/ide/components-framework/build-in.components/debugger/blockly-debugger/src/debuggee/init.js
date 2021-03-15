@@ -64,7 +64,11 @@ export function InitializeBlocklyDebuggee (plugin) {
                 return;
             }
             if (Blockly_Debuggee.state.currNest == -1 && !hasBreakpoint) return;    // stepOver + stepOut for functions                   
-            if (Blockly_Debuggee.state.isState("stepIn") || hasBreakpoint || nest <= Blockly_Debuggee.state.currNest) {
+            
+            if (Blockly_Debuggee.state.isState("stepIn")
+                || hasBreakpoint
+                || nest <= Blockly_Debuggee.state.currNest
+            ) {
                 if (Blockly_Debuggee.state.currId === block_id && !hasBreakpoint) return;
                 if (Blockly_Debuggee.state.isState("stepParent") && nest == Blockly_Debuggee.state.currNest && !hasBreakpoint) return;
 

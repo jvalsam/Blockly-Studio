@@ -41,8 +41,8 @@ export function BlocklyDebugger(plugin) {
     this.getDebuggeeWorker = () => Debuggee_Worker;
 
 
-    Debuggee_Worker.RegisterVariablesDebuggerAction("variables");
-    Debuggee_Worker.RegisterWatchDebuggerAction("watches");
+    Debuggee_Worker.RegisterVariablesDebuggerAction("variables", plugin);
+    Debuggee_Worker.RegisterWatchDebuggerAction("watches", plugin);
     Debuggee_Worker.RegisterEvalDebuggerAction();
     Debuggee_Worker.RegisterStopDebuggerAction("StopButton");
     Debuggee_Worker.RegisterStepInDebuggerAction("StepInButton");

@@ -37,7 +37,6 @@ export class RuntimeEnvironmentDebug {
         // on start debugger
         func: (response) => {
           // initialize backend
-          alert(response);
           (this.blocklyDebuggee = new BlocklyDebuggee(this)),
             this.start(this._envData);
         },
