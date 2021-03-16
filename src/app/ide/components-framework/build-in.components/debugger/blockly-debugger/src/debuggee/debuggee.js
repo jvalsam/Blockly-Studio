@@ -41,4 +41,5 @@ export function BlocklyDebuggee (plugin) {
     this.onmessage = (msg) => {
         dispatcher[msg.type](msg.data);
     };
+
 }

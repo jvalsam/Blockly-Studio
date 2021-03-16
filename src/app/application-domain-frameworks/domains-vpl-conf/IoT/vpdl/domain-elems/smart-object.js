@@ -1226,17 +1226,16 @@ export const SmartObject = {
         strBuilder +=
           "x.id === " +
           JSON.stringify(block.soData.editorId.split("_ec-smart-object")[0]);
-        strBuilder += ").editorsData[editorDataIndex].generated;";
+        strBuilder += ").editorsData[editorDataIndex].generated.src;";
         
-        let defDebugVarCode = "let debuggerScopeId = "
-          + 'debugger_'
-          + JSON.stringify(block.soData.editorId.split("_ec-smart-object")[0])
-          + '_'
-          + dropdown_actions
-          + ';';
+        let defDebugVarCode = "let debuggerScopeId = '"
+          + "debugger_\' + '"
+          + block.soData.editorId.split("_ec-smart-object")[0]
+          + '\' + \'_\' + \''
+          + dropdown_actions + "';";
         
         strBuilder +=
-          "eval(" + defDebugVarCode + " funcCode + ';' + JSON.parse('" +
+          "eval(" + JSON.stringify(defDebugVarCode) + " + funcCode + ';' + JSON.parse('" +
           JSON.stringify(dropdown_actions + "(...args);") +
           "'))";
         strBuilder += "}";

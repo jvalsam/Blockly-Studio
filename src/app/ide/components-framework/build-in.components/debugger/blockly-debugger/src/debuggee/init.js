@@ -2,7 +2,13 @@
 export var window = {};
 
 export var Blockly_Debuggee = {
-    actions: {}
+    actions: {},
+    onPauseDebugger: (callback) => {
+        Blockly_Debuggee.pauseAction = callback;
+    },
+    onContinueDebugger: (callback) => {
+        Blockly_Debuggee.continueAction = callback;
+    }
 };
 
 export function InitializeBlocklyDebuggee (plugin) {
@@ -77,9 +83,17 @@ export function InitializeBlocklyDebuggee (plugin) {
                 Blockly_Debuggee.actions["watch"].updateDebugger();
                 Blockly_Debuggee.actions["breakpoint"].wait_view(block_id);
 
+                let flagPauseExecution = false;
                 while (!Blockly_Debuggee.state.stepWait) {
+                    Blockly_Debuggee.pauseAction();
+                    flagPauseExecution = true;
                     await next_message();
                 }
+
+                if (flagPauseExecution) {
+                    Blockly_Debuggee.continueAction();
+                }
+
                 Blockly_Debuggee.actions["breakpoint"].reset_view(block_id);
 
                 Blockly_Debuggee.state.stepWait = false;

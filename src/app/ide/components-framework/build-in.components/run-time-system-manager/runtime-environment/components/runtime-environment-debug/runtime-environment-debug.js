@@ -24,6 +24,9 @@ export class RuntimeEnvironmentDebug {
 
     // pin callback that checks runtime environment state
     this._envData.checkRuntimeEnvironment = () => this._handleRuntime();
+    this._envData.UISelector = document.getElementById(
+      "run-application-view-container"
+    );
 
     this._envData.RuntimeEnvironmentDebug = this;
 

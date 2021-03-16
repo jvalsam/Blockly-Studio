@@ -89,7 +89,21 @@ export function BlocklyDebuggeeVariablesAction(plugin) {
                     + " + "
                     + varNode.variableName + ";\n";
             });
-                    
+
+            varsNodes = variables.filter(elem => elem.variableSName);
+            
+            varsNodes.forEach(varNode => {
+                code += 'debuggerEnvironmentVariables.find(elem => elem.id === '
+                    + JSON.stringify(varNode.id)
+                    + ').variableValue = ' + varNode.variableSName + ';\n';
+                code += 'debuggerEnvironmentVariables.find(elem => elem.id === '
+                    + JSON.stringify(varNode.id)
+                    + ').text = '
+                    + JSON.stringify(varNode.variableName + " : ")
+                    + " + "
+                    + varNode.variableSName + ";\n";
+            });
+
             return code;
         }
 

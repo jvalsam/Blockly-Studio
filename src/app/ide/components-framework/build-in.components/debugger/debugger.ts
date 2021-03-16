@@ -154,7 +154,7 @@ export class Debugger extends IDEUIComponent {
     public destroy(): void {
         throw new Error("Method not implemented.");
     }
-
+    
     // handling breakpoints
     private breakpointNO: number;
     private breakpoints: Array<BreakpointInfo>;
