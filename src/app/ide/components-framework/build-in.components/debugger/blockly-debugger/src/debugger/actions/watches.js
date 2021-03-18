@@ -172,7 +172,10 @@ export function RegisterEvalDebuggerAction() {
                 ? true
                 : false,
             callback: function () {
-                Blockly_Debugger.actions["Eval"].handler(Blockly.JavaScript.myBlockToCode(block));
+                Blockly_Debugger.actions["Eval"].handler(
+                    Blockly.JavaScript.myBlockToCode(block),
+                    "debugger_" + block.workspace.pitem.systemId
+                );
             }
         };
         return evalOption;

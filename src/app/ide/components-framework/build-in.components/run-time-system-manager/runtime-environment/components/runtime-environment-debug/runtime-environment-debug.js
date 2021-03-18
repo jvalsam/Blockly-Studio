@@ -121,6 +121,27 @@ export class RuntimeEnvironmentDebug {
     this.blocklyDebuggee.onmessage(message);
   }
 
+  browseBlocklyBlock(projectElementId, blockId) {
+    this._runtimeEnv.functionRequest(
+      RuntimeEnvironmentDebug.name,
+      "RuntimeManager",
+      "foldLivePreview",
+      []
+    );
+
+    this._runtimeEnv.functionRequest(
+      RuntimeEnvironmentDebug.name,
+      "BlocklyVPL",
+      "highlightBlockOfPItem",
+      [
+        projectElementId,
+        this.modalWSPId
+          ? this.modalWSPId + "____" + blockId
+          : blockId
+      ]
+    );
+  }
+
   functionRequest(compDest, funcName, args, callback) {
     return this._runtimeEnv.functionRequest(
       RuntimeEnvironmentDebug.name,

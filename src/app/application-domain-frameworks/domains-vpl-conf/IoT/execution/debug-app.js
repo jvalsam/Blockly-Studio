@@ -1,15 +1,21 @@
 import {
   dispatcher,
-  Blockly_Debuggee,
 } from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init.js";
 
 import { BlocklyDebuggeeStartAction } from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/actions/start.js";
+
+import {
+  Blockly_Debuggee
+} from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init.js";
+
 
 let calendar,
   organizer,
   calendarData = {},
   devicesOnAutomations,
   testsCounter;
+
+let functionsFromSmartDevicesActions = {};
 
 var debuggerEnvironmentVariables = [];
 
@@ -902,7 +908,7 @@ const ExecuteValueCheckingTests = function (runTimeData) {
             debugTests.expectedValueCheckingTests.splice(indexDebugTest, 1);
           }
 
-          runTimeData.RuntimeEnvironmentRelease.functionRequest(
+          runTimeData.RuntimeEnvironmentDebug.functionRequest(
             "SmartObjectVPLEditor",
             "saveDebugTests",
             [
@@ -1046,7 +1052,7 @@ const CreateAndRenderTestsModal = function (projectTitle, runTimeData) {
               debugTests.simulateBehaviorTests.splice(indexDebugTest, 1);
             }
 
-            runTimeData.RuntimeEnvironmentRelease.functionRequest(
+            runTimeData.RuntimeEnvironmentDebug.functionRequest(
               "SmartObjectVPLEditor",
               "saveDebugTests",
               [
@@ -1075,7 +1081,7 @@ const CreateAndRenderTestsModal = function (projectTitle, runTimeData) {
               debugTests.expectedValueCheckingTests.splice(indexDebugTest, 1);
             }
 
-            runTimeData.RuntimeEnvironmentRelease.functionRequest(
+            runTimeData.RuntimeEnvironmentDebug.functionRequest(
               "SmartObjectVPLEditor",
               "saveDebugTests",
               [
@@ -1346,7 +1352,7 @@ const RenderExpectedValueCheckingModal = function (
   });
 
   $("#" + idPrefix + "-modal").on("hide.bs.modal", function (e) {
-    runTimeData.RuntimeEnvironmentRelease.functionRequest(
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
       "SmartObjectVPLEditor",
       "closeSrcForBlocklyInstance",
       [blocklyWorkspaceDiv.id]
@@ -1377,7 +1383,7 @@ const RenderExpectedValueCheckingModal = function (
       zIndex: 1060,
     };
 
-    runTimeData.RuntimeEnvironmentRelease.functionRequest(
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
       "BlocklyVPL",
       "openInDialogue",
       [
@@ -1421,13 +1427,13 @@ const RenderExpectedValueCheckingModal = function (
 
     IncreaseTestCounter();
 
-    runTimeData.RuntimeEnvironmentRelease.functionRequest(
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
       "SmartObjectVPLEditor",
       "saveTestsCounter",
       [runTimeData.execData.projectId, testsCounter]
     );
 
-    runTimeData.RuntimeEnvironmentRelease.functionRequest(
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
       "SmartObjectVPLEditor",
       "saveDebugTests",
       [
@@ -1638,13 +1644,13 @@ const RenderSimulateBehaviorModal = function (
 
     IncreaseTestCounter();
 
-    runTimeData.RuntimeEnvironmentRelease.functionRequest(
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
       "SmartObjectVPLEditor",
       "saveTestsCounter",
       [runTimeData.execData.projectId, testsCounter]
     );
 
-    runTimeData.RuntimeEnvironmentRelease.functionRequest(
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
       "SmartObjectVPLEditor",
       "saveDebugTests",
       [
@@ -2557,7 +2563,7 @@ const RenderActionChangeForCreatingTest = function (
   codePreviewButton.classList.add("btn", "btn-info", "btn-sm");
   codePreviewButton.onclick = () => {
     // hide running automations
-    runTimeData.RuntimeEnvironmentRelease.functionRequest(
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
       "SmartObjectVPLEditor",
       "foldRunTimeModal",
       []
@@ -2567,7 +2573,7 @@ const RenderActionChangeForCreatingTest = function (
     let deviceEditorId = devicesOnAutomations.find((x) => x.id === deviceId)
       .editorId;
 
-    runTimeData.RuntimeEnvironmentRelease.functionRequest(
+    runTimeData.RuntimeEnvironmentDebug.functionRequest(
       "SmartObjectVPLEditor",
       "clickDebugConfigurationOfAction",
       [deviceEditorId, action, "READ_ONLY"]
@@ -2633,10 +2639,6 @@ const DefineFunctionForDebugImplementation = function (action) {
     `<field name="NAME">` +
     action.name +
     `</field>
-    <comment pinned="false" h="80" w="160">Implementation of action \"` +
-    action.name +
-    `\" that runs on debug mode
-    </comment>
   </block>
 </xml>`;
   return str;
@@ -2951,7 +2953,7 @@ const CreateBubblesForSimulateBehaviorTests = function (runTimeData) {
                   debugTests.simulateBehaviorTests.splice(indexDebugTest, 1);
                 }
 
-                runTimeData.RuntimeEnvironmentRelease.functionRequest(
+                runTimeData.RuntimeEnvironmentDebug.functionRequest(
                   "SmartObjectVPLEditor",
                   "saveDebugTests",
                   [
@@ -2988,7 +2990,7 @@ const CreateBubblesForSimulateBehaviorTests = function (runTimeData) {
                   debugTests.simulateBehaviorTests.splice(indexDebugTest, 1);
                 }
 
-                runTimeData.RuntimeEnvironmentRelease.functionRequest(
+                runTimeData.RuntimeEnvironmentDebug.functionRequest(
                   "SmartObjectVPLEditor",
                   "saveDebugTests",
                   [
@@ -3388,6 +3390,17 @@ const ChangeValueOfProperty = function (deviceId, changeProperty, runTimeData) {
     changeProperty.type === "enumerated"
   ) {
     newValue = changeProperty.value;
+    // let smartObjectId = runTimeData.execData.project.SmartObjects.find(
+    //   (x) => x.editorsData.items[0].details.iotivityResourceID === deviceId
+    // ).systemID;
+    // let debuggerScopeId = "debugger_" + smartObjectId + "_" + changeProperty.name;
+   eval(update_values());
+    Blockly_Debuggee
+      .actions["variables"]
+      .updateDebugger();
+    Blockly_Debuggee
+      .actions["watch"]
+      .updateDebugger();
   }
 
   let device = devicesOnAutomations.find((x) => x.id === deviceId);
@@ -4242,8 +4255,11 @@ function AddCategoryPelemsDebuggerNodes(categoryData, parentName) {
     );
   });
 }
+var f;
 
 function AddSmartDevicesVariables(smartObjects) {
+  let defineSOActions = "";
+
   smartObjects.forEach((smartObject) => {
     // add smart device properties
     smartObject.editorsData[0].generated.details.properties.forEach(
@@ -4269,6 +4285,7 @@ function AddSmartDevicesVariables(smartObjects) {
         });
       }
     );
+    let editorsDataForActionsMap = smartObject.editorsData[0].blocklyEditorDataIndex;
     // add smart device actions
     for (let i = 1; i < smartObject.editorsData.length; ++i) {
       let blocklyEditorDataIndex =
@@ -4303,8 +4320,47 @@ function AddSmartDevicesVariables(smartObjects) {
           variableValue: undefined
         });
       });
+
+      let actionKey = smartObject.editorsData[0].generated.details.iotivityResourceID 
+        + "-debug-configuration-" 
+        + actionName 
+        + "-blockly-container";
+
+      defineSOActions += "functionsFromSmartDevicesActions['"
+        + smartObject.id + "_" + actionName + "'] = "
+        + "function () { return new Promise( (resolve) => {"
+        + "let debuggerScopeId = 'debugger_"
+        + smartObject.id + "_" + actionName
+        + "';"
+        + "let projectElementId = " + JSON.stringify(smartObject.id) + "; "
+        + "let smartObjectActionName = "
+        + JSON.stringify(
+          "Simulated Action: " + actionName + "____" + actionKey
+        ) + ";"
+        + smartObject.editorsData[i].generated.src
+        + "runTimeData.RuntimeEnvironmentDebug.functionRequest('RuntimeManager', 'foldLivePreview', []);"
+        + "runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'openBlockyEditorDebugTime', ["
+        + JSON.stringify(smartObject.id) + ", 'Simulated Action: " + actionName + "', '"
+        + actionKey
+        + "'], { 'func': async ()=> {"
+        + " let response = await "
+        + actionName
+        + "(...arguments); "
+
+        + " runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'closeBlockyEditorDebugTime', ['"
+        + actionKey + "']);"
+        + " resolve(response); }, 'type': 'async' } ); }); };";
     }
   });
+
+  return defineSOActions;
+}
+
+// debugger variables
+let debuggeeActions, $id, wait, isStepOver, isStepParent, update_values;
+
+function evalLocal(expr) {
+  eval(expr);
 }
 
 function AddAutomationsVariables(automations) {
@@ -4330,6 +4386,15 @@ function AddAutomationsVariables(automations) {
 
 export async function StartApplication(runTimeData) {
   try {
+    variablesWatches_code =
+      `eval(update_values(debuggerScopeId));
+          Blockly_Debuggee
+            .actions[\"variables\"]
+            .updateDebugger();
+          Blockly_Debuggee
+            .actions[\"watch\"]
+            .updateDebugger();`;
+
     Blockly_Debuggee.onPauseDebugger( () => {
       PauseSimulatedTime();
 
@@ -4398,13 +4463,13 @@ export async function StartApplication(runTimeData) {
       return finalCodeForRunningAutomations;
     };
 
-    let debuggeeActions = BlocklyDebuggeeStartAction();
+    debuggeeActions = BlocklyDebuggeeStartAction();
 
     // initialize functions of debugge that are used in generated source
-    let $id = debuggeeActions.$id;
-    let wait = debuggeeActions.wait;
-    let isStepOver = debuggeeActions.isStepOver;
-    let isStepParent = debuggeeActions.isStepParent;
+    $id = debuggeeActions.$id;
+    wait = debuggeeActions.wait;
+    isStepOver = debuggeeActions.isStepOver;
+    isStepParent = debuggeeActions.isStepParent;
 
     // init variables for UI toolbar
     InitializePredefinedDebuggerNodes(runTimeData.execData.project);
@@ -4429,7 +4494,15 @@ export async function StartApplication(runTimeData) {
     AddAutomationsVariables(runTimeData.execData.project.ConditionalEvents);
     AddAutomationsVariables(runTimeData.execData.project.CalendarEvents);
     AddAutomationsVariables(runTimeData.execData.project.AutomationTasks);
-    AddSmartDevicesVariables(runTimeData.execData.project.SmartObjects);
+
+    let defineSOActionsSRC = AddSmartDevicesVariables(runTimeData.execData.project.SmartObjects)
+      + "is_script_ended = true;";
+
+    let is_script_ended = false;
+    eval( defineSOActionsSRC );
+    while(!is_script_ended) {
+      await sleep(200);
+    }
 
     // notify debugger for environment variables tree
     runTimeData.RuntimeEnvironmentDebug.functionRequest(
@@ -4447,7 +4520,7 @@ export async function StartApplication(runTimeData) {
           // iniate variables for the debugger toolbar
           watches = debuggerContent.watches;
 
-          var update_values = (pelemId) => {
+          update_values = (pelemId) => {
             var update_var = Blockly_Debuggee.actions[
               "variables"
             ].update_values(pelemId);
@@ -4456,18 +4529,6 @@ export async function StartApplication(runTimeData) {
             );
             return update_var + update_watch;
           };
-
-          function evalLocal(expr) {
-            eval(expr);
-          }
-
-          variablesWatches_code = `eval(update_values(debuggerScopeId));
-                        Blockly_Debuggee
-                        .actions[\"variables\"]
-                        .updateDebugger();
-                    Blockly_Debuggee
-                        .actions[\"watch\"]
-                        .updateDebugger();`;
 
           Blockly_Debuggee.actions["eval"].evalLocal = evalLocal;
 
@@ -4484,7 +4545,8 @@ export async function StartApplication(runTimeData) {
               ExecuteSimulateBehaviorTests(runTimeData);
               
             };
-            code();`
+            code();
+            //# sourceURL=my-foo.js;`
           );
 
           // runTimeData.RuntimeEnvironmentDebug.postMessage({

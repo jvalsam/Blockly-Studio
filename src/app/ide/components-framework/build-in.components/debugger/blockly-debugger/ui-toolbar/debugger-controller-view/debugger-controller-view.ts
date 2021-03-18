@@ -14,6 +14,8 @@ import * as _ from "lodash";
     style: { system: DebuggerToolbarViewSYCSS }
 })
 export class DebuggerControllerView extends View {
+    private _replica: DebuggerControllerView;
+
     private continueDebuggerAction: Function;
     private pauseDebuggerAction: Function;
     private stopDebuggerAction: Function;
@@ -46,6 +48,25 @@ export class DebuggerControllerView extends View {
         this.stepOverDebuggerAction = debuggerWorker.RegisterStepOverDebuggerAction();
         this.stepParentDebuggerAction = debuggerWorker.RegisterStepParentDebuggerAction();
         this.stepOutDebuggerAction = debuggerWorker.RegisterStepOutDebuggerAction();
+    }
+
+    public createReplica(selector) {
+        this._replica = new DebuggerControllerView(
+            this.parent,
+            this.name,
+            this._templateHTML,
+            this._styles,
+            selector,
+            this.blocklyDebugger,
+            this.data);
+        this._replica.render();
+    }
+
+    public destroyReplica() {
+        this.data = this._replica.data;
+        this.render();
+
+        this._replica.destroy();
     }
 
     public registerEvents(): void {
@@ -113,6 +134,8 @@ export class DebuggerControllerView extends View {
     }
 
     public onContinueExecution() {
+        this.data.state = "RUNNING";
+
         $("#ContinueButton")
             .addClass('not-enable-fa-btn')
             .removeClass('enable-fa-btn');
@@ -141,6 +164,8 @@ export class DebuggerControllerView extends View {
     }
 
     public onPauseExecution() {
+        this.data.state = "PAUSED";
+
         $("#ContinueButton")
             .removeClass('not-enable-fa-btn')
             .addClass('enable-fa-btn');

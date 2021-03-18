@@ -204,6 +204,16 @@ export class BlocklyVPL extends Editor {
     this.instancesMap[editorData.editorId]["__editorData"] = editorData;
 
     this.instancesMap[editorData.editorId].open();
+
+    ComponentsCommunication.functionRequest(
+        this.name,
+        "Debugger",
+        "renderBreakpoints",
+        [
+          pitem.systemID,
+          this.instancesMap[editorData.editorId]
+        ]
+    );
   }
 
   @ExportedFunction
@@ -690,6 +700,168 @@ export class BlocklyVPL extends Editor {
     );
   }
 
+  public CreateDOMElement(type, options) {
+    let element = document.createElement(type);
+  
+    if (options) {
+      if (options.classList !== undefined) {
+        options.classList.forEach((c) => {
+          element.classList.add(c);
+        });
+      }
+      if (options.id !== undefined) element.id = options.id;
+      if (options.innerHtml !== undefined) element.innerHTML = options.innerHtml;
+    }
+    return element;
+  };
+
+  public CreateModal(dom, idPrefix) {
+    let modal = this.CreateDOMElement("div", {
+      classList: ["modal", "fade"],
+      id: idPrefix + "-modal",
+    });
+    modal.setAttribute("data-keyboard", "false");
+    modal.setAttribute("data-backdrop", "static");
+    modal.setAttribute("tabindex", "-1");
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-hidden", "true");
+    dom.appendChild(modal);
+  
+    let modalDialog = this.CreateDOMElement("div", {
+      classList: ["modal-dialog", "modal-lg"],
+      id: idPrefix + "-modal-dialog",
+    });
+    modalDialog.setAttribute("role", "document");
+    modal.appendChild(modalDialog);
+  
+    let modalContent = this.CreateDOMElement("div", {
+      classList: ["modal-content"],
+    });
+    modalDialog.appendChild(modalContent);
+  
+    let modalHeader = this.CreateDOMElement("div", { classList: ["modal-header"] });
+    modalContent.appendChild(modalHeader);
+  
+    let modalTitle = this.CreateDOMElement("h5", {
+      classList: ["modal-title"],
+      id: idPrefix + "-modal-title",
+    });
+    modalHeader.appendChild(modalTitle);
+  
+    // let closeModal = this.CreateDOMElement("button", { classList: ["close"] });
+    // closeModal.setAttribute("type", "button");
+    // closeModal.setAttribute("data-dismiss", "modal");
+    // closeModal.setAttribute("aria-label", "Close");
+    // modalHeader.appendChild(closeModal);
+  
+    // let closeSpan = this.CreateDOMElement("span", {});
+    // closeSpan.setAttribute("aria-hidden", "true");
+    // closeSpan.innerHTML = "&times;";
+    // closeModal.appendChild(closeSpan);
+  
+    let modalBody = this.CreateDOMElement("div", {
+      classList: ["modal-body"],
+      id: idPrefix + "-modal-body",
+    });
+    modalContent.appendChild(modalBody);
+  
+    let modalFooter = this.CreateDOMElement("div", { classList: ["modal-footer"] });
+    modalContent.appendChild(modalFooter);
+  
+    let cancelButton = this.CreateDOMElement("button", {
+      classList: ["btn", "btn-secondary"],
+      id: idPrefix + "-modal-cancel-button",
+      innerHtml: "Cancel",
+    });
+    cancelButton.setAttribute("type", "button");
+    cancelButton.setAttribute("data-dismiss", "modal");
+    modalFooter.appendChild(cancelButton);
+  
+    let confirmButton = this.CreateDOMElement("div", {
+      classList: ["btn", "btn-primary"],
+      id: idPrefix + "-modal-confirm-button",
+      innerHtml: "Confirm",
+    });
+    confirmButton.setAttribute("type", "button");
+    modalFooter.appendChild(confirmButton);
+  };
+
+  public OpenModalForBlockEditorInstance(actionId, title, onShown, disableCloseBtn) {
+    let prefix = actionId;
+  
+    // Create Modal
+    this.CreateModal(
+      document.getElementsByClassName("modal-platform-container")[0],
+      prefix
+    );
+  
+    // title
+    $("#" + prefix + "-modal-title").html(title);
+  
+    document
+      .getElementById(prefix + "-modal-body")
+      .style.setProperty("overflow-y", "auto");
+  
+    document
+      .getElementById(prefix + "-modal-body")
+      .style.setProperty("position", "relative");
+  
+    document
+      .getElementById(prefix + "-modal-body")
+      .style.setProperty("width", "100%");
+    document
+      .getElementById(prefix + "-modal-body")
+      .style.setProperty("height", "750px");
+  
+    // create blockly workspace container
+    // <div id="blocklyDiv" style="position: absolute"></div>;
+    let blocklyWorkspaceDiv = document.createElement("div");
+    blocklyWorkspaceDiv.id = prefix;
+    blocklyWorkspaceDiv.style.setProperty("position", "absolute");
+    blocklyWorkspaceDiv.style.setProperty("width", "97%");
+    blocklyWorkspaceDiv.style.setProperty("height", "720px");
+    document
+      .getElementById(prefix + "-modal-body")
+      .appendChild(blocklyWorkspaceDiv);
+  
+    $("#" + prefix + "-modal").on("hidden.bs.modal", () => {
+      document.getElementsByClassName("modal-platform-container")[0].innerHTML = "";
+      document.getElementById("runtime-modal-title").click();
+    });
+
+    $("#" + prefix + "-modal").on("hide.bs.modal", () => {
+      this.closeSRC(blocklyWorkspaceDiv.id);
+    });
+  
+    let confirmButton = document.getElementById(prefix + "-modal-confirm-button");
+    confirmButton.style.setProperty("display", "none");
+    
+    let cancelButton = document.getElementById(prefix + "-modal-cancel-button");
+
+    if(disableCloseBtn)
+      cancelButton.style.setProperty("display", "none");
+    else
+      cancelButton.innerHTML = "Close";
+
+  
+    // $("#" + prefix + "-modal")["modal"]("toggle");
+  
+    /* change modal size */
+    document
+      .getElementById(prefix + "-modal-dialog")
+      .classList.remove("modal-lg");
+    document.getElementById(prefix + "-modal-dialog").classList.add("modal-xl");
+  
+    $("#" + prefix + "-modal").on("shown.bs.modal", function (e) {
+      onShown();
+      // $(document).off("focusin.modal");
+    });
+
+    $("#" + prefix + "-modal")["modal"]({backdrop: 'static', keyboard: false})  
+  
+    $("#" + prefix + "-modal")["modal"]("show");
+  }
+
   @RequiredFunction("ProjectManager", "getProjectItem")
   @ExportedFunction
   public highlightBlockOfPItem(pitemId: string, blockId: string) {
@@ -700,9 +872,87 @@ export class BlocklyVPL extends Editor {
       [pitemId]
     ).value;
     this.openPItem(pitem);
-    let editorData =
-      pitem._editorsData.items[Object.keys(pitem._editorsData.items)[0]];
-    this.instancesMap[editorData.editorId].getBlockById(blockId)["select"]();
-    // highlightBlock(blockId);
+
+    let splitIDs = blockId.split('____');
+
+    if (splitIDs.length === 1) {
+      let editorData =
+        pitem._editorsData.items[Object.keys(pitem._editorsData.items)[0]];    
+      this.instancesMap[editorData.editorId].getBlockById(blockId)["select"]();
+      // highlightBlock(blockId);
+    }
+    else {
+      let key = splitIDs[1];
+      blockId = splitIDs[2];
+      let title = splitIDs[0];
+
+      this.OpenModalForBlockEditorInstance(
+        key,
+        title,
+        () => {
+          let editorData = pitem._editorsData.items[key];
+          this.openInDialogue(
+            editorData,
+            pitem,
+            "ec-action-implementation-debug",
+            key + "-blockly-container",
+            "EDITING",
+            "BlocklyStudioIDE");
+            this.instancesMap[editorData.editorId].getBlockById(blockId)["select"]();
+        }, false);
+    }
+  }
+
+  @RequiredFunction("Debugger", "createControllerReplica")
+  @ExportedFunction
+  public openBlockyEditorDebugTime(pitemId: string, title: string, wspKey: string, callback: Function) {
+    let pitem = ComponentsCommunication.functionRequest(
+      this.name,
+      "ProjectManager",
+      "getProjectItem",
+      [pitemId]
+    ).value;
+    this.openPItem(pitem);
+
+    this.OpenModalForBlockEditorInstance(
+      wspKey,
+      title,
+      () => {
+
+        let editorData = pitem._editorsData.items[wspKey];
+        this.openInDialogue(
+          editorData,
+          pitem,
+          "ec-action-implementation-debug",
+          wspKey + "-blockly-container",
+          "EDITING",
+          "BlocklyStudioIDE");
+
+        // create debugger control div
+        let controlPanel = document.createElement("div");
+        controlPanel.id = "control-debugger-modal";
+        controlPanel.style.setProperty("position","absolute");
+        controlPanel.style.setProperty("top","-2rem");
+        controlPanel.style.setProperty("right","30rem");
+        document.getElementById(wspKey + "-modal-body").appendChild(controlPanel);
+
+        // call debugger
+        ComponentsCommunication.functionRequest(
+          this.name,
+          "Debugger",
+          "createControllerReplica",
+          [
+            "#" + controlPanel.id,
+            () =>
+            callback()
+          ]
+        );
+      },
+      true);
+  }
+
+  @ExportedFunction
+  public closeBlockyEditorDebugTime(wspId: string) {
+    $("#" + wspId + "-modal")["modal"]("hide");
   }
 }

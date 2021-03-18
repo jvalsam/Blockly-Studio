@@ -339,4 +339,15 @@ export class Debugger extends IDEUIComponent {
                 throw new Error("Not supported source requested action in debugger!");
         }
     }
+
+    @ExportedFunction
+    public createControllerReplica(selector: string, callback: Function) {
+        this.toolbar.controller.createReplica(selector);
+        setTimeout(() => callback(), 200);
+    }
+
+    @ExportedFunction
+    public destroyControllerReplica() {
+        this.toolbar.controller.destroyReplica();
+    }
 }

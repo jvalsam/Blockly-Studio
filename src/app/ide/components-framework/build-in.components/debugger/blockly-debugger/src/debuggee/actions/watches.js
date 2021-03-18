@@ -131,13 +131,13 @@ export function BlocklyDebuggeeVariablesAction(plugin) {
 export function BlocklyDebuggeeEvalAction() {
     Blockly_Debuggee.actions["eval"].evalLocal;     // defined inside the start action in the eval()
 
-    Blockly_Debuggee.actions["eval"].handler = function (expr) {
+    Blockly_Debuggee.actions["eval"].handler = function (expr, debuggerScopeId) {
         Blockly_Debuggee.actions["eval"].evalLocal(expr);
         Blockly_Debuggee.actions["eval"]
-            .evalLocal(Blockly_Debuggee.actions["variables"].update_values());
+            .evalLocal(Blockly_Debuggee.actions["variables"].update_values(debuggerScopeId));
         Blockly_Debuggee.actions["variables"].updateDebugger();
         Blockly_Debuggee.actions["eval"]
-            .evalLocal(Blockly_Debuggee.actions["watch"].update_values());
+            .evalLocal(Blockly_Debuggee.actions["watch"].update_values(debuggerScopeId));
         Blockly_Debuggee.actions["watch"].updateDebugger();
     }
     dispatcher.eval = Blockly_Debuggee.actions["eval"].handler;

@@ -10,7 +10,7 @@ Blockly.JavaScript['procedures_defreturnDEBUG'] = function (block) {
     if (Blockly.JavaScript.STATEMENT_PREFIX) {
         var id = block.id.replace(/\$/g, '$$$$');  // Issue 251.
         branch = Blockly.JavaScript.prefixLines(
-            Blockly.JavaScript.STATEMENT_PREFIX.replace(/%1/g, 'eval(update_values()), await wait(' + "0" + ', \'' + id + '\', \'' + generation.currentSystemEditorId + '\')'
+            Blockly.JavaScript.STATEMENT_PREFIX.replace(/%1/g, 'eval(update_values(debuggerScopeId)), await wait(' + "0" + ', \'' + id + '\', \'' + generation.currentSystemEditorId + '\')'
             ), Blockly.JavaScript.INDENT) + branch;
     }
 
@@ -22,10 +22,12 @@ Blockly.JavaScript['procedures_defreturnDEBUG'] = function (block) {
         Blockly.JavaScript.ORDER_NONE) || '';
 
     if (returnValue)
-        returnValue = '  return Blockly_Debuggee.function_return_decorator(' + returnValue + ', caller_nest);\n';
+        returnValue = '  let lastInstr = Blockly_Debuggee.function_return_decorator(' + returnValue + ', caller_nest);\n';
     else
-        returnValue = '  return Blockly_Debuggee.function_return_decorator( \'\', caller_nest);\n';
+        returnValue = '  let lastInstr =  Blockly_Debuggee.function_return_decorator( \'\', caller_nest);\n';
 
+    returnValue += " return new Promise(resolve => {resolve(lastInstr);});"
+    
     var args = [];
     for (var i = 0; i < block.arguments_.length; i++) {
         args[i] = Blockly.JavaScript.variableDB_.getName(block.arguments_[i],

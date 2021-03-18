@@ -565,27 +565,7 @@ export const SmartObject = {
         strBuilder += "newValue = " + value_value + ";\n";
         strBuilder += "}";
         strBuilder += "if (property.value !== newValue) {";
-        strBuilder += "CreateDeviceBubbleForLog(";
-        strBuilder += JSON.stringify(block.soData.title) + ",";
-        strBuilder += JSON.stringify(block.soData.img) + ",";
-        strBuilder += JSON.stringify(block.soData.colour) + ",";
-        strBuilder +=
-          JSON.stringify("Set property ") +
-          "+ property.name +" +
-          JSON.stringify(": old value = <b>") +
-          "+ property.value +" +
-          JSON.stringify("</b>, current value =  <b>") +
-          "+ newValue +" +
-          JSON.stringify("</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "property.value = newValue;\n";
+        strBuilder += "let oldValue = property.value; property.value = newValue;\n";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=
           "(elem) => elem.id === " +
@@ -593,9 +573,36 @@ export const SmartObject = {
         strBuilder += ");";
         strBuilder += "ExecuteValueCheckingTests(runTimeData);";
         strBuilder += "TriggerWhenConditionalsFunctions();";
-        strBuilder +=
-          "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += "}";
+        strBuilder += `eval(update_values(debuggerScopeId));
+        Blockly_Debuggee
+          .actions[\"variables\"]
+          .updateDebugger();
+        Blockly_Debuggee
+          .actions[\"watch\"]
+          .updateDebugger();`
+          strBuilder +=
+          "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
+          strBuilder += "CreateDeviceBubbleForLog(";
+          strBuilder += JSON.stringify(block.soData.title) + ",";
+          strBuilder += JSON.stringify(block.soData.img) + ",";
+          strBuilder += JSON.stringify(block.soData.colour) + ",";
+          strBuilder +=
+            JSON.stringify("Set property ") +
+            "+ property.name +" +
+            JSON.stringify(": old value = <b>") +
+            "+ oldValue +" +
+            JSON.stringify("</b>, current value =  <b>") +
+            "+ newValue +" +
+            JSON.stringify("</b>") +
+            ",";
+          strBuilder += "() =>";
+          strBuilder +=
+            "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
+          strBuilder += "projectElementId,";
+          strBuilder += JSON.stringify(block.id);
+          strBuilder += ")";
+          strBuilder += ");";
         strBuilder += "})();";
 
         var code = strBuilder + "\n";
@@ -803,27 +810,7 @@ export const SmartObject = {
           JSON.stringify(dropdown_properties) +
           ");\n";
         strBuilder += "if (property.value !== newValue) {";
-        strBuilder += "CreateDeviceBubbleForLog(";
-        strBuilder += JSON.stringify(block.soData.title) + ",";
-        strBuilder += JSON.stringify(block.soData.img) + ",";
-        strBuilder += JSON.stringify(block.soData.colour) + ",";
-        strBuilder +=
-          JSON.stringify("Set property ") +
-          "+ property.name +" +
-          JSON.stringify(": old value = <b>") +
-          "+ property.value +" +
-          JSON.stringify("</b>, current value =  <b>") +
-          "+ newValue +" +
-          JSON.stringify("</b>") +
-          ",";
-        strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
-        strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
-        strBuilder += ")";
-        strBuilder += ");";
-        strBuilder += "property.value = newValue;";
+        strBuilder += "let oldValue = property.value; property.value = newValue;";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=
           "(elem) => elem.id === " +
@@ -832,7 +819,37 @@ export const SmartObject = {
         strBuilder += "ExecuteValueCheckingTests(runTimeData);";
         strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder +=
-          "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
+        "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
+        strBuilder += `update_values(debuggerScopeId);
+        Blockly_Debuggee
+          .actions[\"variables\"]
+          .updateDebugger();
+        Blockly_Debuggee
+          .actions[\"watch\"]
+          .updateDebugger();`
+        strBuilder += "CreateDeviceBubbleForLog(";
+        strBuilder += JSON.stringify(block.soData.title) + ",";
+        strBuilder += JSON.stringify(block.soData.img) + ",";
+        strBuilder += JSON.stringify(block.soData.colour) + ",";
+        strBuilder +=
+          JSON.stringify("Set property ") +
+          "+ property.name +" +
+          JSON.stringify(": old value = <b>") +
+          "+ oldValue +" +
+          JSON.stringify("</b>, current value =  <b>") +
+          "+ newValue +" +
+          JSON.stringify("</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder +=
+          "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
+        let blockId = "smartObjectActionName ? smartObjectActionName + '____' + '"
+        + block.id + "' : '" + block.id + "'";
+
+        strBuilder +=  blockId;
+        strBuilder += ")";
+        strBuilder += ");";
         strBuilder += "}";
         strBuilder += "})();";
 
@@ -1185,7 +1202,7 @@ export const SmartObject = {
         // })();
 
         let strBuilder = "";
-        strBuilder += "(function () {\n";
+        strBuilder += "await (async function () {\n";
         strBuilder += "let args = [];\n";
         strBuilder +=
           "let inputsToCode = JSON.parse('" +
@@ -1220,24 +1237,13 @@ export const SmartObject = {
         strBuilder +=
           ").blocklyEditorDataIndex[" + JSON.stringify(dropdown_actions) + "];";
         strBuilder += "if (editorDataIndex !== -1) {";
-        strBuilder +=
-          "let funcCode = runTimeData.execData.project.SmartObjects.find(";
-        strBuilder += "(x) =>";
-        strBuilder +=
-          "x.id === " +
-          JSON.stringify(block.soData.editorId.split("_ec-smart-object")[0]);
-        strBuilder += ").editorsData[editorDataIndex].generated.src;";
         
-        let defDebugVarCode = "let debuggerScopeId = '"
-          + "debugger_\' + '"
-          + block.soData.editorId.split("_ec-smart-object")[0]
-          + '\' + \'_\' + \''
-          + dropdown_actions + "';";
-        
-        strBuilder +=
-          "eval(" + JSON.stringify(defDebugVarCode) + " + funcCode + ';' + JSON.parse('" +
-          JSON.stringify(dropdown_actions + "(...args);") +
-          "'))";
+        strBuilder += 
+        "await functionsFromSmartDevicesActions["
+        + JSON.stringify(block.soData.editorId.split("_ec-smart-object")[0] 
+        + "_" 
+        + dropdown_actions)
+        + "](...args);"
         strBuilder += "}";
         strBuilder += "let argsStr = '';";
         strBuilder +=
@@ -1265,12 +1271,16 @@ export const SmartObject = {
           ",";
         strBuilder += "() =>";
         strBuilder +=
-          "runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(";
+          "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
         strBuilder += "projectElementId,";
-        strBuilder += JSON.stringify(block.id);
+
+        let blockId = "smartObjectActionName ? smartObjectActionName + '____' + '"
+          + block.id + "' : '" + block.id + "'";
+
+        strBuilder +=  blockId;
         strBuilder += ")";
         strBuilder += ");";
-        strBuilder += "})();";
+        strBuilder += "return new Promise(resolve => {resolve();}); })();";
 
         var code = strBuilder + "\n";
         return code;

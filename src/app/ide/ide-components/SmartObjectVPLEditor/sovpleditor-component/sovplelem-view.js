@@ -1043,10 +1043,6 @@ const DefineFunctionForDebugImplementation = function (action) {
     `<field name="NAME">` +
     action.name +
     `</field>
-    <comment pinned="false" h="80" w="160">Implementation of action \"` +
-    action.name +
-    `\" that runs on debug mode
-    </comment>
   </block>
 </xml>`;
   return str;
