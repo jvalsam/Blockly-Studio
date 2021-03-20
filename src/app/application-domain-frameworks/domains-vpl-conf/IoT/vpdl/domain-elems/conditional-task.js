@@ -51,7 +51,7 @@ export const ConditionalTask = {
           + JSON.stringify("debugger_" + block.pitemData.pitemId) 
           + " + ';') + runTimeData.execData.project.ConditionalEvents.find(e => e.id === " +
           JSON.stringify(block.pitemData.pitemId) +
-          ').editorsData[0].generated.src + "})()" );';
+          ').editorsData[0].generated.src + variablesWatches_code + "})()" );';
         return code;
       },
     },

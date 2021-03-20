@@ -51,6 +51,7 @@ export class DebuggerControllerView extends View {
     }
 
     public createReplica(selector) {
+        this.data.state = "PAUSED";
         this._replica = new DebuggerControllerView(
             this.parent,
             this.name,
@@ -60,12 +61,15 @@ export class DebuggerControllerView extends View {
             this.blocklyDebugger,
             this.data);
         this._replica.render();
+        $("#debugger-control")
+            .css("box-shadow", "1px 1px 1px 1px grey");
+
+        this.render();
     }
 
     public destroyReplica() {
         this.data = this._replica.data;
         this.render();
-
         this._replica.destroy();
     }
 

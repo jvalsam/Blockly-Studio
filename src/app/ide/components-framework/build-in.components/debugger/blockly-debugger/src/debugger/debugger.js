@@ -64,8 +64,10 @@ export var InitializeDebuggeeWorker = function (plugin) {
             Debuggee_Worker.Instance().postMessage({ "type": "prompt", "data": window.prompt(msg) });
         };
         dispatcher["highlightBlock"] = (data) => {
-            generation.workspaces[data.currentSystemEditorId].wsp.traceOn_ = true;
-            generation.workspaces[data.currentSystemEditorId].highlightBlock(data.id);
+            if(generation.workspaces[data.currentSystemEditorId]){
+                generation.workspaces[data.currentSystemEditorId].wsp.traceOn_ = true;
+                generation.workspaces[data.currentSystemEditorId].highlightBlock(data.id);
+            }
         };
         dispatcher["execution_finished"] = () => {
             instance = undefined;

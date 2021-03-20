@@ -22,10 +22,10 @@ export class VPLDomainElements {
             vplBlocks.forEach(vplBlock => {
                 Blockly.Blocks[vplBlock.name] = vplBlock.blockDef();
                 Blockly.JavaScript[vplBlock.name] = (block) =>
-                  //   RuntimeManager.getMode() === "RELEASE"
-                  //     ? vplBlock.codeGen(block)
-                  //     : vplBlock.debugGen(block);
-                  vplBlock.debugGen(block);
+                    RuntimeManager.getMode() === "RELEASE"
+                      ? vplBlock.codeGen(block)
+                      : vplBlock.debugGen(block);
+                //   vplBlock.debugGen(block);
             });
         });
     }

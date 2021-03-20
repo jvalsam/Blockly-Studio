@@ -205,15 +205,18 @@ export class BlocklyVPL extends Editor {
 
     this.instancesMap[editorData.editorId].open();
 
-    ComponentsCommunication.functionRequest(
-        this.name,
-        "Debugger",
-        "renderBreakpoints",
-        [
-          pitem.systemID,
-          this.instancesMap[editorData.editorId]
-        ]
-    );
+    // case of simulator tests are not in pitem
+    if (pitem && pitem.systemID) {
+      ComponentsCommunication.functionRequest(
+          this.name,
+          "Debugger",
+          "renderBreakpoints",
+          [
+            pitem.systemID,
+            this.instancesMap[editorData.editorId]
+          ]
+      );
+    }
   }
 
   @ExportedFunction
@@ -692,12 +695,13 @@ export class BlocklyVPL extends Editor {
 
   @RequiredFunction("ProjectManager", "clickProjectElement")
   private openPItem(pitem: ProjectItem) {
-    ComponentsCommunication.functionRequest(
-      this.name,
-      "ProjectManager",
-      "clickProjectElement",
-      [pitem.systemID]
-    );
+    if(pitem)
+      ComponentsCommunication.functionRequest(
+        this.name,
+        "ProjectManager",
+        "clickProjectElement",
+        [pitem.systemID]
+      );
   }
 
   public CreateDOMElement(type, options) {
@@ -717,20 +721,26 @@ export class BlocklyVPL extends Editor {
 
   public CreateModal(dom, idPrefix) {
     let modal = this.CreateDOMElement("div", {
-      classList: ["modal", "fade"],
+      classList: ["modal", "shadow-sm"],
       id: idPrefix + "-modal",
     });
-    modal.setAttribute("data-keyboard", "false");
-    modal.setAttribute("data-backdrop", "static");
+    // modal.setAttribute("data-keyboard", "false");
+    // modal.setAttribute("data-backdrop", "static");
     modal.setAttribute("tabindex", "-1");
     modal.setAttribute("role", "dialog");
-    modal.setAttribute("aria-hidden", "true");
+    modal.style.setProperty("width", "92rem");
+    modal.style.setProperty("height", "64rem");
+    modal.style.setProperty("top", "0");
+    modal.style.setProperty("left", "0");
+    // modal.setAttribute("aria-hidden", "true");
     dom.appendChild(modal);
   
     let modalDialog = this.CreateDOMElement("div", {
       classList: ["modal-dialog", "modal-lg"],
       id: idPrefix + "-modal-dialog",
     });
+    modalDialog.style.setProperty("margin-left", "21rem");
+    modalDialog.style.setProperty("margin-top", "7rem");
     modalDialog.setAttribute("role", "document");
     modal.appendChild(modalDialog);
   
@@ -740,6 +750,7 @@ export class BlocklyVPL extends Editor {
     modalDialog.appendChild(modalContent);
   
     let modalHeader = this.CreateDOMElement("div", { classList: ["modal-header"] });
+    modalHeader.id = idPrefix + "-modal-header",
     modalContent.appendChild(modalHeader);
   
     let modalTitle = this.CreateDOMElement("h5", {
@@ -747,17 +758,6 @@ export class BlocklyVPL extends Editor {
       id: idPrefix + "-modal-title",
     });
     modalHeader.appendChild(modalTitle);
-  
-    // let closeModal = this.CreateDOMElement("button", { classList: ["close"] });
-    // closeModal.setAttribute("type", "button");
-    // closeModal.setAttribute("data-dismiss", "modal");
-    // closeModal.setAttribute("aria-label", "Close");
-    // modalHeader.appendChild(closeModal);
-  
-    // let closeSpan = this.CreateDOMElement("span", {});
-    // closeSpan.setAttribute("aria-hidden", "true");
-    // closeSpan.innerHTML = "&times;";
-    // closeModal.appendChild(closeSpan);
   
     let modalBody = this.CreateDOMElement("div", {
       classList: ["modal-body"],
@@ -794,6 +794,13 @@ export class BlocklyVPL extends Editor {
       document.getElementsByClassName("modal-platform-container")[0],
       prefix
     );
+
+    // if (!$("#" + prefix + "-modal.in").length) {
+    //   $("#" + prefix + "-modal-dialog").css({
+    //     top: 0,
+    //     left: -10,
+    //   });
+    // }
   
     // title
     $("#" + prefix + "-modal-title").html(title);
@@ -826,7 +833,7 @@ export class BlocklyVPL extends Editor {
   
     $("#" + prefix + "-modal").on("hidden.bs.modal", () => {
       document.getElementsByClassName("modal-platform-container")[0].innerHTML = "";
-      document.getElementById("runtime-modal-title").click();
+      // document.getElementById("runtime-modal-title").click();
     });
 
     $("#" + prefix + "-modal").on("hide.bs.modal", () => {
@@ -853,13 +860,22 @@ export class BlocklyVPL extends Editor {
     document.getElementById(prefix + "-modal-dialog").classList.add("modal-xl");
   
     $("#" + prefix + "-modal").on("shown.bs.modal", function (e) {
+      $(document).off("focusin.modal");
       onShown();
-      // $(document).off("focusin.modal");
     });
 
-    $("#" + prefix + "-modal")["modal"]({backdrop: 'static', keyboard: false})  
+    // $("#" + prefix + "-modal")["modal"]({backdrop: 'static', keyboard: false}) 
+    
+    $("#" + prefix + "-modal")["modal"]({
+      backdrop: false,
+      show: true,
+    });
+
+    // $("#" + prefix + "-modal").draggable({
+    //   handle: "#" + prefix + "-modal-header",
+    // });
   
-    $("#" + prefix + "-modal")["modal"]("show");
+    // $("#" + prefix + "-modal")["modal"]("show");
   }
 
   @RequiredFunction("ProjectManager", "getProjectItem")
@@ -918,8 +934,9 @@ export class BlocklyVPL extends Editor {
       wspKey,
       title,
       () => {
-
         let editorData = pitem._editorsData.items[wspKey];
+        editorData.zIndex = 2000;
+
         this.openInDialogue(
           editorData,
           pitem,
@@ -932,10 +949,11 @@ export class BlocklyVPL extends Editor {
         let controlPanel = document.createElement("div");
         controlPanel.id = "control-debugger-modal";
         controlPanel.style.setProperty("position","absolute");
-        controlPanel.style.setProperty("top","-2rem");
-        controlPanel.style.setProperty("right","30rem");
-        document.getElementById(wspKey + "-modal-body").appendChild(controlPanel);
-
+        controlPanel.style.setProperty("top","1rem");
+        controlPanel.style.setProperty("right","22rem");
+        controlPanel.style.setProperty("width","5rem");
+        document.getElementById(wspKey + "-modal-title").prepend(controlPanel);
+        
         // call debugger
         ComponentsCommunication.functionRequest(
           this.name,

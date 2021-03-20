@@ -583,7 +583,7 @@ export class SmartObjectVPLEditor extends Editor {
         this.name,
         "BlocklyVPL",
         "generateCodeDataForExecution",
-        [{ editorId: data.editorId }]
+        [{ editorId: data.editorId }, "DEBUG"]
       ).value;
 
       // add line for debugging eval

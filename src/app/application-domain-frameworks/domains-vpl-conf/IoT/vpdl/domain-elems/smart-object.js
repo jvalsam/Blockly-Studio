@@ -59,7 +59,6 @@ export const SmartObject = {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         let strBuilder = "";
 
-        if (RuntimeManager.getMode() === "RELEASE") {
           // (function () {
           //   let property = devicesOnAutomations
           //     .find(
@@ -82,30 +81,7 @@ export const SmartObject = {
             ");";
           strBuilder += "return property.value;";
           strBuilder += "})()";
-        } else {
-          // (function () {
-          //   let property = devicesOnAutomations
-          //     .find(
-          //       (device) => device.id === block.soData.details.iotivityResourceID
-          //     )
-          //     .properties.find((prop) => prop.name === dropdown_properties);
-          //   return property.value;
-          // })()
 
-          strBuilder += "(function () {";
-          strBuilder += "let property = devicesOnAutomations";
-          strBuilder += ".find(";
-          strBuilder +=
-            "(device) => device.id === " +
-            JSON.stringify(block.soData.details.iotivityResourceID);
-          strBuilder += ")";
-          strBuilder +=
-            ".properties.find((prop) => prop.name === " +
-            JSON.stringify(dropdown_properties) +
-            ");";
-          strBuilder += "return property.value;";
-          strBuilder += "})()";
-        }
 
         var code = strBuilder + "\n";
         // TODO: Change ORDER_NONE to the correct strength.
@@ -124,7 +100,7 @@ export const SmartObject = {
         //   return property.value;
         // })()
 
-        strBuilder += "(function () {";
+        strBuilder += "(async function () {";
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
         strBuilder +=
@@ -226,7 +202,7 @@ export const SmartObject = {
         // })()
 
         let strBuilder = "";
-        strBuilder += "(function () {";
+        strBuilder += "(async function () {";
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
         strBuilder +=
@@ -517,7 +493,7 @@ export const SmartObject = {
         //       bgColor,
         //       "Text",
         //       () =>
-        //         runTimeData.RuntimeEnvironmentRelease.browseBlocklyBlock(
+        //         runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(
         //           projectElementId,
         //           block.blockId
         //         )
@@ -529,7 +505,7 @@ export const SmartObject = {
         // })();
 
         let strBuilder = "";
-        strBuilder += "(function () {";
+        strBuilder += "await (async function  () { return new Promise((resolve) => {";
         strBuilder += "let newValue;\n";
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
@@ -572,7 +548,6 @@ export const SmartObject = {
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
         strBuilder += "ExecuteValueCheckingTests(runTimeData);";
-        strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder += "}";
         strBuilder += `eval(update_values(debuggerScopeId));
         Blockly_Debuggee
@@ -600,10 +575,15 @@ export const SmartObject = {
           strBuilder +=
             "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
           strBuilder += "projectElementId,";
-          strBuilder += JSON.stringify(block.id);
+
+          let blockId = "smartObjectActionName ? smartObjectActionName + '____' + '"
+          + block.id + "' : '" + block.id + "'";
+
+          strBuilder += blockId;
           strBuilder += ")";
           strBuilder += ");";
-        strBuilder += "})();";
+          strBuilder += "await TriggerWhenConditionalsFunctions();";
+        strBuilder += " }); })();";
 
         var code = strBuilder + "\n";
         return code;
@@ -796,7 +776,7 @@ export const SmartObject = {
         // })();
 
         let strBuilder = "";
-        strBuilder += "(function () {";
+        strBuilder += "await (async function () { return new Promise(async (resolve) => {";
         strBuilder +=
           "let newValue =" + JSON.stringify(dropdown_possible_values) + ";\n";
         strBuilder += "let property = devicesOnAutomations";
@@ -817,7 +797,6 @@ export const SmartObject = {
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
         strBuilder += "ExecuteValueCheckingTests(runTimeData);";
-        strBuilder += "TriggerWhenConditionalsFunctions();";
         strBuilder +=
         "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += `update_values(debuggerScopeId);
@@ -844,14 +823,17 @@ export const SmartObject = {
         strBuilder +=
           "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
         strBuilder += "projectElementId,";
+
         let blockId = "smartObjectActionName ? smartObjectActionName + '____' + '"
         + block.id + "' : '" + block.id + "'";
 
         strBuilder +=  blockId;
         strBuilder += ")";
         strBuilder += ");";
+        strBuilder += "await TriggerWhenConditionalsFunctions();";
+
         strBuilder += "}";
-        strBuilder += "})();";
+        strBuilder += "resolve(); }); })();";
 
         var code = strBuilder + "\n";
         return code;
@@ -899,6 +881,11 @@ export const SmartObject = {
         return {
           updateConnections: function (newValue) {
             let inputs = [].concat(this.inputList);
+            this.actionImplementationId = data.details.iotivityResourceID 
+              + "-debug-configuration-" 
+              + newValue
+              + "-blockly-container";
+            this.actionName = newValue;
             // we need only first input, remove the other inputs
             inputs.forEach((input) => {
               if (input.name !== "MAIN") {
@@ -958,6 +945,11 @@ export const SmartObject = {
             this.setHelpUrl("");
             // pass data to codeGen
             this.soData = data;
+            this.actionImplementationId = data.details.iotivityResourceID 
+                + "-debug-configuration-" 
+                + this.getFieldValue("ACTIONS") 
+                + "-blockly-container";
+            this.actionName = this.getFieldValue("ACTIONS") ;
           },
         };
       },

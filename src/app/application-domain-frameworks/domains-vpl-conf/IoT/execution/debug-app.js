@@ -167,12 +167,14 @@ const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, endTime: Tim
 
 const whenCondData = [];
 
+
 const changesData = [];
 
 const TriggerWhenConditionalsFunctions = function () {
-  whenCondData.forEach((cond) => {
-    cond.func();
+  let promises = whenCondData.map((cond) => {
+    return cond.func();
   });
+  return Promise.all(promises);
 };
 
 const weekDays = [
@@ -808,7 +810,7 @@ const DestroyModal = function (idPrefix) {
 /* End of functions for simulating time */
 
 /* Start functions for creating test */
-const RenderWarningForExpectedValueCheck = function (
+const RenderWarningForExpectedValueCheck = async function (
   title,
   time,
   color,
@@ -922,7 +924,7 @@ const ExecuteValueCheckingTests = function (runTimeData) {
       );
     };
     // eval js
-    eval(test.debugTest.js);
+    eval("(async () => {let debuggerScopeId = '';" + test.debugTest.js.src + "})();");
   }
 };
 
@@ -3363,7 +3365,7 @@ const ExecuteSimulateBehaviorTest = function (
   }
 };
 
-const ChangeValueOfProperty = function (deviceId, changeProperty, runTimeData) {
+const ChangeValueOfProperty = async function (deviceId, changeProperty, runTimeData) {
   let newValue;
   if (changeProperty.type === "intRange") {
     let number = parseInt(changeProperty.value);
@@ -3413,13 +3415,13 @@ const ChangeValueOfProperty = function (deviceId, changeProperty, runTimeData) {
     deviceProperty.value = newValue;
 
     ExecuteValueCheckingTests(runTimeData);
-    TriggerWhenConditionalsFunctions();
+    await TriggerWhenConditionalsFunctions();
     RerenderDevice(device, [deviceProperty]);
   }
   changeProperty.isExecuted = true;
 };
 
-const ExecuteActionForTest = function (deviceId, action, runTimeData) {
+const ExecuteActionForTest = async function (deviceId, action, runTimeData) {
   let args = [];
   for (const [parameterIndex, parameter] of action.parameters.entries()) {
     let newValue;
@@ -3438,13 +3440,20 @@ const ExecuteActionForTest = function (deviceId, action, runTimeData) {
 
   let device = devicesOnAutomations.find((x) => x.id === deviceId);
 
-  let editorId = device.blocklyEditorId[action.name];
+  // let editorId = device.blocklyEditorId[action.name];
   let editorDataIndex = device.blocklyEditorDataIndex[action.name];
   if (editorDataIndex !== -1) {
-    let funcCode = runTimeData.execData.project.SmartObjects.find(
-      (x) => x.id === device.editorId.split("_ec-smart-object")[0]
-    ).editorsData[editorDataIndex].generated.src;
-    eval(funcCode + ";" + action.name + "(...args);");
+    // let funcCode = runTimeData.execData.project.SmartObjects.find(
+    //   (x) => x.id === device.editorId.split("_ec-smart-object")[0]
+    // ).editorsData[editorDataIndex].generated.src;
+    // eval(funcCode + ";" + action.name + "(...args);");
+
+    await (()=>{return new Promise(async (resolve) => {
+      await functionsFromSmartDevicesActions[
+     device.editorId.split("_ec-smart-object")[0] +
+     "_" +
+    action.name
+    ](...args);  resolve();}); })();
     action.isExecuted = true;
   }
 };
@@ -4332,6 +4341,7 @@ function AddSmartDevicesVariables(smartObjects) {
         + "let debuggerScopeId = 'debugger_"
         + smartObject.id + "_" + actionName
         + "';"
+        + "Blockly_Debuggee.state.setState('stepIn');"
         + "let projectElementId = " + JSON.stringify(smartObject.id) + "; "
         + "let smartObjectActionName = "
         + JSON.stringify(
@@ -4346,7 +4356,7 @@ function AddSmartDevicesVariables(smartObjects) {
         + " let response = await "
         + actionName
         + "(...arguments); "
-
+        + "eval(variablesWatches_code);"
         + " runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'closeBlockyEditorDebugTime', ['"
         + actionKey + "']);"
         + " resolve(response); }, 'type': 'async' } ); }); };";
@@ -4457,7 +4467,7 @@ export async function StartApplication(runTimeData) {
             variablesDef +
             automation.editorsData[0].generated.src +
             variablesWatches_code +
-            "})()";
+            "})();";
         }
       });
       return finalCodeForRunningAutomations;
@@ -4533,16 +4543,28 @@ export async function StartApplication(runTimeData) {
           Blockly_Debuggee.actions["eval"].evalLocal = evalLocal;
 
           var finalAppCode = BuildAutomationsCodeForRun(
+            runTimeData.execData.project.ConditionalEvents
+          );
+
+          finalAppCode += BuildAutomationsCodeForRun(
+            runTimeData.execData.project.CalendarEvents
+          );
+
+          finalAppCode += BuildAutomationsCodeForRun(
             runTimeData.execData.project.AutomationTasks
           );
 
           await eval(
             `async function code(){
+
               ExecuteValueCheckingTests(runTimeData);
               
-              ${finalAppCode}
               
-              ExecuteSimulateBehaviorTests(runTimeData);
+              ${finalAppCode}
+
+
+              
+              ExecuteSimulateBehaviorTests(runTimeData);            
               
             };
             code();

@@ -47,11 +47,11 @@ export const AutomationTask = {
         var code =
           'eval( "(async () => { let projectElementId = " + JSON.stringify(' 
           +JSON.stringify(block.pitemData.pitemId) +
-          "+ ';') + 'let debuggerScopeId = ' + JSON.stringify(" 
+          ") + ';' + 'let debuggerScopeId = ' + JSON.stringify(" 
           + JSON.stringify("debugger_" + block.pitemData.pitemId) 
-          + " + ';') + runTimeData.execData.project.AutomationTasks.find(e => e.id === " +
+          + ") + ';' + runTimeData.execData.project.AutomationTasks.find(e => e.id === " +
           JSON.stringify(block.pitemData.pitemId) +
-          ').editorsData[0].generated.src + "})()" );';
+          ').editorsData[0].generated.src + variablesWatches_code + " })();" );';
         return code;
       },
     },
