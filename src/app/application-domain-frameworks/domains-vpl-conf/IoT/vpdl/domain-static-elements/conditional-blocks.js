@@ -561,7 +561,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -688,7 +688,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -842,7 +842,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -969,7 +969,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -1121,7 +1121,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -1248,7 +1248,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -1402,7 +1402,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -1529,7 +1529,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -1657,7 +1657,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -1764,7 +1764,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -1894,7 +1894,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
@@ -2001,7 +2001,7 @@ export const ConditionalStaticBlocks = [
       strBuilder += "}";
       strBuilder += "}";
       strBuilder +=
-        "} else if (" +
+        "} else if (!" +
         value_condition +
         " && whenCondData[index].triggerFlag) {";
       strBuilder += "whenCondData[index].triggerFlag = false;";
