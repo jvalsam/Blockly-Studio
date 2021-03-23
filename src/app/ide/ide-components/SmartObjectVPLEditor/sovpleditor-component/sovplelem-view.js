@@ -1650,7 +1650,7 @@ export function RenderSmartGroup(
   // let hrActionGroups = CreateDOMElement("hr");
   // cardBodyDiv.appendChild(hrActionGroups);
   // Smart Objects
-  let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Objects");
+  let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Devices");
   RenderBubbles(
     bubblesDiv,
     sgData.editorData.details.smartObjects,
