@@ -4395,7 +4395,7 @@ function AddAutomationsVariables(automations) {
 /* End debugger functions */
 
 export async function StartApplication(runTimeData) {
-  try {
+  // try {
     variablesWatches_code =
       `eval(update_values(debuggerScopeId));
           Blockly_Debuggee
@@ -4506,7 +4506,7 @@ export async function StartApplication(runTimeData) {
     AddAutomationsVariables(runTimeData.execData.project.AutomationTasks);
 
     let defineSOActionsSRC = AddSmartDevicesVariables(runTimeData.execData.project.SmartObjects)
-      + "is_script_ended = true;";
+      + "is_script_ended = true; //# sourceURL=my-foo.js;";
 
     let is_script_ended = false;
     eval( defineSOActionsSRC );
@@ -4567,8 +4567,7 @@ export async function StartApplication(runTimeData) {
               ExecuteSimulateBehaviorTests(runTimeData);            
               
             };
-            code();
-            //# sourceURL=my-foo.js;`
+            code();`
           );
 
           // runTimeData.RuntimeEnvironmentDebug.postMessage({
@@ -4577,9 +4576,9 @@ export async function StartApplication(runTimeData) {
         },
       }
     );
-  } catch (e) {
-    alert(e);
-  }
+  // } catch (e) {
+  //   alert(e);
+  // }
 }
 
 export async function StopApplication(execData) {
