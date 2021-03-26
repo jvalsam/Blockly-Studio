@@ -1,6 +1,7 @@
 {
     "img" : {
-        "fa" : "fa-tablet-alt"
+        "src" : "/images/iot/intro.png",
+        "style": "width: 149px;"
     },
     "author" : {
         "name" : "Valsamakis Yannis",
@@ -13,8 +14,8 @@
         "details"
     ],
     "name" : "IoT",
-    "title" : "Visual Programming in the Internet of Things",
+    "title" : "Personalized IoT Automations",
     "help" : "Develop automations for your smart devices",
-    "description" : "This domain is designed to help end-users develop automations for their daily activities using their smart objects such as smart phone, smart watch, air-conditioning etc.",
+    "description" : "This domain is designed to help end-users develop automations for their daily activities using their smart devoces such as smart phones, smart watches, air-conditioning, etc.",
     "type" : "programming"
 }
