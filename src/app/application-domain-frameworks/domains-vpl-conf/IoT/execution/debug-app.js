@@ -4356,7 +4356,7 @@ function AddSmartDevicesVariables(smartObjects) {
         + " let response = await "
         + actionName
         + "(...arguments); "
-        + "eval(variablesWatches_code);"
+        // + "eval(variablesWatches_code);"
         + " runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'closeBlockyEditorDebugTime', ['"
         + actionKey + "']);"
         + " resolve(response); }, 'type': 'async' } ); }); };";

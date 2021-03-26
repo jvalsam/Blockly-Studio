@@ -81,13 +81,13 @@ export function BlocklyDebuggeeVariablesAction(plugin) {
             varsNodes.forEach(varNode => {
                 code += 'debuggerEnvironmentVariables.find(elem => elem.id === '
                     + JSON.stringify(varNode.id)
-                    + ').variableValue = ' + varNode.variableName + ';\n';
+                    + ').variableValue = ' + varNode.variableName.replace("-", "_") + ';\n';
                 code += 'debuggerEnvironmentVariables.find(elem => elem.id === '
                     + JSON.stringify(varNode.id)
                     + ').text = '
                     + JSON.stringify(varNode.variableName + " : ")
                     + " + "
-                    + varNode.variableName + ";\n";
+                    + varNode.variableName.replace("-", "_") + ";\n";
             });
 
             varsNodes = variables.filter(elem => elem.variableSName);

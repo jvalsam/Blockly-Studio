@@ -59,29 +59,28 @@ export const SmartObject = {
         var dropdown_properties = block.getFieldValue("PROPERTIES");
         let strBuilder = "";
 
-          // (function () {
-          //   let property = devicesOnAutomations
-          //     .find(
-          //       (device) => device.id === block.soData.details.iotivityResourceID
-          //     )
-          //     .properties.find((prop) => prop.name === dropdown_properties);
-          //   return property.value;
-          // })()
+        // (function () {
+        //   let property = devicesOnAutomations
+        //     .find(
+        //       (device) => device.id === block.soData.details.iotivityResourceID
+        //     )
+        //     .properties.find((prop) => prop.name === dropdown_properties);
+        //   return property.value;
+        // })()
 
-          strBuilder += "(function () {";
-          strBuilder += "let property = devicesOnAutomations";
-          strBuilder += ".find(";
-          strBuilder +=
-            "(device) => device.id === " +
-            JSON.stringify(block.soData.details.iotivityResourceID);
-          strBuilder += ")";
-          strBuilder +=
-            ".properties.find((prop) => prop.name === " +
-            JSON.stringify(dropdown_properties) +
-            ");";
-          strBuilder += "return property.value;";
-          strBuilder += "})()";
-
+        strBuilder += "(function () {";
+        strBuilder += "let property = devicesOnAutomations";
+        strBuilder += ".find(";
+        strBuilder +=
+          "(device) => device.id === " +
+          JSON.stringify(block.soData.details.iotivityResourceID);
+        strBuilder += ")";
+        strBuilder +=
+          ".properties.find((prop) => prop.name === " +
+          JSON.stringify(dropdown_properties) +
+          ");";
+        strBuilder += "return property.value;";
+        strBuilder += "})()";
 
         var code = strBuilder + "\n";
         // TODO: Change ORDER_NONE to the correct strength.
@@ -505,7 +504,8 @@ export const SmartObject = {
         // })();
 
         let strBuilder = "";
-        strBuilder += "await (function  () { return new Promise(async (resolve) => {";
+        strBuilder +=
+          " await ( async function  () { return new Promise(async (resolve) => {";
         strBuilder += "let newValue;\n";
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
@@ -517,11 +517,12 @@ export const SmartObject = {
           ".properties.find((prop) => prop.name === " +
           JSON.stringify(dropdown_properties) +
           ");\n";
-        
-        strBuilder += "await eval('let promise = (() => { return new Promise( async (resolve) => { let response = ' + "
-          + JSON.stringify(value_value)
-          + " + '; resolve(response); } ); }) (); let value_value; promise.then((value) => { value_value = value; }); ');";
-        
+
+        strBuilder +=
+          " let value_value = await (async() => { return new Promise(async (resolve)=>{  eval(" +
+          JSON.stringify("(async()=>{ let response =  " + value_value + ";  resolve(response);})();") +
+          "); }) })(); ";
+
         strBuilder += "if ('" + checkArray[0] + '\' === "Number") {';
         strBuilder += "let number = parseFloat(value_value);\n";
         strBuilder += "if (";
@@ -539,55 +540,58 @@ export const SmartObject = {
         strBuilder += "}\n";
         strBuilder +=
           "} else if (" + JSON.stringify(checkArray[0]) + ' === "Boolean") {';
-        strBuilder +=
-          'newValue = value_value === "true" ? true : false;\n';
+        strBuilder += 'newValue = value_value === "true" ? true : false;\n';
         strBuilder +=
           "} else if (" + JSON.stringify(checkArray[0]) + ' === "String") {';
         strBuilder += "newValue = value_value;\n";
         strBuilder += "}";
         strBuilder += "if (property.value !== newValue) {";
-        strBuilder += "let oldValue = property.value; property.value = newValue;\n";
+        strBuilder +=
+          "let oldValue = property.value; property.value = newValue;\n";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=
           "(elem) => elem.id === " +
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
         strBuilder += "ExecuteValueCheckingTests(runTimeData);";
-        strBuilder += "}";
         strBuilder += `eval(update_values(debuggerScopeId));
         Blockly_Debuggee
           .actions[\"variables\"]
           .updateDebugger();
         Blockly_Debuggee
           .actions[\"watch\"]
-          .updateDebugger();`
-          strBuilder +=
+          .updateDebugger();`;
+        strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
-          strBuilder += "CreateDeviceBubbleForLog(";
-          strBuilder += JSON.stringify(block.soData.title) + ",";
-          strBuilder += JSON.stringify(block.soData.img) + ",";
-          strBuilder += JSON.stringify(block.soData.colour) + ",";
-          strBuilder +=
-            JSON.stringify("Set property ") +
-            "+ property.name +" +
-            JSON.stringify(": old value = <b>") +
-            "+ oldValue +" +
-            JSON.stringify("</b>, current value =  <b>") +
-            "+ newValue +" +
-            JSON.stringify("</b>") +
-            ",";
-          strBuilder += "() =>";
-          strBuilder +=
-            "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
-          strBuilder += "projectElementId,";
+        strBuilder += "CreateDeviceBubbleForLog(";
+        strBuilder += JSON.stringify(block.soData.title) + ",";
+        strBuilder += JSON.stringify(block.soData.img) + ",";
+        strBuilder += JSON.stringify(block.soData.colour) + ",";
+        strBuilder +=
+          JSON.stringify("Set property ") +
+          "+ property.name +" +
+          JSON.stringify(": old value = <b>") +
+          "+ oldValue +" +
+          JSON.stringify("</b>, current value =  <b>") +
+          "+ newValue +" +
+          JSON.stringify("</b>") +
+          ",";
+        strBuilder += "() =>";
+        strBuilder += "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
+        strBuilder += "projectElementId,";
 
-          let blockId = "smartObjectActionName ? smartObjectActionName + '____' + '"
-          + block.id + "' : '" + block.id + "'";
+        let blockId =
+          "smartObjectActionName ? smartObjectActionName + '____' + '" +
+          block.id +
+          "' : '" +
+          block.id +
+          "'";
 
-          strBuilder += blockId;
-          strBuilder += ")";
-          strBuilder += ");";
-          strBuilder += "await TriggerWhenConditionalsFunctions();";
+        strBuilder += blockId;
+        strBuilder += ")";
+        strBuilder += ");";
+        strBuilder += "}";
+        strBuilder += "await TriggerWhenConditionalsFunctions(); resolve();";
         strBuilder += " }); })();";
 
         var code = strBuilder + "\n";
@@ -781,7 +785,8 @@ export const SmartObject = {
         // })();
 
         let strBuilder = "";
-        strBuilder += "await (async function () { return new Promise(async (resolve) => {";
+        strBuilder +=
+          "await (async function () { return new Promise(async (resolve) => {";
         strBuilder +=
           "let newValue =" + JSON.stringify(dropdown_possible_values) + ";\n";
         strBuilder += "let property = devicesOnAutomations";
@@ -795,7 +800,8 @@ export const SmartObject = {
           JSON.stringify(dropdown_properties) +
           ");\n";
         strBuilder += "if (property.value !== newValue) {";
-        strBuilder += "let oldValue = property.value; property.value = newValue;";
+        strBuilder +=
+          "let oldValue = property.value; property.value = newValue;";
         strBuilder += "let oldDeviceIndex = devicesOnAutomations.findIndex(";
         strBuilder +=
           "(elem) => elem.id === " +
@@ -803,14 +809,14 @@ export const SmartObject = {
         strBuilder += ");";
         strBuilder += "ExecuteValueCheckingTests(runTimeData);";
         strBuilder +=
-        "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
+          "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += `update_values(debuggerScopeId);
         Blockly_Debuggee
           .actions[\"variables\"]
           .updateDebugger();
         Blockly_Debuggee
           .actions[\"watch\"]
-          .updateDebugger();`
+          .updateDebugger();`;
         strBuilder += "CreateDeviceBubbleForLog(";
         strBuilder += JSON.stringify(block.soData.title) + ",";
         strBuilder += JSON.stringify(block.soData.img) + ",";
@@ -825,14 +831,17 @@ export const SmartObject = {
           JSON.stringify("</b>") +
           ",";
         strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
+        strBuilder += "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
         strBuilder += "projectElementId,";
 
-        let blockId = "smartObjectActionName ? smartObjectActionName + '____' + '"
-        + block.id + "' : '" + block.id + "'";
+        let blockId =
+          "smartObjectActionName ? smartObjectActionName + '____' + '" +
+          block.id +
+          "' : '" +
+          block.id +
+          "'";
 
-        strBuilder +=  blockId;
+        strBuilder += blockId;
         strBuilder += ")";
         strBuilder += ");";
         strBuilder += "await TriggerWhenConditionalsFunctions();";
@@ -886,10 +895,11 @@ export const SmartObject = {
         return {
           updateConnections: function (newValue) {
             let inputs = [].concat(this.inputList);
-            this.actionImplementationId = data.details.iotivityResourceID 
-              + "-debug-configuration-" 
-              + newValue
-              + "-blockly-container";
+            this.actionImplementationId =
+              data.details.iotivityResourceID +
+              "-debug-configuration-" +
+              newValue +
+              "-blockly-container";
             this.actionName = newValue;
             // we need only first input, remove the other inputs
             inputs.forEach((input) => {
@@ -950,11 +960,12 @@ export const SmartObject = {
             this.setHelpUrl("");
             // pass data to codeGen
             this.soData = data;
-            this.actionImplementationId = data.details.iotivityResourceID 
-                + "-debug-configuration-" 
-                + this.getFieldValue("ACTIONS") 
-                + "-blockly-container";
-            this.actionName = this.getFieldValue("ACTIONS") ;
+            this.actionImplementationId =
+              data.details.iotivityResourceID +
+              "-debug-configuration-" +
+              this.getFieldValue("ACTIONS") +
+              "-blockly-container";
+            this.actionName = this.getFieldValue("ACTIONS");
           },
         };
       },
@@ -1125,31 +1136,10 @@ export const SmartObject = {
           (elem) => elem.name === dropdown_actions
         ).parameters.length;
 
-        let inputsToCode = [];
-        let checksArray = {};
+        // let inputsToCode = [];
+        // let checksArray = {};
 
         // get code and type from every input
-        for (let i = 0; i < parametersLength; ++i) {
-          if (block.getInput("INPUT" + i).type === 1) {
-            // type 1
-            inputsToCode.push(
-              eval(
-                Blockly.JavaScript.valueToCode(
-                  block,
-                  "INPUT" + i,
-                  Blockly.JavaScript.ORDER_ATOMIC
-                )
-              )
-            );
-            checksArray["INPUT" + i] = block
-              .getInput("INPUT" + i)
-              .connection.getCheck();
-          } else if (block.getInput("INPUT" + i).type === 5) {
-            // type 5
-            inputsToCode.push(block.getFieldValue("ENUM" + i));
-            checksArray["INPUT" + i] = ["String"];
-          }
-        }
 
         // (function () {
         //   let args = [];
@@ -1201,14 +1191,44 @@ export const SmartObject = {
         let strBuilder = "";
         strBuilder += "await (async function () {\n";
         strBuilder += "let args = [];\n";
-        strBuilder +=
-          "let inputsToCode = JSON.parse('" +
-          JSON.stringify(inputsToCode) +
-          "');\n";
-        strBuilder +=
-          "let checksArray = JSON.parse('" +
-          JSON.stringify(checksArray) +
-          "');\n";
+        strBuilder += "let inputsToCode = [];\n";
+        strBuilder += "let checksArray = {};";
+
+        for (let i = 0; i < parametersLength; ++i) {
+          if (block.getInput("INPUT" + i).type === 1) {
+            // type 1
+            strBuilder += "var value = await (async () => {";
+            strBuilder += "return new Promise(async (resolve) => {";
+            strBuilder += "eval('";
+            strBuilder +=
+              "(async()=>{ let response = ' + " +
+              JSON.stringify(
+                Blockly.JavaScript.valueToCode(
+                  block,
+                  "INPUT" + i,
+                  Blockly.JavaScript.ORDER_ATOMIC
+                )
+              ) +
+              " + ';  resolve(response); })();'";
+            strBuilder += ");";
+            strBuilder += "});";
+            strBuilder += "})();";
+            strBuilder += "inputsToCode.push(value);";
+            strBuilder +=
+              "checksArray['INPUT' +" +
+              i +
+              "] = " +
+              JSON.stringify(
+                block.getInput("INPUT" + i).connection.getCheck()
+              ) +
+              ";";
+          } else if (block.getInput("INPUT" + i).type === 5) {
+            // type 5
+            strBuilder +=
+              "inputsToCode.push('" + block.getFieldValue("ENUM" + i) + "');";
+            strBuilder += "checksArray['INPUT' + " + i + "] = ['String'];";
+          }
+        }
         strBuilder += "for (let i = 0; i < " + parametersLength + "; ++i) {\n";
         strBuilder += 'if (checksArray["INPUT" + i][0] === "Number") {\n';
         strBuilder += "let number = parseFloat(inputsToCode[i]);\n";
@@ -1234,13 +1254,15 @@ export const SmartObject = {
         strBuilder +=
           ").blocklyEditorDataIndex[" + JSON.stringify(dropdown_actions) + "];";
         strBuilder += "if (editorDataIndex !== -1) {";
-        
-        strBuilder += 
-        "await functionsFromSmartDevicesActions["
-        + JSON.stringify(block.soData.editorId.split("_ec-smart-object")[0] 
-        + "_" 
-        + dropdown_actions)
-        + "](...args);"
+
+        strBuilder +=
+          "await functionsFromSmartDevicesActions[" +
+          JSON.stringify(
+            block.soData.editorId.split("_ec-smart-object")[0] +
+              "_" +
+              dropdown_actions
+          ) +
+          "](...args);";
         strBuilder += "}";
         strBuilder += "let argsStr = '';";
         strBuilder +=
@@ -1267,14 +1289,17 @@ export const SmartObject = {
           "+ argsStr" +
           ",";
         strBuilder += "() =>";
-        strBuilder +=
-          "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
+        strBuilder += "runTimeData.RuntimeEnvironmentDebug.browseBlocklyBlock(";
         strBuilder += "projectElementId,";
 
-        let blockId = "smartObjectActionName ? smartObjectActionName + '____' + '"
-          + block.id + "' : '" + block.id + "'";
+        let blockId =
+          "smartObjectActionName ? smartObjectActionName + '____' + '" +
+          block.id +
+          "' : '" +
+          block.id +
+          "'";
 
-        strBuilder +=  blockId;
+        strBuilder += blockId;
         strBuilder += ")";
         strBuilder += ");";
         strBuilder += "return new Promise(resolve => {resolve();}); })();";
