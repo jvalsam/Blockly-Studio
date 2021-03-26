@@ -505,7 +505,7 @@ export const SmartObject = {
         // })();
 
         let strBuilder = "";
-        strBuilder += "await (async function  () { return new Promise((resolve) => {";
+        strBuilder += "await (function  () { return new Promise(async (resolve) => {";
         strBuilder += "let newValue;\n";
         strBuilder += "let property = devicesOnAutomations";
         strBuilder += ".find(";
@@ -517,8 +517,13 @@ export const SmartObject = {
           ".properties.find((prop) => prop.name === " +
           JSON.stringify(dropdown_properties) +
           ");\n";
+        
+        strBuilder += "await eval('let promise = (() => { return new Promise( async (resolve) => { let response = ' + "
+          + JSON.stringify(value_value)
+          + " + '; resolve(response); } ); }) (); let value_value; promise.then((value) => { value_value = value; }); ');";
+        
         strBuilder += "if ('" + checkArray[0] + '\' === "Number") {';
-        strBuilder += "let number = parseFloat(" + value_value + ");\n";
+        strBuilder += "let number = parseFloat(value_value);\n";
         strBuilder += "if (";
         strBuilder += "property.options.minimum_value && ";
         strBuilder += "number < property.options.minimum_value";
@@ -535,10 +540,10 @@ export const SmartObject = {
         strBuilder +=
           "} else if (" + JSON.stringify(checkArray[0]) + ' === "Boolean") {';
         strBuilder +=
-          "newValue = " + value_value + ' === "true" ? true : false;\n';
+          'newValue = value_value === "true" ? true : false;\n';
         strBuilder +=
           "} else if (" + JSON.stringify(checkArray[0]) + ' === "String") {';
-        strBuilder += "newValue = " + value_value + ";\n";
+        strBuilder += "newValue = value_value;\n";
         strBuilder += "}";
         strBuilder += "if (property.value !== newValue) {";
         strBuilder += "let oldValue = property.value; property.value = newValue;\n";
