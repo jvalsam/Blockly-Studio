@@ -76,6 +76,7 @@ export class ConfigurationView extends ComponentView {
     private onSave(): void {
         this.parent["onSaveValues"](this.configCompData.compName, this.propsView.value);
         this.propsView.destroy();
+        this.destroy();
     }
 
     private onReset(): void {
