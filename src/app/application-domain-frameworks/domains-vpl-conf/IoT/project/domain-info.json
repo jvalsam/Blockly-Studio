@@ -1,7 +1,7 @@
 {
     "img" : {
         "src" : "/images/iot/intro.png",
-        "style": "width: 149px;"
+        "style": "width: 195px; margin-left:-2rem;"
     },
     "author" : {
         "name" : "Valsamakis Yannis",
@@ -16,6 +16,6 @@
     "name" : "IoT",
     "title" : "Personalized IoT Automations",
     "help" : "Develop automations for your smart devices",
-    "description" : "This domain is designed to help end-users develop automations for their daily activities using their smart devoces such as smart phones, smart watches, air-conditioning, etc.",
+    "description" : "This domain is focused on directly enabling everybody with the necessary tools to easily and quickly craft, test and change the automations they desire in the context of the Internet of Things. <br><br> The workspace includes smart device registry and grouping, device dashboard to handle smart objects. Additionally, approapriate full-<br>scale VPL for development of automations has been developed including conditional and scheduled tasks. Moreover, full-scale user-interface for the runtime execution of automations is provided for monitoring and interacting purposes. Finally, testing and debugging facilities for smart automations are provided by simulating the smart devices.",
     "type" : "programming"
 }
