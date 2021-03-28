@@ -59,11 +59,11 @@ export class ConfigurationView extends ComponentView {
                 selector: ".ts-btn-config-save",
                 handler: () => this.onSave()
             },
-            {
-                eventType: "hidden.bs.modal",
-                selector: "this",
-                handler: () => this.destroy()
-            }
+            // {
+            //     eventType: "hidden.bs.modal",
+            //     selector: "#configModalCenter",
+            //     handler: () => this.close()
+            // }
         );
     }
 
@@ -132,10 +132,12 @@ export class ConfigurationView extends ComponentView {
     public open(): void {
         this.render();
         $("#"+this.configCompData.id)["modal"]("show");
+        $("#"+this.configCompData.id).on("hidden.bs.modal", () => this.close());
     }
 
     private close(): void {
         $("#" + this.configCompData.id + " .close").click();
+        this.destroy();
     }
 
     public setConfigData (data: any): void {
