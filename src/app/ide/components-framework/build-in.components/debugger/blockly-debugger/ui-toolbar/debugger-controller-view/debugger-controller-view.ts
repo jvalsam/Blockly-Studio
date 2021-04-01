@@ -51,7 +51,7 @@ export class DebuggerControllerView extends View {
     }
 
     public createReplica(selector) {
-        this.data.state = "PAUSED";
+        // this.data.state = "PAUSED";
         this._replica = new DebuggerControllerView(
             this.parent,
             this.name,

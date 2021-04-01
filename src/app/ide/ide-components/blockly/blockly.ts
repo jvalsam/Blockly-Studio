@@ -922,51 +922,52 @@ export class BlocklyVPL extends Editor {
   @RequiredFunction("Debugger", "createControllerReplica")
   @ExportedFunction
   public openBlockyEditorDebugTime(pitemId: string, title: string, wspKey: string, callback: Function) {
-    let pitem = ComponentsCommunication.functionRequest(
-      this.name,
-      "ProjectManager",
-      "getProjectItem",
-      [pitemId]
-    ).value;
-    this.openPItem(pitem);
+    // let pitem = ComponentsCommunication.functionRequest(
+    //   this.name,
+    //   "ProjectManager",
+    //   "getProjectItem",
+    //   [pitemId]
+    // ).value;
+    // this.openPItem(pitem);
 
-    this.OpenModalForBlockEditorInstance(
-      wspKey,
-      title,
-      () => {
-        let editorData = pitem._editorsData.items[wspKey];
-        editorData.zIndex = 2000;
+    // this.OpenModalForBlockEditorInstance(
+    //   wspKey,
+    //   title,
+    //   () => {
+    //     let editorData = pitem._editorsData.items[wspKey];
+    //     editorData.zIndex = 2000;
 
-        this.openInDialogue(
-          editorData,
-          pitem,
-          "ec-action-implementation-debug",
-          wspKey + "-blockly-container",
-          "EDITING",
-          "BlocklyStudioIDE");
+    //     this.openInDialogue(
+    //       editorData,
+    //       pitem,
+    //       "ec-action-implementation-debug",
+    //       wspKey + "-blockly-container",
+    //       "EDITING",
+    //       "BlocklyStudioIDE");
 
-        // create debugger control div
-        let controlPanel = document.createElement("div");
-        controlPanel.id = "control-debugger-modal";
-        controlPanel.style.setProperty("position","absolute");
-        controlPanel.style.setProperty("top","1rem");
-        controlPanel.style.setProperty("right","22rem");
-        controlPanel.style.setProperty("width","5rem");
-        document.getElementById(wspKey + "-modal-title").prepend(controlPanel);
+    //     // create debugger control div
+    //     let controlPanel = document.createElement("div");
+    //     controlPanel.id = "control-debugger-modal";
+    //     controlPanel.style.setProperty("position","absolute");
+    //     controlPanel.style.setProperty("top","1rem");
+    //     controlPanel.style.setProperty("right","22rem");
+    //     controlPanel.style.setProperty("width","5rem");
+    //     document.getElementById(wspKey + "-modal-title").prepend(controlPanel);
         
-        // call debugger
-        ComponentsCommunication.functionRequest(
-          this.name,
-          "Debugger",
-          "createControllerReplica",
-          [
-            "#" + controlPanel.id,
-            () =>
-            callback()
-          ]
-        );
-      },
-      true);
+    //     // call debugger
+    //     ComponentsCommunication.functionRequest(
+    //       this.name,
+    //       "Debugger",
+    //       "createControllerReplica",
+    //       [
+    //         "#" + controlPanel.id,
+    //         () =>
+    //         callback()
+    //       ]
+    //     );
+    //   },
+    //   true);
+    callback();
   }
 
   @ExportedFunction

@@ -4350,7 +4350,7 @@ function AddSmartDevicesVariables(smartObjects) {
         "_" +
         actionName +
         "';" +
-        "Blockly_Debuggee.state.setState('stepIn');" +
+        // "Blockly_Debuggee.state.setState('stepIn');" +
         "let projectElementId = " +
         JSON.stringify(smartObject.id) +
         "; " +
@@ -4358,7 +4358,7 @@ function AddSmartDevicesVariables(smartObjects) {
         JSON.stringify("Simulated Action: " + actionName + "____" + actionKey) +
         ";" +
         smartObject.editorsData[i].generated.src +
-        "runTimeData.RuntimeEnvironmentDebug.functionRequest('RuntimeManager', 'foldLivePreview', []);" +
+        // "runTimeData.RuntimeEnvironmentDebug.functionRequest('RuntimeManager', 'foldLivePreview', []);" +
         "runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'openBlockyEditorDebugTime', [" +
         JSON.stringify(smartObject.id) +
         ", 'Simulated Action: " +
