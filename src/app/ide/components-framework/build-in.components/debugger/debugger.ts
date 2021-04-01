@@ -32,6 +32,7 @@ export class Debugger extends IDEUIComponent {
     private blocklyDebugger: BlocklyDebugger;
     private toolbar: DebuggerToolbarView;
 
+    @RequiredFunction("RuntimeManager", "functionRequest")
     private postMessage(msg, callback?: Function) {
         ComponentsCommunication.functionRequest(
             this.name,
@@ -41,7 +42,9 @@ export class Debugger extends IDEUIComponent {
                 this.name,
                 "RuntimeEnvironmentDebug",
                 "receiveFrontendMessage",
-                msg,
+                [
+                    msg
+                ],
                 callback
             ]
         );
@@ -60,22 +63,30 @@ export class Debugger extends IDEUIComponent {
         this.breakpointNO = 1;
     }
 
+    @RequiredFunction("RuntimeManager", "getEnvironmentRunData")
     @ExportedFunction
-    public start(environmentData: any, onSuccess: Function) {
-        alert("start debugging process...");
-        this.environmentData = environmentData;
-        
+    public start(onSuccess: Function) {
+        this.environmentData = ComponentsCommunication.functionRequest(
+            this.name,
+            "RuntimeManager",
+            "getEnvironmentRunData",
+            []
+        ).value;
+//
+
         this.toolbar = <DebuggerToolbarView>ViewRegistry.getEntry("DebuggerToolbarView")
             .create(
                 this,
                 ".debugger-toolbar-area",
-                environmentData,
+                this.environmentData,
                 {
                     breakpoints: this.breakpoints
                 },//debuggerData
                 this.blocklyDebugger
             );
         this.toolbar.render();
+
+        onSuccess("debugger toolbar has been loaded!");
     }
 
     @RequiredFunction("BlocklyVPL", "getAllBlocklyWSPs")
@@ -88,12 +99,44 @@ export class Debugger extends IDEUIComponent {
         ).value;
     }
 
+    @ExportedFunction
+    public setEnvironmentVariablesTree(envTree, callback) {
+        this.toolbar.debuggerInfodata.setEnvironmentData(
+            envTree,
+            () => {
+                let bdi = this.blocklyDebugger.getDebuggerInstance();
+                bdi.actions.Variables.init(envTree);
+                callback({
+                    "breakpoints": bdi.actions["Breakpoint"].breakpoints.map((obj) => {
+                        return {
+                            "block_id": obj.block_id,
+                            "enable": obj.enable
+                        }
+                    }),
+                    "cursorBreakpoint": "", // run to cursor in block: TODO
+                    "watches": bdi.actions["Watch"].getWatches()
+                });
+            });        
+    }
+
     private getEnvironmentData(): any {
         return this.environmentData;
     }
 
     private stop() {
         alert("stop debugging process...");
+    }
+
+    private updateWatches(watches) {
+
+    }
+
+    private updateVariables(variables) {
+        this.toolbar.debuggerInfodata.setEnvironmentData(variables);
+    }
+
+    private onBreakpointTriggered(blockId: string) {
+        this.toolbar.controller.onPauseExecution();
     }
 
     public registerEvents(): void {
@@ -111,7 +154,7 @@ export class Debugger extends IDEUIComponent {
     public destroy(): void {
         throw new Error("Method not implemented.");
     }
-
+    
     // handling breakpoints
     private breakpointNO: number;
     private breakpoints: Array<BreakpointInfo>;
@@ -295,5 +338,16 @@ export class Debugger extends IDEUIComponent {
             default:
                 throw new Error("Not supported source requested action in debugger!");
         }
+    }
+
+    @ExportedFunction
+    public createControllerReplica(selector: string, callback: Function) {
+        this.toolbar.controller.createReplica(selector);
+        setTimeout(() => callback(), 200);
+    }
+
+    @ExportedFunction
+    public destroyControllerReplica() {
+        this.toolbar.controller.destroyReplica();
     }
 }

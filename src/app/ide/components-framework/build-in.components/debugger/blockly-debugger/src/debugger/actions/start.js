@@ -8,35 +8,37 @@ function AddVariableWatchTable() {
     Blockly_Debugger.actions["Variables"].init();
     Blockly_Debugger.actions["Watch"].init();
 
-    document.getElementById("val_table").innerHTML =
-        `<div class="watch">
-            <div class="title">&nbsp;Variables<!--i class="fa fa-bars"></i--></div>
-            <div class="watch-content">
-                <table style="width:100%">
-                    <tr>
-                        <th>Name</th>
-                        <th>Value</th> 
-                        <th>Type</th>
-                    </tr>
-                </table>
-                <table id="variables" style="width:100%"></table>
-            </div>
-        </div>
-        <div class="watch">
-            <div class="title">&nbsp;Watches</div>
-            <div class="watch-content">
-                <table style="width:100%">
-                    <tr>
-                        <th>Name</th>
-                        <th>Code</th> 
-                        <th>Value</th>
-                        <th>Type</th>
-                    </tr>     
-                </table>
-                <table id="watches" style="width:100%">
-                </table>
-            </div>
-        </div>`;
+    // TODO: initiate UI toolbar variables and watches
+    
+    // document.getElementById("val_table").innerHTML =
+    //     `<div class="watch">
+    //         <div class="title">&nbsp;Variables<!--i class="fa fa-bars"></i--></div>
+    //         <div class="watch-content">
+    //             <table style="width:100%">
+    //                 <tr>
+    //                     <th>Name</th>
+    //                     <th>Value</th> 
+    //                     <th>Type</th>
+    //                 </tr>
+    //             </table>
+    //             <table id="variables" style="width:100%"></table>
+    //         </div>
+    //     </div>
+    //     <div class="watch">
+    //         <div class="title">&nbsp;Watches</div>
+    //         <div class="watch-content">
+    //             <table style="width:100%">
+    //                 <tr>
+    //                     <th>Name</th>
+    //                     <th>Code</th> 
+    //                     <th>Value</th>
+    //                     <th>Type</th>
+    //                 </tr>     
+    //             </table>
+    //             <table id="watches" style="width:100%">
+    //             </table>
+    //         </div>
+    //     </div>`;
 }
 
 

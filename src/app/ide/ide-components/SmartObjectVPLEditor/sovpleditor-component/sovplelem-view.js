@@ -1043,10 +1043,6 @@ const DefineFunctionForDebugImplementation = function (action) {
     `<field name="NAME">` +
     action.name +
     `</field>
-    <comment pinned="false" h="80" w="160">Implementation of action \"` +
-    action.name +
-    `\" that runs on debug mode
-    </comment>
   </block>
 </xml>`;
   return str;
@@ -1654,7 +1650,7 @@ export function RenderSmartGroup(
   // let hrActionGroups = CreateDOMElement("hr");
   // cardBodyDiv.appendChild(hrActionGroups);
   // Smart Objects
-  let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Objects");
+  let bubblesDiv = BuildBubblesArea(cardBodyDiv, "Smart Devices");
   RenderBubbles(
     bubblesDiv,
     sgData.editorData.details.smartObjects,

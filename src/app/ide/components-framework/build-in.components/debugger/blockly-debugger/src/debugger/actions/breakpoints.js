@@ -40,18 +40,22 @@ export function RegisterDebuggerBreakpointFunctionality(visualDebugger) {
 
     Blockly_Debugger.actions["Breakpoint"].wait_view = (block_id) => {
         let currentSystemEditorId = generation.findBlockEditorId(block_id);
-        let block = generation.workspaces[currentSystemEditorId].getBlockById(block_id);
+        let block = generation.workspaces[currentSystemEditorId]
+            .getBlockById(block_id);
+        
         while (block != null) {
             block.setCollapsed(false);
             block = block.parentBlock_;
         }
         // highlighting, not works in case that is collapsed
-        generation.workspaces[currentSystemEditorId].traceOn_ = true;
+        generation.workspaces[currentSystemEditorId].wsp.traceOn_ = true;
         generation.workspaces[currentSystemEditorId].highlightBlock(block_id);
 
         document.getElementById(block_id).style.stroke = 'red';
         document.getElementById(block_id).style.fill = 'yellow';
         document.getElementById(block_id).style['stroke-width'] = '5px';
+
+        visualDebugger.onBreakpointTriggered(block_id);
     }
 
 

@@ -533,7 +533,7 @@ export class SmartObjectVPLEditor extends Editor {
   }
 
   @ExportedFunction
-  public generateCodeDataForExecution(data: any) {
+  public generateCodeDataForExecution(data: any, execType: string) {
     // if (RuntimeManager.getMode() === "RELEASE") {
     // alert("Not implemented generateCodeDataForExecution in " + this.name);
     let runTimeData = JSON.parse(JSON.stringify(data));
@@ -583,7 +583,7 @@ export class SmartObjectVPLEditor extends Editor {
         this.name,
         "BlocklyVPL",
         "generateCodeDataForExecution",
-        [{ editorId: data.editorId }]
+        [{ editorId: data.editorId }, "DEBUG"]
       ).value;
 
       // add line for debugging eval
@@ -764,11 +764,11 @@ export class SmartObjectVPLEditor extends Editor {
       "closeSRC",
       [editorId]
     );
-    ComponentsCommunication.functionRequest(
-      this.name,
-      "BlocklyVPL",
-      "destroySRC",
-      [editorId]
-    );
+    // ComponentsCommunication.functionRequest(
+    //   this.name,
+    //   "BlocklyVPL",
+    //   "destroySRC",
+    //   [editorId]
+    // );
   }
 }

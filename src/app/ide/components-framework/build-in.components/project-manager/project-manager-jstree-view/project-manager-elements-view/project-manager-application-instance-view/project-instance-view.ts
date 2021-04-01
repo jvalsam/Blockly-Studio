@@ -274,8 +274,8 @@ export class ProjectInstanceView extends View {
 
         jstreeNode.highlighted = category.highlighted ||
             {
-                bgColor: "rgb(151 181 207)",
-                bgColorHover: "rgb(180 201 220)",
+                bgColor: "rgb(151, 181, 207)",
+                bgColorHover: "rgb(180, 201, 220)",
                 options: {
                     color: "#1A3A3A",
                     hover: "white"

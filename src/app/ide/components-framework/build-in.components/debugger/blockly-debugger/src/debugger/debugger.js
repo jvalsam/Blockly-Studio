@@ -26,15 +26,12 @@ export var InitializeDebuggeeWorker = function (plugin) {
 
     function getInstance() {
         if (instance === undefined) {
-            alert(plugin);
             instance = {};	 // to path apo to localhost kai oxi apo edw
             initDispacher();
             
             // establish the communication
             instance.onmessage = function (msg) {
-                let obj = msg.data;
-                let data = obj.data;
-                dispatcher[obj.type](data);
+                dispatcher[msg.type](msg.data);
             };
             instance.postMessage = (msg) => {
                 plugin.postMessage(msg);
@@ -61,28 +58,22 @@ export var InitializeDebuggeeWorker = function (plugin) {
     function initDispacher() {
         dispatcher["alert"] = (msg) => {
             window.alert(msg);
-            Debuggee_Worker.Instance().postMessage({ "type": "alert", "data": "" });
+            Debuggee_Worker.Instance().postMessage({ "type": "alert", "data": [""] });
         };
         dispatcher["prompt"] = (msg) => {
             Debuggee_Worker.Instance().postMessage({ "type": "prompt", "data": window.prompt(msg) });
         };
         dispatcher["highlightBlock"] = (data) => {
-            // it entered here with editor null
-            //
-            let blocklyWSP = generation.getBlocklyWSP[data.currentSystemEditorId];
-            
-            window.workspace[data.currentSystemEditorId].traceOn_ = true;
-            window.workspace[data.currentSystemEditorId].highlightBlock(data.id);
+            if(generation.workspaces[data.currentSystemEditorId]){
+                generation.workspaces[data.currentSystemEditorId].wsp.traceOn_ = true;
+                generation.workspaces[data.currentSystemEditorId].highlightBlock(data.id);
+            }
         };
         dispatcher["execution_finished"] = () => {
             instance = undefined;
-            document.getElementById("val_table").innerHTML = '';
+            // document.getElementById("val_table").innerHTML = '';
         };
     };
-
-    function registerDebuggerActions () {
-        RegisterEvalDebuggerAction();
-    }
 
     function registerBreakpointsRunToCursorFunctionality () {
         RegisterDebuggerBreakpointFunctionality(plugin);
@@ -97,16 +88,19 @@ export var InitializeDebuggeeWorker = function (plugin) {
         //
         registerBreakpointsRunToCursorFunctionality: registerBreakpointsRunToCursorFunctionality,
         //
-        registerDebuggerActions: registerDebuggerActions,
         RegisterContinueDebuggerAction : () => RegisterContinueDebuggerAction(),
         RegisterStartDebuggerAction : (selector, handler) => RegisterStartDebuggerAction(selector, handler),
-        RegisterVariablesDebuggerAction : (selector) => RegisterVariablesDebuggerAction(selector),
-        RegisterWatchDebuggerAction : (selector) => RegisterWatchDebuggerAction(selector),
+        RegisterVariablesDebuggerAction :
+            (selector, plugin) => RegisterVariablesDebuggerAction(selector, plugin),
+        RegisterWatchDebuggerAction :
+            (selector, plugin) => RegisterWatchDebuggerAction(selector, plugin),
         RegisterStopDebuggerAction : () => RegisterStopDebuggerAction(),
         RegisterStepInDebuggerAction : () => RegisterStepInDebuggerAction(),
         RegisterStepOutDebuggerAction : () => RegisterStepOutDebuggerAction(),
         RegisterStepOverDebuggerAction : () => RegisterStepOverDebuggerAction(),
-        RegisterStepParentDebuggerAction : () => RegisterStepParentDebuggerAction()
+        RegisterStepParentDebuggerAction : () => RegisterStepParentDebuggerAction(),
+
+        RegisterEvalDebuggerAction: () => RegisterEvalDebuggerAction()
     };
 };
 

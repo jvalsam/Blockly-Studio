@@ -3,56 +3,61 @@ import {
     Blockly_Debugger
 } from '../debugger.js';
 import * as Blockly from 'blockly';
-import { generation } from "../../generator/blockly/blockly_init";
 
 // Variables
-export function RegisterVariablesDebuggerAction (event) {
+export function RegisterVariablesDebuggerAction (event, plugin) {
     Blockly_Debugger.actions["Variables"] = (function () {
-        var variables = [];
+        var variables = {};
     
         function handler() { };
     
-        function update(new_vars) {
-            for (var i = 0; i < variables.length; ++i) {
-                if (variables[i].value !== new_vars[i].value) {
-                    variables[i].value = new_vars[i].value;
-                    variables[i].change = true;
-                } else {
-                    variables[i].change = false;
+        // envTree: Array<JSTree>
+        function update(envTree) {
+            let workspaces_vars = envTree.filter(elem => elem.isBlocklyVariable);
+
+            workspaces_vars.forEach(variable => {
+                if (!variables[variable.parent]) {
+                    variables[variable.parent] = [];
                 }
-    
-            }
-            //variables = new_vars;
-            dispatchEvent(new Event("updateTable"));
+
+                let debugVar = variables[variable.parent]
+                    .find(pvar => variable.variableName === pvar.name);
+                
+                if (debugVar.value !== variable.variableValue) {
+                    debugVar.value = variable.variableValue;
+                    debugVar.text = variable.variableName + " : " + variable.variableValue;
+                    debugVar.change = true;
+                } else {
+                    debugVar.change = false;
+                }
+            });
+
+            plugin.updateVariables(envTree);
         };
     
-        function getVariables() {
+        function getVariables(pelemId) {
+            if(pelemId)
+                return variables[pelemId];
+            
             return variables;
         };
     
-        function init() {
-            var workspace_vars = [];
-            for (const editorId in generation.workspaces) {
-                workspace_vars.push(
-                    generation
-                        .workspaces[editorId]
-                        .getAllVariables()
-                        .map(variable => variable.name)
-                );
-            }
+        // envTree: Array<JSTreeNode>
+        function init(envTree) {
+            let workspaces_vars = envTree.filter(elem => elem.isBlocklyVariable);
     
-            for (var i = 0; i < workspace_vars.length; i++) {
-                var variables_names = variables.map(variable => variable.name);
-                for (var j = 0; j < workspace_vars[i].length; ++j) {
-                    if (variables_names.includes(workspace_vars[i][j])) continue;
-                    var nvar = {
-                        "name": workspace_vars[i][j],
-                        "value": undefined,
-                        "change": false
-                    };
-                    variables.push(nvar);
+            workspaces_vars.forEach(variable => {
+                if (!variables[variable.parent]) {
+                    variables[variable.parent] = [];
                 }
-            }
+
+                variables[variable.parent].push({
+                    "name": variable.variableName,
+                    "id": variable.id,
+                    "value": variable.variableValue,
+                    "change": false
+                });
+            });
         };
     
         return {
@@ -68,7 +73,7 @@ export function RegisterVariablesDebuggerAction (event) {
 }
 
 // Watches
-export function RegisterWatchDebuggerAction(event) {
+export function RegisterWatchDebuggerAction(event, plugin) {
     Blockly_Debugger.actions["Watch"] = (function () {
         var watches = [];
     
@@ -80,20 +85,21 @@ export function RegisterWatchDebuggerAction(event) {
     
         function update(new_watches) {
             for (var i = 0; i < watches.length; ++i) {
-                if (watches[i].value !== new_watches[i].value) {
-                    watches[i].value = new_watches[i].value;
+                let new_watch = new_watches.find(w => w.blockId === watches[i].blockId);
+
+                if (watches[i].value !== new_watch.value) {
+                    watches[i].value = new_watch.value;
                     watches[i].change = true;
                 } else {
                     watches[i].change = false;
                 }
-    
             }
-            //watches = new_watches;
-            dispatchEvent(new Event("updateWatchesTable"));
+            
+            plugin.updateWatches(new_watches);
         };
     
-        function getWatches() {
-            return watches;
+        function getWatches(pelemId) {
+            return watches.filter(elem => elem.parent === pelemId);
         }
     
         function init() {
@@ -103,25 +109,36 @@ export function RegisterWatchDebuggerAction(event) {
         }
     
         function menuOption(block) {
+            var pelemId = "debugger_" + block.workspace.pitem.systemId;
+
             var watchOption = {
-                text: (!Blockly_Debugger.actions["Watch"].getWatches().map((obj) => { return obj.name; }).includes(block.toString())) ? "Add Watch" : "Remove Watch",
-                enabled: (block.outputConnection == null) ? false : true,
+                text: (watches.findIndex(e => e.blockId === block.id) === -1)
+                            ? "Add Watch"
+                            : "Remove Watch",
+                enabled: (block.outputConnection == null)
+                    ? false
+                    : true,
                 callback: function () {
-                    var name = block.toString();
-    
-                    if (!Blockly_Debugger.actions["Watch"].getWatches().map((obj) => { return obj.name; }).includes(name)) {
+                    if (watches.findIndex(e => e.blockId === block.id) > -1) {
                         var code = Blockly.JavaScript.myBlockToCode(block);
+
                         var new_watch = {
-                            "name": name,
+                            "blockId": block.id,
+                            "name": block.toString(),
                             "code": code,
-                            "value": undefined
-                        }
-                        Blockly_Debugger.actions["Watch"].getWatches().push(new_watch);
-                    } else {
-                        var index = Blockly_Debugger.actions["Watch"].getWatches().map((obj) => { return obj.name; }).indexOf(name);
-                        if (index !== -1) Blockly_Debugger.actions["Watch"].getWatches().splice(index, 1);
+                            "value": undefined,
+                            "parent": pelemId
+                        };
+                        watches.push(new_watch);
                     }
-                    Blockly_Debugger.actions["Watch"].handler();
+                    else {
+                        var index = watches.findIndex(
+                            e => e.parent === pelemId
+                                && e.blockId === block.id);
+                        watches.splice(index, 1);
+                    }
+
+                    handler();
                 }
             };
             return watchOption;
@@ -151,9 +168,14 @@ export function RegisterEvalDebuggerAction() {
     Blockly_Debugger.actions["Eval"].menuOption = function (block) {
         var evalOption = {
             text: "Evaluate",
-            enabled: (block.type === "variables_set" || block.type === "math_change") ? true : false,
+            enabled: (block.type === "variables_set" || block.type === "math_change")
+                ? true
+                : false,
             callback: function () {
-                Blockly_Debugger.actions["Eval"].handler(Blockly.JavaScript.myBlockToCode(block));
+                Blockly_Debugger.actions["Eval"].handler(
+                    Blockly.JavaScript.myBlockToCode(block),
+                    "debugger_" + block.workspace.pitem.systemId
+                );
             }
         };
         return evalOption;

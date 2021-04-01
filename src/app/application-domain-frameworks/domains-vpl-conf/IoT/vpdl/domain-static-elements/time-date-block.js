@@ -49,13 +49,13 @@ export const TimeAndDateStaticBlocks = [
       var number_second = block.getFieldValue("SECOND");
 
       var code =
-        'JSON.stringify({ type: "specificTime", hour: ' +
+        '________JSON.stringify({ type: "specificTime", hour: ' +
         number_hour +
         ",minute:" +
         number_minute +
         ", second:" +
         number_second +
-        ",})";
+        ",})________";
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.JavaScript.ORDER_NONE];
     },
@@ -98,9 +98,9 @@ export const TimeAndDateStaticBlocks = [
       var dropdown_days = block.getFieldValue("DAYS");
 
       var code =
-        'JSON.stringify({ type: "specificDay", day: \'' +
+        '________JSON.stringify({ type: "specificDay", day: \'' +
         dropdown_days +
-        "' })";
+        "' })________";
 
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.JavaScript.ORDER_NONE];
@@ -147,9 +147,9 @@ export const TimeAndDateStaticBlocks = [
       var dropdown_months = block.getFieldValue("MONTHS");
       // TODO: Assemble JavaScript into code variable.
       var code =
-        'JSON.stringify({ type: "specificMonth", month: \'' +
+        '________JSON.stringify({ type: "specificMonth", month: \'' +
         dropdown_months +
-        "' })";
+        "' })________";
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.JavaScript.ORDER_NONE];
     },
@@ -179,9 +179,9 @@ export const TimeAndDateStaticBlocks = [
     debugGen: (block) => {
       var number_seconds = block.getFieldValue("SECONDS");
       var code =
-        'JSON.stringify({ type: "everySecond", second: ' +
+        '________JSON.stringify({ type: "everySecond", second: ' +
         number_seconds +
-        " })";
+        " })________";
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.JavaScript.ORDER_NONE];
     },
@@ -213,9 +213,9 @@ export const TimeAndDateStaticBlocks = [
       var number_minute = block.getFieldValue("MINUTE");
 
       var code =
-        'JSON.stringify({ type: "everyMinute", minute: ' +
+        '________JSON.stringify({ type: "everyMinute", minute: ' +
         number_minute +
-        " })";
+        " })________";
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.JavaScript.ORDER_NONE];
     },
@@ -245,7 +245,7 @@ export const TimeAndDateStaticBlocks = [
       var number_hour = block.getFieldValue("HOUR");
 
       var code =
-        'JSON.stringify({ type: "everyHour", hour: ' + number_hour + " })";
+        '________JSON.stringify({ type: "everyHour", hour: ' + number_hour + " })________";
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.JavaScript.ORDER_NONE];
     },
@@ -275,7 +275,7 @@ export const TimeAndDateStaticBlocks = [
       var number_day = block.getFieldValue("DAY");
 
       var code =
-        'JSON.stringify({ type: "everyDay", day: ' + number_day + " })";
+        '________JSON.stringify({ type: "everyDay", day: ' + number_day + " })________";
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.JavaScript.ORDER_NONE];
     },
@@ -305,7 +305,7 @@ export const TimeAndDateStaticBlocks = [
       var number_month = block.getFieldValue("MONTH");
 
       var code =
-        'JSON.stringify({ type: "everyMonth", month: ' + number_month + " })";
+        '________JSON.stringify({ type: "everyMonth", month: ' + number_month + " })________";
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.JavaScript.ORDER_NONE];
     },

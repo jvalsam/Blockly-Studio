@@ -57,7 +57,7 @@ export const ChecksExpectedValuesBlocks = [
       // })();
 
       let strBuilder = "";
-      strBuilder += "(function () {";
+      strBuilder += "(async function () {";
       strBuilder += "if (" + value_condition + " === true) {";
       strBuilder += "RenderWarningForExpectedValueCheck(";
       strBuilder += "titleForExpectedValueTest,";
@@ -133,7 +133,7 @@ export const ChecksExpectedValuesBlocks = [
       // })();
 
       let strBuilder = "";
-      strBuilder += "(function () {";
+      strBuilder += "(async function () {";
       strBuilder += "if (" + value_condition + " === true) {";
       strBuilder += "PauseSimulatedTime();";
       strBuilder += "RenderWarningForExpectedValueCheck(";

@@ -707,11 +707,11 @@ export class EditorManager extends IDEUIComponent {
             [ editorId ]
         );
 
-        ComponentsCommunication.functionRequest(
-            this.name,
-            editorName,
-            "destroySRC",
-            [ editorId ]
-        );
+        // ComponentsCommunication.functionRequest(
+        //     this.name,
+        //     editorName,
+        //     "destroySRC",
+        //     [ editorId ]
+        // );
     }
 }

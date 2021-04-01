@@ -1,6 +1,9 @@
 import { Blockly_Debugger, Debuggee_Worker } from '../../../debugger/debugger.js';
 import { Breakpoint_Icon } from './breakpoint.js';
 import * as Blockly from 'blockly';
+import {
+    ComponentsCommunication
+} from "../../../../../../../../../../../src/app/ide/components-framework/component/components-communication.ts";
 
 
 export function AddBreakpoint(block, outer) {
@@ -67,6 +70,35 @@ Blockly.BlockSvg.prototype.generateContextMenu = function () {
         Blockly.ContextMenuRegistry.ScopeType.BLOCK, {block: this});
 
     if (this.isDeletable() && this.isMovable() && !block.isInFlyout) {
+
+        // todo: create infrastructure for generic cases for each domain
+        if (block.actionImplementationId) {
+            menuOptions.push({
+                text: "Go to Implementation",
+                enabled: true,
+                callback: function () {
+                    ComponentsCommunication.functionRequest(
+                        "ProjectManager",
+                        "ProjectManager",
+                        "clickProjectElement",
+                        [
+                            block.soData.systemID.split("SmartObjectVPLEditor_")[1]
+                        ]
+                    );
+                    ComponentsCommunication.functionRequest(
+                        "ProjectManager",
+                        "SmartObjectVPLEditor",
+                        "clickDebugConfigurationOfAction",
+                        [
+                            block.soData.editorId,
+                            block.soData.details.actions
+                                .find(a=> a.name === block.actionName),
+                            "EDITING"
+                        ]
+                    );
+                }
+            });
+        }
         menuOptions.push(BreakpointOption(block));
         menuOptions.push(Blockly_Debugger.actions["Breakpoint"].disableMenuOption(block));
         menuOptions.push(Blockly_Debugger.actions["RunToCursor"].menuOption(block));

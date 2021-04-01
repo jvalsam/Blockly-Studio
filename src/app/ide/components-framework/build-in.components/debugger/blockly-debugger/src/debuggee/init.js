@@ -2,7 +2,13 @@
 export var window = {};
 
 export var Blockly_Debuggee = {
-    actions: {}
+    actions: {},
+    onPauseDebugger: (callback) => {
+        Blockly_Debuggee.pauseAction = callback;
+    },
+    onContinueDebugger: (callback) => {
+        Blockly_Debuggee.continueAction = callback;
+    }
 };
 
 export function InitializeBlocklyDebuggee (plugin) {
@@ -64,7 +70,11 @@ export function InitializeBlocklyDebuggee (plugin) {
                 return;
             }
             if (Blockly_Debuggee.state.currNest == -1 && !hasBreakpoint) return;    // stepOver + stepOut for functions                   
-            if (Blockly_Debuggee.state.isState("stepIn") || hasBreakpoint || nest <= Blockly_Debuggee.state.currNest) {
+            
+            if (Blockly_Debuggee.state.isState("stepIn")
+                || hasBreakpoint
+                || nest <= Blockly_Debuggee.state.currNest
+            ) {
                 if (Blockly_Debuggee.state.currId === block_id && !hasBreakpoint) return;
                 if (Blockly_Debuggee.state.isState("stepParent") && nest == Blockly_Debuggee.state.currNest && !hasBreakpoint) return;
 
@@ -73,9 +83,17 @@ export function InitializeBlocklyDebuggee (plugin) {
                 Blockly_Debuggee.actions["watch"].updateDebugger();
                 Blockly_Debuggee.actions["breakpoint"].wait_view(block_id);
 
+                let flagPauseExecution = false;
                 while (!Blockly_Debuggee.state.stepWait) {
+                    Blockly_Debuggee.pauseAction();
+                    flagPauseExecution = true;
                     await next_message();
                 }
+
+                if (flagPauseExecution) {
+                    Blockly_Debuggee.continueAction();
+                }
+
                 Blockly_Debuggee.actions["breakpoint"].reset_view(block_id);
 
                 Blockly_Debuggee.state.stepWait = false;
@@ -102,7 +120,7 @@ export function InitializeBlocklyDebuggee (plugin) {
     window.alert = async function (msg) {
         Blockly_Debuggee.actions["variables"].updateDebugger();     // gia na fainontai swsta kata to alert ta value pisw ston pinaka
         Blockly_Debuggee.actions["watch"].updateDebugger();
-        setTimeout(function () { plugin.postMessage({ "type": "alert", "data": msg }); }, 50);
+        setTimeout(function () { plugin.postMessage({ "type": "alert", "data": [msg] }); }, 50);
         while (!Blockly_Debuggee.state.alertFlag) {
             await (function () { return new Promise(resolve => setTimeout(resolve, 0)); })();         // next_message();
         }

@@ -1,6 +1,7 @@
 {
     "img" : {
-        "fa" : "fa-mobile"
+        "src" : "/images/classroom.png",
+        "style": "width: 165px;"
     },
     "author" : {
         "id" : "5ad5d7d90ccbad25bc637600",
@@ -8,8 +9,8 @@
     },
     "actions" : [],
     "name" : "LoGo",
-    "title" : "LoGo",
+    "title" : "Leagning Programming",
     "help" : "Learn programming activities",
-    "description" : "This domain is designed to help end-users learn programming via activities such as pley game with challenges and drawing with special defined instructions.",
-    "type" : "learning"
+    "description" : "This domain is designed to help end-users learn programming via assignments and tasks will be designed by the teachers. Teachers are able to share their assignments through collaborative programming and interact with children.",
+    "type" : "programming"
 }

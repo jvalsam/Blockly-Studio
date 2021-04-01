@@ -24,18 +24,22 @@ export class RuntimeEnvironmentDebug {
 
     // pin callback that checks runtime environment state
     this._envData.checkRuntimeEnvironment = () => this._handleRuntime();
+    this._envData.UISelector = document.getElementById(
+      "run-application-view-container"
+    );
+
+    this._envData.RuntimeEnvironmentDebug = this;
 
     // request to start front-end debugger
     this._runtimeEnv.functionRequest(
       RuntimeEnvironmentDebug.name,
       "Debugger",
       "start",
-      [this._envData],
+      [],
       {
         // on start debugger
         func: (response) => {
           // initialize backend
-          alert(response);
           (this.blocklyDebuggee = new BlocklyDebuggee(this)),
             this.start(this._envData);
         },
@@ -52,10 +56,6 @@ export class RuntimeEnvironmentDebug {
       "frontendReceiveMessage",
       [message]
     );
-  }
-
-  receiveMessage(message) {
-    this.blocklyDebuggee.onmessage(message);
   }
 
   // has to be executed per visual programming statement
@@ -86,6 +86,7 @@ export class RuntimeEnvironmentDebug {
     const promise = new Promise((resolve, reject) => {
       this.promiseStopApp = reject;
       applicationData.onFinish = resolve;
+      
       this._executionScript.StartApplication(applicationData);
     });
     promise
@@ -116,5 +117,38 @@ export class RuntimeEnvironmentDebug {
     this._executionScript.ContinueApplication();
   }
 
-  receiveFrontendMessage(message, callback) {}
+  receiveFrontendMessage(message, callback) {
+    this.blocklyDebuggee.onmessage(message);
+  }
+
+  browseBlocklyBlock(projectElementId, blockId) {
+    this._runtimeEnv.functionRequest(
+      RuntimeEnvironmentDebug.name,
+      "RuntimeManager",
+      "foldLivePreview",
+      []
+    );
+
+    this._runtimeEnv.functionRequest(
+      RuntimeEnvironmentDebug.name,
+      "BlocklyVPL",
+      "highlightBlockOfPItem",
+      [
+        projectElementId,
+        this.modalWSPId
+          ? this.modalWSPId + "____" + blockId
+          : blockId
+      ]
+    );
+  }
+
+  functionRequest(compDest, funcName, args, callback) {
+    return this._runtimeEnv.functionRequest(
+      RuntimeEnvironmentDebug.name,
+      compDest,
+      funcName,
+      args,
+      callback
+    );
+  }
 }

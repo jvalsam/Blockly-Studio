@@ -14,7 +14,8 @@ import './src/generator/blockly/blockly_init.js';
 
 import {
     Debuggee_Worker,
-    InitializeDebuggeeWorker
+    InitializeDebuggeeWorker,
+    Blockly_Debugger
 } from "./src/debugger/debugger";
 
 export function BlocklyDebugger(plugin) {
@@ -35,7 +36,19 @@ export function BlocklyDebugger(plugin) {
         return generation.workspaces[editorId];
     };
 
+    this.getDebuggerInstance = () => Blockly_Debugger;
+
     this.getDebuggeeWorker = () => Debuggee_Worker;
+
+
+    Debuggee_Worker.RegisterVariablesDebuggerAction("variables", plugin);
+    Debuggee_Worker.RegisterWatchDebuggerAction("watches", plugin);
+    Debuggee_Worker.RegisterEvalDebuggerAction();
+    Debuggee_Worker.RegisterStopDebuggerAction("StopButton");
+    Debuggee_Worker.RegisterStepInDebuggerAction("StepInButton");
+    Debuggee_Worker.RegisterStepOutDebuggerAction("StepOutButton");
+    Debuggee_Worker.RegisterStepOverDebuggerAction("StepOverButton");
+    Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
 
     this.initiateToolbar = (data, onFinish) => {
         // let data2 =[{
@@ -68,27 +81,28 @@ export function BlocklyDebugger(plugin) {
         //         $('#debugger-toggle').hide();
         //     });
 
-        //     Debuggee_Worker.registerDebuggerActions();
         //     Debuggee_Worker.RegisterContinueDebuggerAction("ContinueButton");
 
-        //     /*Debuggee_Worker.RegisterStartDebuggerAction(
-        //         "StartButton",
-        //         () => this.plugin.getEnvironmentData(),
-        //         () => alert("actions on start")
-        //     );*/
-        //     //Debuggee_Worker.RegisterVariablesDebuggerAction("variables");
-        //     //Debuggee_Worker.RegisterWatchDebuggerAction("watches");
-        //     Debuggee_Worker.RegisterStopDebuggerAction("StopButton");
-        //     Debuggee_Worker.RegisterStepInDebuggerAction("StepInButton");
-        //     Debuggee_Worker.RegisterStepOutDebuggerAction("StepOutButton");
-        //     Debuggee_Worker.RegisterStepOverDebuggerAction("StepOverButton");
-        //     Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
+        Debuggee_Worker.RegisterStartDebuggerAction(
+                "StartButton",
+                () => this.plugin.getEnvironmentData(),
+                () => alert("actions on start")
+        );
+        
+        // Debuggee_Worker.RegisterVariablesDebuggerAction("variables");
+        // Debuggee_Worker.RegisterWatchDebuggerAction("watches");
+        // Debuggee_Worker.RegisterStopDebuggerAction("StopButton");
+        // Debuggee_Worker.RegisterStepInDebuggerAction("StepInButton");
+        // Debuggee_Worker.RegisterStepOutDebuggerAction("StepOutButton");
+        // Debuggee_Worker.RegisterStepOverDebuggerAction("StepOverButton");
+        // Debuggee_Worker.RegisterStepParentDebuggerAction("StepParentButton");
+        
         //     //onReady();
         // });
         // this.toolbar_ui.createVariables(data2);
     };
 
     this.onmessage = (msg, callback) => {
-        Debuggee_Worker.getInstance().onmessage(msg);
+        Debuggee_Worker.Instance().onmessage(msg);
     };
 }

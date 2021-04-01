@@ -38,7 +38,11 @@ export class DomainView extends ComponentViewElement {
             img = "<i class=\"fa "+ imgData.fa +" fa-2x\" aria-hidden=\"true\"></i>";
         }
         else {
-            img = "<img src'TODO' />";
+            img = "<img src=\""
+                + imgData.src
+                + "\" style=\""
+                + imgData.style
+                + "\" />";
         }
         $(".domain-image").empty();
         $(".domain-image").append(img);

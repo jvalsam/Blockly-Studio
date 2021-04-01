@@ -17,6 +17,10 @@ import { RuntimeSystem } from "./runtime-system";
 import { RuntimeManagerView } from './run-time-manager-view/run-time-manager-view';
 import { ComponentRegistry } from '../../component/component-entry';
 import { Debugger } from '../debugger/debugger';
+import {
+    InitiateBlocklyGenerator,
+    InitiateBlocklyGeneratorDebug
+} from "../../../ide-components/blockly/blockly-instance";
 
 // initialize the metadata of the project manager component for registration in the platform
 RuntimeManagerDataHolder.initialize();
@@ -238,7 +242,10 @@ export class RuntimeManager extends IDEUIComponent {
         let appData = ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
-            "getRunApplicationData"
+            "getRunApplicationData",
+            [
+                RuntimeManager.getMode()
+            ]
         ).value;
 
         this._environmentData = {
@@ -271,13 +278,7 @@ export class RuntimeManager extends IDEUIComponent {
         // this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
-        // initiate Blockly generator for the runtime environment
-        ComponentsCommunication.functionRequest(
-            this.name,
-            "BlocklyVPL",
-            "initiateCodeGenerator",
-            []
-        );
+        InitiateBlocklyGenerator();
 
         this.setEnvironmentRunData();
 
@@ -325,20 +326,6 @@ export class RuntimeManager extends IDEUIComponent {
     private onStartDebugApplicationBtn(): void {
         RuntimeManager.currentMode = 1;
 
-        // if (!this.debuggerInst) {
-        //     this.debuggerInst = <Debugger>ComponentRegistry
-        //         .getEntry("Debugger")
-        //         .create([
-        //             ".debugger-toolbar-area"
-        //         ]);
-        //     ComponentsCommunication.functionRequest(
-        //         this.name,
-        //         "Shell",
-        //         "openComponent",
-        //         [this.debuggerInst]);
-        // }
-        // this.debuggerInst.initiate();
-
         let toolbarView = this._viewElems.RuntimeManagerToolbarView[0].elem;
         toolbarView.disableButtons();
         toolbarView.activateStopBtn();
@@ -346,7 +333,12 @@ export class RuntimeManager extends IDEUIComponent {
         this.ClearMessages();
         this.AddDefaultMessage("prepare");
 
+        InitiateBlocklyGeneratorDebug();
+
         this.setEnvironmentRunData();
+
+        (<RuntimeManagerView>this._view).openRuntimeEnvironmentDialogue(
+            this._environmentData.execData.title);
 
         RuntimeSystem.initialize(
             "BlocklyStudioIDE_MainRuntimeEnvironment",
@@ -440,7 +432,12 @@ export class RuntimeManager extends IDEUIComponent {
         callback: Function =null) {
             // try {
                 if (destComp === "Debugger") {
+                    if (callback) {
                         this.debuggerInst[funcName](...data, callback);
+                    }
+                    else {
+                        return this.debuggerInst[funcName](...data);
+                    }
                 }
                 else {
                     if (callback) {
