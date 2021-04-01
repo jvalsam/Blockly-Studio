@@ -112,7 +112,7 @@ export function handleAcceptSuggestion(pitemID, suggID){
     if(!suggestions[suggID]) throw Error('Tried to accept a suggestion that does not exist');
 
     // pitem.editorsData = suggestions[suggID];
-    debugger;
+    
     collabInfo.plugin.onPItemUpdate(pitemID, 'replace', suggestions[suggID]);
     
     collabInfo.plugin.logAction(

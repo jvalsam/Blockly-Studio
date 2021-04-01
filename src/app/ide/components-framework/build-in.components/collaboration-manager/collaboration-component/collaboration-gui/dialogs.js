@@ -77,6 +77,7 @@ function openViewSuggestionDialogue(collabPlugin, {suggestionID, pItemID}){
         $suggestionContainer, 
         pItemID,
         [],
+        collabPlugin.getSuggestionTitle(pItemID, suggestionID),
         collabPlugin.getSuggestionComment(pItemID,suggestionID),
         collabPlugin.amIAuthor(pItemID),
         (popup) => {
@@ -178,6 +179,7 @@ export function openSuggestionDialogue(collabPlugin, pitemID) {
             popup.setOnYesCb(() => {
                 collabPlugin.saveSuggestion(
                     popup.getFileId(),
+                    popup.getTitle(),
                     popup.getComment(),
                     popup.getLeftContainerSelector(),
                     popup.getRightContainerSelector(),

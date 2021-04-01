@@ -524,7 +524,7 @@ class JoinPopup extends CollaborationPopup{
 
 class SuggestionPopup extends CollaborationPopup{
 
-    constructor(container, fileId, comment, buttonNames, cb){
+    constructor(container, fileId, title, comment, buttonNames, cb){
         super(container, `Visual Code Suggestion`);
 
         this.fileId = fileId;
@@ -555,16 +555,21 @@ class SuggestionPopup extends CollaborationPopup{
                         <div class="suggestion-text-16">\
                             Manage Suggestion\
                         </div>\
-                        <div class="suggestion-annotation suggestion-annotation-comment">\
-                            <div class="suggestion-comment-title">\
-                                <div class="suggestion-arrow"> </div>\
-                                <div class="suggestion-comment"> Comment </div>\
-                            </div>\
+                        <div class = "suggestion-input-container">
+                            <div class = "suggestion-input-title"> Title </div>
+                            <input class = "suggestion-title"
+                                ${title.readonly ? 'readonly' : ''} 
+                                placeholder = "Suggestion title" 
+                                value = "${ title.text === undefined ? '' : title.text}"
+                            >
+                        </div>
+                        <div class = "suggestion-input-container">\
+                            <div class = "suggestion-input-title"> Comment </div>\
                             <textarea\
-                                class="suggestion-comment-content"\ 
+                                class="suggestion-comment"\ 
                                 ${comment.readonly ? 'readonly' : ''}\
                                 placeholder="Suggestion description"
-                            >${comment.text ? comment.text : ''}</textarea>\
+                            >${comment.text === undefined ? '' : comment.text}</textarea>\
                         </div>\
                     </div>\
                 </div>\
@@ -585,13 +590,6 @@ class SuggestionPopup extends CollaborationPopup{
         }
 
         this._contentContainer.append($html).ready( () => {
-            let arrow_rotation = 0;
-            $(".suggestion-comment-title").click( () => {
-                $(".suggestion-comment-content").toggle();
-                arrow_rotation = arrow_rotation == 0 ? -90 : 0;
-                $(".suggestion-arrow").css('transform', `rotate(${arrow_rotation}deg)`);
-            });
-
             $(".suggestion-accept").click(() => {
                 this._onYesCb();
             });
@@ -635,23 +633,28 @@ class SuggestionPopup extends CollaborationPopup{
     }
 
     getComment(){
-        return $('.suggestion-comment-content').val() || '';
+        return $('.suggestion-comment').val() || '';
+    }
+
+    getTitle() {
+        return $('.suggestion-title').val() || '';
     }
 }
 
 class AuthorSuggestionPopup extends SuggestionPopup {
     constructor(container, fileName, cb){
-        super(container, fileName, {readonly: false, text: ''}, {yes: 'Send', no: 'Cancel'}, cb);
+        super(container, fileName, {readonly: false, text: ''}, {readonly: false, text: ''}, {yes: 'Send', no: 'Cancel'}, cb);
     }
 }
 
 class ViewSuggestionPopup extends SuggestionPopup {
     
-    constructor(container, fileId, members, comment, hasButtons, cb){
+    constructor(container, fileId, members, title, comment, hasButtons, cb){
         super(
             container, 
-            fileId, 
-            {readonly: true, text: comment ? comment : ' '}, 
+            fileId,
+            {readonly: true, text: title || ''},
+            {readonly: true, text: comment || ''}, 
             hasButtons ? {yes: 'Accept', no: 'Reject'} : undefined,
             cb
         );

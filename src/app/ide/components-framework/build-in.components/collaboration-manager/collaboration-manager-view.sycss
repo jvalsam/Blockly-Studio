@@ -946,30 +946,36 @@
     gap: 10px;
 }
 
-.suggestion-arrow{
-    /* background-image: url(./Icons/arrow.png); */
-    width: 10px;
-    height: 10px;
-    cursor: pointer;
-    margin-right: 10px;
+.suggestion-input-container{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.suggestion-comment-title{
-    display:flex;
-    align-items: center;
-    cursor: pointer;
+.suggestion-input-container>input, .suggestion-input-container>textarea{
+    width: 100%;
+    padding: 5px 10px;
+    border-radius: 5px;
+    outline: 0;
 }
 
-.suggestion-comment-content{
-    font-style: italic;
-    font-weight: 300;
+.suggestion-input-container>input {
+    border: 1px solid #b1b1b1;
+}
+
+
+.suggestion-input-title{
+    font-size: 15px;
+}
+
+.suggestion-comment{
     border: 0;
-    background-color: transparent;
+    background: #FFF7CB;
     resize: none;
     height: 80px;
 }
 
-.suggestion-comment-content:focus{
+.suggestion-comment:focus{
     border: 0;
 }
 

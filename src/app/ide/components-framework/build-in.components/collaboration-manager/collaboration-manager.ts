@@ -369,7 +369,7 @@ export class CollaborationManager extends IDEUIComponent {
         sendAcceptSuggestion({pitemID,suggID});
     }
 
-    public saveSuggestion(id, comment, readOnlySel, editableSel, cb) {
+    public saveSuggestion(id, title, comment, readOnlySel, editableSel, cb) {
         let pitemData = ComponentsCommunication.functionRequest(
             this.name,
             "ProjectManager",
@@ -399,6 +399,7 @@ export class CollaborationManager extends IDEUIComponent {
                 editableSel
             ]
         );
+        pitemData._editorsData.title = title;
         pitemData._editorsData.comment = comment;
         let suggID = handleSaveSuggestion(pitemData._editorsData);
         sendAddSuggestion(pitemData._editorsData);
@@ -462,11 +463,11 @@ export class CollaborationManager extends IDEUIComponent {
                 action: () => alert('Make a note on the current project item')
             })
         }
-        opts.push({
-            tooltip: "print code",
-            icon: "../../../../../../images/collaboration/send.png",
-            action: () => alert(this.getInvitationCode())
-        })
+        // opts.push({
+        //     tooltip: "print code",
+        //     icon: "../../../../../../images/collaboration/send.png",
+        //     action: () => alert(this.getInvitationCode())
+        // })
         if(settings.reqOwnership && collabData.privileges.owner !== collabInfo.myInfo.name){ // Add Logic if "Allow members request for ownership" was enabled
             opts.push(
                 {
@@ -499,8 +500,8 @@ export class CollaborationManager extends IDEUIComponent {
         if(collabData.privileges.owner === collabInfo.myInfo.name){
             opts.push(
                 {
-                tooltip: "Give Floor",
-                icon: "../../../../../../images/collaboration/send.png",
+                tooltip: "Give editing privileges",
+                icon: "../../../../../../images/collaboration/floorControl.png",
                 action: () => {
                     let container = $(`<div style = "
                         position: absolute;
@@ -566,6 +567,11 @@ export class CollaborationManager extends IDEUIComponent {
         else {
             return [];
         }
+    }
+
+    public getSuggestionTitle(pItemID, suggID){
+        let pitem = this.getPItem(pItemID);
+        return pitem.componentsData.collaborationData.suggestions[suggID].title;
     }
 
     public getSuggestionComment(pItemID, suggID){
