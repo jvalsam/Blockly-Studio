@@ -361,7 +361,7 @@ export class CollaborationManager extends IDEUIComponent {
 
     public denySuggestion(pitemID, suggID){
         handleDenySuggestion(pitemID, suggID, collabInfo.myInfo);
-        sendDenySuggestion({pitemID,suggID});
+        sendDenySuggestion({pitemID,suggID,user:collabInfo.myInfo});
     }
 
     public acceptSuggestion(pitemID, suggID){
