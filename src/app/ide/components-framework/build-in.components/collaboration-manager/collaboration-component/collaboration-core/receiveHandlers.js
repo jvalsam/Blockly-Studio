@@ -116,7 +116,7 @@ export function receiveAcceptSuggestion(data, conn){
 
 export function receiveDenySuggestion(data, conn){
     data.info = JSON.parse(data.info);
-    handleDenySuggestion(data.info.pitemID, data.info.suggID);
+    handleDenySuggestion(data.info.pitemID, data.info.suggID, data.info.user);
     collabInfo.connected_users.forEach(user => {
         if(user.id !== conn.id){
             sendDenySuggestion(data.info,user);
