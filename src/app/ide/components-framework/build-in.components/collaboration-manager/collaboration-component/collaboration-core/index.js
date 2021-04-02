@@ -18,6 +18,7 @@ import {
   receiveAcceptSuggestion,
   receiveDenySuggestion
 } from "./receiveHandlers.js"
+import { random } from "lodash";
 
 export function communicationInitialize(myInfo, settings, CollabManager) {
   let receivedHandler = {
@@ -38,6 +39,7 @@ export function communicationInitialize(myInfo, settings, CollabManager) {
   // console.log(collabInfo.plugin.shProject);
   console.log(collabInfo.UI);
   let randomId = generateRandom(20);
+  console.log(randomId);
   let peer = new Peer(randomId, {
     host: '147.52.17.129',
     port: 9000,

@@ -62,7 +62,12 @@ export function receiveRemoveUser(data,conn){
 
 export function receivePItemAdded(data,conn){
     collabInfo.plugin.onPitemAdded(data.info);//(filterProjectItem(data.info));
-    collabInfo.plugin.logAction({type: "createPItem", user: collabInfo.myInfo, pitemID: data.info.itemData.id});
+
+    let authorName = data.info.itemData.componentsData.collaborationData.privileges.author;
+    let members = collabInfo.plugin.shProject.componentsData.CollaborationManager.members;
+
+    let rUser = members.find((mem)=>mem.name === authorName);
+    collabInfo.plugin.logAction({type: "createPItem", user: rUser, pitemID: data.info.itemData.id});
     collabInfo.connected_users.forEach(user => {
         if(user.id !== conn.id){
             sendPItemAdded(data.info,user);

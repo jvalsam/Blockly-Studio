@@ -644,7 +644,6 @@ export class CollaborationManager extends IDEUIComponent {
     }
     
     private iAmMaster(myName): Boolean {
-        console.log(myName, this.shProject.author.username);
         return this.shProject.author.username === myName;
     }
 
