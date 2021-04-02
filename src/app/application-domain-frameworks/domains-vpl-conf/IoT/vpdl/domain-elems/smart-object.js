@@ -520,7 +520,11 @@ export const SmartObject = {
 
         strBuilder +=
           " let value_value = await (async() => { return new Promise(async (resolve)=>{  eval(" +
-          JSON.stringify("(async()=>{ let response =  " + value_value + ";  resolve(response);})();") +
+          JSON.stringify(
+            "(async()=>{ let response =  " +
+              value_value +
+              ";  resolve(response);})();"
+          ) +
           "); }) })(); ";
 
         strBuilder += "if ('" + checkArray[0] + '\' === "Number") {';
@@ -553,7 +557,7 @@ export const SmartObject = {
           "(elem) => elem.id === " +
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
-        strBuilder += "ExecuteValueCheckingTests(runTimeData);";
+        // strBuilder += "ExecuteValueCheckingTests(runTimeData);";
         strBuilder += `eval(update_values(debuggerScopeId));
         Blockly_Debuggee
           .actions[\"variables\"]
@@ -807,7 +811,7 @@ export const SmartObject = {
           "(elem) => elem.id === " +
           JSON.stringify(block.soData.details.iotivityResourceID);
         strBuilder += ");";
-        strBuilder += "ExecuteValueCheckingTests(runTimeData);";
+        // strBuilder += "ExecuteValueCheckingTests(runTimeData);";
         strBuilder +=
           "RerenderDevice(devicesOnAutomations[oldDeviceIndex], [property]);";
         strBuilder += `update_values(debuggerScopeId);
@@ -1053,7 +1057,7 @@ export const SmartObject = {
         // })();
 
         let strBuilder = "";
-        strBuilder += "await(function () {\n";
+        strBuilder += "await(async function () {\n";
         strBuilder += "new Promise((resolve) => {\n";
         strBuilder += "let args = [];\n";
         strBuilder +=

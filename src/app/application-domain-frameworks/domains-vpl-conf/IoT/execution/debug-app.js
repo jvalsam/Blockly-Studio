@@ -1,13 +1,8 @@
-import {
-  dispatcher,
-} from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init.js";
+import { dispatcher } from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init.js";
 
 import { BlocklyDebuggeeStartAction } from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/actions/start.js";
 
-import {
-  Blockly_Debuggee
-} from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init.js";
-
+import { Blockly_Debuggee } from "../../../../ide/components-framework/build-in.components/debugger/blockly-debugger/src/debuggee/init.js";
 
 let calendar,
   organizer,
@@ -166,7 +161,6 @@ const activeDateOnCalendar = {}; // "December 14, 2020": [ {startTime:"16:54:33"
 const arrayIntervals = []; // {type: <blockType>, time: SetTimeout, endTime: Time, func: Function (for recursive)}
 
 const whenCondData = [];
-
 
 const changesData = [];
 
@@ -924,7 +918,11 @@ const ExecuteValueCheckingTests = function (runTimeData) {
       );
     };
     // eval js
-    eval("(async () => {let debuggerScopeId = '';" + test.debugTest.js.src + "})();");
+    eval(
+      "(async () => {let debuggerScopeId = '';" +
+        test.debugTest.js.src +
+        "})();"
+    );
   }
 };
 
@@ -3365,7 +3363,11 @@ const ExecuteSimulateBehaviorTest = function (
   }
 };
 
-const ChangeValueOfProperty = async function (deviceId, changeProperty, runTimeData) {
+const ChangeValueOfProperty = async function (
+  deviceId,
+  changeProperty,
+  runTimeData
+) {
   let newValue;
   if (changeProperty.type === "intRange") {
     let number = parseInt(changeProperty.value);
@@ -3396,13 +3398,9 @@ const ChangeValueOfProperty = async function (deviceId, changeProperty, runTimeD
     //   (x) => x.editorsData.items[0].details.iotivityResourceID === deviceId
     // ).systemID;
     // let debuggerScopeId = "debugger_" + smartObjectId + "_" + changeProperty.name;
-   eval(update_values());
-    Blockly_Debuggee
-      .actions["variables"]
-      .updateDebugger();
-    Blockly_Debuggee
-      .actions["watch"]
-      .updateDebugger();
+    eval(update_values());
+    Blockly_Debuggee.actions["variables"].updateDebugger();
+    Blockly_Debuggee.actions["watch"].updateDebugger();
   }
 
   let device = devicesOnAutomations.find((x) => x.id === deviceId);
@@ -3448,12 +3446,14 @@ const ExecuteActionForTest = async function (deviceId, action, runTimeData) {
     // ).editorsData[editorDataIndex].generated.src;
     // eval(funcCode + ";" + action.name + "(...args);");
 
-    await (()=>{return new Promise(async (resolve) => {
-      await functionsFromSmartDevicesActions[
-     device.editorId.split("_ec-smart-object")[0] +
-     "_" +
-    action.name
-    ](...args);  resolve();}); })();
+    await (() => {
+      return new Promise(async (resolve) => {
+        await functionsFromSmartDevicesActions[
+          device.editorId.split("_ec-smart-object")[0] + "_" + action.name
+        ](...args);
+        resolve();
+      });
+    })();
     action.isExecuted = true;
   }
 };
@@ -4286,15 +4286,17 @@ function AddSmartDevicesVariables(smartObjects) {
           isBlocklyVariable: true,
           variableName: property.name,
           variableValue: property.value,
-          variableSName: "devicesOnAutomations.find(s => s.name === "
-            + JSON.stringify(smartObject.title)
-            + ").properties.find(p => p.name === "
-            + JSON.stringify(property.name)
-            + ").value"
+          variableSName:
+            "devicesOnAutomations.find(s => s.name === " +
+            JSON.stringify(smartObject.title) +
+            ").properties.find(p => p.name === " +
+            JSON.stringify(property.name) +
+            ").value",
         });
       }
     );
-    let editorsDataForActionsMap = smartObject.editorsData[0].blocklyEditorDataIndex;
+    let editorsDataForActionsMap =
+      smartObject.editorsData[0].blocklyEditorDataIndex;
     // add smart device actions
     for (let i = 1; i < smartObject.editorsData.length; ++i) {
       let blocklyEditorDataIndex =
@@ -4326,40 +4328,52 @@ function AddSmartDevicesVariables(smartObjects) {
           // blockly debugger information
           isBlocklyVariable: true,
           variableName: variable,
-          variableValue: undefined
+          variableValue: undefined,
         });
       });
 
-      let actionKey = smartObject.editorsData[0].generated.details.iotivityResourceID 
-        + "-debug-configuration-" 
-        + actionName 
-        + "-blockly-container";
+      let actionKey =
+        smartObject.editorsData[0].generated.details.iotivityResourceID +
+        "-debug-configuration-" +
+        actionName +
+        "-blockly-container";
 
-      defineSOActions += "functionsFromSmartDevicesActions['"
-        + smartObject.id + "_" + actionName + "'] = "
-        + "function () { return new Promise( (resolve) => {"
-        + "let debuggerScopeId = 'debugger_"
-        + smartObject.id + "_" + actionName
-        + "';"
-        + "Blockly_Debuggee.state.setState('stepIn');"
-        + "let projectElementId = " + JSON.stringify(smartObject.id) + "; "
-        + "let smartObjectActionName = "
-        + JSON.stringify(
-          "Simulated Action: " + actionName + "____" + actionKey
-        ) + ";"
-        + smartObject.editorsData[i].generated.src
-        + "runTimeData.RuntimeEnvironmentDebug.functionRequest('RuntimeManager', 'foldLivePreview', []);"
-        + "runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'openBlockyEditorDebugTime', ["
-        + JSON.stringify(smartObject.id) + ", 'Simulated Action: " + actionName + "', '"
-        + actionKey
-        + "'], { 'func': async ()=> {"
-        + " let response = await "
-        + actionName
-        + "(...arguments); "
+      defineSOActions +=
+        "functionsFromSmartDevicesActions['" +
+        smartObject.id +
+        "_" +
+        actionName +
+        "'] = " +
+        "function () { return new Promise( (resolve) => {" +
+        "let debuggerScopeId = 'debugger_" +
+        smartObject.id +
+        "_" +
+        actionName +
+        "';" +
+        "Blockly_Debuggee.state.setState('stepIn');" +
+        "let projectElementId = " +
+        JSON.stringify(smartObject.id) +
+        "; " +
+        "let smartObjectActionName = " +
+        JSON.stringify("Simulated Action: " + actionName + "____" + actionKey) +
+        ";" +
+        smartObject.editorsData[i].generated.src +
+        "runTimeData.RuntimeEnvironmentDebug.functionRequest('RuntimeManager', 'foldLivePreview', []);" +
+        "runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'openBlockyEditorDebugTime', [" +
+        JSON.stringify(smartObject.id) +
+        ", 'Simulated Action: " +
+        actionName +
+        "', '" +
+        actionKey +
+        "'], { 'func': async ()=> {" +
+        " let response = await " +
+        actionName +
+        "(...arguments); " +
         // + "eval(variablesWatches_code);"
-        + " runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'closeBlockyEditorDebugTime', ['"
-        + actionKey + "']);"
-        + " resolve(response); }, 'type': 'async' } ); }); };";
+        " runTimeData.RuntimeEnvironmentDebug.functionRequest('BlocklyVPL', 'closeBlockyEditorDebugTime', ['" +
+        actionKey +
+        "']);" +
+        " resolve(response); }, 'type': 'async' } ); }); };";
     }
   });
 
@@ -4396,8 +4410,7 @@ function AddAutomationsVariables(automations) {
 
 export async function StartApplication(runTimeData) {
   // try {
-    variablesWatches_code =
-      `eval(update_values(debuggerScopeId));
+  variablesWatches_code = `eval(update_values(debuggerScopeId));
           Blockly_Debuggee
             .actions[\"variables\"]
             .updateDebugger();
@@ -4405,157 +4418,157 @@ export async function StartApplication(runTimeData) {
             .actions[\"watch\"]
             .updateDebugger();`;
 
-    Blockly_Debuggee.onPauseDebugger( () => {
-      PauseSimulatedTime();
+  Blockly_Debuggee.onPauseDebugger(() => {
+    PauseSimulatedTime();
 
-      //DisableSimulatedTime
-      document
+    //DisableSimulatedTime
+    document
       .querySelectorAll("#simulator-controls button")
       .forEach((x) => (x.disabled = true));
-    });
-    Blockly_Debuggee.onContinueDebugger(() => {
-      //EnableSimulatedTime
-      document
+  });
+  Blockly_Debuggee.onContinueDebugger(() => {
+    //EnableSimulatedTime
+    document
       .querySelectorAll("#simulator-controls button")
       .forEach((x) => (x.disabled = false));
 
-      NormalSimulatedTime();
+    NormalSimulatedTime();
+  });
+
+  devicesOnAutomations = CollectRegisteredDevices(
+    runTimeData.execData.project.SmartObjects
+  );
+
+  debugTests =
+    runTimeData.execData.project.SmartObjects[0].editorsData[0].generated
+      .debugTests;
+
+  testsCounter =
+    runTimeData.execData.project.SmartObjects[0].editorsData[0].generated
+      .testsCounter;
+
+  // console.log(runTimeData);
+  Initialize(runTimeData.UISelector, runTimeData);
+
+  // Listen for messages
+  RenderClocks();
+
+  // Render Smart Devices
+  RenderSmartDevices(devicesOnAutomations);
+
+  const BuildAutomationsCodeForRun = function (automations) {
+    let finalCodeForRunningAutomations = "";
+    automations.forEach((automation) => {
+      if (
+        automation.options.find((option) => option.id === "starts_on_execution")
+          .value === "Automatically"
+      ) {
+        let variablesDef = "";
+        automation.editorsData[0].generated.variables.forEach((variable) => {
+          variablesDef += "let " + variable + ";\n";
+        });
+
+        finalCodeForRunningAutomations +=
+          "(async () => {" +
+          "let projectElementId = " +
+          JSON.stringify(automation.id) +
+          ";" +
+          "let debuggerScopeId = " +
+          JSON.stringify("debugger_" + automation.id) +
+          ";" +
+          variablesDef +
+          automation.editorsData[0].generated.src +
+          variablesWatches_code +
+          "})();";
+      }
     });
+    return finalCodeForRunningAutomations;
+  };
 
-    devicesOnAutomations = CollectRegisteredDevices(
-      runTimeData.execData.project.SmartObjects
-    );
+  debuggeeActions = BlocklyDebuggeeStartAction();
 
-    debugTests =
-      runTimeData.execData.project.SmartObjects[0].editorsData[0].generated
-        .debugTests;
+  // initialize functions of debugge that are used in generated source
+  $id = debuggeeActions.$id;
+  wait = debuggeeActions.wait;
+  isStepOver = debuggeeActions.isStepOver;
+  isStepParent = debuggeeActions.isStepParent;
 
-    testsCounter =
-      runTimeData.execData.project.SmartObjects[0].editorsData[0].generated
-        .testsCounter;
+  // init variables for UI toolbar
+  InitializePredefinedDebuggerNodes(runTimeData.execData.project);
+  // collect pelements
+  AddCategoryPelemsDebuggerNodes(
+    runTimeData.execData.project.SmartObjects,
+    "debugger_jstree_SmartObjects"
+  );
+  AddCategoryPelemsDebuggerNodes(
+    runTimeData.execData.project.ConditionalEvents,
+    "debugger_jstree_ConditionalEvents"
+  );
+  AddCategoryPelemsDebuggerNodes(
+    runTimeData.execData.project.CalendarEvents,
+    "debugger_jstree_CalendarEvents"
+  );
+  AddCategoryPelemsDebuggerNodes(
+    runTimeData.execData.project.AutomationTasks,
+    "debugger_jstree_AutomationTasks"
+  );
+  // collect variables
+  AddAutomationsVariables(runTimeData.execData.project.ConditionalEvents);
+  AddAutomationsVariables(runTimeData.execData.project.CalendarEvents);
+  AddAutomationsVariables(runTimeData.execData.project.AutomationTasks);
 
-    // console.log(runTimeData);
-    Initialize(runTimeData.UISelector, runTimeData);
+  let defineSOActionsSRC =
+    AddSmartDevicesVariables(runTimeData.execData.project.SmartObjects) +
+    "is_script_ended = true; //# sourceURL=my-foo.js;";
 
-    // Listen for messages
-    RenderClocks();
+  let is_script_ended = false;
+  eval(defineSOActionsSRC);
+  while (!is_script_ended) {
+    await sleep(200);
+  }
 
-    // Render Smart Devices
-    RenderSmartDevices(devicesOnAutomations);
+  // notify debugger for environment variables tree
+  runTimeData.RuntimeEnvironmentDebug.functionRequest(
+    "Debugger",
+    "setEnvironmentVariablesTree",
+    [debuggerEnvironmentVariables],
+    {
+      type: "async",
+      func: async (debuggerContent) => {
+        //todo: build rest data to init debuggee
+        debuggerContent.variables = debuggerEnvironmentVariables;
 
-    const BuildAutomationsCodeForRun = function (automations) {
-      let finalCodeForRunningAutomations = "";
-      automations.forEach((automation) => {
-        if (
-          automation.options.find(
-            (option) => option.id === "starts_on_execution"
-          ).value === "Automatically"
-        ) {
-          let variablesDef = "";
-          automation.editorsData[0].generated.variables.forEach((variable) => {
-            variablesDef += "let " + variable + ";\n";
-          });
+        debuggeeActions.init(debuggerContent);
 
-          finalCodeForRunningAutomations +=
-            "(async () => {" +
-            "let projectElementId = " +
-            JSON.stringify(automation.id) +
-            ";" +
-            "let debuggerScopeId = " +
-            JSON.stringify("debugger_" + automation.id) +
-            ";" +
-            variablesDef +
-            automation.editorsData[0].generated.src +
-            variablesWatches_code +
-            "})();";
-        }
-      });
-      return finalCodeForRunningAutomations;
-    };
+        // iniate variables for the debugger toolbar
+        watches = debuggerContent.watches;
 
-    debuggeeActions = BlocklyDebuggeeStartAction();
-
-    // initialize functions of debugge that are used in generated source
-    $id = debuggeeActions.$id;
-    wait = debuggeeActions.wait;
-    isStepOver = debuggeeActions.isStepOver;
-    isStepParent = debuggeeActions.isStepParent;
-
-    // init variables for UI toolbar
-    InitializePredefinedDebuggerNodes(runTimeData.execData.project);
-    // collect pelements
-    AddCategoryPelemsDebuggerNodes(
-      runTimeData.execData.project.SmartObjects,
-      "debugger_jstree_SmartObjects"
-    );
-    AddCategoryPelemsDebuggerNodes(
-      runTimeData.execData.project.ConditionalEvents,
-      "debugger_jstree_ConditionalEvents"
-    );
-    AddCategoryPelemsDebuggerNodes(
-      runTimeData.execData.project.CalendarEvents,
-      "debugger_jstree_CalendarEvents"
-    );
-    AddCategoryPelemsDebuggerNodes(
-      runTimeData.execData.project.AutomationTasks,
-      "debugger_jstree_AutomationTasks"
-    );
-    // collect variables
-    AddAutomationsVariables(runTimeData.execData.project.ConditionalEvents);
-    AddAutomationsVariables(runTimeData.execData.project.CalendarEvents);
-    AddAutomationsVariables(runTimeData.execData.project.AutomationTasks);
-
-    let defineSOActionsSRC = AddSmartDevicesVariables(runTimeData.execData.project.SmartObjects)
-      + "is_script_ended = true; //# sourceURL=my-foo.js;";
-
-    let is_script_ended = false;
-    eval( defineSOActionsSRC );
-    while(!is_script_ended) {
-      await sleep(200);
-    }
-
-    // notify debugger for environment variables tree
-    runTimeData.RuntimeEnvironmentDebug.functionRequest(
-      "Debugger",
-      "setEnvironmentVariablesTree",
-      [debuggerEnvironmentVariables],
-      {
-        type: "async",
-        func: async (debuggerContent) => {
-          //todo: build rest data to init debuggee
-          debuggerContent.variables = debuggerEnvironmentVariables;
-
-          debuggeeActions.init(debuggerContent);
-
-          // iniate variables for the debugger toolbar
-          watches = debuggerContent.watches;
-
-          update_values = (pelemId) => {
-            var update_var = Blockly_Debuggee.actions[
-              "variables"
-            ].update_values(pelemId);
-            var update_watch = Blockly_Debuggee.actions["watch"].update_values(
-              pelemId
-            );
-            return update_var + update_watch;
-          };
-
-          Blockly_Debuggee.actions["eval"].evalLocal = evalLocal;
-
-          var finalAppCode = BuildAutomationsCodeForRun(
-            runTimeData.execData.project.ConditionalEvents
+        update_values = (pelemId) => {
+          var update_var = Blockly_Debuggee.actions["variables"].update_values(
+            pelemId
           );
-
-          finalAppCode += BuildAutomationsCodeForRun(
-            runTimeData.execData.project.CalendarEvents
+          var update_watch = Blockly_Debuggee.actions["watch"].update_values(
+            pelemId
           );
+          return update_var + update_watch;
+        };
 
-          finalAppCode += BuildAutomationsCodeForRun(
-            runTimeData.execData.project.AutomationTasks
-          );
+        Blockly_Debuggee.actions["eval"].evalLocal = evalLocal;
 
-          await eval(
-            `async function code(){
+        var finalAppCode = BuildAutomationsCodeForRun(
+          runTimeData.execData.project.ConditionalEvents
+        );
+
+        finalAppCode += BuildAutomationsCodeForRun(
+          runTimeData.execData.project.CalendarEvents
+        );
+
+        finalAppCode += BuildAutomationsCodeForRun(
+          runTimeData.execData.project.AutomationTasks
+        );
+
+        await eval(
+          `async function code(){
 
               ExecuteValueCheckingTests(runTimeData);
               
@@ -4568,14 +4581,14 @@ export async function StartApplication(runTimeData) {
               
             };
             code();`
-          );
+        );
 
-          // runTimeData.RuntimeEnvironmentDebug.postMessage({
-          //   type: "execution_finished",
-          // });
-        },
-      }
-    );
+        // runTimeData.RuntimeEnvironmentDebug.postMessage({
+        //   type: "execution_finished",
+        // });
+      },
+    }
+  );
   // } catch (e) {
   //   alert(e);
   // }

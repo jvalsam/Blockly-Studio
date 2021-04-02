@@ -117,7 +117,7 @@ const StartWhenTimeout = function () {
         cond.func();
       });
       arrayIntervals[index].func();
-    }, 400);
+    }, 800);
   };
   arrayIntervals[index].func = f;
   arrayIntervals[index].func();
