@@ -524,17 +524,17 @@ export class CollaborationUI {
         `);
 
         let $right = $(`
-            <div class = "recent-action-last-row vcenter">
+            <div class = "recent-action-last-row">
                 <div> ${type}</div>
-            </div>  
+            </div>
         `);
 
         if (file){
             $right.append(`
-                <div class = "middle-right vcenter">
+                <div class = "vcenter" style = "display: flex; align-items: center; flex-wrap: nowrap;">
                     <div class = "file-icon float-left" style = "background-image: url(${file.icon});"></div>
                     ${file.name}
-                </div>  
+                </div>
             `);
         }
 
