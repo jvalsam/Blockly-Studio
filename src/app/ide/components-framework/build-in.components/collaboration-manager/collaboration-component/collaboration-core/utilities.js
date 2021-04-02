@@ -128,7 +128,7 @@ export function handleAcceptSuggestion(pitemID, suggID){
 
 }
 
-export function handleDenySuggestion(pitemID, suggID){
+export function handleDenySuggestion(pitemID, suggID, user){
     let pitem = collabInfo.plugin.getPItem(pitemID);
 
     let suggestions = pitem.componentsData.collaborationData.suggestions;
@@ -138,7 +138,7 @@ export function handleDenySuggestion(pitemID, suggID){
     collabInfo.plugin.logAction(
         {
             type: "rejectSuggestion", 
-            user: collabInfo.myInfo,
+            user: user,
             pitemID: pitemID,
             suggestionID: suggID,
         });
