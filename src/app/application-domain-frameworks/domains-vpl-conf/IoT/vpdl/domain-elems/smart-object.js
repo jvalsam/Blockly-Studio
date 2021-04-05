@@ -1057,7 +1057,7 @@ export const SmartObject = {
         // })();
 
         let strBuilder = "";
-        strBuilder += "await(async function () {\n";
+        strBuilder += "await(function () {\n";
         strBuilder += "new Promise((resolve) => {\n";
         strBuilder += "let args = [];\n";
         strBuilder +=
